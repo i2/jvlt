@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+	<name>jVLT - Vocabulary Learning Tool</name>
+	<version>1.1.0</version>
+	<data-version>1.0</data-version>
+	<author>
+		<name>Henning Burchardt (Developer)</name>
+		<e-mail>burchardt@users.sourceforge.net</e-mail>
+	</author>
+	<author>
+		<name>Guy Leavitt (Support for Sanskrit)</name>
+		<e-mail>camatkara@users.sourceforge.net</e-mail>
+	</author>
+	<author>
+		<name>Vít Profant (Czech translation files)</name>
+		<e-mail>vit.profant@gmail.com</e-mail>
+	</author>
+	<language name="chinese"/>
+	<language name="english"/>
+	<language name="french"/>
+	<language name="german"/>
+	<language name="greek"/>
+	<language name="japanese"/>
+	<language name="sanskrit"/>
+	<language name="spanish"/>
+	<language name="swedish"/>
+</info>
+

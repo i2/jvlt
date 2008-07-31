@@ -1,0 +1,201 @@
+package net.sourceforge.jvlt;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.table.*;
+
+public class SortableTable<T extends Object> extends JTable
+		implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
+	private JPopupMenu _menu;
+	private SortableTableModel<T> _model;
+	private JMenuItem _sort_descending_item;
+	private JMenuItem _no_sorting_item;
+	private JMenuItem _sort_ascending_item;
+	private JMenuItem _select_cols_item;
+	private MouseHandler _mouse_handler;
+
+	public SortableTable(SortableTableModel<T> model) {
+		super(model);
+		_model = model;
+		
+		_mouse_handler = new MouseHandler();
+		getTableHeader().addMouseListener(_mouse_handler);
+		
+		int height = getFontMetrics(getFont()).getHeight();
+		setRowHeight(height);
+		getTableHeader().setReorderingAllowed(false);
+		
+		init();
+	}
+	
+	public List<T> getSelectedObjects() {
+		int[] indices = getSelectedRows();
+		ArrayList<T> array = new ArrayList<T>();
+		for (int i=0; i<indices.length; i++)
+			array.add(_model.getObjectAt(indices[i]));
+		
+		return array;
+	}
+	
+	public void setSelectedObject(T obj) {
+		int index = _model.getObjectIndex(obj);
+		if (index >= 0) {
+			setRowSelectionInterval (index, index);
+			
+			// Scroll to selected row.
+			Rectangle rect = getCellRect(index, 0, true);
+			scrollRectToVisible(rect);
+		}
+	}
+	
+	public void actionPerformed(ActionEvent ev) {
+		if (ev.getActionCommand().equals("sort_ascending")) {
+			_model.setSortingDirective(new SortableTableModel.Directive(
+				_mouse_handler.getLastClickedColumn(),
+				SortableTableModel.ASCENDING));
+		}
+		else if (ev.getActionCommand().equals("sort_descending")) {
+			_model.setSortingDirective(new SortableTableModel.Directive(
+				_mouse_handler.getLastClickedColumn(),
+				SortableTableModel.DESCENDING));
+		}
+		else if (ev.getActionCommand().equals("no_sorting")) {
+			_model.setSortingDirective(new SortableTableModel.Directive(
+				_mouse_handler.getLastClickedColumn(),
+				SortableTableModel.NOT_SORTED));
+		}
+		else if (ev.getActionCommand().equals("select_columns")) {
+			ColumnSelectionDialogData dd = new ColumnSelectionDialogData();
+			dd.setSelectedStrings(_model.getColumnNames());
+			dd.setAvailableStrings(_model.getMetaData().getAttributeNames());
+	
+			int result = CustomDialog.showDialog(dd, SortableTable.this,
+				GUIUtils.getString("Labels", "select_columns"));
+			if (result == CustomDialog.OK_OPTION) {
+				_model.setColumnNames(dd.getSelectedStrings());
+			}
+		}
+	}
+	
+	private void init() {
+		CustomAction sort_ascending_action = GUIUtils.createTextAction(
+			this, "sort_ascending");
+		CustomAction sort_descending_action = GUIUtils.createTextAction(
+			this, "sort_descending");
+		CustomAction no_sorting_action = GUIUtils.createTextAction(
+			this, "no_sorting");
+		CustomAction select_cols_action = GUIUtils.createTextAction(
+			this, "select_columns");
+
+		_menu = new JPopupMenu();
+		ButtonGroup group = new ButtonGroup();
+		_no_sorting_item = new JRadioButtonMenuItem(no_sorting_action);
+		group.add(_no_sorting_item); 
+		_menu.add(_no_sorting_item);
+		_sort_ascending_item = new JRadioButtonMenuItem(sort_ascending_action);
+		group.add(_sort_ascending_item);
+		_menu.add(_sort_ascending_item);
+		_sort_descending_item=new JRadioButtonMenuItem(sort_descending_action);
+		group.add(_sort_descending_item);
+		_menu.add(_sort_descending_item);
+		_menu.addSeparator();
+		_select_cols_item = new JMenuItem(select_cols_action);
+		_menu.add(_select_cols_item);
+	}
+	
+	private class MouseHandler extends MouseAdapter {
+		private int _last_clicked_col;
+		
+		public MouseHandler() { _last_clicked_col = -1;	}
+		
+		public void mouseClicked(MouseEvent ev) {
+			if (ev.getButton() != MouseEvent.BUTTON1)
+				return;
+
+			int col = getColumn(ev);
+			if (col < 0)
+				return;
+			
+			SortableTableModel.Directive directive =
+				_model.getSortingDirective();
+			SortableTableModel.Directive new_directive;
+			if (directive.getColumn() != col)
+				new_directive = new SortableTableModel.Directive(
+					col, SortableTableModel.ASCENDING);
+			else {
+				if (directive.getDirection()==SortableTableModel.ASCENDING)
+					new_directive = new SortableTableModel.Directive(
+						col, SortableTableModel.DESCENDING);
+				else
+					new_directive = new SortableTableModel.Directive(
+						col, SortableTableModel.ASCENDING);
+			}
+			_model.setSortingDirective(new_directive);
+		}
+		
+		public void mousePressed(MouseEvent ev) { maybeShowPopup(ev); }
+		
+		public void mouseReleased(MouseEvent ev) { maybeShowPopup(ev); }
+		
+		public int getLastClickedColumn() { return _last_clicked_col; }
+		
+		private void maybeShowPopup(MouseEvent ev) {
+			if (ev.isPopupTrigger()) {
+				_last_clicked_col = getColumn(ev);
+				SortableTableModel.Directive d = _model.getSortingDirective();
+				if (d.getColumn() != _last_clicked_col)
+					_no_sorting_item.setSelected(true);
+				else if (d.getDirection() == SortableTableModel.ASCENDING)
+					_sort_ascending_item.setSelected(true);
+				else if (d.getDirection() == SortableTableModel.DESCENDING)
+					_sort_descending_item.setSelected(true);
+				else
+					_no_sorting_item.setSelected(true);
+
+				_menu.show(ev.getComponent(),ev.getX(),ev.getY());
+			}
+		}
+		
+		private int getColumn(MouseEvent ev) {
+			Object src = ev.getSource();
+			if (! (src instanceof JTableHeader))
+				return -1;
+			
+			JTableHeader header = (JTableHeader) src;
+			TableColumnModel column_model = header.getColumnModel();
+			int view_col = column_model.getColumnIndexAtX(ev.getX());
+			return column_model.getColumn(view_col).getModelIndex();
+		}
+	}
+}
+
+class ColumnSelectionDialogData extends CustomDialogData {
+	private ObjectSelectionPanel _selection_panel;
+	
+	public ColumnSelectionDialogData() {
+		_selection_panel = new ObjectSelectionPanel();
+		_selection_panel.setTranslateItems(true);
+		_content_pane = _selection_panel;
+	}
+	
+	public String[] getSelectedStrings() {
+		Object[] selected = _selection_panel.getSelectedObjects();
+		return Utils.objectArrayToStringArray(selected);
+	}
+	
+	public void setAvailableStrings(String[] strings) {
+		_selection_panel.setAvailableObjects(strings);
+	}
+	
+	public void setSelectedStrings(String[] strings) {
+		_selection_panel.setSelectedObjects(strings);
+	}
+	
+	public void updateData() throws InvalidDataException {}
+}
+

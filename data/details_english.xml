@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<schema lang="english">
+	<class name="noun"/>
+	<class name="verb"/>
+	<class name="adjective"/>
+	<class name="adverb"/>
+	<attribute name="pastt" classes="verb" group="conjugation"/>
+	<attribute name="pastp" classes="verb" group="conjugation"/>
+</schema>
+
