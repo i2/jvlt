@@ -19,6 +19,12 @@ public class PropertyMap {
 		return _value_map.containsKey(key);
 	}
 	
+	/**
+	 * @brief Returns a property given by a certain key
+	 * @param key The key
+	 * @return The value that is mapped to the key or null if there is
+	 *		no value for the key 
+	 */
 	public Object get(String key) { return _value_map.get(key); }
 	
 	public void put(String key, Object value) {
