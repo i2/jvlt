@@ -735,19 +735,9 @@ class StatsDescriptor extends WizardPanelDescriptor
 		jm.getDictModel().addDictUpdateListener(this);
 		jm.getQueryModel().addDictUpdateListener(this);
 		_entry_selection_data = new EntrySelectionDialogData(jm);
-		EntrySelectionDialogData.State default_state =
-			new EntrySelectionDialogData.State();
-		String state_string = JVLT.getConfig().getProperty(
-			"quiz_entry_filter", default_state.convertToString());
-		try {
-			_entry_selection_data.initFromState((EntrySelectionDialogData.State)
-				StringSerializableUtils.createFromString(state_string));
-		} catch (DeserializationException e) {
-			System.out.println("Warning: Could not restore state of "+
-				"the entry selection dialog. Reason: "+e.getMessage());
-			JVLT.getConfig().setProperty("quiz_entry_filter",
-				default_state.convertToString());
-		}
+		EntrySelectionDialogData.State state = (EntrySelectionDialogData.State)
+			JVLT.getRuntimeProperties().get("quiz_entry_filter");
+		_entry_selection_data.initFromState(state);
 		
 		_dict = null;
 		_qdict = null;
@@ -804,8 +794,8 @@ class StatsDescriptor extends WizardPanelDescriptor
 			GUIUtils.showDialog(frame, dlg);
 			if (dlg.getStatus() == CustomDialog.OK_OPTION) {
 				update();
-				JVLT.getConfig().setProperty("quiz_entry_filter",
-					_entry_selection_data.getState().convertToString());
+				JVLT.getRuntimeProperties().put("quiz_entry_filter",
+					_entry_selection_data.getState());
 			} else
 				// Initialize according to previous state
 				_entry_selection_data.initFromState(state);
@@ -998,8 +988,9 @@ class StatsDescriptor extends WizardPanelDescriptor
 		_quiz_info_map.clear();
 		QuizInfo[] qinfos =
 			(QuizInfo[]) JVLT.getRuntimeProperties().get("quiz_types");
-		for (int i=0; i<qinfos.length; i++)
-			_quiz_info_map.put(qinfos[i].getName(), qinfos[i]);
+		if (qinfos != null)
+			for (int i=0; i<qinfos.length; i++)
+				_quiz_info_map.put(qinfos[i].getName(), qinfos[i]);
 
 		updateQuizInfoList();
 	}
@@ -1024,13 +1015,14 @@ class StatsDescriptor extends WizardPanelDescriptor
 			} else
 				_invisible_quiz_info_map.put(info.getName(), info);
 		}
-		String selected_quiz_type =
-			JVLT.getRuntimeProperties().get("selected_quiz_type").toString();
-		if (_visible_quiz_info_map.containsKey(selected_quiz_type))
-			_quiz_info_box.setSelectedItem(selected_quiz_type);
-		else
+		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
+				"selected_quiz_type");
+		if (selected_quiz_type == null ||
+				! _visible_quiz_info_map.containsKey(selected_quiz_type))
 			_quiz_info_box.setSelectedItem(
-				GUIUtils.getString("Labels", "default"));
+					GUIUtils.getString("Labels", "default"));
+		else
+			_quiz_info_box.setSelectedItem(selected_quiz_type);
 		_quiz_info_box.addActionListener(_quiz_info_box_listener);
 	}
 }
