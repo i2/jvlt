@@ -21,7 +21,7 @@ import net.sourceforge.jvlt.event.DictUpdateListener;
 
 public class EntrySelectionDialogData extends CustomDialogData
 	implements ActionListener, DialogListener {
-	public static class State implements StringSerializable {
+	public static class State {
 		public static final int ALL_ENTRIES = 0;
 		public static final int SOME_CATEGORIES = 1;
 		public static final int SOME_ENTRIES = 2;
@@ -49,6 +49,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 			return _disallowed_categories;
 		}
 		
+		public void setType(int type) { _type = type; }
+		
 		public void setQuery(ObjectQuery query) { _query = query; }
 		
 		public void setMultiQuery(ObjectQuery[] queries) { _queries = queries; }
@@ -59,65 +61,6 @@ public class EntrySelectionDialogData extends CustomDialogData
 		
 		public void setDisallowedCategories(String[] categories) {
 			_disallowed_categories = categories;
-		}
-
-		public String convertToString() {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(getClass().getName());
-			buffer.append("{");
-			buffer.append(_type);
-			buffer.append(";");
-			buffer.append(_query.convertToString());
-			buffer.append(";{");
-			String[] oq_strings = new String[_queries.length];
-			for (int i=0; i<_queries.length; i++)
-				oq_strings[i] = _queries[i].convertToString();
-			buffer.append(StringSerializableUtils.join(oq_strings));
-			buffer.append("};{");
-			buffer.append(StringSerializableUtils.join(_allowed_categories));
-			buffer.append("};{");
-			buffer.append(StringSerializableUtils.join(_disallowed_categories));
-			buffer.append("}}");
-			return buffer.toString();
-		}
-
-		public void initFromString(String str)
-			throws DeserializationException {
-			String[] attributes = StringSerializableUtils.split(str);
-			if (attributes.length < 5)
-				throw new DeserializationException("Not enough attributes.");
-			
-			try {
-				_type = Integer.parseInt(attributes[0]);
-
-				_query = (ObjectQuery) StringSerializableUtils.createFromString(
-					attributes[1]);
-				if (_query == null)
-					_query = new ObjectQuery(Entry.class);
-
-				ArrayList<ObjectQuery> list = new ArrayList<ObjectQuery>();
-				String[] strings = StringSerializableUtils.split(
-					attributes[2].substring(1, attributes[2].length()-1));
-				for (int i=0; i<strings.length; i++) {
-					ObjectQuery query = (ObjectQuery)
-						StringSerializableUtils.createFromString(strings[i]);
-					if (query != null)
-						list.add(query);
-				}
-				_queries = (ObjectQuery[]) list.toArray(new ObjectQuery[0]);
-
-				_allowed_categories = StringSerializableUtils.split(
-					attributes[3].substring(1, attributes[3].length()-1));
-			
-				_disallowed_categories = StringSerializableUtils.split(
-					attributes[4].substring(1, attributes[4].length()-1));
-			} catch (NumberFormatException e) {
-				throw new DeserializationException("Could not parse integer.");
-			} catch (IndexOutOfBoundsException e) {
-				throw new DeserializationException("Index out of bounds.");
-			} catch (ClassCastException e) {
-				throw new DeserializationException("Class cast error.");
-			}
 		}
 	}
 	
@@ -344,9 +287,14 @@ public class EntrySelectionDialogData extends CustomDialogData
 	}
 	
 	private void setFilters(ObjectQuery[] oqs) {
-		String[] names = new String[oqs.length];
-		for (int i=0; i<oqs.length; i++)
-			names[i] = oqs[i].getName();
+		String[] names;
+		if (oqs == null)
+			names = new String[0];
+		else {
+			names = new String[oqs.length];
+			for (int i=0; i<oqs.length; i++)
+				names[i] = oqs[i].getName();
+		}
 		
 		_filter_chooser_panel.setStrings(names);
 	}
