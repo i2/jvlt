@@ -219,8 +219,9 @@ public class EntryQueryDialog extends AbstractDialog
 		ObjectQuery[] oqs = (ObjectQuery[])
 			JVLT.getRuntimeProperties().get("filters");
 		HashMap<Object, ObjectQuery> map = new HashMap<Object, ObjectQuery>();
-		for (int i=0; i<oqs.length; i++)
-			map.put(oqs[i].getName(), oqs[i]);
+		if (oqs != null)
+			for (int i=0; i<oqs.length; i++)
+				map.put(oqs[i].getName(), oqs[i]);
 		
 		_filter_map_panel.setItems(map);
 	}
