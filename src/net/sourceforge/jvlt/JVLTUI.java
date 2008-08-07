@@ -3,6 +3,8 @@ package net.sourceforge.jvlt;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.*;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -836,92 +838,100 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void loadRuntimeProperties() {
 		Config conf = JVLT.getConfig();
+		String home = System.getProperty("user.home") + File.separator
+			+ ".jvlt" + File.separator;
+		XMLDecoder decoder;
 
-		//-----
-		// Load filters
-		//-----
-		ArrayList<ObjectQuery> oqs = new ArrayList<ObjectQuery>();
-		int num_filters = conf.getIntProperty("num_filters", 0);
-		for (int i=0; i<num_filters; i++) {
-			String str = conf.getProperty("filter_" + String.valueOf(i));
-			if (str == null)
-				continue;
+		try {
+			//-----
+			// Load filters
+			//-----
+			decoder = new XMLDecoder(new BufferedInputStream(
+					new FileInputStream(home + "filters.xml")));
+			ObjectQuery[] oqs = (ObjectQuery[]) decoder.readObject();
+			JVLT.getRuntimeProperties().put("filters", oqs);
 			
-			try {
-				ObjectQuery query = (ObjectQuery)
-					StringSerializableUtils.createFromString(str);
-				if (query != null)
-					oqs.add(query);
-			} catch (DeserializationException e) {
-				System.out.println("Warning: "+e.getMessage());
-			}
-		}
-		JVLT.getRuntimeProperties().put(
-			"filters", oqs.toArray(new ObjectQuery[0]));
-		
-		//-----
-		// Load quiz types
-		//-----
-		int num_quiz_types = conf.getIntProperty("num_quiz_types", 0);
-		ArrayList<QuizInfo> qinfos = new ArrayList<QuizInfo>();
-		for (int i=0; i<num_quiz_types; i++) {
-			String str = conf.getProperty("quiz_type_" + String.valueOf(i));
-			if (str == null)
-				continue;
+			//-----
+			// Load quiz entry filter
+			//-----
+			decoder = new XMLDecoder(new BufferedInputStream(
+					new FileInputStream(home + "quizfilter.xml")));
+			EntrySelectionDialogData.State state =
+				(EntrySelectionDialogData.State) decoder.readObject();
+			JVLT.getRuntimeProperties().put("quiz_entry_filter", state);
 			
-			try {
-				QuizInfo info = (QuizInfo)
-					StringSerializableUtils.createFromString(str);
-				if (info != null)
-					qinfos.add(info);
-			} catch (DeserializationException e) {
-				System.out.println("Warning: "+e.getMessage());
-			}
+			//-----
+			// Load quiz types
+			//-----
+			decoder = new XMLDecoder(new BufferedInputStream(
+					new FileInputStream(home + "quiztypes.xml")));
+			QuizInfo[] qinfos = (QuizInfo[]) decoder.readObject();
+			decoder.close();
+			JVLT.getRuntimeProperties().put("quiz_types", qinfos);
+			JVLT.getRuntimeProperties().put("selected_quiz_type",
+				conf.getProperty("selected_quiz_type", ""));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
 		}
-		JVLT.getRuntimeProperties().put(
-			"quiz_types", qinfos.toArray(new QuizInfo[0]));
-		JVLT.getRuntimeProperties().put("selected_quiz_type",
-			conf.getProperty("selected_quiz_type", ""));
 	}
-
+	
 	private void saveRuntimeProperties() {
 		Config conf = JVLT.getConfig();
+		String home = System.getProperty("user.home") + File.separator
+			+ ".jvlt" + File.separator;
+		XMLEncoder encoder;
 
-		//-----
-		// Save filters
-		//-----
-		ObjectQuery[] oqs = (ObjectQuery[])
-			JVLT.getRuntimeProperties().get("filters");
-		conf.setProperty("num_filters", oqs.length);
-		for (int i=0; i<oqs.length; i++) {
-			String key_string = "filter_" + String.valueOf(i);
-			String value_string = oqs[i].convertToString();
-			conf.setProperty(key_string, value_string);
+		try {
+			//-----
+			// Save filters
+			//-----
+			ObjectQuery[] oqs = (ObjectQuery[])
+				JVLT.getRuntimeProperties().get("filters");
+			encoder = new XMLEncoder(new BufferedOutputStream(
+					new FileOutputStream(home + "filters.xml")));
+			encoder.writeObject(oqs);
+			encoder.close();
+			
+			//-----
+			// Save quiz entry filter
+			//-----
+			EntrySelectionDialogData.State state =
+				(EntrySelectionDialogData.State)
+				JVLT.getRuntimeProperties().get("quiz_entry_filter");
+			encoder = new XMLEncoder(new BufferedOutputStream(
+					new FileOutputStream(home + "quizfilter.xml")));
+			encoder.writeObject(state);
+			encoder.close();
+			
+			//-----
+			// Save quiz types
+			//-----
+			QuizInfo[] qts = (QuizInfo[])
+				JVLT.getRuntimeProperties().get("quiz_types");
+			encoder = new XMLEncoder(new BufferedOutputStream(
+					new FileOutputStream(home + "quiztypes.xml")));
+			encoder.writeObject(qts);
+			encoder.close();
+			Object obj = JVLT.getRuntimeProperties().get("selected_quiz_type");
+			if (obj == null)
+				conf.setProperty("selected_quiz_type", "");
+			else
+				conf.setProperty("selected_quiz_type", obj.toString());
+	
+			//-----
+			// Save language-specific settings
+			//-----
+			String lang = _dict.getLanguage();
+			Object[] displayed_attributes = (Object[])
+				JVLT.getRuntimeProperties().get("displayed_attributes");
+			String key = (lang==null||lang.equals("")) ?
+				"displayed_attributes" : ("displayed_attributes_"+lang);
+			JVLT.getConfig().setProperty(key, displayed_attributes);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
-		
-		//-----
-		// Save quiz types
-		//-----
-		QuizInfo[] qts = (QuizInfo[])
-			JVLT.getRuntimeProperties().get("quiz_types");
-		conf.setProperty("num_quiz_types", qts.length);
-		for (int i=0; i<qts.length; i++) {
-			String key_string = "quiz_type_" + String.valueOf(i);
-			String value_string = qts[i].convertToString();
-			conf.setProperty(key_string, value_string);
-		}
-		conf.setProperty("selected_quiz_type",
-			JVLT.getRuntimeProperties().get("selected_quiz_type").toString());
-
-		//-----
-		// Save language-specific settings
-		//-----
-		String lang = _dict.getLanguage();
-		Object[] displayed_attributes = (Object[])
-			JVLT.getRuntimeProperties().get("displayed_attributes");
-		String key = (lang==null||lang.equals("")) ?
-			"displayed_attributes" : ("displayed_attributes_"+lang);
-		JVLT.getConfig().setProperty(key, displayed_attributes);
 	}
 	
 	public static void main (String[] args) {

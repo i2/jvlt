@@ -43,32 +43,5 @@ public class ChoiceObjectArrayQueryItem extends ObjectArrayQueryItem {
 			return true;
 		}
 	}
-
-	protected String convertToString(Object value) {
-		if (value == null)
-			return "{}";
-
-		if (_type == CONTAINS_ALL_ITEMS || _type == CONTAINS_ONE_ITEM
-			|| _type == DOES_NOT_CONTAIN_ANY_ITEM)
-			return "{" + StringSerializableUtils.join(
-					Utils.objectArrayToStringArray((Object[]) value)) + "}";
-		else
-			return super.convertToString(value);
-	}
-		
-	protected Object createFromString(String value)
-		throws DeserializationException {
-		// Warning: It is assumed that the _type attribute is read before
-		// this method is called.
-		if (_type == CONTAINS_ALL_ITEMS || _type == CONTAINS_ONE_ITEM
-			|| _type == DOES_NOT_CONTAIN_ANY_ITEM) {
-			if (value.length() <= 2)
-				return new Object[0];
-			else
-				return StringSerializableUtils.split(
-					value.substring(1, value.length()-1));
-		} else
-			return super.createFromString(value);
-	}
 }
 

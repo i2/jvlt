@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Vector;
 
-public abstract class ObjectQueryItem implements StringSerializable {
+public abstract class ObjectQueryItem {
 	protected String _name;
 	protected int _type;
 	protected Object _value;
@@ -49,26 +49,6 @@ public abstract class ObjectQueryItem implements StringSerializable {
 		return names;
 	}
 	
-	public String convertToString() {
-		StringBuffer buf = new StringBuffer();
-		buf.append(getClass().getName());
-		buf.append("{");
-		buf.append(StringSerializableUtils.join(new String[] {
-			_name, String.valueOf(_type), convertToString(_value) }));
-		buf.append("}");
-		return buf.toString();
-	}
-
-	public void initFromString(String value) throws DeserializationException {
-		String[] attributes = StringSerializableUtils.split(value);
-		if (attributes.length < 3)
-			throw new DeserializationException("Not enough attributes");
-		
-		_name = attributes[0];
-		_type = Integer.parseInt(attributes[1]);
-		_value = createFromString(attributes[2]);
-	}
-	
 	public abstract boolean objectMatches(Object o);
 
 	protected Field[] getTypeFields() {
@@ -84,15 +64,6 @@ public abstract class ObjectQueryItem implements StringSerializable {
 		}
 		
 		return (Field[]) field_vector.toArray(new Field[0]);
-	}
-	
-	protected String convertToString(Object value) {
-		return StringSerializableUtils.convertToString(value);
-	}
-		
-	protected Object createFromString(String value)
-		throws DeserializationException {
-		return StringSerializableUtils.createFromString(value);
 	}
 }
 
