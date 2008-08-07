@@ -84,8 +84,13 @@ public class SettingsDialogData extends CustomDialogData
 			"expiration_unit", Entry.UNIT_DAYS);
 
 		MetaData data = model.getDictModel().getMetaData(Entry.class);
-		String[] attr_names = Utils.objectArrayToStringArray(
-			(Object[]) JVLT.getRuntimeProperties().get("displayed_attributes"));
+		String[] attr_names;
+		Object[] attrs = (Object[]) JVLT.getRuntimeProperties().get(
+				"displayed_attributes");
+		if (attrs != null)
+			attr_names = Utils.objectArrayToStringArray(attrs);
+		else
+			attr_names = new String[0];
 		_old_displayed_attrs = new Attribute[attr_names.length];
 		for (int i=0; i<attr_names.length; i++)
 			_old_displayed_attrs[i] = data.getAttribute(attr_names[i]);
