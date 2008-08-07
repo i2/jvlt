@@ -23,7 +23,8 @@ public class JVLT {
 	
 	public static void saveConfig() throws IOException {
 		String prop_file_name =
-			System.getProperty("user.home")+"/"+".jvltrc";
+			System.getProperty("user.home") + File.separator + ".jvlt" +
+			File.separator + "config";
 		FileOutputStream fos = new FileOutputStream(prop_file_name);
 		_config.store(fos, "jVLT property file");
 	}
@@ -35,7 +36,8 @@ public class JVLT {
 	 * Unlike the properties stored in the Config object returned by method
 	 * getConfig(), this map is not stored in a config file. */
 	public static PropertyMap getRuntimeProperties() {
-		return _runtime_properties; }
+		return _runtime_properties;
+	}
 	
 	public static String getVersion() { return _version; }
 	
@@ -66,13 +68,26 @@ public class JVLT {
 		catch (XPathExpressionException ex) { ex.printStackTrace(); }
 
 		//----------
+		// Create .jvlt directory if necessary
+		//----------
+		File dir = new File(System.getProperty("user.home") +
+				File.separator + ".jvlt");
+		if (dir.exists()) {
+			if (! dir.isDirectory())
+				System.out.println(dir.getPath() +
+						" already exists but it is not a directory");
+		} else {
+			if (! dir.mkdir())
+				System.out.println(dir.getPath() + " could not be created.");
+		}
+		
+		//----------
 		// Read settings.
 		//----------		
 		_config = new Config();
 		try	{
-			String prop_file_name =
-				System.getProperty("user.home")+"/"+".jvltrc";
-			FileInputStream fis=new FileInputStream(prop_file_name);
+			String prop_file_name = dir.getPath() + File.separator + "config";
+			FileInputStream fis = new FileInputStream(prop_file_name);
 			_config.load(new FileInputStream(prop_file_name));
 			fis.close();
 		}
