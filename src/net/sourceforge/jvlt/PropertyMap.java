@@ -28,8 +28,17 @@ public class PropertyMap {
 	public Object get(String key) { return _value_map.get(key); }
 	
 	public void put(String key, Object value) {
-		boolean fire = ! _value_map.containsKey(key) ||
-			! _value_map.get(key).equals(value);
+		boolean fire;
+		if (! _value_map.containsKey(key))
+			fire = true;
+		else {
+			Object obj = _value_map.get(key);
+			if (obj == null)
+				fire = (value != null);
+			else
+				fire = (! obj.equals(value));
+		}
+
 		_value_map.put(key, value);
 		if (fire)
 			firePropertyChangeEvent(key, _value_map.get(key), value);
