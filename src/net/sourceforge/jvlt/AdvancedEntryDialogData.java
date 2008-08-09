@@ -47,13 +47,24 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	public void updateData() throws InvalidDataException {
 		if (_schema_panel != null) {
 			EntryClass ec = _schema_panel.getValue();
-			if (ec == null) {
-				if (_orig_class != null)
+			if (_entries.size() == 1) {
+				_entries.get(0).setEntryClass(ec);
+			} else {
+				if (ec == null) {
+					if (_orig_class != null) {
+						Iterator<Entry> it = _entries.iterator();
+						for (; it.hasNext(); )
+							it.next().setEntryClass(null);
+					}
+				} else if (! ec.equals(_orig_class))
+					/*
+					 * Currently, only when the new entry class has another
+					 * name as the old one, the entry class is updated.
+					 * TODO: Update also if only attributes have changed   
+					 */ 
 					for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
-						it.next().setEntryClass(null);
-			} else if (! ec.equals(_orig_class))
-				for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
-					it.next().setEntryClass(ec);
+						it.next().setEntryClass(ec);
+			}
 		}
 
 		String[] categories = Utils.objectArrayToStringArray(
