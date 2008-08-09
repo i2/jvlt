@@ -15,6 +15,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 public class StringChooserPanel extends JPanel {
@@ -32,6 +34,10 @@ public class StringChooserPanel extends JPanel {
 			if (! ev.getValueIsAdjusting())
 				update();
 		}
+	}
+	
+	private class TableModelHandler implements TableModelListener {
+		public void tableChanged(TableModelEvent ev) { update(); }
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -54,6 +60,7 @@ public class StringChooserPanel extends JPanel {
 			new ListSelectionHandler());
 		JScrollPane sp = new JScrollPane(_table);
 		sp.setPreferredSize(new Dimension(100,100));
+		_table_model.addTableModelListener(new TableModelHandler());
 		
 		ActionHandler handler = new ActionHandler();
 		_up_action = GUIUtils.createIconAction(handler, "up");
@@ -74,16 +81,20 @@ public class StringChooserPanel extends JPanel {
 	}
 	
 	public void setStrings(String[] strings) {
-		_table_model.setStrings(strings); }
+		_table_model.setStrings(strings);
+	}
 		
 	public boolean isStringSelected(String str) {
-		return _table_model.isStringSelected(str); }
+		return _table_model.isStringSelected(str);
+	}
 	
 	public String[] getSelectedStrings() {
-		return _table_model.getSelectedStrings(); }
+		return _table_model.getSelectedStrings();
+	}
 		
 	public void setSelectedStrings(String[] strings) {
-		_table_model.setSelectedStrings(strings); }
+		_table_model.setSelectedStrings(strings);
+	}
 		
 	public void setEnabled(boolean enable) {
 		super.setEnabled(enable);
@@ -99,9 +110,14 @@ public class StringChooserPanel extends JPanel {
 	private void update() {
 		int selected_row = _table.getSelectedRow();
 		int num_selected_strings = _table_model.getSelectedStrings().length;
-		_up_action.setEnabled(
-			selected_row>0 && selected_row<num_selected_strings);
-		_down_action.setEnabled(selected_row<num_selected_strings-1);
+		if (selected_row < 0) {
+			_up_action.setEnabled(false);
+			_down_action.setEnabled(false);
+		} else {
+			_up_action.setEnabled(selected_row > 0
+					&& selected_row < num_selected_strings);
+			_down_action.setEnabled(selected_row < num_selected_strings - 1);
+		}
 	}
 
 	private void swap(int i1, int i2) {
@@ -142,8 +158,7 @@ class StringChooserModel extends AbstractTableModel {
 			return null;
 	}
 	
-	public boolean isCellEditable(int row, int column) {
-		return column == 0; }
+	public boolean isCellEditable(int row, int column) { return column == 0; }
 	
 	/**
 	 * Set a value at a specific position in the table.  Only the values in the
@@ -151,22 +166,24 @@ class StringChooserModel extends AbstractTableModel {
 	 * use the {@link #setStrings(String[]) setStrings} method. By calling the
 	 * {@link #setValueAt(Object,int,int) setValutAt} method, the order of the
 	 * list entries changes: Entries that are selected move to the top while
-	 * entries that are deselected move down.*/
+	 * entries that are not selected move down.
+	 */
 	public void setValueAt(Object value, int row, int column) {
 		if (column != 0 || row < 0 || row >= _string_list.size())
 			return;
 		
 		boolean selected = ((Boolean) value).booleanValue();
 		Object obj = _string_list.remove(row);
+		int index = _first_deselected_index;
 		if (selected) {
-			_string_list.add(_first_deselected_index, obj);
-			fireTableRowsUpdated(_first_deselected_index, row);
 			_first_deselected_index++;
+			_string_list.add(index, obj);
+			fireTableRowsUpdated(index, row);
 		}
 		else {
-			_string_list.add(_first_deselected_index-1, obj);
-			fireTableRowsUpdated(row, _first_deselected_index);
 			_first_deselected_index--;
+			_string_list.add(index - 1, obj);
+			fireTableRowsUpdated(row, index);
 		}
 	}
 
@@ -209,7 +226,8 @@ class StringChooserModel extends AbstractTableModel {
 	/**
 	 * Mark a set of strings as selected.
 	 * All other strings in the list are deselected. The selected strings
-	 * are moved to the top of the list. */
+	 * are moved to the top of the list.
+	 */
 	public void setSelectedStrings(String[] strings) {
 		int num_selected_strings = 0;
 		for (int i=strings.length-1; i>=0; i--) {
