@@ -121,24 +121,36 @@ public class QuizDialogData extends CustomDialogData {
 			return null;
 		
 		Object[] selected = _shown_attributes_panel.getSelectedObjects();
-		Attribute[] attr_list = new Attribute[selected.length];
+		String[] attr_list = new String[selected.length];
 		for (int i=0; i<selected.length; i++)
-			attr_list[i] = (Attribute) selected[i];
+			attr_list[i] = ((Attribute) selected[i]).getName();
 		
 		QuizInfo info = new QuizInfo();
 		info.setName(name);
 		info.setLanguage(_model.getDict().getLanguage());
-		info.setQuizzedAttribute((Attribute)
-			_name_attribute_map.get(_quizzed_attribute_box.getSelectedItem()));
+		Attribute attr = (Attribute)
+			_name_attribute_map.get(_quizzed_attribute_box.getSelectedItem());
+		info.setQuizzedAttribute(attr.getName());
 		info.setShownAttributes(attr_list);
 		
 		return info;
 	}
 
 	private void setCurrentQuizInfo(QuizInfo info) {
-		_shown_attributes_panel.setSelectedObjects(info.getShownAttributes());
+		/*
+		 * The attributes are stored as strings in the QuizInfo object.
+		 * Obtain the real attributes from the entry meta data.
+		 */
+		MetaData data = _model.getDictModel().getMetaData(Entry.class);
+		String[] names = info.getShownAttributes();
+		Attribute[] attrs = new Attribute[names.length];
+		for (int i=0; i<attrs.length; i++)
+			attrs[i] = data.getAttribute(names[i]);
+		_shown_attributes_panel.setSelectedObjects(attrs);
+		
+		/* The currently selected item is given as a string */
 		_quizzed_attribute_box.setSelectedItem(
-			_resources.getString(info.getQuizzedAttribute().getName()));
+			_resources.getString(info.getQuizzedAttribute()));
 	}
 }
 

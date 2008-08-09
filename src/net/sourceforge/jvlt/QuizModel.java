@@ -404,7 +404,9 @@ public class QuizModel extends WizardModel {
 			else if (ead.getState() == YesNoPanel.NO_OPTION)
 				result = new QueryResult(entry, false);
 		} else if (d instanceof EntryInputDescriptor) {
-			Attribute attr = _qdict.getQuizInfo().getQuizzedAttribute();
+			String attr_name = _qdict.getQuizInfo().getQuizzedAttribute();
+			Attribute attr = _model.getDictModel().getMetaData(
+					Entry.class).getAttribute(attr_name);
 			EntryInputDescriptor eid = (EntryInputDescriptor) d;
 			String answer = eid.getAnswer();
 			String solution = attr.getFormattedValue(entry);
@@ -601,19 +603,14 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 	protected void updateInfoPanel() {
 		_info_panel.setDisplayedExampleAttributes(new String[0]);
 		
-		Attribute[] attrs = _quiz_info.getShownAttributes();
-		String[] attr_strs = new String[attrs.length];
-		for (int i=0; i<attrs.length; i++)
-			attr_strs[i] = attrs[i].getName();
-		_info_panel.setDisplayedEntryAttributes(attr_strs);
+		String[] attrs = _quiz_info.getShownAttributes();
+		_info_panel.setDisplayedEntryAttributes(attrs);
 		
 		AttributeResources ar = new AttributeResources();
-		Attribute attr = _quiz_info.getQuizzedAttribute();
-		if (attr != null) {
-			String attr_str = ar.getString(attr.getName());
+		String attr = _quiz_info.getQuizzedAttribute();
+		if (attr != null)
 			_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-				new Object[]{attr_str}));
-		}
+				new Object[]{ar.getString(attr)}));
 	}
 }
 
@@ -683,19 +680,14 @@ class EntryInputDescriptor extends EntryDescriptor
 	protected void updateInfoPanel() {
 		_info_panel.setDisplayedExampleAttributes(new String[0]);
 
-		Attribute[] attrs = _quiz_info.getShownAttributes();
-		String[] attr_strs = new String[attrs.length];
-		for (int i=0; i<attrs.length; i++)
-			attr_strs[i] = attrs[i].getName();
-		_info_panel.setDisplayedEntryAttributes(attr_strs);
+		String[] attrs = _quiz_info.getShownAttributes();
+		_info_panel.setDisplayedEntryAttributes(attrs);
 		
 		AttributeResources ar = new AttributeResources();
-		Attribute attr = _quiz_info.getQuizzedAttribute();
-		if (attr != null) {
-			String attr_str = ar.getString(attr.getName());
+		String attr = _quiz_info.getQuizzedAttribute();
+		if (attr != null)
 			_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-				new Object[]{attr_str}));
-		}
+				new Object[]{ar.getString(attr)}));
 	}
 }
 
@@ -880,7 +872,8 @@ class StatsDescriptor extends WizardPanelDescriptor
 		for (int i=0; i<oqs.length; i++)
 			filters[i] = new EntryFilter(oqs[i]);
 		
-		_qdict = new QuizDict(_dict.getEntries(), filters, info);
+		_qdict = new QuizDict(((QuizModel) _model).getJVLTModel(),
+				filters, info);
 		
 		_model.panelDescriptorUpdated(this);
 	}

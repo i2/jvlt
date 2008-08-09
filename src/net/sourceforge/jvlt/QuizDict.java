@@ -3,17 +3,21 @@ package net.sourceforge.jvlt;
 import java.util.*;
 
 public class QuizDict {
+	private JVLTModel _model;
 	private ArrayList<QueryResult> _results;
-	private ArrayList<Entry> _entries;
 	private QuizInfo _info = null;
 	
-	public QuizDict(Collection<Entry> entries,
+	private ArrayList<Entry> _entries;
+
+	public QuizDict(JVLTModel model,
 			EntryFilter[] filters, QuizInfo info) {
+		_model = model;
 		_info = info;
 		_results = new ArrayList<QueryResult>();
+		
 		_entries = new ArrayList<Entry>();
 		
-		initEntryList(entries, filters);
+		initEntryList(model.getDict().getEntries(), filters);
 	}
 	
 	public int getResultCount() { return _results.size(); }
@@ -80,7 +84,9 @@ public class QuizDict {
 		// Only add the entries that have been expired and where the quizzed
 		// attribute is set.
 		//-----
-		Attribute attr = _info.getQuizzedAttribute();
+		String attr_str = _info.getQuizzedAttribute(); 
+		Attribute attr = _model.getDictModel().getMetaData(
+					Entry.class).getAttribute(attr_str);
 		GregorianCalendar now = new GregorianCalendar();
 		ArrayList<Entry> entry_array = new ArrayList<Entry>();
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
