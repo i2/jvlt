@@ -270,8 +270,9 @@ class EntryQueryRow implements ActionListener {
 	private class DictUpdateHandler implements DictUpdateListener {
 		public void dictUpdated(DictUpdateEvent event) {
 			if (event instanceof NewDictDictUpdateEvent
-				|| event instanceof LanguageDictUpdateEvent)
+				|| event instanceof LanguageDictUpdateEvent) {
 				updateAttributeBox();
+			}
 		}
 	}
 
@@ -283,8 +284,8 @@ class EntryQueryRow implements ActionListener {
 	private HashMap<Integer, String> _type_translation_map;
 	private MetaData _data;
 	private InputComponent _input_component;
-	private JComboBox _name_box;
-	private JComboBox _type_box;
+	private JComboBox _name_box = null;
+	private JComboBox _type_box = null;
 	
 	public EntryQueryRow(JVLTModel model) {
 		_container = new ItemContainer();
@@ -320,11 +321,11 @@ class EntryQueryRow implements ActionListener {
 
 		_name_box = new JComboBox();
 		_name_box.addActionListener(this);
-		updateAttributeBox();
 		_type_box = new JComboBox();
 		_type_box.addActionListener(this);
 		_input_component = null;
 				
+		updateAttributeBox();
 		setName(_data.getAttributeNames()[0]);
 	}
 	
@@ -367,32 +368,72 @@ class EntryQueryRow implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
-		String name = (String)
-			_container.getItem((String) _name_box.getSelectedItem());
+		String selected = (String) _name_box.getSelectedItem();
 		Integer type = _translation_type_map.get(_type_box.getSelectedItem());
-		if (ev.getSource() == _name_box)
-			setName(name);
-		else if (ev.getSource() == _type_box)
-			if (type != null)
-				setType(name, type.intValue());
+		if (ev.getSource() == _name_box) {
+			if (selected != null)
+				setName((String) _container.getItem(selected));
+		} else if (ev.getSource() == _type_box) { 
+			if (selected != null && type != null)
+				setType((String) _container.getItem(selected), type.intValue());
+		}
 	}
 	
 	private void updateAttributeBox() {
-		// Remove action listener. Otherwise ActionEvents are generated
-		// while updating the name combo box which results in
-		// NullPointerExceptions.
+		/*
+		 * Remove action listener. Otherwise ActionEvents are generated
+		 * while updating the name combo box which results in
+		 * NullPointerExceptions.
+		 */
 		_name_box.removeActionListener(this);
+		
+		/*
+		 * Save name in order to restore it after the name box has been updated
+		 */
+		Object name = _container.getItem(_name_box.getSelectedItem());
 		
 		_name_box.removeAllItems();
 		String[] names = _data.getAttributeNames();
-		_container.setItems(names);
-		for (int i=0; i<names.length; i++)
-			_name_box.addItem(_container.getTranslation(names[i]));
+		boolean found = false;
+		if (names != null && names.length > 0) {
+			_container.setItems(names);
+			for (int i=0; i<names.length; i++)
+				_name_box.addItem(_container.getTranslation(names[i]));
 		
+			/*
+			 * If the name box does not contain the original name, use the
+			 * default name (the first one in the array). Otherwise, restore the
+			 * original name. 
+			 */
+			for (int i=0; i<names.length; i++)
+				if (names[i].equals(name)) {
+					found = true;
+					break;
+				}
+			if (found)
+				_name_box.setSelectedItem(_container.getTranslation(name));
+		}
+			
 		_name_box.addActionListener(this);
+		
+		if (! found)
+			/*
+			 * - Do not call _name_box.setSelectedItem() as the other values
+			 *   in the row probably also have to be updated.
+			 * - Call setName() after the action listener has been added so
+			 *   the action listener will not be added twice 
+			 */
+			setName(names[0]);
 	}
 	
 	private void setName(String name) {
+		/*
+		 * Remove action listeners from combo boxes so actionPerformed() will
+		 * not called during the update
+		 */
+		_name_box.removeActionListener(this);
+		_type_box.removeActionListener(this);
+		
 		_name_box.setSelectedItem(_container.getTranslation(name));
 		
 		Attribute attr = _data.getAttribute(name);
@@ -413,12 +454,22 @@ class EntryQueryRow implements ActionListener {
 			}
 			catch (Exception ex) { ex.printStackTrace(); }
 		}
+		
+		/* Re-add action listeners */
+		_name_box.addActionListener(this);
+		_type_box.addActionListener(this);
 
 		setType(name, item.getTypes()[0]);
 	}
 	
 	private void setType(String name, int type) {
+		/*
+		 * Update the type combo box. Remove action listener before updating
+		 * in order to prevent actionPerformed() from being called.
+		 */
+		_type_box.removeActionListener(this);
 		_type_box.setSelectedItem(_type_translation_map.get(new Integer(type)));
+		_type_box.addActionListener(this);
 		
 		JComponent old_component = null;
 		if (_input_component != null)
