@@ -174,7 +174,12 @@ class EntryClassPanel extends JPanel {
 	
 	private void updateInputPanel(SchemaAttribute att) {
 		SchemaAttributeInput input = _input_panels.get(att);
-		input.setValue(att.getValue());
+		if (input != null)
+			/*
+			 * The input panel may be null if the attribute cannot be found
+			 * because the dictionary changed.
+			 */
+			input.setValue(att.getValue());
 	}
 	
 	private JPanel createPanel(String group) {
