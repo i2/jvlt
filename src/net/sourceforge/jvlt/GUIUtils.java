@@ -146,5 +146,19 @@ public class GUIUtils {
 			(int) ((pbounds.getHeight()-dbounds.getHeight())/2+pbounds.getY()));
 		dlg.setVisible(true);
 	}
+
+	public static int showSaveDiscardCancelDialog(Frame frame, String message) {
+		String text = GUIUtils.getString("Messages", message);
+		String title = GUIUtils.getString("Labels", "confirm");
+		Object[] options = {
+			GUIUtils.getString("Actions", "yes_save"),
+			GUIUtils.getString("Actions", "no_discard"),
+			// Do not use "Actions" as we want no mnemonic key.
+			GUIUtils.getString("Labels", "cancel") };
+		
+		return JOptionPane.showOptionDialog(frame, text, title,
+			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+			null, options, options[2]);
+	}
 }
 
