@@ -116,14 +116,15 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		String command = e.getActionCommand();
 		if (command.equals("new") || command.equals("open")
 			|| command.startsWith("open_")) {
-			if (! finishQuery())
+			if (! finishQuiz())
 				return;
 			
 			//----------
 			// Ask whether changes should be saved.
 			//----------
 			if (_model.isDataModified()) {
-				int result = showSaveDiscardCancelDialog("save_changes");
+				int result = GUIUtils.showSaveDiscardCancelDialog(
+						_main_frame, "save_changes");
 				if (result == JOptionPane.YES_OPTION) {
 					if (! save())
 						return;
@@ -181,8 +182,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} else if (command.equals("redo")) {
 			_model.redo();
 		} else if (command.equals("dict_properties")) {
+			if (! finishQuiz())
+				return;
+			
 			PropertiesDialogData ddata = new PropertiesDialogData(
-				_dict.getLanguage());
+					_dict.getLanguage());
 			CustomDialog dlg = new CustomDialog(ddata, _main_frame,
 				GUIUtils.getString("Labels", "dict_properties"));
 			GUIUtils.showDialog(_main_frame, dlg);
@@ -431,20 +435,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			short_message, long_message);
 	}
 	
-	private int showSaveDiscardCancelDialog(String message) {
-		String text = GUIUtils.getString("Messages", message);
-		String title = GUIUtils.getString("Labels", "confirm");
-		Object[] options = {
-			GUIUtils.getString("Actions", "yes_save"),
-			GUIUtils.getString("Actions", "no_discard"),
-			// Do not use "Actions" as we want no mnemonic key.
-			GUIUtils.getString("Labels", "cancel") };
-		
-		return JOptionPane.showOptionDialog(_main_frame, text, title,
-			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-			null, options, options[2]);
-	}
-	
 	private boolean saveAs() {
 		JFileChooser chooser = new DictFileChooser(_model.getDictFileName());
 		int val = chooser.showSaveDialog(_main_frame);
@@ -606,13 +596,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	private void tryToQuit() {
-		if (! finishQuery())
+		if (! finishQuiz())
 			return;
 		
 		if (! _model.isDataModified())
 			exit();
 		else {
-			int result = showSaveDiscardCancelDialog("save_changes");
+			int result = GUIUtils.showSaveDiscardCancelDialog(
+					_main_frame, "save_changes");
 			if (result == JOptionPane.YES_OPTION) {
 				if (save())
 					exit();
@@ -625,14 +616,15 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	/**
-	 * Checks whether there is an unfinished query and - if yes - asks
-	 * the user whether to save or discard the query results, or to cancel.
+	 * Checks whether there is an unfinished quiz and - if yes - asks
+	 * the user whether to save or discard the quiz results, or to cancel.
 	 * @return false if the user selects "Cancel", and true otherwise.
 	 */
-	private boolean finishQuery() {
+	private boolean finishQuiz() {
 		QuizModel model = (QuizModel) _quiz_wizard.getModel();
 		if (model.existsUnfinishedQuiz()) {
-			int result = showSaveDiscardCancelDialog("save_quiz");
+			int result = GUIUtils.showSaveDiscardCancelDialog(
+					_main_frame, "save_quiz");
 			if (result == JOptionPane.YES_OPTION)
 				model.saveQuizResults();
 			
