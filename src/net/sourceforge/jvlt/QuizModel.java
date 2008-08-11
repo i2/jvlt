@@ -767,11 +767,17 @@ class StatsDescriptor extends WizardPanelDescriptor
 		if (event instanceof NewDictDictUpdateEvent) {
 			_dict = ((NewDictDictUpdateEvent) event).getDict();
 			loadQuizInfoList();
+			update();
 		} else if (event instanceof LanguageDictUpdateEvent) {
 			loadQuizInfoList();
+			update();
+		} else {
+			/*
+			 * Entries or examples have been added, modified or removed. There
+			 * is no need to reload the quiz info list.
+			 */ 
+			updateView();
 		}
-		
-		update();
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
@@ -978,6 +984,10 @@ class StatsDescriptor extends WizardPanelDescriptor
 	}
 	
 	private void loadQuizInfoList() {
+		/*
+		 * At this state, no quiz should be running, since the quiz dictionary
+		 * will be reset.
+		 */
 		_quiz_info_map.clear();
 		QuizInfo[] qinfos =
 			(QuizInfo[]) JVLT.getRuntimeProperties().get("quiz_types");
