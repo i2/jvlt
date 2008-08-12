@@ -5,11 +5,14 @@ import javax.swing.Box;
 import javax.swing.JPanel;
 
 public class PropertiesDialogData extends CustomDialogData {
+	private String _language;
 	private LanguageComboBox _language_box;
 	
-	public PropertiesDialogData(String lang) {
+	public PropertiesDialogData(String language) {
+		_language = language;
+		
 		_language_box = new LanguageComboBox();
-		_language_box.setSelectedLanguage(lang);
+		_language_box.setSelectedLanguage(_language);
 		
 		_content_pane = new JPanel();
 		_content_pane.setLayout(new GridBagLayout());
@@ -22,8 +25,20 @@ public class PropertiesDialogData extends CustomDialogData {
 		_content_pane.add(Box.createVerticalGlue(), cc);
 	}
 	
-	public String getLanguage() { return _language_box.getSelectedLanguage(); }
+	public String getLanguage() { return _language; }
 
-	public void updateData() throws InvalidDataException {}
+	public void updateData() throws InvalidDataException {
+		String lang = _language_box.getSelectedLanguage();
+		if (_language != null && ! _language.equals("") &&
+				(lang == null || ! lang.equals(_language))) {
+			int result = MessageDialog.showDialog(_content_pane,
+					MessageDialog.WARNING_MESSAGE,
+					MessageDialog.OK_CANCEL_OPTION,
+					GUIUtils.getString("Messages", "language_change"));
+			if (result == MessageDialog.OK_OPTION)
+				_language = lang;
+		} else
+			_language = lang;
+	}
 }
 
