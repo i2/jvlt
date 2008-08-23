@@ -2,7 +2,7 @@
 <schema lang="english">
 	<class name="noun"/>
 	<class name="verb"/>
-	<class name="phrasalverb"/>
+	<class name="phrasalverb" extends="verb"/>
 	<class name="adjective"/>
 	<class name="adverb"/>
 	<attribute name="pastt" classes="verb" group="conjugation"/>
