@@ -10,7 +10,9 @@ public class ChoiceInputComponent extends ListeningInputComponent {
 	protected ItemContainer _container = new ItemContainer();
 	protected LabeledComboBox _input_box = null;
 	
-	public ChoiceInputComponent() { this(new LabeledComboBox()); }
+	public ChoiceInputComponent() {
+		this(new LabeledComboBox(new SortedComboBoxModel()));
+	}
 
 	public JComponent getComponent() { return _input_box; }
 	
