@@ -36,7 +36,6 @@ public class ObjectSelectionPanel extends JPanel {
 			else if (ev.getActionCommand().equals("left")) {
 				Object obj = _container.getItem(
 					_choice_list.getSelectedValue());
-				_available_objects.remove(obj);
 				_selected_objects.add(obj);
 				updateLists();
 			}
@@ -44,7 +43,6 @@ public class ObjectSelectionPanel extends JPanel {
 				Object obj = _container.getItem(
 					_selection_list.getSelectedValue());
 				_selected_objects.remove(obj);
-				_available_objects.add(obj);
 				updateLists();
 			}
 		}
@@ -183,12 +181,13 @@ public class ObjectSelectionPanel extends JPanel {
 	
 	protected void updateLists() {
 		_selection_list_model.clear();
-		for (Iterator<Object> it=_selected_objects.iterator(); it.hasNext(); )
+		Iterator<Object> it = _selected_objects.iterator();
+		for (; it.hasNext(); )
 			_selection_list_model.addElement(
 				_container.getTranslation(it.next()));
 			
 		_choice_list_model.clear();
-		for (Iterator<Object> it=_available_objects.iterator(); it.hasNext(); ) {
+		for (it = _available_objects.iterator(); it.hasNext(); ) {
 			Object o = it.next();
 			if (! _selected_objects.contains(o))
 				_choice_list_model.addElement(_container.getTranslation(o));
