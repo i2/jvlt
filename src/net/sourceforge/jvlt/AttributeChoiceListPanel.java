@@ -12,7 +12,7 @@ public class AttributeChoiceListPanel extends ChoiceListPanel {
 		Object[] vals = super.getSelectedObjects();
 		AttributeChoice[] choices = new AttributeChoice[vals.length];
 		for (int i=0; i<vals.length; i++)
-			choices[i] = (AttributeChoice) _container.getItem((String) vals[i]);
+			choices[i] = (AttributeChoice) vals[i];
 		
 		return choices;
 	}
