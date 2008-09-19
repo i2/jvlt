@@ -146,6 +146,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_current_entry = entry;
 		_sense_map.clear();
 		_sense_actions.clear();
+		_list_model.clear();
 		
 		if (entry != null)
 		{
@@ -153,6 +154,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 			for (int i=0; i<senses.length; i++) {
 				Sense clone = (Sense) senses[i].clone();
 				_sense_map.put(clone, senses[i]);
+				_list_model.addElement(clone);
 			}
 		}
 
@@ -164,7 +166,6 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_orth_field.setEnabled(false);
 		_pronunciation_editor.setEnabled(false);
 		_sense_list.setEnabled(false);
-		_list_model.clear();
 
 		if (_current_entry != null) {
 			_orth_field.setEnabled(true);
@@ -174,8 +175,6 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 			_orth_field.setText(_current_entry.getOrthography());
 			_pronunciation_editor.setSelectedItems(
 				_current_entry.getPronunciations());
-			for (Iterator<Sense> it=_sense_map.keySet().iterator(); it.hasNext(); )
-				_list_model.addElement(it.next());
 		} else {
 			_orth_field.setText("");
 			_pronunciation_editor.setSelectedItems(new String[0]);
