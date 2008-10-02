@@ -142,31 +142,18 @@ public class Utils {
 		
 		return array;
 	}
-
-	public static String escapeString(String str, char ch) {
-		return str.replaceAll(
-			quote(String.valueOf(ch)), escapeChar(ch));
-	}
 	
-	public static String escapeString(String str, String chs) {
-		String string = str;
-		for (int i=0; i<chs.length(); i++)
-			string = escapeString(string, chs.charAt(i));
+	public static boolean arraysEqual(Object[] array1, Object[] array2) {
+		if (array1 == null)
+			return array2 == null;
+		if (array1.length != array2.length)
+			return false;
 		
-		return string;
-	}
-
-	public static String unescapeString(String str, char ch) {
-		return str.replaceAll(
-			escapeChar(ch), quote(String.valueOf(ch)));
-	}
-	
-	public static String unescapeString(String str, String chs) {
-		String string = str;
-		for (int i=0; i<chs.length(); i++)
-			string = unescapeString(string, chs.charAt(i));
+		for (int i=0; i<array1.length; i++)
+			if (! array1[i].equals(array2[i]))
+				return false;
 		
-		return string;
+		return true;
 	}
 	
 	/**
@@ -183,20 +170,6 @@ public class Utils {
 			return "/u0" + hex;
 		else
 			return "/u" + hex;
-	}
-	
-	// Replacement for method java.util.regex.Patter.quote() which
-	// exists since jdk 1.5. Needed for jdk 1.4.
-	private static String quote(String s) {
-		StringBuffer buf = new StringBuffer();
-		for (int i=0; i<s.length(); i++) {
-			char c = s.charAt(i);
-			if (Character.isLetter(c))
-				buf.append(c);
-			else
-				buf.append("\\"+c);
-		}
-		return buf.toString();
 	}
 }
 
