@@ -15,7 +15,6 @@ import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -69,12 +68,12 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 
 		String[] categories = Utils.objectArrayToStringArray(
 				_category_selection_panel.getSelectedObjects());
-		if (! arraysEqual(categories, _orig_categories))
+		if (! Utils.arraysEqual(categories, _orig_categories))
 			for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
 				it.next().setCategories(categories);
 
 		String[] files = _file_selection_panel.getFiles();
-		if (! arraysEqual(files, _orig_mmfiles))
+		if (! Utils.arraysEqual(files, _orig_mmfiles))
 			for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
 				it.next().setMultimediaFiles(files);
 		
@@ -135,10 +134,10 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		_orig_mmfiles = _entries.get(0).getMultimediaFiles();
 		_orig_class = _entries.get(0).getEntryClass();
 		for (int i=1; i<_entries.size(); i++) {
-			if (_orig_categories.length > 0 && ! arraysEqual(_orig_categories,
-						_entries.get(i).getCategories()))
+			if (_orig_categories.length > 0 && ! Utils.arraysEqual(
+					_orig_categories, _entries.get(i).getCategories()))
 				_orig_categories = new String[0];
-			if (_orig_mmfiles.length > 0 &&	! arraysEqual(_orig_mmfiles,
+			if (_orig_mmfiles.length > 0 &&	! Utils.arraysEqual(_orig_mmfiles,
 						_entries.get(i).getMultimediaFiles()))
 				_orig_mmfiles = new String[0];
 			if (_orig_class != null &&
@@ -149,19 +148,6 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		_file_selection_panel.setFiles(_orig_mmfiles);
 		if (schema != null)
 			_schema_panel.setValue(_orig_class);
-	}
-	
-	private boolean arraysEqual(Object[] array1, Object[] array2) {
-		if (array1 == null)
-			return array2 == null;
-		if (array1.length != array2.length)
-			return false;
-		
-		for (int i=0; i<array1.length; i++)
-			if (! array1[i].equals(array2[i]))
-				return false;
-		
-		return true;
 	}
 }
 
@@ -332,35 +318,5 @@ class FileSelectionPanel extends JPanel {
 			path = _list_model.get(index).toString();
 		
 		return path;
-	}
-}
-
-class StringListInputComponent implements InputComponent {
-	ObjectListPanel _input_component = new ObjectListPanel();
-
-	public JComponent getComponent() { return _input_component; }
-	
-	public Object getInput() {
-		return _input_component.getSelectedObjects();
-	}
-
-	public void setInput(Object input) {
-		_input_component.setSelectedObjects((Object[]) input);
-	}
-
-	public void reset() {
-		_input_component.setSelectedObjects(new Object[0]);
-	}
-}
-
-class StringListEditor extends ObjectListEditor {
-	public StringListEditor(String label) { super(label); }
-
-	protected InputComponent createSingleInputComponent() {
-		return new StringInputComponent();
-	}
-
-	protected InputComponent createMultiInputComponent() {
-		return new StringListInputComponent();
 	}
 }
