@@ -13,7 +13,7 @@ public class JVLT {
 	private static JVLT _instance = null;
 	private static Config _config = null;
 	private static Locale[] _locales = {
-		Locale.US, Locale.GERMANY, new Locale("cs", "CZ") };
+		Locale.US, Locale.FRANCE, Locale.GERMANY, new Locale("cs", "CZ") };
 	private static String _version = null;
 	private static String _data_version = null;
 
