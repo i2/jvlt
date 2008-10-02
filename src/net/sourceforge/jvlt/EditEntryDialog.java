@@ -14,7 +14,7 @@ public class EditEntryDialog extends AbstractEntryDialog {
 		public void dialogStateChanged(DialogEvent ev) {
 			if (ev.getType() == OK_OPTION) {
 				try {
-					updateCurrentEntry();
+					updateEntries();
 					
 					// Create action and execute it
 					ArrayList<EditEntryAction> actions =
@@ -55,6 +55,7 @@ public class EditEntryDialog extends AbstractEntryDialog {
 	private static final int MODE_EDIT_ENTRIES = 2;
 	
 	private int _mode = MODE_INVALID;
+	private String _orig_lesson = null;
 	
 	private List<Entry> _orig_entries = new ArrayList<Entry>();
 	private List<Entry> _entries = new ArrayList<Entry>();
@@ -85,6 +86,42 @@ public class EditEntryDialog extends AbstractEntryDialog {
 			setCurrentEntry(null);
 	}
 	
+	protected void updateComponents() {
+		super.updateComponents();
+
+		if (_current_entry != null) {
+			// Only one entry is edited
+			_orig_lesson = _current_entry.getLesson();
+			_lesson_box.setEnabled(true);
+			_lesson_box.setSelectedItem(_current_entry.getLesson());
+		} else {
+			//
+			// Multiple entries are edited. The lesson list can only be edited
+			// if it is the same for all entries.
+			// 
+			boolean enabled = true;
+			_orig_lesson = _entries.get(0).getLesson();
+			for (int i=1; i<_entries.size(); i++)
+				if (! _orig_lesson.equals(_entries.get(i).getLesson())) {
+					_orig_lesson = "";
+					enabled = false;
+					break;
+				}
+			
+			_lesson_box.setSelectedItem(_orig_lesson);
+			_lesson_box.setEnabled(enabled);
+		}
+	}
+	
+	protected void updateEntries() throws InvalidDataException {
+		super.updateEntries();
+		
+		String lesson = _lesson_box.getSelectedItem().toString();
+		if (! lesson.equals(_orig_lesson))
+			for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
+				it.next().setLesson(lesson);
+	}
+
 	protected AdvancedEntryDialogData getAdvancedDialogData() {
 		return new AdvancedEntryDialogData(_entries, _model);
 	}
