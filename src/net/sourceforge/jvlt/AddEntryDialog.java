@@ -12,7 +12,7 @@ public class AddEntryDialog extends AbstractEntryDialog {
 		public void dialogStateChanged(DialogEvent ev) {
 			if (ev.getType() == APPLY_OPTION) {
 				try {
-					updateCurrentEntry();
+					updateEntries();
 					
 					// Apply sense actions
 					EditEntryAction eea = new EditEntryAction(
@@ -53,6 +53,18 @@ public class AddEntryDialog extends AbstractEntryDialog {
 		setCurrentEntry(new Entry(_model.getDict().getNextUnusedEntryID()));
 	}
 	
+	protected void updateComponents() {
+		super.updateComponents();
+		
+		_lesson_box.setEnabled(false);
+		if (_current_entry != null) {
+			_lesson_box.setEnabled(true);
+			_lesson_box.setSelectedItem(_current_entry.getLesson());
+		} else {
+			_lesson_box.setSelectedItem("");
+		}
+	}
+
 	protected AdvancedEntryDialogData getAdvancedDialogData() {
 		ArrayList<Entry> entries = new ArrayList<Entry>();
 		entries.add(_current_entry);
