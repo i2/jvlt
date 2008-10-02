@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 public class SortedComboBoxModel implements MutableComboBoxModel {
@@ -36,7 +37,14 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 
 	public Object getSelectedItem() { return _selected_item; }
 
-	public void setSelectedItem(Object item) { _selected_item = item; } 
+	public void setSelectedItem(Object item) {
+		_selected_item = item;
+
+		Iterator<ListDataListener> it = _listeners.iterator();
+		while (it.hasNext())
+			it.next().contentsChanged(new ListDataEvent(this,
+					ListDataEvent.CONTENTS_CHANGED, 0, 0));
+	} 
 
 	public void addListDataListener(ListDataListener l) { _listeners.add(l); }
 
