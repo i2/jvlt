@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -119,6 +118,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	
 	protected CustomTextField _orth_field;
 	protected StringListEditor _pronunciation_editor;
+	protected LabeledComboBox _lesson_box;
 	protected JList _sense_list;
 	protected DefaultListModel _list_model;
 	protected CustomAction _add_action;
@@ -129,6 +129,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	protected CustomAction _sense_down_action;
 
 	protected JPanel _text_field_panel;
+	
 	protected JComponent _pronunciation_component;
 
 	public AbstractEntryDialog(Frame owner, String title, JVLTModel model) {
@@ -167,6 +168,12 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_pronunciation_editor.setEnabled(false);
 		_sense_list.setEnabled(false);
 
+		MetaData data = _model.getDictModel().getMetaData(Entry.class);
+		ChoiceAttribute attr = (ChoiceAttribute) data.getAttribute("Lesson");
+		Object[] available_lessons = attr.getValues();
+		for (int i=0; i<available_lessons.length; i++)
+			_lesson_box.addItem(available_lessons[i]);
+
 		if (_current_entry != null) {
 			_orth_field.setEnabled(true);
 			_pronunciation_editor.setEnabled(true);
@@ -174,7 +181,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 			_orth_field.setText(_current_entry.getOrthography());
 			_pronunciation_editor.setSelectedItems(
-				_current_entry.getPronunciations());
+					_current_entry.getPronunciations());
 		} else {
 			_orth_field.setText("");
 			_pronunciation_editor.setSelectedItems(new String[0]);
@@ -200,7 +207,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 				selected_sense != _list_model.getSize()-1);
 	}
 
-	protected void updateCurrentEntry()
+	protected void updateEntries()
 			throws InvalidDataException {
 		if (_current_entry == null)
 			return;
@@ -216,6 +223,12 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_current_entry.setOrthography(_orth_field.getText());
 		_current_entry.setPronunciations(Utils.objectArrayToStringArray(
 			_pronunciation_editor.getSelectedItems()));
+		Object obj = _lesson_box.getEditor().getItem();
+		if (obj == null)
+			_current_entry.setLesson("");
+		else
+			_current_entry.setLesson(obj.toString());
+
 		Entry e = _model.getDict().getEntry(_current_entry);
 		if (e != null && ! e.getID().equals(_current_entry.getID()))
 			throw new InvalidDataException(GUIUtils.getString(
@@ -227,13 +240,17 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	private void init() {
 		ActionHandler handler = new ActionHandler();
 		
-		_orth_field  = new CustomTextField (20);
+		_orth_field  = new CustomTextField(20);
 		_orth_field.setActionCommand("orthography");
 
-		_pronunciation_editor  = new StringListEditor("pronunciation");
+		_pronunciation_editor = new StringListEditor("pronunciation");
 		_pronunciation_editor.addComponentReplacementListener(
 			new ComponentReplacementHandler());
 		_pronunciation_component = _pronunciation_editor.getInputComponent();
+		
+		_lesson_box = new LabeledComboBox(new SortedComboBoxModel());
+		_lesson_box.setLabel("lesson");
+		_lesson_box.setEditable(true);
 		
 		_list_model = new DefaultListModel();
 		_sense_list = new JList(_list_model);
@@ -262,8 +279,12 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_text_field_panel.add(_orth_field.getLabel(), cc);
 		cc.update(1, 0, 1.0, 0.0);
 		_text_field_panel.add(_orth_field, cc);
-		cc.update(0, 1, 1.0, 0.0, 2, 1);
+		cc.update(0, 1,	1.0, 0.0, 2, 1);
 		_text_field_panel.add(_pronunciation_component, cc);
+		cc.update(0, 2, 0.0, 0.0, 1, 1);
+		_text_field_panel.add(_lesson_box.getLabel(), cc);
+		cc.update(1, 2, 1.0, 0.0, 1, 1);
+		_text_field_panel.add(_lesson_box, cc);
 		
 		ButtonPanel button_panel = new ButtonPanel(
 			SwingConstants.VERTICAL, SwingConstants.TOP);
