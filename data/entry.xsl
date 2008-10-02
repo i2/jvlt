@@ -49,6 +49,7 @@
 	</xsl:if>
 	<div style="margin-top:10;">
 	<table cellspacing="2" cellpadding="1">
+	<xsl:apply-templates select="Entry/Lesson"/>
 	<xsl:apply-templates select="Entry/Categories"/>
 	<xsl:apply-templates select="Entry/EntryClass"/>
 	</table>
@@ -220,8 +221,11 @@
 	<xsl:param name="example-node"/>
 	<xsl:param name="sense-id"/>
 	<table cellpadding="0" cellspacing="0"
-		style="margin-left:10pt; margin-top:2pt; font-family:{$orth_font_family}">
+		style="margin-top:2pt; font-family:{$orth_font_family}">
 	<tr>
+	<td width="25" valign="top">
+	<img src="/images/bullet.png" width="16" height="16"/>
+	</td>
 	<td>
 	<xsl:for-each select="$example-node/TextFragments/Fragment">
 		<xsl:choose>
@@ -263,6 +267,19 @@
 		<xsl:if test="position()>1">, </xsl:if>
 		<xsl:value-of disable-output-escaping="yes" select="."/>
 	</xsl:for-each>
+</xsl:template>
+
+<xsl:template match="Lesson">
+	<xsl:if test="string(.)">
+		<tr>
+		<td>
+		<xsl:value-of select="xslutils:i18nString('lesson')"/>:
+		</td>
+		<td>
+		<xsl:value-of select="."/>
+		</td>
+		</tr>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="Categories">
