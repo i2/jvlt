@@ -151,12 +151,15 @@ class XMLFormatter {
 		String[] categories = entry.getCategories();
 		for (int i=0; i<categories.length; i++)
 			entry_elem.appendChild(
-				XMLUtils.createTextElement(doc, "category", categories[i]));
+					XMLUtils.createTextElement(doc, "category", categories[i]));
+		
+		entry_elem.appendChild(
+				XMLUtils.createTextElement(doc, "lesson", entry.getLesson()));
 		
 		String[] mm_files = entry.getMultimediaFiles();
 		for (int i=0; i<mm_files.length; i++)
 			entry_elem.appendChild(
-				XMLUtils.createTextElement(doc, "multimedia", mm_files[i]));
+					XMLUtils.createTextElement(doc, "multimedia", mm_files[i]));
 		
 		return entry_elem;
 	}

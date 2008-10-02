@@ -50,6 +50,7 @@ public class EntryMetaData extends MetaData {
 		_custom_attributes = new Vector<CustomAttribute>();
 		
 		addAttribute(new SensesAttribute());
+		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
 		addAttribute(new EntryClassAttribute());
 	}

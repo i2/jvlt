@@ -159,7 +159,8 @@ public class CSVDictReader extends DictReader {
 		HashMap<SchemaAttribute, Vector<String>> attr_value_map =
 			new HashMap<SchemaAttribute, Vector<String>>();
 		int senses_index = 2;
-		int categories_index = senses_index + 2*_num_senses;
+		int lesson_index = senses_index + 2*_num_senses;
+		int categories_index = lesson_index + 1;
 		int mmfiles_index = categories_index + _num_categories;
 		int examples_index = mmfiles_index + _num_mmfiles;
 		int class_index = examples_index + 3*_num_examples;
@@ -184,7 +185,7 @@ public class CSVDictReader extends DictReader {
 				entry.setOrthography(s);
 			else if (i == 1)
 				entry.addPronunciation(s);
-			else if (i < categories_index) {
+			else if (i < lesson_index) {
 				if (i % 2 == 0)
 					translation = s;
 				else {
@@ -198,6 +199,8 @@ public class CSVDictReader extends DictReader {
 					}
 				}
 			}
+			else if (i < categories_index)
+				entry.setLesson(s);
 			else if (i < mmfiles_index) {
 				if (! s.equals(""))
 					entry.addCategory(s);

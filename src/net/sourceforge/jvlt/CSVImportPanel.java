@@ -95,6 +95,7 @@ public class CSVImportPanel extends CSVPanel {
 				names.add(getTranslation("nth_translation", i+1));
 				names.add(getTranslation("nth_definition", i+1));
 			}
+			names.add(_resources.getString("Lesson"));
 			for (int i=0; i<num_categories; i++)
 				names.add(getTranslation("nth_category", i+1));
 			for (int i=0; i<num_mmfiles; i++)

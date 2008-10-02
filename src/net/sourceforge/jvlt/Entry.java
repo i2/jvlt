@@ -79,6 +79,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	private TreeSet<String> _pronunciations;
 	private TreeSet<Sense> _sense_set;
 	private TreeSet<String> _categories;
+	private String _lesson;
 	private TreeSet<String> _mm_files;
 	private EntryClass _class;
 	private Stats _stats;
@@ -90,6 +91,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		_sense_set = new TreeSet<Sense>(new Sense.Comparator());
 		_class = null;
 		_categories = new TreeSet<String>();
+		_lesson = "";
 		_mm_files = new TreeSet<String>();
 		_pronunciations = new TreeSet<String>();
 		_stats = new Stats();
@@ -103,6 +105,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		// _sense_set = entry._sense_set;
 		_class = entry._class;
 		_categories = entry._categories;
+		_lesson = entry._lesson;
 		_mm_files = entry._mm_files;
 		_pronunciations = entry._pronunciations;
 		_stats.reinit(entry._stats);
@@ -167,6 +170,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		return (String[]) _categories.toArray(new String[0]);
 	}
 
+	public String getLesson() { return _lesson; }
+	
 	public EntryClass getEntryClass() { return _class; }
 	
 	public String[] getMultimediaFiles() {
@@ -228,6 +233,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	public void addCategory(String category) { _categories.add(category); }
 	
+	public void setLesson(String lesson) { _lesson = lesson; }
+
 	public void setEntryClass(EntryClass cl) { _class = cl; }
 	
 	public void setMultimediaFiles(String[] files) {
@@ -264,13 +271,15 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	/**
 	 * Creates a clone of depth one. This means that all members are cloned
 	 * but not the members of the members (in this case the instances of class
-	 * Sense that are contained in the vector <i>_senses</i> are not cloned). */
+	 * Sense that are contained in the vector <i>_senses</i> are not cloned).
+	 */
 	public Object clone() {
 		Entry entry = new Entry(_id);
 		entry._orthography = new String(_orthography);
 		entry._senses = _senses;
 		entry._sense_set = _sense_set;
 		entry._categories.addAll(_categories);
+		entry._lesson = new String(_lesson);
 		if (_class == null)
 			entry._class = null;
 		else

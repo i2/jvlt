@@ -29,19 +29,27 @@ public class DictCSVWriter extends DictWriter {
 		Collection<Entry> entries = _dict.getEntries();
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 			Entry entry = it.next();
+			
 			writer.write(getField(entry.getOrthography()));
 			writer.write(_field_delimiter);
+			
 			String[] pronunciations = entry.getPronunciations();
 			if (pronunciations.length > 0)
 				writer.write(getField(pronunciations[0]));
 			else
 				writer.write(getField(""));
 			writer.write(_field_delimiter);
+			
+			writer.write(getField(entry.getLesson()));
+			writer.write(_field_delimiter);
+			
+			// Only write the first category
 			String[] categories = entry.getCategories();
 			if (categories.length > 0)
 				writer.write(getField(categories[0]));
 			else
 				writer.write(getField(""));
+			
 			Sense[] senses = entry.getSenses();
 			for (int j=0; j<senses.length; j++) {
 				writer.write(_field_delimiter);

@@ -246,12 +246,11 @@ class DictHandler extends AbstractHandler {
 			
 			_current_entry = null;
 			_current_class = null;
-		}
-		else if (qname.equals("orth"))
+		} else if (qname.equals("orth")) {
 			_current_entry.setOrthography(getChars());
-		else if (qname.equals("pron"))
+		} else if (qname.equals("pron")) {
 			_current_entry.addPronunciation(getChars());
-		else if (qname.equals("sense")) {
+		} else if (qname.equals("sense")) {
 			if (_current_trans != null)
 				_current_sense.setTranslation(_current_trans);
 			if (_current_def != null)
@@ -267,42 +266,39 @@ class DictHandler extends AbstractHandler {
 			_current_trans = null;
 			_current_def = null;
 			_current_sense = null;
-		}
-		else if (qname.equals("trans"))
+		} else if (qname.equals("trans")) {
 			_current_trans = getChars();
-		else if (qname.equals("def"))
+		} else if (qname.equals("def")) {
 			_current_def = getChars();
-		else if (qname.equals("example")) {
+		} else if (qname.equals("example")) {
 			try { _dict.addExample(_current_example); }
 			catch (DictException ex) {
 				_duplicate_examples.add(_current_example);
 			}
 			
 			_current_example = null;
-		}
-		else if (qname.equals("ex")) {
+		} else if (qname.equals("ex")) {
 			String chars = getChars();
 			if (! chars.equals(""))
 				_current_example.addTextFragment(
 					new Example.TextFragment(chars));
-		}
-		else if (qname.equals("link")) {
+		} else if (qname.equals("link")) {
 			_current_fragment.setText(getChars());
 			_current_example.addTextFragment(_current_fragment);
 			
 			_current_fragment = null;
-		}
-		else if (qname.equals("tr"))
+		} else if (qname.equals("tr")) {
 			_current_example.setTranslation(getChars());
-		else if (qname.equals("category")) {
+		} else if (qname.equals("category")) {
 			if (_current_entry != null)
 				_current_entry.addCategory(getChars());
-		}
-		else if (qname.equals("multimedia")) {
+		} else if (qname.equals("lesson")) {
+			if (_current_entry != null)
+				_current_entry.setLesson(getChars());
+		} else if (qname.equals("multimedia")) {
 			if (_current_entry != null)
 				_current_entry.addMultimediaFile(getChars());
-		}
-		else if (qname.equals("attr")) {
+		} else if (qname.equals("attr")) {
 			if (_current_attr instanceof ArraySchemaAttribute)
 				_current_attr.setValue(
 					_current_items.toArray(new AttributeChoice[0]));
@@ -314,10 +310,10 @@ class DictHandler extends AbstractHandler {
 			
 			_current_attr = null;
 			_current_items = null;
-		}
-		else if (qname.equals("item"))
+		} else if (qname.equals("item")) {
 			_current_items.add(getAttributeChoice(
 				(ChoiceSchemaAttribute) _current_attr, getChars()));
+		}
 	}
 
 	public void startElement(String uri, String local_name, String qname,
@@ -386,7 +382,8 @@ class DictHandler extends AbstractHandler {
 		else if (qname.equals("orth") || qname.equals("pron")
 			|| qname.equals("trans") || qname.equals("def")
 			|| qname.equals("ex") || qname.equals("tr")
-			|| qname.equals("category") || qname.equals("multimedia"))
+			|| qname.equals("category") || qname.equals("lesson")
+			|| qname.equals("multimedia"))
 			getChars(); // Clear character cache.
 		else if (qname.equals("attr")) {
 			getChars();
