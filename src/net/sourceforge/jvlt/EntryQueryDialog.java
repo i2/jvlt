@@ -297,6 +297,8 @@ class EntryQueryRow implements ActionListener {
 		_type_translation_map = new HashMap<Integer, String>();
 		_query_items =
 			new HashMap<Class<? extends Attribute>, ObjectQueryItem>();
+		_query_items.put(DefaultChoiceAttribute.class,
+			new ChoiceQueryItem());
 		_query_items.put(ArrayAttribute.class,
 			new ObjectArrayQueryItem());
 		_query_items.put(ArrayChoiceAttribute.class,
@@ -310,7 +312,7 @@ class EntryQueryRow implements ActionListener {
 		_query_items.put(CustomAttribute.class,
 			new StringQueryItem());
 		_query_items.put(CustomChoiceAttribute.class,
-			new StringQueryItem());
+			new ChoiceQueryItem());
 		_query_items.put(CustomArrayAttribute.class,
 			new ObjectArrayQueryItem());
 		_query_items.put(EntryMetaData.SensesAttribute.class,
@@ -478,7 +480,18 @@ class EntryQueryRow implements ActionListener {
 		Attribute attr = _data.getAttribute(name);
 		ObjectQueryItem item = (ObjectQueryItem)
 			_query_items.get(attr.getClass());
-		if (item instanceof ObjectArrayQueryItem) {
+		if (item instanceof ChoiceQueryItem) {
+			ChoiceInputComponent cic = new ChoiceInputComponent();
+			if (attr.getClass().equals(CustomChoiceAttribute.class)) {
+				CustomChoiceAttribute cca = (CustomChoiceAttribute) attr;
+				cic.setTranslateItems(true);
+				cic.setChoices(cca.getValues());
+			} else if (attr.getClass().equals(DefaultChoiceAttribute.class)) {
+				DefaultChoiceAttribute dca = (DefaultChoiceAttribute) attr;
+				cic.setChoices(dca.getValues());
+			}
+			_input_component = cic;
+		} else if (item instanceof ObjectArrayQueryItem) {
 			if (type == ObjectArrayQueryItem.EMPTY
 				|| type == ObjectArrayQueryItem.NOT_EMPTY)
 				_input_component = new EmptyInputComponent();
@@ -492,27 +505,21 @@ class EntryQueryRow implements ActionListener {
 				if (attr instanceof CustomArrayAttribute)
 					clic.setTranslateItems(true);
 			}
-		} else if (item instanceof CalendarQueryItem)
+		} else if (item instanceof CalendarQueryItem) {
 			_input_component = new DateInputComponent();
-		else if (item instanceof NumberQueryItem)
+		} else if (item instanceof NumberQueryItem) {
 			_input_component = new NumberInputComponent();
-		else if (item instanceof StringQueryItem) {
-			if (attr.getClass().equals(CustomChoiceAttribute.class)) {
-				CustomChoiceAttribute cca = (CustomChoiceAttribute) attr;
-				ChoiceInputComponent cic = new ChoiceInputComponent();
-				cic.setTranslateItems(true);
-				cic.setChoices(cca.getValues());
-				_input_component = cic;
-			} else
-				_input_component = new StringInputComponent();
-		} else if (item instanceof SenseArrayQueryItem)
+		} else if (item instanceof StringQueryItem) {
 			_input_component = new StringInputComponent();
-		else if (item instanceof EntryClassQueryItem) {
+		} else if (item instanceof SenseArrayQueryItem) {
+			_input_component = new StringInputComponent();
+		} else if (item instanceof EntryClassQueryItem) {
 			EntryClassInputComponent ecic = new EntryClassInputComponent();
 			ecic.setSchema(_model.getDict().getEntryAttributeSchema());
 			_input_component = ecic;
-		} else
+		} else {
 			_input_component = null;
+		}
 		
 		// Notify listeners
 		for (Iterator<ComponentReplacementListener> it=_listeners.iterator();
