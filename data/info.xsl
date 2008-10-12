@@ -28,8 +28,15 @@
 	</xsl:template>
 
 	<xsl:template match="author">
-		<xsl:value-of select="name"/><br/>
-		<xsl:value-of select="e-mail"/><br/>
+		<xsl:value-of select="name"/>
+		<xsl:text> (</xsl:text>
+			<xsl:value-of select="role"/>
+		<xsl:text>)</xsl:text>
+		<br/>
+		<xsl:value-of select="e-mail/local-part"/>
+		<xsl:text>@</xsl:text>
+		<xsl:value-of select="e-mail/domain"/>
+		<br/>
 		<br/>
 	</xsl:template>
 </xsl:stylesheet>
