@@ -8,6 +8,7 @@ public class DictFileChooser extends JFileChooser {
 
 	public static final int JVLT_FILES = 0;
 	public static final int CSV_FILES = 1;
+	public static final int HTML_FILES = 2;
 	
 	public DictFileChooser(String file_name) {
 		this(file_name, JVLT_FILES); }
@@ -25,11 +26,13 @@ public class DictFileChooser extends JFileChooser {
 			filter = new SimpleFileFilter(
 				GUIUtils.getString("Labels", "jvlt_files"));
 			filter.addExtension("jvlt");
-		}
-		else if (type == CSV_FILES) {
+		} else if (type == CSV_FILES) {
 			filter = new SimpleFileFilter(
 				GUIUtils.getString("Labels", "csv_files"));
 			filter.addExtension("csv");
+		} else if (type == HTML_FILES) {
+			filter = new SimpleFileFilter(
+				GUIUtils.getString("Labels", "html_files"));
 		}
 		
 		if (filter != null)

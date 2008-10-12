@@ -277,6 +277,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String csv_file = GUIUtils.getString("Labels", "csv_file");
+			String jvlt_file = GUIUtils.getString("Labels", "jvlt_file");
 			if (e.getActionCommand().equals("select_file")) {
                 DictFileChooser chooser;
 				ExportWizardModel ewm = (ExportWizardModel) _model;
@@ -284,9 +285,12 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 				if (_type_box.getSelectedItem().equals(csv_file))
 					chooser = new DictFileChooser(
 						file, DictFileChooser.CSV_FILES);
-				else
+				else if (_type_box.getSelectedItem().equals(jvlt_file))
 					chooser = new DictFileChooser(
 						file, DictFileChooser.JVLT_FILES);
+				else
+					chooser = new DictFileChooser(
+						file, DictFileChooser.HTML_FILES);
 				
 				int val = chooser.showSaveDialog(_panel);
 				if (val == JFileChooser.APPROVE_OPTION)
@@ -324,13 +328,12 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		File f = new File(_file_field.getText());
 		FileOutputStream stream = new FileOutputStream(f);
 		if (_type_box.getSelectedItem().toString().equals(
-			GUIUtils.getString("Labels", "jvlt_file"))) {
+				GUIUtils.getString("Labels", "jvlt_file"))) {
 			DictXMLWriter writer = new DictXMLWriter(_dict, stream);
 			writer.setClearStats(_clear_stats);
 			writer.write();
-		}
-		else if (_type_box.getSelectedItem().toString().equals(
-			GUIUtils.getString("Labels", "csv_file"))) {
+		} else if (_type_box.getSelectedItem().toString().equals(
+				GUIUtils.getString("Labels", "csv_file"))) {
 			DictCSVWriter writer = new DictCSVWriter(_dict, stream);
 			writer = new DictCSVWriter(_dict, stream);
 			writer.setCharset(_csv_panel.getCharset());
@@ -339,6 +342,10 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 			/* No need to clear entry statistics, since the exporter currently
 			 * ignores the statistics fields.
 			 */
+			writer.write();
+		} else if (_type_box.getSelectedItem().equals(
+				GUIUtils.getString("Labels", "html_file"))) {
+			DictHtmlWriter writer = new DictHtmlWriter(_dict, stream);
 			writer.write();
 		}
 	}
@@ -358,6 +365,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		_type_box.setLabel("file_type");
 		_type_box.addItem(GUIUtils.getString("Labels", "jvlt_file"));
 		_type_box.addItem(GUIUtils.getString("Labels", "csv_file"));
+		_type_box.addItem(GUIUtils.getString("Labels", "html_file"));
 		_type_box.addActionListener(new ActionHandler());
 		
 		_csv_panel = new CSVExportPanel();
