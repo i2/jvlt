@@ -8,12 +8,17 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 public class DictXMLWriter extends DictWriter {
+	public static final int FORMAT_ZIP = 0;
+	public static final int FORMAT_XML = 1;
+	
 	private DocumentBuilder _builder;
 	private XMLFormatter _formatter;
 	private boolean _clear_stats = false;
+	private int _format;
 
-	public DictXMLWriter(Dict dict, OutputStream stream) {
+	public DictXMLWriter(Dict dict, OutputStream stream, int format) {
 		super(dict, stream);
+		_format = format;
 		_formatter = new XMLFormatter();
 		_formatter.setNoIndentTags(new String[] {"ex"});
 		try {
@@ -25,17 +30,25 @@ public class DictXMLWriter extends DictWriter {
 		}
 	}
 	
+	public DictXMLWriter(Dict dict, OutputStream stream) {
+		this(dict, stream, FORMAT_ZIP);
+	}
+	
 	public void setClearStats(boolean clear) { _clear_stats = clear; }
 	
 	public void write() throws IOException {
-		ZipOutputStream zos = new ZipOutputStream(_stream);
-		zos.putNextEntry(new ZipEntry("dict.xml"));
-		writeDict(zos);
-		zos.flush();
-		zos.closeEntry();
-		zos.putNextEntry(new ZipEntry("stats.xml"));
-		writeStats(zos);
-		zos.close();
+		if (_format == FORMAT_ZIP) {
+			ZipOutputStream zos = new ZipOutputStream(_stream);
+			zos.putNextEntry(new ZipEntry("dict.xml"));
+			writeDict(zos);
+			zos.flush();
+			zos.closeEntry();
+			zos.putNextEntry(new ZipEntry("stats.xml"));
+			writeStats(zos);
+			zos.close();
+		} else if (_format == FORMAT_XML) {
+			writeDict(_stream);
+		}
 	}
 	
 	private void writeStats(OutputStream stream) {
