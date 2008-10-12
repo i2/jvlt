@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt;
 
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -22,15 +21,25 @@ public class XSLTransformer {
 			TransformerFactory factory = TransformerFactory.newInstance();
 			_transformer = factory.newTransformer(stylesrc);
 			_transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		}
-		catch (TransformerConfigurationException ex) { ex.printStackTrace(); }
+		} catch (TransformerConfigurationException ex) { ex.printStackTrace(); }
 	}
 	
 	public String transform(InputStream stream) {
-		return transform(new StreamSource(stream)); }
+		return transform(new StreamSource(stream));
+	}
 	
 	public String transform(Document doc) {
-		return transform(new DOMSource(doc)); }
+		return transform(new DOMSource(doc));
+	}
+	
+	public void transform(InputStream istream, OutputStream ostream) 
+			throws IOException {
+		StreamResult result = new StreamResult(ostream);
+		try { _transformer.transform(new StreamSource(istream), result); }
+		catch (TransformerException ex) {
+			throw new IOException(ex.getMessage());
+		}
+	}
 	
 	private String transform(Source src) {
 		StringWriter writer = new StringWriter();
@@ -38,8 +47,7 @@ public class XSLTransformer {
 		try {
 			_transformer.transform(src, result);
 			return writer.toString();
-		}
-		catch (TransformerException ex) {
+		} catch (TransformerException ex) {
 			ex.printStackTrace();
 			return null;
 		}
