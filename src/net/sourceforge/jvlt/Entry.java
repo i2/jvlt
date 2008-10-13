@@ -1,12 +1,20 @@
 package net.sourceforge.jvlt;
 
+import java.text.Collator;
 import java.util.*;
 
 public class Entry implements Comparable<Entry>, Reinitializable {
 	public static class Comparator implements java.util.Comparator<Entry> {
+		private Collator _collator;
+		
+		public Comparator() {
+			_collator = Collator.getInstance(Locale.US);
+			_collator.setStrength(Collator.PRIMARY);
+		}
+		
 		public int compare(Entry e1, Entry e2) {
-			if (! e1._orthography.equals(e2._orthography))
-				return e1._orthography.compareTo(e2._orthography);
+			if (! _collator.equals(e1._orthography, e2._orthography))
+				return _collator.compare(e1._orthography, e2._orthography);
 			else if (! e1._pronunciations.equals(e2._pronunciations)) {
 				if (e1._pronunciations.size() != e2._pronunciations.size())
 					return e1._pronunciations.size()-e2._pronunciations.size();
@@ -16,8 +24,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 				while (it1.hasNext()) {
 					String s1 = it1.next();
 					String s2 = it2.next();
-					if (! s1.equals(s2))
-						return s1.compareTo(s2);
+					if (! _collator.equals(s1, s2))
+						return _collator.compare(s1, s2);
 				}
 
 				return 0; // Should not happen
