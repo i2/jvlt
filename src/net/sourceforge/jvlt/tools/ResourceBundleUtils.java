@@ -64,7 +64,7 @@ class ResourceBundleUtils
 		files.add(args[0] + "/Attributes");
 		files.add(args[0] + "/Labels");
 		files.add(args[0] + "/Messages");
-		String[] languages = new String[]{ "de_DE", "cs_CZ" };
+		String[] languages = new String[]{ "cs_CZ", "de_DE", "fr_FR" };
 		ResourceBundleUtils utils = new ResourceBundleUtils(
 				files.toArray(new String[0]), languages);
 		utils.sync();
