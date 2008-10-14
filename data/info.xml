@@ -27,6 +27,14 @@
 		</e-mail>
 		<role>Czech translation</role>
 	</author>
+	<author>
+		<name>Stéphane Lelaure</name>
+		<e-mail>
+			<local-part>misterel</local-part>
+			<domain>users.sourceforge.net</domain>
+		</e-mail>
+		<role>French translation</role>
+	</author>
 	<language name="chinese"/>
 	<language name="english"/>
 	<language name="french"/>
