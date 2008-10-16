@@ -128,9 +128,6 @@ public class CSVDictReader extends DictReader {
 					index = i+1;
 				}
 			}
-			// If the last character is a field delimiter, add another field
-			if (line.charAt(line.length()-1) == _field_delimiter)
-				fields.add("");
 
 			try { processRow(fields); }
 			catch (DictReaderException e) {
@@ -184,6 +181,7 @@ public class CSVDictReader extends DictReader {
 			if (i == 0)
 				entry.setOrthography(s);
 			else if (i == 1)
+				// Only one pronunciation is supported at the moment
 				entry.addPronunciation(s);
 			else if (i < lesson_index) {
 				if (i % 2 == 0)
