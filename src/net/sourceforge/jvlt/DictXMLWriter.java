@@ -80,10 +80,14 @@ public class DictXMLWriter extends DictWriter {
 			root.setAttribute("language", _dict.getLanguage());
 		doc.appendChild(root);
 		
-		Iterator<Entry> it= _dict.getEntries().iterator();
+		// Sort and write entries
+		ArrayList<Entry> entries = new ArrayList<Entry>(_dict.getEntries());
+		Collections.sort(entries, new CollatingEntryComparator());
+		Iterator<Entry> it= entries.iterator();
 		while (it.hasNext())
 			root.appendChild(_formatter.getXMLForEntry(doc, it.next()));
 		
+		// Write examples
 		Iterator<Example> example_it= _dict.getExamples().iterator();
 		while (example_it.hasNext())
 			root.appendChild(
