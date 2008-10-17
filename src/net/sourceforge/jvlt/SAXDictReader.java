@@ -39,11 +39,12 @@ public class SAXDictReader extends DictReader {
 		
 		InputStream dict_stream = zipfile.getInputStream(dict_entry);
 		InputStream stats_stream = zipfile.getInputStream(stats_entry);
-		if (_version.compareTo(JVLT.getDataVersion()) < 0) {
+		String dataversion = JVLT.getDataVersion();
+		if (_version.compareTo(dataversion) < 0) {
 			InputStream dict_xslt = SAXDictReader.class.getResourceAsStream(
-				"/transform-dict-"+_version+".xsl");
+				"/transform-dict-"+dataversion+".xsl");
 			InputStream stats_xslt = SAXDictReader.class.getResourceAsStream(
-				"/transform-stats-"+_version+".xsl");
+				"/transform-stats-"+dataversion+".xsl");
 			if (dict_xslt != null && stats_xslt != null) {
 				dict_stream = transform(dict_xslt, dict_stream);
 				stats_stream = transform(stats_xslt, stats_stream);
