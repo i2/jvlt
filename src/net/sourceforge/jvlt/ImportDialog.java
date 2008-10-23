@@ -197,6 +197,10 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 	private CSVImportPanel _csv_panel;
 	private Component _empty_component;
 	
+	private Dict _dict = null;
+	private String _type = ""; // Content of _type_box
+	private String _file = ""; // Content of _file_field;
+	
 	public StartImportDescriptor(ImportWizardModel model) {
 		super(model);
 		initUI();
@@ -205,6 +209,19 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 	public String getID() { return "start"; }
 	
 	public Dict getDict() throws DictReaderException, IOException {
+		//
+		// Save dictionary. When called again, this method will return the
+		// saved dictionary if _type and _file haven't changed.
+		//
+		if (_type != null && _type.equals(_type_box.getSelectedItem()) &&
+			_file != null && _file.equals(_file_field.getText()) &&
+			_dict != null)
+			return _dict;
+		
+		// Save file type and name
+		_type = _type_box.getSelectedItem().toString();
+		_file = _file_field.getText();
+		
 		File f = new File(_file_field.getText());
 		DictReader reader = null;
 		String csv_file = GUIUtils.getString("Labels", "csv_file");
@@ -231,8 +248,42 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		else
 			reader = new SAXDictReader();
 
-		reader.read(f);
-		return reader.getDict();
+		try {
+			reader.read(f);
+			_dict = reader.getDict();
+			return _dict;
+		} catch (DictReaderException e) {
+			if (! (reader instanceof SAXDictReader))
+				throw e;
+			
+			/*
+			 * When reading a .jvlt file, a version exception may occur. Try to
+			 * handle this exception.
+			 */ 
+			Exception ex = e.getException();
+			if (ex == null || ! (ex instanceof VersionException))
+				throw e;
+
+			VersionException ve = (VersionException) ex;
+			if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0)
+				throw e;
+			else {
+				String text = GUIUtils.getString(
+						"Messages", "convert_file");
+				int result = MessageDialog.showDialog(
+					JOptionPane.getFrameForComponent(_panel),
+					MessageDialog.WARNING_MESSAGE,
+					MessageDialog.OK_CANCEL_OPTION, text);
+				if (result == MessageDialog.OK_OPTION) {
+					reader = new SAXDictReader(ve.getVersion());
+					reader.read(f);
+					_dict = reader.getDict();
+					return _dict;
+				} else {
+					throw e;
+				}
+			}
+		} // catch
 	}
 	
 	public void loadState() {
