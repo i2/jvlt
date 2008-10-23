@@ -20,7 +20,8 @@ public class PropertyMap {
 	}
 	
 	/**
-	 * @brief Returns a property given by a certain key
+	 * Returns a property given by a certain key
+	 * 
 	 * @param key The key
 	 * @return The value that is mapped to the key or null if there is
 	 *		no value for the key 
