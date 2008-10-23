@@ -4,11 +4,7 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -262,20 +258,26 @@ public class CSVImportPanel extends CSVPanel {
 			config.getBooleanProperty("CSVImport.IgnoreFirstRow", false));
 		String attr_string = config.getProperty("CSVImport.Attributes", "");
 		String[] attr_strings = Utils.split(attr_string);
-		SchemaAttribute[] attrs = new SchemaAttribute[attr_strings.length/2];
-		int[] columns = new int[attr_strings.length/2];
+		ArrayList<SchemaAttribute> attrs = new ArrayList<SchemaAttribute>();
+		ArrayList<Integer> columns = new ArrayList<Integer>();
 		SchemaAttribute[] available_attrs = new SchemaAttribute[0];
 		if (! language.equals(""))
 			available_attrs = getSchemaAttributes(language);
-		for (int i=0; i<attrs.length; i++) {
-			for (int j=0; j<available_attrs.length; j++)
-				if (available_attrs[j].getName().equals(attr_strings[2*i])) {
-					attrs[i] = available_attrs[j];
-					break;
-				}
-			columns[i] = Integer.parseInt(attr_strings[2*i+1]);
-		}
-		_attribute_table.setSelectedAttributes(attrs, columns); 
+		
+		try {
+			for (int i=0; i<attr_strings.length/2; i++) {
+				for (int j=0; j<available_attrs.length; j++)
+					if (available_attrs[j].getName().equals(
+							attr_strings[2*i])) {
+						attrs.add(available_attrs[j]);
+						break;
+					}
+				columns.add(Integer.parseInt(attr_strings[2*i+1]));
+			}
+			
+			if (attrs.size() == columns.size())
+				_attribute_table.setSelectedAttributes(attrs, columns);
+		} catch (NumberFormatException e) { e.printStackTrace(); }
 	}
 	
 	public void saveState() {
@@ -507,12 +509,14 @@ class AttributeTable extends JTable {
 		}
 		
 		public void setSelectedAttributes(
-			SchemaAttribute[] attrs, int[] columns) {
+			Collection<SchemaAttribute> attrs, Collection<Integer> columns) {
 			_attributes.clear();
 			_num_columns.clear();
-			for (int i=0; i<attrs.length; i++) {
-				_attributes.add(_resources.getString(attrs[i].getName()));
-				_num_columns.add(new Integer(columns[i]));
+			Iterator<SchemaAttribute> attr_it = attrs.iterator();
+			Iterator<Integer> col_it = columns.iterator();
+			while (attr_it.hasNext() && col_it.hasNext()) {
+				_attributes.add(_resources.getString(attr_it.next().getName()));
+				_num_columns.add(col_it.next());
 			}
 			fireTableDataChanged();
 		}
@@ -556,8 +560,10 @@ class AttributeTable extends JTable {
 			_attribute_box.addItem(resources.getString(attrs[i].getName()));
 	}
 	
-	public void setSelectedAttributes(SchemaAttribute[] attrs, int[] columns) {
-		((AttributeTableModel) getModel()).setSelectedAttributes(attrs,columns);
+	public void setSelectedAttributes(Collection<SchemaAttribute> attrs,
+			Collection<Integer> columns) {
+		AttributeTableModel atm = (AttributeTableModel) getModel();
+		atm.setSelectedAttributes(attrs, columns);
 	}
 }
 
