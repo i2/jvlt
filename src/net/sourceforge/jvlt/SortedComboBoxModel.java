@@ -16,7 +16,7 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 	public void addElement(Object obj) { _items.add(obj); }
 
 	/**
-	 * @brief Inserts an object
+	 * Inserts an object
 	 * 
 	 * The obj argument is ignored.
 	 */
