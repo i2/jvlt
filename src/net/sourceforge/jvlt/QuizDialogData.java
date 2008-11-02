@@ -9,6 +9,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+/**
+ * Dialog for managing (adding, editing, removing) quiz types.
+ * For each quiz type, it is possible to select the attribute to quiz on and
+ * the displayed attributes.
+ */
 public class QuizDialogData extends CustomDialogData {
 	private class QuizListPanel extends ObjectMapEditorPanel<QuizInfo> {
 		private static final long serialVersionUID = 1L;
