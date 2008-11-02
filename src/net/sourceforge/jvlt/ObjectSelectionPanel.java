@@ -87,8 +87,6 @@ public class ObjectSelectionPanel extends JPanel {
 	public void setSelectedObjects(Object[] values) {
 		_selected_objects.clear();
 		_selected_objects.addAll(Arrays.asList(values));
-		for (int i=0; i<values.length; i++)
-			_available_objects.remove(values[i]);
 
 		updateLists();
 	}
