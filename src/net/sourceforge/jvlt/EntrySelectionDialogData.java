@@ -19,6 +19,9 @@ import javax.swing.SwingConstants;
 import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 
+/**
+ * Dialog for selecting the words available during a quiz. 
+ */
 public class EntrySelectionDialogData extends CustomDialogData
 	implements ActionListener, DialogListener {
 	public static class State {
@@ -30,6 +33,7 @@ public class EntrySelectionDialogData extends CustomDialogData
 		private int _type = ALL_ENTRIES;
 		private ObjectQuery _query = new ObjectQuery(Entry.class);
 		private ObjectQuery[] _queries = new ObjectQuery[0];
+		private String[] _allowed_lessons = new String[0];
 		private String[] _allowed_categories = new String[0];
 		private String[] _disallowed_categories = new String[0];
 		
@@ -43,6 +47,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 		
 		public ObjectQuery[] getMultiQuery() { return _queries; }
 		
+		public String[] getAllowedLessons() { return _allowed_lessons; }
+		
 		public String[] getAllowedCategories() { return _allowed_categories; }
 		
 		public String[] getDisallowedCategories() {
@@ -54,6 +60,10 @@ public class EntrySelectionDialogData extends CustomDialogData
 		public void setQuery(ObjectQuery query) { _query = query; }
 		
 		public void setMultiQuery(ObjectQuery[] queries) { _queries = queries; }
+		
+		public void setAllowedLessons(String[] lessons) {
+			_allowed_lessons = lessons;
+		}
 		
 		public void setAllowedCategories(String[] categories) {
 			_allowed_categories = categories;
@@ -77,6 +87,7 @@ public class EntrySelectionDialogData extends CustomDialogData
 	private JRadioButton _some_entries_button;
 	private JRadioButton _some_categories_button;
 	private JRadioButton _multiple_filters_button;
+	private ChoiceListPanel _contained_lessons_panel;
 	private ChoiceListPanel _contained_categories_panel;
 	private ChoiceListPanel _not_contained_categories_panel;
 	private SimpleEntryQueryDialog _query_dlg;
@@ -114,6 +125,16 @@ public class EntrySelectionDialogData extends CustomDialogData
 					ChoiceObjectArrayQueryItem.DOES_NOT_CONTAIN_ANY_ITEM,
 					Utils.objectArrayToStringArray(categories)));
 			
+			Object[] lessons = _contained_lessons_panel.getSelectedObjects();
+			if (lessons.length > 0) {
+				ContainerQueryItem cqi = new ContainerQueryItem("Lesson",
+						ContainerQueryItem.MATCH_ONE);
+				for (int i=0; i<lessons.length; i++)
+					cqi.addItem(new ChoiceQueryItem("Lesson",
+							ChoiceQueryItem.EQUALS, lessons[i]));
+				query.addItem(cqi);
+			}
+			
 			return new ObjectQuery[] { query };
 		} else if (_some_entries_button.isSelected()) {
 			return new ObjectQuery[] { _query_dlg.getObjectQuery() };
@@ -148,6 +169,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 			_contained_categories_panel.getSelectedObjects()));
 		state.setDisallowedCategories(Utils.objectArrayToStringArray(
 			_not_contained_categories_panel.getSelectedObjects()));
+		state.setAllowedLessons(Utils.objectArrayToStringArray(
+			_contained_lessons_panel.getSelectedObjects()));
 		return state;
 	}
 	
@@ -165,6 +188,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 		else // if (type == State.MULTIPLE_FILTERS)
 			_multiple_filters_button.setSelected(true);
 		
+		_contained_lessons_panel.setSelectedObjects(
+				state.getAllowedLessons());
 		_contained_categories_panel.setSelectedObjects(
 			state.getAllowedCategories());
 		_not_contained_categories_panel.setSelectedObjects(
@@ -223,11 +248,14 @@ public class EntrySelectionDialogData extends CustomDialogData
 		JPanel filter_panel = new JPanel();
 		filter_panel.add(_filter_button, BorderLayout.CENTER);
 		
+		_contained_lessons_panel = new ChoiceListPanel();
+		_contained_lessons_panel.setAllowCustomChoices(false);
 		_contained_categories_panel = new ChoiceListPanel();
 		_contained_categories_panel.setAllowCustomChoices(false);
 		_not_contained_categories_panel = new ChoiceListPanel();
 		_not_contained_categories_panel.setAllowCustomChoices(false);
 		CustomTabbedPane categories_tab = new CustomTabbedPane();
+		categories_tab.add("allowed_lessons", _contained_lessons_panel);
 		categories_tab.add("allowed_categories", _contained_categories_panel);
 		categories_tab.add("not_allowed_categories",
 			_not_contained_categories_panel);
@@ -279,6 +307,12 @@ public class EntrySelectionDialogData extends CustomDialogData
 		_not_contained_categories_panel.setAvailableObjects(attr.getValues());
 		_not_contained_categories_panel.setEnabled(
 			_some_categories_button.isSelected());
+
+		attr = (ChoiceAttribute) data.getAttribute("Lesson");
+		_contained_lessons_panel.setAvailableObjects(attr.getValues());
+		_contained_lessons_panel.setEnabled(
+			_some_categories_button.isSelected());
+		
 		_filter_button.setEnabled(_some_entries_button.isSelected());
 		_filter_chooser_panel.setEnabled(
 			_multiple_filters_button.isSelected());
