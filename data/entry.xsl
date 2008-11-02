@@ -276,7 +276,7 @@
 		<xsl:value-of select="xslutils:i18nString('lesson')"/>:
 		</td>
 		<td>
-		<xsl:value-of select="."/>
+		<xsl:value-of disable-output-escaping="yes" select="."/>
 		</td>
 		</tr>
 	</xsl:if>
@@ -328,7 +328,7 @@
 		<xsl:value-of select="xslutils:translate(@name)"/>:
 		</i></td>
 		<td>
-		<xsl:value-of select="."/>
+		<xsl:value-of disable-output-escaping="yes" select="."/>
 		</td>
 		</tr>
 	</xsl:if>
