@@ -1,5 +1,6 @@
 package net.sourceforge.jvlt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -17,8 +18,16 @@ public class AttributeSelectionPanel extends ObjectSelectionPanel {
 	protected void updateLists() {
         _selection_list_model.clear();
 		addElements(_selection_list_model, _selected_objects);
+		
 		_choice_list_model.clear();
-		addElements(_choice_list_model, _available_objects);
+		ArrayList<Object> l = new ArrayList<Object>();
+		Iterator<Object> it = _available_objects.iterator();
+		while (it.hasNext()) {
+			Object o = it.next();
+			if (! _selected_objects.contains(o))
+				l.add(o);
+		}
+		addElements(_choice_list_model, l);
 	}
 
 	private void addElements(
