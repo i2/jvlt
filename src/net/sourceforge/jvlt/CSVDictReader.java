@@ -180,10 +180,11 @@ public class CSVDictReader extends DictReader {
 			String s = it.next();
 			if (i == 0)
 				entry.setOrthography(s);
-			else if (i == 1)
+			else if (i == 1) {
 				// Only one pronunciation is supported at the moment
-				entry.addPronunciation(s);
-			else if (i < lesson_index) {
+				if (! s.equals(""))
+					entry.addPronunciation(s);
+			} else if (i < lesson_index) {
 				if (i % 2 == 0)
 					translation = s;
 				else {
