@@ -8,11 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -894,25 +890,33 @@ class StatsDescriptor extends WizardPanelDescriptor
 		int total_num_quizzed = 0;
 		int total_num_mistakes = 0;
 		int not_expired = 0;
-		int num_batches = JVLT.getConfig().getIntProperty("num_batches", 7);
-		int [] batches = new int[num_batches+1];
-		int [] expired = new int[num_batches+1];
-		for (int i=0; i<num_batches+1; i++)
-			batches[i] = 0;
+		int max_batch = 0;
+		Map<Integer, Integer> batches = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> expired = new HashMap<Integer, Integer>();
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 			Entry entry = it.next();
 			int batch = entry.getBatch();
+			int num;
+			
+			if (batch > max_batch)
+				max_batch = batch;
+			
 			if (entry.getNumQueried() == 0)
 				num_never_quizzed++;
+			
 			total_num_quizzed += entry.getNumQueried();
 			total_num_mistakes += entry.getNumMistakes();
-			batches[batch]++;
+			
+			num = batches.containsKey(batch) ? batches.get(batch) : 0;
+			batches.put(batch, num+1);
 			if (batch > 0) {
 				Calendar expire_date = entry.getExpireDate();
-				if (expire_date == null || expire_date.before(now))
-					expired[batch]++;
-				else
+				if (expire_date == null || expire_date.before(now)) {
+					num = expired.containsKey(batch) ? expired.get(batch) : 0;
+					expired.put(batch, num+1);
+				} else {
 					not_expired++;
+				}
 			}
 		}
 		int num_expired = num_entries - num_never_quizzed - not_expired;
@@ -949,18 +953,19 @@ class StatsDescriptor extends WizardPanelDescriptor
 		buffer.append(getRowString(label, avg_num_quizzed_str));
 		label = GUIUtils.getString("Labels", "avg_mistake_ratio") + ":";
 		buffer.append(getRowString(label, avg_mistake_ratio_str));
-		for (int i=0; i<num_batches+1; i++) {
-			if (batches[i] == 0)
+		for (int i=0; i<max_batch; i++) {
+			if (! batches.containsKey(i) || batches.get(i) == 0)
 				continue;
 			
 			label = GUIUtils.getString("Labels", "batch_no",
 				new Integer[]{new Integer(i)}) + ":";
 			ChoiceFormatter formatter = new ChoiceFormatter(
 				GUIUtils.getString("Labels", "num_words"));
-			String value = formatter.format(batches[i]);
+			String value = formatter.format(batches.get(i));
+			int num_exp = expired.containsKey(i) ? expired.get(i) : 0;
 			if (i > 0)
 				value =	GUIUtils.getString("Labels", "words_expired",
-					new Object[] {value, new Integer(expired[i])});
+					new Object[] {value, new Integer(num_exp)});
 
 			buffer.append(getRowString(label, value));
 		}
