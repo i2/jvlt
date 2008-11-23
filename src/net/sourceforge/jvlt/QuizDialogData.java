@@ -83,6 +83,7 @@ public class QuizDialogData extends CustomDialogData {
 		_quizzed_attribute_box.setLabel("quizzed_attribute");
 
 		_shown_attributes_panel = new AttributeSelectionPanel();
+		_shown_attributes_panel.setAllowReordering(false);
 		_shown_attributes_panel.setBorder(new TitledBorder(
 			new EtchedBorder(EtchedBorder.LOWERED),
 			GUIUtils.getString("Labels", "shown_attributes")));
