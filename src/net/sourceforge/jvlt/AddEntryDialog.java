@@ -49,6 +49,8 @@ public class AddEntryDialog extends AbstractEntryDialog {
 	}
 	
 	public void init() {
+		super.init();
+		
 		// Initialize with empty entry
 		setCurrentEntry(new Entry(_model.getDict().getNextUnusedEntryID()));
 	}

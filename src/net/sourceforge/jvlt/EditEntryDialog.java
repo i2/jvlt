@@ -68,6 +68,8 @@ public class EditEntryDialog extends AbstractEntryDialog {
 	}
 	
 	public void init(List<Entry> entries) {
+		super.init();
+		
 		_orig_entries = entries;
 		_entries.clear();
 		for (Iterator<Entry> it=_orig_entries.iterator(); it.hasNext(); )
