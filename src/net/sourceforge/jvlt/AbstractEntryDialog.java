@@ -139,8 +139,12 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_sense_map = new HashMap<Sense, Sense>();
 		_sense_actions = new ArrayList<DictObjectAction>();
 
-		init();
+		initUi();
 		updateActions();
+	}
+	
+	public void init() {
+		_orth_field.requestFocusInWindow();
 	}
 	
 	protected void setCurrentEntry(Entry entry) {
@@ -237,7 +241,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	
 	protected abstract AdvancedEntryDialogData getAdvancedDialogData();
 	
-	private void init() {
+	private void initUi() {
 		ActionHandler handler = new ActionHandler();
 		
 		_orth_field  = new CustomTextField(20);
