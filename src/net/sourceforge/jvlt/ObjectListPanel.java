@@ -33,8 +33,14 @@ public class ObjectListPanel extends JPanel {
 				}
 			} else if (ev.getActionCommand().equals("remove")) {
 				int index = _list.getSelectedIndex();
-				if (index>=0)
+				if (index>=0) {
 					_list_model.remove(index);
+					
+					if (index < _list_model.getSize())
+						_list.setSelectedIndex(index);
+					else if (index-1 >= 0)
+						_list.setSelectedIndex(index-1);
+				}
 			}
 		}
 	}
