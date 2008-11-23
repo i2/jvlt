@@ -328,7 +328,7 @@ class EntryQueryRow implements ActionListener {
 		_input_component = null;
 				
 		updateAttributeBox();
-		setName(_data.getAttributeNames()[0]);
+		setAttribute(_data.getAttributes()[0]);
 	}
 	
 	public void addComponentReplacementListener(
@@ -345,11 +345,10 @@ class EntryQueryRow implements ActionListener {
 	}
 	
 	public ObjectQueryItem getQueryItem() {
-		String name = (String)
-			_container.getItem((String) _name_box.getSelectedItem());
-		Attribute attr = _data.getAttribute(name);
+		Attribute attr = (Attribute) _container.getItem(
+				(String) _name_box.getSelectedItem());
 		ObjectQueryItem item = _query_items.get(attr.getClass());
-		item.setName(name);
+		item.setName(attr.getName());
 		Object type_obj = _type_box.getSelectedItem().toString();
 		int type = _translation_type_map.get(type_obj).intValue();
 		item.setType(type);
@@ -361,7 +360,7 @@ class EntryQueryRow implements ActionListener {
 
 	public void setQueryItem(ObjectQueryItem item) {
 		String name = item.getName();
-		setName(name);
+		setAttribute(_data.getAttribute(name));
 		Integer type = new Integer(item.getType());
 		if (_type_translation_map.containsKey(type))
 			_type_box.setSelectedItem(_type_translation_map.get(type));
@@ -370,14 +369,15 @@ class EntryQueryRow implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
-		String selected = (String) _name_box.getSelectedItem();
+		Object selected = _name_box.getSelectedItem();
 		Integer type = _translation_type_map.get(_type_box.getSelectedItem());
 		if (ev.getSource() == _name_box) {
 			if (selected != null)
-				setName((String) _container.getItem(selected));
+				setAttribute((Attribute) _container.getItem(selected));
 		} else if (ev.getSource() == _type_box) { 
 			if (selected != null && type != null)
-				setType((String) _container.getItem(selected), type.intValue());
+				setType((Attribute) _container.getItem(selected),
+						type.intValue());
 		}
 	}
 	
@@ -390,30 +390,37 @@ class EntryQueryRow implements ActionListener {
 		_name_box.removeActionListener(this);
 		
 		/*
-		 * Save name in order to restore it after the name box has been updated
+		 * Save attribute in order to restore it after the name box has been
+		 * updated
 		 */
-		Object name = _container.getItem(_name_box.getSelectedItem());
+		Attribute attr = (Attribute) _container.getItem(
+				_name_box.getSelectedItem());
 		
 		_name_box.removeAllItems();
-		String[] names = _data.getAttributeNames();
+		Attribute[] attrs = _data.getAttributes();
 		boolean found = false;
-		if (names != null && names.length > 0) {
-			_container.setItems(names);
-			for (int i=0; i<names.length; i++)
-				_name_box.addItem(_container.getTranslation(names[i]));
+		if (attrs != null && attrs.length > 0) {
+			_container.setItems(attrs);
+			TreeSet<Object> set = new TreeSet<Object>(
+					new AttributeComparator(_container));
+			set.addAll(Arrays.asList(attrs));
+			for (Iterator<Object> it=set.iterator(); it.hasNext(); )
+				_name_box.addItem(_container.getTranslation(it.next()));
 		
 			/*
 			 * If the name box does not contain the original name, use the
 			 * default name (the first one in the array). Otherwise, restore the
 			 * original name. 
 			 */
-			for (int i=0; i<names.length; i++)
-				if (names[i].equals(name)) {
-					found = true;
-					break;
-				}
+			if (attr != null)
+				for (int i=0; i<attrs.length; i++)
+					if (attrs[i].getName().equals(attr.getName())) {
+						found = true;
+						break;
+					}
+			
 			if (found)
-				_name_box.setSelectedItem(_container.getTranslation(name));
+				_name_box.setSelectedItem(_container.getTranslation(attr));
 		}
 			
 		_name_box.addActionListener(this);
@@ -422,13 +429,13 @@ class EntryQueryRow implements ActionListener {
 			/*
 			 * - Do not call _name_box.setSelectedItem() as the other values
 			 *   in the row probably also have to be updated.
-			 * - Call setName() after the action listener has been added so
+			 * - Call setAttribute() after the action listener has been added so
 			 *   the action listener will not be added twice 
 			 */
-			setName(names[0]);
+			setAttribute(attrs[0]);
 	}
 	
-	private void setName(String name) {
+	private void setAttribute(Attribute attr) {
 		/*
 		 * Remove action listeners from combo boxes so actionPerformed() will
 		 * not called during the update
@@ -436,9 +443,8 @@ class EntryQueryRow implements ActionListener {
 		_name_box.removeActionListener(this);
 		_type_box.removeActionListener(this);
 		
-		_name_box.setSelectedItem(_container.getTranslation(name));
+		_name_box.setSelectedItem(_container.getTranslation(attr));
 		
-		Attribute attr = _data.getAttribute(name);
 		ObjectQueryItem item = (ObjectQueryItem)
 			_query_items.get(attr.getClass());
 		String[] types = item.getTypeNames();
@@ -461,10 +467,10 @@ class EntryQueryRow implements ActionListener {
 		_name_box.addActionListener(this);
 		_type_box.addActionListener(this);
 
-		setType(name, item.getTypes()[0]);
+		setType(attr, item.getTypes()[0]);
 	}
 	
-	private void setType(String name, int type) {
+	private void setType(Attribute attr, int type) {
 		/*
 		 * Update the type combo box. Remove action listener before updating
 		 * in order to prevent actionPerformed() from being called.
@@ -477,7 +483,6 @@ class EntryQueryRow implements ActionListener {
 		if (_input_component != null)
 			old_component = _input_component.getComponent();
 
-		Attribute attr = _data.getAttribute(name);
 		ObjectQueryItem item = (ObjectQueryItem)
 			_query_items.get(attr.getClass());
 		if (item instanceof ChoiceQueryItem) {
