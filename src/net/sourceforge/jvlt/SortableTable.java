@@ -175,11 +175,11 @@ public class SortableTable<T extends Object> extends JTable
 }
 
 class ColumnSelectionDialogData extends CustomDialogData {
-	private ObjectSelectionPanel _selection_panel;
+	private AttributeSelectionPanel _selection_panel;
 	
 	public ColumnSelectionDialogData() {
-		_selection_panel = new ObjectSelectionPanel();
-		_selection_panel.setTranslateItems(true);
+		_selection_panel = new AttributeSelectionPanel();
+		_selection_panel.setAllowReordering(true);
 		_content_pane = _selection_panel;
 	}
 	
