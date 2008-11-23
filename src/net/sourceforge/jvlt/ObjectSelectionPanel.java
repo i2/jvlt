@@ -4,9 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
@@ -58,6 +56,7 @@ public class ObjectSelectionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	protected ItemContainer _container = new ItemContainer();
+	protected Comparator<Object> _comparator = null;
 	protected boolean _allow_reordering = true;
 	// _selected_objects and _available_objects contain the original objects,
 	// while _selection_list_model contains the translations
@@ -178,18 +177,40 @@ public class ObjectSelectionPanel extends JPanel {
 	}
 	
 	protected void updateLists() {
+		Iterator<Object> it;
+		TreeSet<Object> set;
+		
+		// Update list of selected items
+		if (_comparator != null && ! _allow_reordering) {
+			set = new TreeSet<Object>(_comparator);
+			set.addAll(_selected_objects);
+			it = set.iterator();
+		} else {
+			it = _selected_objects.iterator();
+		}
 		_selection_list_model.clear();
-		Iterator<Object> it = _selected_objects.iterator();
-		for (; it.hasNext(); )
+		while (it.hasNext())
 			_selection_list_model.addElement(
 				_container.getTranslation(it.next()));
 			
+		// Update list of available items
+		if (_comparator != null) {
+			set = new TreeSet<Object>(_comparator);
+			set.addAll(_available_objects);
+			it = set.iterator();
+		} else {
+			it = _available_objects.iterator();
+		}
 		_choice_list_model.clear();
-		for (it = _available_objects.iterator(); it.hasNext(); ) {
+		while (it.hasNext()) {
 			Object o = it.next();
 			if (! _selected_objects.contains(o))
 				_choice_list_model.addElement(_container.getTranslation(o));
 		}
+	}
+	
+	protected void setComparator(Comparator<Object> comparator) {
+		_comparator = comparator;
 	}
 }
 
