@@ -481,16 +481,20 @@ class EntryQueryRow implements ActionListener {
 		ObjectQueryItem item = (ObjectQueryItem)
 			_query_items.get(attr.getClass());
 		if (item instanceof ChoiceQueryItem) {
-			ChoiceInputComponent cic = new ChoiceInputComponent();
-			if (attr.getClass().equals(CustomChoiceAttribute.class)) {
-				CustomChoiceAttribute cca = (CustomChoiceAttribute) attr;
-				cic.setTranslateItems(true);
-				cic.setChoices(cca.getValues());
-			} else if (attr.getClass().equals(DefaultChoiceAttribute.class)) {
-				DefaultChoiceAttribute dca = (DefaultChoiceAttribute) attr;
-				cic.setChoices(dca.getValues());
+			if (type == ChoiceQueryItem.CONTAINS) {
+				_input_component = new StringInputComponent();
+			} else {
+				ChoiceInputComponent cic = new ChoiceInputComponent();
+				if (attr.getClass().equals(CustomChoiceAttribute.class)) {
+					CustomChoiceAttribute cca = (CustomChoiceAttribute) attr;
+					cic.setTranslateItems(true);
+					cic.setChoices(cca.getValues());
+				} else if (attr.getClass().equals(DefaultChoiceAttribute.class)) {
+					DefaultChoiceAttribute dca = (DefaultChoiceAttribute) attr;
+					cic.setChoices(dca.getValues());
+				}
+				_input_component = cic;
 			}
-			_input_component = cic;
 		} else if (item instanceof ObjectArrayQueryItem) {
 			if (type == ObjectArrayQueryItem.EMPTY
 				|| type == ObjectArrayQueryItem.NOT_EMPTY)
