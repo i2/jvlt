@@ -262,8 +262,7 @@ class SortableTableModel<T extends Object> implements TableModel {
 		public Row(int index) {
 			_index = index;
 			
-			_collator = Collator.getInstance(Locale.US);
-			_collator.setStrength(Collator.PRIMARY);
+			_collator = CustomCollator.getInstance();
 		}
 		
 		public int getIndex() { return _index; }

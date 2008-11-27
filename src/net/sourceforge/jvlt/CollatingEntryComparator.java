@@ -2,14 +2,12 @@ package net.sourceforge.jvlt;
 
 import java.text.Collator;
 import java.util.Comparator;
-import java.util.Locale;
 
 public class CollatingEntryComparator implements Comparator<Entry> {
 	Collator _collator;
 	
 	public CollatingEntryComparator() {
-		_collator = Collator.getInstance(Locale.US);
-		_collator.setStrength(Collator.PRIMARY);
+		_collator = CustomCollator.getInstance();
 	}
 	
 	public int compare(Entry e1, Entry e2) {
