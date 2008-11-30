@@ -1,21 +1,35 @@
 package net.sourceforge.jvlt;
 
-import java.text.ParseException;
-import java.text.RuleBasedCollator;
+import java.text.*;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CustomCollator extends RuleBasedCollator {
 	private static CustomCollator _instance = null;
 	
-	private CustomCollator() throws ParseException {
-		super(((RuleBasedCollator) RuleBasedCollator.getInstance(Locale.US))
-				.getRules() + "< ' '");
+	private CustomCollator(String rules) throws ParseException {
+		super(rules);
 	}
 	
 	public static CustomCollator getInstance() {
 		try {
-			if (_instance == null)
-				_instance = new CustomCollator();
+			if (_instance == null) {
+				//
+				// Create a new collator. Ensure that the space character is not
+				// ignored and is placed before the letter "a" in the sort order
+				//
+				RuleBasedCollator c =
+					(RuleBasedCollator) Collator.getInstance(Locale.US);
+				c.setStrength(Collator.PRIMARY);
+				Pattern p = Pattern.compile("(.)\\s*<\\s*a");
+				Matcher m = p.matcher(c.getRules());
+				if (m.find())
+					_instance = new CustomCollator(c.getRules() + "&" +
+							m.group(1) + "<' '");
+				else
+					_instance = new CustomCollator(c.getRules());
+			}
 			
 			return _instance;
 		} catch (ParseException e) {
