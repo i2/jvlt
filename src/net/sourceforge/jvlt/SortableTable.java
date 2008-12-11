@@ -10,6 +10,27 @@ import javax.swing.table.*;
 public class SortableTable<T extends Object> extends JTable
 		implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	
+	private class HeaderRenderer implements TableCellRenderer {
+		private TableCellRenderer _renderer;
+		
+		public HeaderRenderer(TableCellRenderer renderer) {
+			_renderer = renderer;
+		}
+		
+		public Component getTableCellRendererComponent(JTable table,
+			Object value, boolean selected, boolean focus, int row, int col) {
+			Component c = _renderer.getTableCellRendererComponent(
+					table, value, selected, focus, row, col);
+			if (c instanceof JLabel) {
+				JLabel l = (JLabel) c;
+				l.setHorizontalTextPosition(JLabel.LEFT);
+				l.setIcon(getHeaderRendererIcon(col));
+			}
+			
+			return c;
+		}
+	}
 
 	private JPopupMenu _menu;
 	private SortableTableModel<T> _model;
@@ -18,6 +39,8 @@ public class SortableTable<T extends Object> extends JTable
 	private JMenuItem _sort_ascending_item;
 	private JMenuItem _select_cols_item;
 	private MouseHandler _mouse_handler;
+	private ImageIcon _up_arrow;
+	private ImageIcon _down_arrow;
 
 	public SortableTable(SortableTableModel<T> model) {
 		super(model);
@@ -26,9 +49,16 @@ public class SortableTable<T extends Object> extends JTable
 		_mouse_handler = new MouseHandler();
 		getTableHeader().addMouseListener(_mouse_handler);
 		
+		_up_arrow = new ImageIcon(SortableTable.class.getResource(
+				"/images/arrow_up.png"));
+		_down_arrow = new ImageIcon(SortableTable.class.getResource(
+				"/images/arrow_down.png"));
+		
 		int height = getFontMetrics(getFont()).getHeight();
 		setRowHeight(height);
 		getTableHeader().setReorderingAllowed(false);
+		getTableHeader().setDefaultRenderer(new HeaderRenderer(
+				getTableHeader().getDefaultRenderer()));
 		
 		init();
 	}
@@ -106,6 +136,19 @@ public class SortableTable<T extends Object> extends JTable
 		_menu.addSeparator();
 		_select_cols_item = new JMenuItem(select_cols_action);
 		_menu.add(_select_cols_item);
+	}
+	
+	private ImageIcon getHeaderRendererIcon(int col) {
+		SortableTableModel.Directive dir = _model.getSortingDirective();
+		if (col != dir.getColumn())
+			return null;
+		
+		if (dir.getDirection() == SortableTableModel.DESCENDING)
+			return _down_arrow;
+		else if (dir.getDirection() == SortableTableModel.ASCENDING)
+			return _up_arrow;
+		else
+			return null;
 	}
 	
 	private class MouseHandler extends MouseAdapter {
