@@ -83,6 +83,8 @@ class SortableTableModel<T extends Object> implements TableModel {
 		
 		clearSortingState();
 		fireTableModelEvent(new TableModelEvent(this));
+		fireTableModelEvent(
+				new TableModelEvent(this, TableModelEvent.HEADER_ROW));
 	}
 	
 	/** Set column names (not translated version). */
