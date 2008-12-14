@@ -242,7 +242,7 @@
 				</xsl:choose>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:copy-of select="Text/child::node()"/>
+				<xsl:value-of disable-output-escaping="yes" select="Text"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:for-each>

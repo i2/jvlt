@@ -62,7 +62,7 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<font style="font-family:{$orth_font_family};">
-				<xsl:copy-of select="Text/child::node()"/>
+				<xsl:value-of disable-output-escaping="yes" select="Text"/>
 				</font>
 			</xsl:otherwise>
 		</xsl:choose>
