@@ -6,8 +6,15 @@ import java.util.regex.*;
 
 class ResourceBundleUtils
 {
+	private static final String[] LANGUAGES = new String[]{ 
+		"cs_CZ", 
+		"de_DE", 
+		"fr_FR",
+		"pl_PL"
+	};
+	
 	private String[] _files;
-	private String[] _languages;
+	private String[] _languages;	
 	
 	public ResourceBundleUtils(String[] files, String[] languages) {
 		_files = files;
@@ -64,9 +71,8 @@ class ResourceBundleUtils
 		files.add(args[0] + "/Attributes");
 		files.add(args[0] + "/Labels");
 		files.add(args[0] + "/Messages");
-		String[] languages = new String[]{ "cs_CZ", "de_DE", "fr_FR" };
 		ResourceBundleUtils utils = new ResourceBundleUtils(
-				files.toArray(new String[0]), languages);
+				files.toArray(new String[0]), LANGUAGES);
 		utils.sync();
 	}
 	

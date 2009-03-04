@@ -7,13 +7,19 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class JVLT {
-	private JVLTModel _model;
+	private static final Locale[] _locales = {
+		Locale.US, 
+		Locale.FRANCE, 
+		Locale.GERMANY, 
+		new Locale("cs", "CZ"),
+		new Locale("pl", "PL")
+	};
 	
+	private JVLTModel _model;
 	private static PropertyMap _runtime_properties;
 	private static JVLT _instance = null;
 	private static Config _config = null;
-	private static Locale[] _locales = {
-		Locale.US, Locale.FRANCE, Locale.GERMANY, new Locale("cs", "CZ") };
+
 	private static String _version = null;
 	private static String _data_version = null;
 
