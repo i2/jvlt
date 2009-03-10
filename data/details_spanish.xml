@@ -8,5 +8,11 @@
 		<choice name="feminine"/>
 		<choice name="masculine"/>
 	</attribute>
+	<attribute name="pres_sg_1st" classes="verb" group="conjugation"/>
+	<attribute name="pres_sg_2nd" classes="verb" group="conjugation"/>
+	<attribute name="pres_sg_3rd" classes="verb" group="conjugation"/>
+	<attribute name="pres_pl_1st" classes="verb" group="conjugation"/>
+	<attribute name="pres_pl_2nd" classes="verb" group="conjugation"/>
+	<attribute name="pres_pl_3rd" classes="verb" group="conjugation"/>
 </schema>
 
