@@ -250,7 +250,7 @@ public class SettingsDialogData extends CustomDialogData
 		_locale_cobox.setSelectedItem (_old_locale.getDisplayLanguage());
 	
 		_displayed_attrs_panel = new AttributeSelectionPanel();
-		_displayed_attrs_panel.setAllowReordering(false);
+		_displayed_attrs_panel.setAllowReordering(true);
 		_displayed_attrs_panel.setBorder(new TitledBorder(
 			new EtchedBorder(EtchedBorder.LOWERED),
 			GUIUtils.getString("Labels", "displayed_attributes")));
