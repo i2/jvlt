@@ -24,24 +24,40 @@ public class ObjectSelectionPanel extends JPanel {
 				Object obj = _selected_objects.remove(index);
 				_selected_objects.add(index-1, obj);
 				updateLists();
+				_selection_list.setSelectedValue(_container.getTranslation(obj),
+						true);
 			}
 			else if (ev.getActionCommand().equals("down")) {
 				int index = _selection_list.getSelectedIndex();
 				Object obj = _selected_objects.remove(index);
 				_selected_objects.add(index+1, obj);
 				updateLists();
+				_selection_list.setSelectedValue(_container.getTranslation(obj),
+						true);
 			}
 			else if (ev.getActionCommand().equals("left")) {
+				int index = _choice_list.getSelectedIndex();
 				Object obj = _container.getItem(
 					_choice_list.getSelectedValue());
 				_selected_objects.add(obj);
 				updateLists();
+				if (index < _choice_list_model.size())
+					_choice_list.setSelectedIndex(index);
+				else if (index == _choice_list_model.size()
+						&& _choice_list_model.size() > 0)
+					_choice_list.setSelectedIndex(index - 1);
 			}
 			else if (ev.getActionCommand().equals("right")) {
+				int index = _selection_list.getSelectedIndex();
 				Object obj = _container.getItem(
 					_selection_list.getSelectedValue());
 				_selected_objects.remove(obj);
 				updateLists();
+				if (index < _selection_list_model.size())
+					_selection_list.setSelectedIndex(index);
+				else if (index == _selection_list_model.size()
+						&& _selection_list_model.size() > 0)
+					_selection_list.setSelectedIndex(index - 1);
 			}
 		}
 	}
