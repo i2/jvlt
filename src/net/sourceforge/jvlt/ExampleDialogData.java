@@ -158,6 +158,11 @@ public class ExampleDialogData extends CustomDialogData
 			updateSelectedSensesTree();
 	}
 	
+	public void prepareToShow()
+	{
+		_example_field.requestFocusInWindow();
+	}
+	
 	private void init() {
 		//-----------
 		// Setup the preview pane which displays the example and its
