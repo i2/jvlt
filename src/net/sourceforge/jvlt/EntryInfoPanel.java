@@ -11,6 +11,8 @@ import javax.swing.event.HyperlinkListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import net.sourceforge.jvlt.event.DictUpdateListener.LanguageDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.NewDictDictUpdateEvent;
 import net.sourceforge.jvlt.event.SelectionListener.SelectionEvent;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 
@@ -81,6 +83,9 @@ public class EntryInfoPanel extends InfoPanel implements HyperlinkListener {
 					}
 			}
 		} else if (event instanceof ExampleDictUpdateEvent) {
+			updateView();
+		} else if (event instanceof LanguageDictUpdateEvent) {
+			_current_entry = null;
 			updateView();
 		} else if (event instanceof NewDictDictUpdateEvent) {
 			_current_entry = null;

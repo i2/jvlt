@@ -46,6 +46,9 @@ public class ExampleInfoPanel extends InfoPanel implements HyperlinkListener {
 		} else if (event instanceof LanguageDictUpdateEvent) {
 			_current_example = null;
 			updateView();
+		} else if (event instanceof NewDictDictUpdateEvent) {
+			_current_example = null;
+			updateView();
 			super.dictUpdated(event);
 		}
 	}
