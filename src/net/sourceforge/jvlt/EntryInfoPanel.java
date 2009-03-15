@@ -11,8 +11,6 @@ import javax.swing.event.HyperlinkListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.jvlt.event.DictUpdateListener.LanguageDictUpdateEvent;
-import net.sourceforge.jvlt.event.DictUpdateListener.NewDictDictUpdateEvent;
 import net.sourceforge.jvlt.event.SelectionListener.SelectionEvent;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 
