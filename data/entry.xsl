@@ -201,11 +201,11 @@
 		<xsl:value-of select="position()"/>.
 	</xsl:if>
 	<xsl:if test="string(Definition)">
-		<i>(<xsl:value-of disable-output-escaping="yes"
-			select="Definition"/>)</i>
+		<b><i>(<xsl:value-of disable-output-escaping="yes"
+			select="Definition"/>)</i></b>
 		<xsl:if test="string(Translation)">, </xsl:if>
 	</xsl:if>
-	<xsl:value-of disable-output-escaping="yes" select="Translation"/>
+	<b><xsl:value-of disable-output-escaping="yes" select="Translation"/></b>
 	<xsl:variable name="entry-id" select="../../ID"/>
 	<xsl:variable name="sense-id" select="ID"/>
 	<xsl:for-each select="/Dict/Example[TextFragments/Fragment/Link=$sense-id]">
