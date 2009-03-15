@@ -68,17 +68,27 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 			try {
 				_data.updateData();
 				setVisible(false);
-			}
-			catch (InvalidDataException e) {
+			} catch (InvalidDataException e) {
 				MessageDialog.showDialog(this, MessageDialog.WARNING_MESSAGE,
 					e.getMessage());
 			}
-		}
-		else if (ev.getType() == AbstractDialog.CANCEL_OPTION
+		} else if (ev.getType() == AbstractDialog.CANCEL_OPTION
 			|| ev.getType() == AbstractDialog.CLOSE_OPTION) {
 			_value = CANCEL_OPTION;
 			setVisible(false);
 		}
+	}
+	
+	/**
+	 * Show/hide the dialog.
+	 * Before the dialog is shown, {@link CustomDialogData#prepareToShow()} is
+	 * called.
+	 */
+	public void setVisible(boolean visible) {
+		if (_data != null && visible)
+			_data.prepareToShow();
+		
+		super.setVisible(visible);
 	}
 }
 
