@@ -9,6 +9,7 @@ import net.sourceforge.jvlt.event.ComponentReplacementListener;
 import net.sourceforge.jvlt.event.ComponentReplacementListener.
 	ComponentReplacementEvent;
 
+/** Content of {@link CustomDialog} */
 public abstract class CustomDialogData {
 	protected ArrayList<ComponentReplacementListener> _listeners;
 
@@ -31,6 +32,12 @@ public abstract class CustomDialogData {
 		ComponentReplacementListener l) { _listeners.remove(l); }
 	
 	public abstract void updateData() throws InvalidDataException;
+	
+	/**
+	 * This method is called right before the dialog is shown.
+	 * @see CustomDialog#setVisible(boolean)
+	 */
+	public void prepareToShow() {}
 
 	protected void fireComponentReplacementEvent(
 		JComponent old_comp, JComponent new_comp) {
