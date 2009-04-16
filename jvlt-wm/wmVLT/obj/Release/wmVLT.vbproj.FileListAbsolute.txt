@@ -1,0 +1,12 @@
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\bin\Release\ICSharpCode.SharpZipLib.dll
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\bin\Release\wmVLT.exe
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\bin\Release\wmVLT.pdb
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\bin\Release\wmVLT.xml
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\ResolveAssemblyReference.cache
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.Standard.resources
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.Resources.resources
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.Startpage.resources
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.vbproj.GenerateResource.Cache
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.exe
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.xml
+C:\Dokumente und Einstellungen\nesapio\Eigene Dateien\Visual Studio 2008\Projects\wmVLT\wmVLT\obj\Release\wmVLT.pdb

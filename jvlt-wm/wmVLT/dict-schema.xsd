@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="dictionary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="entry" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="language" type="xs:string"/>
+      <xs:attribute name="version" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="entry">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="orth"/>
+        <xs:element ref="sense" maxOccurs="unbounded"/>
+        <xs:element ref="lesson"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="orth" type="xs:string"/>
+  
+  <xs:element name="sense">
+    <xs:complexType>
+        <xs:sequence>
+          <xs:element ref="trans"/>
+          <xs:element ref="def" minOccurs="0"/>
+        </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="trans" type="xs:string"/>
+  
+  <xs:element name="lesson" type="xs:string"/>
+  
+  <xs:element name="def" type="xs:string"/>
+</xs:schema>
