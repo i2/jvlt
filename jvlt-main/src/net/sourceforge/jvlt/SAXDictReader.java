@@ -306,8 +306,11 @@ class DictHandler extends AbstractHandler {
 			else if (_current_attr instanceof ChoiceSchemaAttribute)
 				_current_attr.setValue(getAttributeChoice(
 					(ChoiceSchemaAttribute) _current_attr, getChars()));
-			else
-				_current_attr.setValue(getChars());
+			else {
+				String val = getChars();
+				if (val.length() > 0)
+					_current_attr.setValue(val);
+			}
 			
 			_current_attr = null;
 			_current_items = null;
