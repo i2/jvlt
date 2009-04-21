@@ -252,7 +252,13 @@ class SimpleAttributeInput extends SchemaAttributeInput {
 		add(_input_field, cc);
 	}
 	
-	public Object getValue() { return _input_field.getText(); }
+	public Object getValue() {
+		String text = _input_field.getText();
+		if (text == null || text.length() == 0)
+			return null;
+		else
+			return text;
+	}
 	
 	public void setValue(Object o) {
 		if (o == null)
