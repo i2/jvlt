@@ -223,7 +223,7 @@
 	<table cellpadding="0" cellspacing="0"
 		style="margin-top:2pt; font-family:{$orth_font_family}">
 	<tr>
-	<td width="25" valign="top">
+	<td width="30" align="right" valign="top">
 	<img src="/images/bullet.png" width="16" height="16"/>
 	</td>
 	<td>
