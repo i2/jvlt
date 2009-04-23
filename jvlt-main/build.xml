@@ -7,20 +7,25 @@
 	<property name="data" location="data"/>
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
+	<property name="lib" value="lib"/>
 	<property name="debug" value="true"/>
 	<property name="javadoc" value="javadoc"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
+		<fileset dir="${lib}"><include name="*.jar"/></fileset>
 	</path>
 
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${lib}"/>
 		<mkdir dir="${build}"/>
-		<copy todir="${build}"><fileset dir="." includes="images/*.png"/></copy>
-		<copy todir="${build}"><fileset dir="." includes="doc/**/*"/></copy>
 		<copy todir="${build}">
+			<fileset dir="." includes="images/*.png"/>
+			<fileset dir="." includes="doc/**/*"/>
 			<fileset dir="${data}" includes="*.xsl,*.xml,*.xsd,*.css"/>
+			<fileset dir="${src}"
+				includes="net/sourceforge/jvlt/hibernate/*.hbm.xml"/>
 		</copy>
 	</target>
 
@@ -29,12 +34,13 @@
 			dest="${build}"/>
 	</target>
 
-	<target name="compile" depends="init" description="compile the source">
-		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" debug="${debug}">
-			<classpath refid="project.classpath"/>
-			<compilerarg value="-Xlint:unchecked"/>
-		</javac>
+	<target name="compile" depends="init" unless="compile-hibernate"
+		description="compile the source">
+		<condition property="compile-hibernate">
+			<available file="${lib}/hibernate3.jar"/>
+		</condition>
+		<antcall target="compile.base"/>
+		<antcall target="compile.all"/>
 	</target>
 
 	<target name="run" depends="compile,i18n"
@@ -67,6 +73,7 @@
 
 		<jar jarfile="${dist}/jVLT-${DSTAMP}.jar">
 			<fileset dir="${dist}/build" includes="**/*"/>
+			<zipgroupfileset dir="${lib}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Main-Class"
 					value="net.sourceforge.jvlt.JVLTUI"/>
@@ -105,6 +112,23 @@
 		<javadoc sourcepath="${src}" destdir="${javadoc}" package="yes">
 			<fileset dir="${src}" includes="*.java"/>
 		</javadoc>
+	</target>
+
+	<target name="compile.base" unless="compile-hibernate">
+		<echo>Compiling base application...</echo>
+		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
+			excludes="net/sourceforge/jvlt/hibernate/*.java">
+			<classpath refid="project.classpath"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="compile.all" if="compile-hibernate">
+		<echo>Compiling application with hibernate...</echo>
+		<javac srcdir="${src}" destdir="${build}" debug="${debug}">
+			<classpath refid="project.classpath"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
 	</target>
 </project>
 

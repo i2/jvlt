@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="net.sourceforge.jvlt.hibernate.Entry" table="ENTRIES">
+		<id name="id" column="ENTRY_ID">
+			<generator class="native"/>
+		</id>
+        <property name="orthography"/>
+        <property name="lesson"/>
+        <many-to-one name="stats" unique="true" not-null="false"
+        	class="net.sourceforge.jvlt.hibernate.EntryStats"/>
+        <many-to-one name="entryClass" unique="true" not-null="false"
+			class="net.sourceforge.jvlt.hibernate.EntryClass"/>
+		<list name="categories" table="ENTRY_CATEGORIES">
+			<key column="ENTRY_ID"/>
+			<list-index/>
+			<element type="string" column="CATEGORY"/>
+		</list>
+		<list name="pronunciations" table="ENTRY_PRONUNCIATIONS">
+			<key column="ENTRY_ID"/>
+			<list-index/>
+			<element type="string" column="PRONUNCIATION"/>
+		</list>
+		<list name="multimediaFiles" table="ENTRY_MULTIMEDIAFILES">
+			<key column="ENTRY_ID"/>
+			<list-index/>
+			<element type="string" column="MULTIMEDIAFILE"/>
+		</list>
+		<list name="senses" table="ENTRY_SENSES">
+		    <key column="ENTRY_ID"/>
+		    <list-index/>
+		    <many-to-many
+				column="SENSE_ID"
+				unique="true"
+				class="net.sourceforge.jvlt.hibernate.Sense"/>
+		</list>
+	</class>
+	<class name="net.sourceforge.jvlt.hibernate.EntryStats" table="ENTRYSTATS">
+		<id name="id" column="ENTRYSTATS_ID">
+			<generator class="native"/>
+		</id>
+       	<property name="batch"/>
+       	<property name="numQuizzed"/>
+       	<property name="numMistakes"/>
+		<property name="lastQuizzed" type="timestamp"
+			column="LASTQUIZZED"/>
+		<property name="dateAdded" type="timestamp"
+			column="DATEADDED"/>
+	</class>
+	<class name="net.sourceforge.jvlt.hibernate.EntryClass"
+		table="ENTRYCLASSES">
+		<id name="id" column="ENTRYCLASS_ID">
+			<generator class="native"/>
+		</id>
+		<property name="name"/>
+		<set name="attributes" table="ENTRYCLASS_ATTRIBUTES">
+			<key column="ENTRYCLASS_ID"/>
+			<many-to-many
+				column="ATTRIBUTE_ID"
+				unique="true"
+				class="net.sourceforge.jvlt.hibernate.SchemaAttribute"/>
+		</set>
+	</class>
+	<class name="net.sourceforge.jvlt.hibernate.SchemaAttribute"
+		table="ATTRIBUTES">
+		<id name="id" column="SCHEMAATTRIBUTE_ID">
+			<generator class="native"/>
+		</id>
+		<discriminator column="ATTRIBUTE_TYPE" type="string"/>
+		<property name="name"/>
+		<subclass name="net.sourceforge.jvlt.hibernate.DefaultSchemaAttribute"
+			discriminator-value="DEFAULT">
+			<property type="string" name="value"/>
+		</subclass>
+		<subclass name="net.sourceforge.jvlt.hibernate.ArraySchemaAttribute"
+			discriminator-value="CHOICEARRAY">
+			<list name="values" table="ARRAYSCHEMAATTRIBUTE_VALUES">
+				<key column="ARRAYSCHEMAATTRIBUTE_ID"/>
+				<list-index/>
+				<element type="string" column="VALUE"/>
+			</list>
+		</subclass>
+	</class>
+</hibernate-mapping>
+
