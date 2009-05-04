@@ -6,6 +6,8 @@ import java.util.SortedMap;
 import javax.swing.JPanel;
 
 public abstract class CSVPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	protected LabeledComboBox _text_delim_box;
 	protected LabeledComboBox _field_delim_box;
 	protected LabeledComboBox _charset_box;
