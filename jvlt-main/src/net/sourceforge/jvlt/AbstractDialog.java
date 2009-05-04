@@ -16,6 +16,8 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 	public static final int CANCEL_OPTION = 3;
 	public static final int CLOSE_OPTION = 4;
 	
+	private static final long serialVersionUID = 1L;
+	
 	private int[] _buttons = new int[] { OK_OPTION, CANCEL_OPTION };
 	private int _default_button = OK_OPTION;
 	private LinkedList<DialogListener> _listeners;
