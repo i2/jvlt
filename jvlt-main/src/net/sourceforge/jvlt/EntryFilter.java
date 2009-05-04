@@ -9,6 +9,8 @@ public class EntryFilter {
 	
 	public EntryFilter() { this(new ObjectQuery(Entry.class)); }
 	
+	public ObjectQuery getQuery() { return _query; }
+	
 	public void setQuery(ObjectQuery query) { _query = query; }
 	
 	public List<Entry> getMatchingEntries(Collection<Entry> entries) {
