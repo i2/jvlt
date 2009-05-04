@@ -245,8 +245,10 @@ public class DictManager {
 			hibEntryStats.setBatch(entry.getBatch());
 			hibEntryStats.setNumQuizzed(entry.getNumQueried());
 			hibEntryStats.setNumMistakes(entry.getNumMistakes());
-			hibEntryStats.setLastQuizzed(entry.getLastQueried().getTime());
-			hibEntryStats.setDateAdded(entry.getDateAdded().getTime());
+			if (entry.getLastQueried() != null)
+				hibEntryStats.setLastQuizzed(entry.getLastQueried().getTime());
+			if (entry.getDateAdded() != null)
+				hibEntryStats.setDateAdded(entry.getDateAdded().getTime());
 			hibEntry.setStats(hibEntryStats);
 		}
 		
