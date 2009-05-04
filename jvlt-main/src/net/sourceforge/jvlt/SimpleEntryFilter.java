@@ -5,6 +5,8 @@ public class SimpleEntryFilter extends EntryFilter {
 	private ObjectArrayQueryItem _pron_item;
 	private SenseArrayQueryItem _trans_item;
 	private SenseArrayQueryItem _def_item;
+	private ObjectArrayQueryItem _category_item;
+	private StringQueryItem _lesson_item;
 	
 	public SimpleEntryFilter() {
 		super();
@@ -16,19 +18,29 @@ public class SimpleEntryFilter extends EntryFilter {
 			SenseArrayQueryItem.TRANSLATION_CONTAINS, "");
 		_def_item = new SenseArrayQueryItem(
 			SenseArrayQueryItem.DEFINITION_CONTAINS, "");
+		_category_item = new ObjectArrayQueryItem(
+				"Categories", ObjectArrayQueryItem.ITEM_CONTAINS, "");
+		_lesson_item = new StringQueryItem(
+				"Lesson", StringQueryItem.CONTAINS, "");
 		_query = new ObjectQuery(Entry.class);
 		_query.setType(ObjectQuery.MATCH_ONE);
 		_query.addItem(_orth_item);
 		_query.addItem(_pron_item);
 		_query.addItem(_trans_item);
 		_query.addItem(_def_item);
+		_query.addItem(_category_item);
+		_query.addItem(_lesson_item);
 	}
+	
+	public String getFilterString() { return (String) _orth_item.getValue(); }
 	
 	public void setFilterString(String value) {
 		_orth_item.setValue(value);
 		_pron_item.setValue(value);
 		_trans_item.setValue(value);
 		_def_item.setValue(value);
+		_category_item.setValue(value);
+		_lesson_item.setValue(value);
 	}
 
 	public void setMatchCase(boolean match) {
@@ -36,6 +48,8 @@ public class SimpleEntryFilter extends EntryFilter {
 		_pron_item.setMatchCase(match);
 		_trans_item.setMatchCase(match);
 		_def_item.setMatchCase(match);
+		_category_item.setMatchCase(match);
+		_lesson_item.setMatchCase(match);
 	}
 }
 
