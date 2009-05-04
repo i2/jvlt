@@ -13,6 +13,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class ObjectMapEditorPanel<T extends Object> extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	protected class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
 			if (ev.getActionCommand().equals("new_update")) {
