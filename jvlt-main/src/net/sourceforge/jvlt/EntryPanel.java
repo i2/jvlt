@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.FilterListener;
 import net.sourceforge.jvlt.event.FilterListener.FilterEvent;
@@ -19,46 +18,34 @@ import net.sourceforge.jvlt.event.SelectionListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 
 public class EntryPanel extends JPanel implements ActionListener,
-	DictUpdateListener, ListSelectionListener, SelectionListener,
-	ItemListener, DialogListener {
+	DictUpdateListener, ListSelectionListener, SelectionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private ArrayList<FilterListener<Entry>> _filter_listeners;
 	private JVLTModel _model;
 	private Dict _dict;
-	private SimpleEntryFilter _simple_filter;
-	private EntryFilter _advanced_filter;
-	private EntryFilter _filter;
 	private SelectionNotifier _notifier;
 	
 	private CustomAction _add_action;
 	private CustomAction _edit_action;
 	private CustomAction _remove_action;
-	private CustomAction _advanced_action;
-	private EntryQueryDialog _query_dlg;
-	private JCheckBox _advanced_box;
-	private CustomTextField _filter_field;
 	private SortableTable<Entry> _entry_table;
 	private SortableTableModel<Entry> _entry_table_model;
 	private EntryInfoPanel _entry_info_panel;
 	private AddEntryDialog _add_entry_dialog;
 	private EditEntryDialog _edit_entry_dialog;
+	private EntryFilterPanel _filter_panel;
 
 	public EntryPanel (JVLTModel model, SelectionNotifier notifier) {
 		_filter_listeners = new ArrayList<FilterListener<Entry>>();
 		_model = model;
 		_notifier = notifier;
-		_simple_filter = new SimpleEntryFilter();
-		_simple_filter.setMatchCase(false);
-		_advanced_filter = new EntryFilter();
-		_filter = _simple_filter;
 		_dict = _model.getDict();
 		_model.getDictModel().addDictUpdateListener(this);
 		_model.getQueryModel().addDictUpdateListener(this);
 		notifier.addSelectionListener(this);
 		init();
 		updateActions();
-		filterTypeChanged();
 	}
 	
 	public TableModel getTableModel() { return _entry_table.getModel(); }
@@ -122,17 +109,17 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 		if (! _entry_table_model.containsObject(entry)) {
 			String filter = entry.getOrthography();
-			_simple_filter.setFilterString(filter);
-			_filter_field.setText(filter);
-			_advanced_box.setSelected(false);
-			filterTypeChanged();
+			_filter_panel.setFilterString(filter);
+			_filter_panel.setMode(EntryFilterPanel.MODE_ORIGINAL);
 			applyFilter();
 		}
 		_entry_table.setSelectedObject(entry);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("add"))	{
+		if (e.getSource() == _filter_panel) {
+			applyFilter();
+		} else if (e.getActionCommand().equals("add")) {
 			_add_entry_dialog.init();
 			GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 					_add_entry_dialog);
@@ -144,16 +131,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() > 0)
 				removeEntries(entries);
-		} else if (e.getActionCommand().equals("filter")) {
-			String str = _filter_field.getText();
-			_simple_filter.setFilterString(str);
-			applyFilter();
-		} else if (e.getActionCommand().equals("advanced")) {
-			if (_query_dlg.isVisible())
-				_query_dlg.setVisible(false);
-			else
-				GUIUtils.showDialog(
-					JOptionPane.getFrameForComponent(this), _query_dlg);
 		}
 	}
 
@@ -165,7 +142,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 				Entry entry = null;
 				for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 					entry = it.next();
-					if (_filter.entryMatches(entry))
+					if (_filter_panel.getFilter().entryMatches(entry))
 						_entry_table_model.addObject(entry);
 				}
 				// Select the last added entry.
@@ -211,23 +188,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 		}
 	}
 
-	public void itemStateChanged(ItemEvent e) { filterTypeChanged(); }
-	
-	public void dialogStateChanged(DialogEvent ev) {
-		if (ev.getSource() == _query_dlg) {
-			if (ev.getType() == AbstractDialog.APPLY_OPTION) {
-				ObjectQuery oq = _query_dlg.getObjectQuery();
-				_advanced_filter.setQuery(oq);
-				if (! _advanced_box.isSelected()) {
-					_advanced_box.setSelected(true);
-					filterTypeChanged();
-				}
-				applyFilter();
-			} else if (ev.getType() == AbstractDialog.CLOSE_OPTION)
-				_query_dlg.setVisible(false);
-		}
-	}
-	
 	public void addFilterListener(FilterListener<Entry> fl) {
 		_filter_listeners.add(fl);
 	}
@@ -246,30 +206,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_add_action = GUIUtils.createTextAction(this, "add");
 		_edit_action = GUIUtils.createTextAction(this, "edit");
 		_remove_action = GUIUtils.createTextAction(this, "remove");
-		_advanced_action = GUIUtils.createTextAction(this, "advanced");
 		
-		_query_dlg = new EntryQueryDialog(
-			JOptionPane.getFrameForComponent(this),
-			GUIUtils.getString("Labels", "advanced_filter"), _model);
-		_query_dlg.addDialogListener(this);
-		
-		_filter_field = new CustomTextField();
-		_filter_field.setActionCommand("filter");
-		_filter_field.addActionListener(this);
-		_advanced_box = new JCheckBox(
-			GUIUtils.createTextAction(this, "advanced_filter"));
-		_advanced_box.addItemListener(this);
-		JPanel filter_panel = new JPanel();
-		filter_panel.setLayout(new GridBagLayout());
-		CustomConstraints cc = new CustomConstraints();
-		cc.update(0, 0, 0.0, 0.0);
-		filter_panel.add(_filter_field.getLabel(), cc);
-		cc.update(1, 0, 1.0, 0.0);
-		filter_panel.add(_filter_field, cc);
-		cc.update(2, 0, 0.0, 0.0);
-		filter_panel.add(_advanced_box, cc);
-		cc.update(3, 0, 0.0, 0.0);
-		filter_panel.add(new JButton(_advanced_action), cc);
+		_filter_panel = new EntryFilterPanel(_model);
+		_filter_panel.addActionListener(this);
 		
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
 		_entry_table_model = new SortableTableModel<Entry>(data);
@@ -295,6 +234,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridBagLayout());
+		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 0.0, 0.0);
 		button_panel.add(new JButton(_add_action), cc);
 		cc.update(0, 1);
@@ -307,7 +247,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		JPanel entry_list_panel = new JPanel();
 		entry_list_panel.setLayout(new GridBagLayout());
 		cc.update(0, 0, 1.0, 0.0, 2, 1);
-		entry_list_panel.add(filter_panel, cc);
+		entry_list_panel.add(_filter_panel, cc);
 		cc.update(0, 1, 1.0, 1.0, 1, 1);
 		entry_list_panel.add(entry_scrpane, cc);
 		cc.update(1, 1, 0.0, 1.0);
@@ -333,7 +273,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	
 	private void applyFilter() {
 		Collection<Entry> entries = _dict.getEntries();
-		List<Entry> el = _filter.getMatchingEntries(entries);
+		List<Entry> el = _filter_panel.getFilter().getMatchingEntries(entries);
 		_entry_table_model.setObjects(el);
 		fireFilterEvent(new FilterEvent<Entry>(this, el));
 	}
@@ -386,15 +326,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 		} // if (entry != null && play)
 	}
 	
-	private void filterTypeChanged() {
-		_filter_field.setEnabled(! _advanced_box.isSelected());
-		_advanced_action.setEnabled(_advanced_box.isSelected());
-		if (_advanced_box.isSelected())
-			_filter = _advanced_filter;
-		else
-			_filter = _simple_filter;
-	}
-
 	private void editEntries(List<Entry> entries) {
 		String title = entries.size() == 1 ?
 						GUIUtils.getString("Labels", "edit_entry") :
