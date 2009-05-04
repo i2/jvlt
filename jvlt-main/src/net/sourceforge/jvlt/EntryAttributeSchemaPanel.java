@@ -221,6 +221,8 @@ class EntryClassPanel extends JPanel {
 }
 
 abstract class SchemaAttributeInput extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	protected SchemaAttribute _attribute;
 	protected AttributeResources _resources;
 	
