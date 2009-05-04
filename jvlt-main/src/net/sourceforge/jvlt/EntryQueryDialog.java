@@ -128,6 +128,9 @@ public class EntryQueryDialog extends AbstractDialog
 		}
 		_query_panel.revalidate();
 		_query_panel.repaint(_query_panel.getVisibleRect());
+		
+		// Update filter map panel
+		_filter_map_panel.setSelectedItem(query.getName());
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
@@ -210,7 +213,6 @@ public class EntryQueryDialog extends AbstractDialog
 	}
 	
 	private void clear() {
-		_filter_map_panel.setSelectedItem("");
 		setObjectQuery(new ObjectQuery(Entry.class));
 		addRow();
 	}
