@@ -16,9 +16,9 @@ public class ChoiceQueryItem extends ObjectQueryItem {
 			return obj==null && _value==null;
 		
 		if (_type == StringQueryItem.EQUALS)
-			return obj.equals(_value);
+			return obj.toString().equals(_value.toString());
 		else if (_type == NOT_EQUAL)
-			return ! obj.equals(_value);
+			return ! obj.toString().equals(_value.toString());
 		else if (_type == CONTAINS)
 			return obj.toString().toLowerCase().indexOf(
 					_value.toString().toLowerCase()) >= 0;
