@@ -723,9 +723,6 @@ class StatsDescriptor extends WizardPanelDescriptor
 		jm.getDictModel().addDictUpdateListener(this);
 		jm.getQueryModel().addDictUpdateListener(this);
 		_entry_selection_data = new EntrySelectionDialogData(jm);
-		EntrySelectionDialogData.State state = (EntrySelectionDialogData.State)
-			JVLT.getRuntimeProperties().get("quiz_entry_filter");
-		_entry_selection_data.initFromState(state);
 		
 		_dict = null;
 		_qdict = null;
@@ -763,9 +760,11 @@ class StatsDescriptor extends WizardPanelDescriptor
 		if (event instanceof NewDictDictUpdateEvent) {
 			_dict = ((NewDictDictUpdateEvent) event).getDict();
 			loadQuizInfoList();
+			updateEntrySelectionDialog();
 			update();
 		} else if (event instanceof LanguageDictUpdateEvent) {
 			loadQuizInfoList();
+			updateEntrySelectionDialog();
 			update();
 		} else {
 			/*
@@ -783,16 +782,35 @@ class StatsDescriptor extends WizardPanelDescriptor
 			// subdialog.
 			CustomDialog dlg = new CustomDialog(_entry_selection_data, frame,
 				GUIUtils.getString("Labels", "select_words"));
-			EntrySelectionDialogData.State state
-				= _entry_selection_data.getState();
 			GUIUtils.showDialog(frame, dlg);
+			EntrySelectionDialogData.State oldstate
+				= _entry_selection_data.getState();
 			if (dlg.getStatus() == CustomDialog.OK_OPTION) {
 				update();
-				JVLT.getRuntimeProperties().put("quiz_entry_filter",
-					_entry_selection_data.getState());
-			} else
+				EntrySelectionDialogData.State state
+					= _entry_selection_data.getState();
+				EntrySelectionDialogData.State[] states = 
+					(EntrySelectionDialogData.State[])
+						JVLT.getRuntimeProperties().get("quiz_entry_filters");
+				ArrayList<EntrySelectionDialogData.State> statelist =
+					new ArrayList<EntrySelectionDialogData.State>();
+				if (states != null)
+					statelist.addAll(Arrays.asList(states));
+				
+				Iterator<EntrySelectionDialogData.State> it =
+					statelist.iterator();
+				while (it.hasNext())
+					if (it.next().getLanguage().equals(state.getLanguage())) {
+						it.remove();
+						break;
+					}
+				statelist.add(state);
+				JVLT.getRuntimeProperties().put("quiz_entry_filters",
+					statelist.toArray(new EntrySelectionDialogData.State[0]));
+			} else {
 				// Initialize according to previous state
-				_entry_selection_data.initFromState(state);
+				_entry_selection_data.initFromState(oldstate);
+			}
 		} else if (ev.getActionCommand().equals("manage_quiz_types")) {
 			QuizDialogData data = new QuizDialogData(
 				((QuizModel) _model).getJVLTModel());
@@ -867,6 +885,27 @@ class StatsDescriptor extends WizardPanelDescriptor
 		_panel.add(settings_panel, cc);
 	}
 
+	private synchronized void updateEntrySelectionDialog() {
+		EntrySelectionDialogData.State[] states =
+			(EntrySelectionDialogData.State[])
+				JVLT.getRuntimeProperties().get("quiz_entry_filters");
+		if (states != null) {
+			int i;
+			for (i=0; i<states.length; i++)
+				if (states[i].getLanguage().equals(_dict.getLanguage())) {
+					_entry_selection_data.initFromState(states[i]);
+					break;
+				}
+		
+			if (i == states.length)
+				_entry_selection_data.initFromState(
+						new EntrySelectionDialogData.State());
+		} else {
+			_entry_selection_data.initFromState(
+					new EntrySelectionDialogData.State());
+		}
+	}
+	
 	private synchronized void updateQuizDict() {
 		QuizInfo info = getQuizInfo();
 		ObjectQuery[] oqs = _entry_selection_data.getObjectQueries();
