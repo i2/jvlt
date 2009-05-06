@@ -495,7 +495,13 @@ class EntryQueryRow implements ActionListener {
 				if (attr.getClass().equals(CustomChoiceAttribute.class)) {
 					CustomChoiceAttribute cca = (CustomChoiceAttribute) attr;
 					cic.setTranslateItems(true);
-					cic.setChoices(cca.getValues());
+					
+					Object[] values = cca.getValues();
+					String[] strvals = new String[values.length];
+					for (int i=0; i<values.length; i++)
+						strvals[i] = values[i].toString();
+					
+					cic.setChoices(strvals);
 				} else if (attr.getClass().equals(DefaultChoiceAttribute.class)) {
 					DefaultChoiceAttribute dca = (DefaultChoiceAttribute) attr;
 					cic.setChoices(dca.getValues());
@@ -526,7 +532,9 @@ class EntryQueryRow implements ActionListener {
 			_input_component = new StringInputComponent();
 		} else if (item instanceof EntryClassQueryItem) {
 			EntryClassInputComponent ecic = new EntryClassInputComponent();
-			ecic.setSchema(_model.getDict().getEntryAttributeSchema());
+			if (_model.getDict() != null)
+				ecic.setSchema(_model.getDict().getEntryAttributeSchema());
+           
 			_input_component = ecic;
 		} else {
 			_input_component = null;
@@ -618,8 +626,14 @@ class EntryClassInputComponent extends ChoiceInputComponent {
 	public void setSchema(EntryAttributeSchema s) {
 		if (s == null)
 			setChoices(new Object[0]);
-		else
-			setChoices(s.getEntryClasses());
+		else {
+			EntryClass[] entry_classes = s.getEntryClasses();
+			String[] choices = new String[entry_classes.length];
+			for (int i=0; i<entry_classes.length; i++)
+				choices[i] = entry_classes[i].getName();
+			
+			setChoices(choices);
+		}
 	}
 }
 
