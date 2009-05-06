@@ -31,6 +31,7 @@ public class EntrySelectionDialogData extends CustomDialogData
 		public static final int MULTIPLE_FILTERS = 3;
 		
 		private int _type = ALL_ENTRIES;
+		private String _language = "";
 		private ObjectQuery _query = new ObjectQuery(Entry.class);
 		private ObjectQuery[] _queries = new ObjectQuery[0];
 		private String[] _allowed_lessons = new String[0];
@@ -43,6 +44,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 		public State(int type) { _type = type; }
 		
 		public int getType() { return _type; }
+		
+		public String getLanguage() { return _language; }
 		
 		public ObjectQuery getQuery() { return _query; }
 		
@@ -59,6 +62,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 		}
 		
 		public void setType(int type) { _type = type; }
+		
+		public void setLanguage(String l) { _language = l; }
 		
 		public void setQuery(ObjectQuery query) { _query = query; }
 		
@@ -180,6 +185,7 @@ public class EntrySelectionDialogData extends CustomDialogData
 			type = State.MULTIPLE_FILTERS;
 		
 		State state = new State(type);
+		state.setLanguage(_model.getDict().getLanguage());
 		state.setQuery(_query_dlg.getObjectQuery());
 		state.setMultiQuery(getObjectQueries());
 		state.setAllowedCategories(Utils.objectArrayToStringArray(
