@@ -852,13 +852,13 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			// Load quiz entry filter
 			//-----
 			decoder = new XMLDecoder(new BufferedInputStream(
-					new FileInputStream(home + "quizfilter.xml")));
-			EntrySelectionDialogData.State state =
-				(EntrySelectionDialogData.State) decoder.readObject();
-			JVLT.getRuntimeProperties().put("quiz_entry_filter", state);
+					new FileInputStream(home + "quizfilters.xml")));
+			EntrySelectionDialogData.State[] states =
+				(EntrySelectionDialogData.State[]) decoder.readObject();
+			JVLT.getRuntimeProperties().put("quiz_entry_filters", states);
 		} catch (Exception e) {
 			e.printStackTrace();
-			JVLT.getRuntimeProperties().put("quiz_entry_filter", null);
+			JVLT.getRuntimeProperties().put("quiz_entry_filters", null);
 		}
 			
 		try {
@@ -899,12 +899,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			//-----
 			// Save quiz entry filter
 			//-----
-			EntrySelectionDialogData.State state =
-				(EntrySelectionDialogData.State)
-				JVLT.getRuntimeProperties().get("quiz_entry_filter");
+			EntrySelectionDialogData.State[] states =
+				(EntrySelectionDialogData.State[])
+				JVLT.getRuntimeProperties().get("quiz_entry_filters");
 			encoder = new XMLEncoder(new BufferedOutputStream(
-					new FileOutputStream(home + "quizfilter.xml")));
-			encoder.writeObject(state);
+					new FileOutputStream(home + "quizfilters.xml")));
+			encoder.writeObject(states);
 			encoder.close();
 			
 			//-----
