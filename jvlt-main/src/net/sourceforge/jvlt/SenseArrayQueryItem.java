@@ -6,7 +6,7 @@ public class SenseArrayQueryItem extends ObjectQueryItem {
 	public static final int DEFINITION_CONTAINS = 3;
 	public static final int DEFINITION_EQUALS = 4;
 
-	private boolean _match_case = true;
+	private boolean _match_case = false;
 
 	public SenseArrayQueryItem(int type, Object value) {
 		super("Senses", type, value);

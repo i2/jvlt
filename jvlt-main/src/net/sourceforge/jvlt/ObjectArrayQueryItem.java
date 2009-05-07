@@ -5,7 +5,7 @@ public class ObjectArrayQueryItem extends ObjectQueryItem {
 	public static final int EMPTY = 1;
 	public static final int NOT_EMPTY = 2;
 
-	private boolean _match_case = true;
+	private boolean _match_case = false;
 	
 	public ObjectArrayQueryItem (String name, int type, Object value) {
 		super(name, type, value);
