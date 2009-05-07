@@ -20,7 +20,7 @@ public class EntryFilterPanel extends JPanel {
 	public static final int MODE_DEFINITION = 4;
 	public static final int MODE_CATEGORY = 5;
 	public static final int MODE_LESSON = 6;
-	public static final int MODE_ADVANCED = 2;
+	public static final int MODE_ADVANCED = 7;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -86,6 +86,12 @@ public class EntryFilterPanel extends JPanel {
 				else if (selected.equals(
 						GUIUtils.getString("Labels", "filter_advanced")))
 					setMode(MODE_ADVANCED);
+
+				if (_mode != MODE_ADVANCED)
+					setFilterString(_filter_field.getText());
+				
+				fireActionEvent(new ActionEvent(EntryFilterPanel.this,
+						e.getID(), null));
 			} else if (e.getActionCommand().equals("ok")) {
 				if (_mode != MODE_ADVANCED)
 					setFilterString(_filter_field.getText());
@@ -97,7 +103,7 @@ public class EntryFilterPanel extends JPanel {
 					ObjectQuery empty_query = new ObjectQuery();
 					_query_dialog.setObjectQuery(empty_query);
 					_filters.get(MODE_ADVANCED).setQuery(empty_query);
-					updateFilterField();
+					updateAdvancedFilterField();
 				} else {
 					setFilterString("");
 				}
@@ -114,7 +120,7 @@ public class EntryFilterPanel extends JPanel {
 				if (e.getType() == AbstractDialog.APPLY_OPTION) {
 					ObjectQuery oq = _query_dialog.getObjectQuery();
 					_filters.get(MODE_ADVANCED).setQuery(oq);
-					updateFilterField();
+					updateAdvancedFilterField();
 					fireActionEvent(new ActionEvent(EntryFilterPanel.this,
 							ActionEvent.ACTION_PERFORMED, null));
 				} else if (e.getType() == AbstractDialog.CLOSE_OPTION) {
@@ -219,13 +225,14 @@ public class EntryFilterPanel extends JPanel {
 		if (mode == _mode)
 			return;
 		
+		int oldmode = _mode;
 		_mode = mode;
 
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(3, 0, 0.0, 0.0);
 		if (mode == MODE_ADVANCED) {
 			// Update filter field text
-			updateFilterField();
+			updateAdvancedFilterField();
 
 			// Remove ok button, add button for advanced dialog
 			remove(_ok_button);
@@ -233,7 +240,9 @@ public class EntryFilterPanel extends JPanel {
 			revalidate();
 		} else {
 			// Update filter field text
-			updateFilterField();
+			_filter_field.setEnabled(true);
+			if (oldmode == MODE_ADVANCED)
+				_filter_field.setText("");
 			
 			// Remove button for advanced dialog, add ok button
 			remove(_advanced_button);
@@ -263,7 +272,7 @@ public class EntryFilterPanel extends JPanel {
 			((BasicEntryFilter) filter).setFilterString(str);
 		}
 		
-		updateFilterField();
+		_filter_field.setText(str);
 	}
 	
 	public void addActionListener(ActionListener l) { _listeners.add(l); }
@@ -274,18 +283,13 @@ public class EntryFilterPanel extends JPanel {
 					new ActionEvent(this, e.getID(), e.getActionCommand()));
 	}
 	
-	private void updateFilterField() {
-		if (_mode == MODE_ADVANCED) {
-			_filter_field.setEnabled(false);
-			ObjectQuery oq = _filters.get(_mode).getQuery();
-			if (oq.getName() == null || oq.getName().equals(""))
-				_filter_field.setText(
-						GUIUtils.getString("Labels", "filter_unnamed"));
-			else
-				_filter_field.setText(oq.getName());
-		} else {
-			_filter_field.setEnabled(true);
-			_filter_field.setText(getFilterString());
-		}
+	private void updateAdvancedFilterField() {
+		_filter_field.setEnabled(false);
+		ObjectQuery oq = _filters.get(_mode).getQuery();
+		if (oq.getName() == null || oq.getName().equals(""))
+			_filter_field.setText(
+					GUIUtils.getString("Labels", "filter_unnamed"));
+		else
+			_filter_field.setText(oq.getName());
 	}
 }
