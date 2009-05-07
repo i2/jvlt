@@ -4,7 +4,7 @@ public class StringQueryItem extends ObjectQueryItem {
 	public static final int EQUALS   = 0;
 	public static final int CONTAINS = 1;
 
-	private boolean _match_case = true;
+	private boolean _match_case = false;
 	
 	public StringQueryItem(String name, int type, Object value) {
 		super(name, type, value);
