@@ -1,6 +1,7 @@
 package net.sourceforge.jvlt;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -8,13 +9,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import javax.swing.Action;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.event.DictUpdateListener;
@@ -303,6 +298,10 @@ public class EntrySelectionDialogData extends CustomDialogData
 		cc.update(1,0,0.0,1.0);
 		filter_chooser_panel.add(button_panel, cc);
 		
+		// Filler item that ensures that the dialog has a minimum width of 400
+		Box.Filler filler = new Box.Filler(new Dimension(400, 0),
+				new Dimension(400, 0), new Dimension(400, 0));
+		
 		_content_pane = new JPanel();
 		_content_pane.setLayout(new GridBagLayout());
 		cc.update(0, 0, 1.0, 0.0);
@@ -319,6 +318,8 @@ public class EntrySelectionDialogData extends CustomDialogData
 		_content_pane.add(_some_categories_button, cc);
 		cc.update(0, 6, 1.0, 1.0);
 		_content_pane.add(categories_tab, cc);
+		cc.update(0, 7, 1.0, 0.0);
+		_content_pane.add(filler, cc);
 		
 		// Initialize dialog
 		_query_dlg = new SimpleEntryQueryDialog(
