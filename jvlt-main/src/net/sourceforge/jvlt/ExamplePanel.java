@@ -151,11 +151,16 @@ public class ExamplePanel extends JPanel implements ActionListener,
 					_model.getDictModel().executeAction(action);
 				}
 			}
-		} else if (e.getActionCommand().equals("filter")) {
+		} else if (e.getActionCommand().equals("filter")
+				|| e.getActionCommand().equals("ok")) {
 			String str = _filter_field.getText();
 			_filter.setFilterString(str);
 			applyFilter();
-		}
+		} else if (e.getActionCommand().equals("cancel")) {
+			_filter_field.setText("");
+			_filter.setFilterString("");
+			applyFilter();
+		} 
 	}
 
 	public synchronized void dictUpdated(DictUpdateEvent event) {
@@ -217,9 +222,18 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		_filter_field.setActionCommand("filter");
 		_filter_field.addActionListener(this);
 		JPanel filter_panel = new JPanel();
-		filter_panel.setLayout(new BorderLayout(5, 0));
-		filter_panel.add(_filter_field.getLabel(), BorderLayout.WEST);
-		filter_panel.add(_filter_field, BorderLayout.CENTER);
+		filter_panel.setLayout(new GridBagLayout());
+		CustomConstraints cc = new CustomConstraints();
+		cc.update(0, 0, 0.0, 0.0);
+		filter_panel.add(_filter_field.getLabel(), cc);
+		cc.update(1, 0, 1.0, 0.0);
+		filter_panel.add(_filter_field, cc);
+		cc.update(2, 0, 0.0, 0.0);
+		filter_panel.add(
+				new JButton(GUIUtils.createIconAction(this, "cancel")), cc);
+		cc.update(3, 0, 0.0, 0.0);
+		filter_panel.add(
+				new JButton(GUIUtils.createIconAction(this, "ok")), cc);
 		
 		//----------
 		// Example table
@@ -257,7 +271,6 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		
 		JPanel example_button_panel = new JPanel();
 		example_button_panel.setLayout (new GridBagLayout());
-		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 0.0, 0.0);
 		example_button_panel.add(new JButton(_add_action), cc);
 		cc.update(0, 1);
