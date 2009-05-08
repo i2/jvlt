@@ -205,7 +205,7 @@
 			select="Definition"/>)</i></b>
 		<xsl:if test="string(Translation)">, </xsl:if>
 	</xsl:if>
-	<b><xsl:value-of disable-output-escaping="yes" select="Translation"/></b>
+	<b><xsl:apply-templates select="Translation"/></b>
 	<xsl:variable name="entry-id" select="../../ID"/>
 	<xsl:variable name="sense-id" select="ID"/>
 	<xsl:for-each select="/Dict/Example[TextFragments/Fragment/Link=$sense-id]">
@@ -340,6 +340,16 @@
 		<xsl:variable name="file" select="."/>
 		<a href="mm:{$file}"><img src="{$image}" border="0"/></a>
 	</xsl:for-each>
+</xsl:template>
+
+<xsl:template match="*">
+	<xsl:element name="{name(.)}">
+		<xsl:apply-templates/>
+	</xsl:element>
+</xsl:template>
+
+<xsl:template match="text()">
+	<xsl:value-of disable-output-escaping="yes" select="."/>
 </xsl:template>
 
 </xsl:stylesheet>

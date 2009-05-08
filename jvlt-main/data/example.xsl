@@ -33,7 +33,7 @@
 		<xsl:if test="string(Example/Translation)">
 			<td valign="center" class="vbar"/>
 			<td>
-			<xsl:copy-of select="Example/Translation/child::node()"/>
+			<xsl:apply-templates select="Example/Translation/child::node()"/>
 			</td>
 		</xsl:if>
 		</tr>
@@ -105,6 +105,16 @@
 			<xsl:if test="position()>1">, </xsl:if>
 			<xsl:value-of disable-output-escaping="yes" select="."/>
 		</xsl:for-each>
+	</xsl:template>
+	
+	<xsl:template match="*">
+		<xsl:element name="{name(.)}">
+			<xsl:apply-templates/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="text()">
+		<xsl:value-of disable-output-escaping="yes" select="."/>
 	</xsl:template>
 
 </xsl:stylesheet>
