@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <info>
 	<name>jVLT - Vocabulary Learning Tool</name>
-	<version>090510</version>
+	<version>1.1.5</version>
 	<data-version>1.1</data-version>
 	<author>
 		<name>Henning Burchardt</name>
@@ -49,6 +49,7 @@
 	<language name="german"/>
 	<language name="greek"/>
 	<language name="japanese"/>
+	<language name="russian"/>
 	<language name="sanskrit"/>
 	<language name="spanish"/>
 	<language name="swedish"/>
