@@ -277,6 +277,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String csv_file = GUIUtils.getString("Labels", "csv_file");
+			String html_file = GUIUtils.getString("Labels", "html_file");
 			String jvlt_file = GUIUtils.getString("Labels", "jvlt_file");
 			if (e.getActionCommand().equals("select_file")) {
                 DictFileChooser chooser;
@@ -297,13 +298,15 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 					_file_field.setText(chooser.getSelectedFile().getPath());
 			}
 			else if (e.getActionCommand().equals("file_type")) {
+				_panel.remove(_csv_panel);
+				_panel.remove(_html_panel);
+				CustomConstraints cc = new CustomConstraints();
+				cc.update(0, 3, 1.0, 0.0, 3, 1);
 				if (_type_box.getSelectedItem().equals(csv_file)) {
-					CustomConstraints cc = new CustomConstraints();
-					cc.update(0, 3, 1.0, 0.0, 3, 1);
 					_panel.add(_csv_panel, cc);
+				} else if (_type_box.getSelectedItem().equals(html_file)) {
+					_panel.add(_html_panel, cc);
 				}
-				else
-					_panel.remove(_csv_panel);
 				
 				_panel.revalidate();
 				_panel.repaint(_panel.getVisibleRect());
@@ -314,6 +317,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	private LabeledComboBox _type_box;
 	private CustomTextField _file_field;
 	private CSVExportPanel _csv_panel;
+	private HTMLExportPanel _html_panel;
 	private Dict _dict;
 	private boolean _clear_stats = false; 
 	
@@ -346,6 +350,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		} else if (_type_box.getSelectedItem().equals(
 				GUIUtils.getString("Labels", "html_file"))) {
 			DictHtmlWriter writer = new DictHtmlWriter(_dict, stream);
+			writer.setAddReverse(_html_panel.isBidirectional());
 			writer.write();
 		}
 	}
@@ -369,6 +374,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		_type_box.addActionListener(new ActionHandler());
 		
 		_csv_panel = new CSVExportPanel();
+		_html_panel = new HTMLExportPanel();
 		
 		_panel = new JPanel();
 		_panel.setLayout(new GridBagLayout());
@@ -389,5 +395,26 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		cc.update(0, 4, 0, 1.0);
 		_panel.add(Box.createVerticalGlue(), cc);
 	}
+}
+
+class HTMLExportPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+
+	private JCheckBox _bidirectional_box;
+
+	public HTMLExportPanel() {
+		_bidirectional_box = new JCheckBox();
+		_bidirectional_box.setText(
+			GUIUtils.getString("Actions", "bidirectional"));
+
+		setLayout(new GridBagLayout());
+		CustomConstraints cc = new CustomConstraints();
+		cc.update(0, 0, 1.0, 0.0);
+		add(_bidirectional_box, cc);
+		cc.update(0, 1, 0.0, 1.0);
+		add(Box.createVerticalGlue(), cc);
+	}
+
+	public boolean isBidirectional() { return _bidirectional_box.isSelected(); }
 }
 

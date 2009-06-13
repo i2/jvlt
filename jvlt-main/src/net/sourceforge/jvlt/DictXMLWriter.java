@@ -1,6 +1,7 @@
 package net.sourceforge.jvlt;
 
 import java.io.*;
+import java.text.Collator;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -11,9 +12,19 @@ public class DictXMLWriter extends DictWriter {
 	public static final int FORMAT_ZIP = 0;
 	public static final int FORMAT_XML = 1;
 	
+	private static final Comparator<Sense> SENSE_COMPARATOR
+		= new Comparator<Sense>() {
+		private Collator _collator = CustomCollator.getInstance();
+		
+		public int compare(Sense s1, Sense s2) {
+			return _collator.compare(s1.getTranslation(), s2.getTranslation());
+		}
+	};
+	
 	private DocumentBuilder _builder;
 	private XMLFormatter _formatter;
 	private boolean _clear_stats = false;
+	private boolean _add_reverse = false;
 	private int _format;
 
 	public DictXMLWriter(Dict dict, OutputStream stream, int format) {
@@ -35,6 +46,12 @@ public class DictXMLWriter extends DictWriter {
 	}
 	
 	public void setClearStats(boolean clear) { _clear_stats = clear; }
+	
+	/**
+	 * Set whether a reverse version of the dictionary (sense - original) will
+	 * be added. 
+	 */
+	public void setAddReverse(boolean add) { _add_reverse = add; }
 	
 	public void write() throws IOException {
 		if (_format == FORMAT_ZIP) {
@@ -87,6 +104,20 @@ public class DictXMLWriter extends DictWriter {
 		while (it.hasNext())
 			root.appendChild(_formatter.getXMLForEntry(doc, it.next()));
 		
+		// Write reverse entries
+		if (_add_reverse) {
+			Node reverse = root.appendChild(doc.createElement("reverse"));
+			ArrayList<Sense> senses = new ArrayList<Sense>();
+			for (Entry e: entries)
+				for (Sense s: e.getSenses())
+					senses.add(s);
+			
+			Collections.sort(senses, SENSE_COMPARATOR);
+			
+			for (Sense s: senses)
+				reverse.appendChild(_formatter.getXMLForSenseReverse(doc, s));
+		}
+		
 		// Write examples
 		Iterator<Example> example_it= _dict.getExamples().iterator();
 		while (example_it.hasNext())
@@ -104,8 +135,7 @@ class XMLFormatter {
 		_no_indent_tags = new String[0];
 	}
 	
-	public void setNoIndentTags(String[] tags)
-	{	_no_indent_tags = tags; }
+	public void setNoIndentTags(String[] tags) { _no_indent_tags = tags; }
 	
 	public Element getXMLForEntry(Document doc, Entry entry) {
 		Element entry_elem = doc.createElement("entry");
@@ -228,6 +258,14 @@ class XMLFormatter {
 				doc, "tr", translation));
 		
 		return example_elem;
+	}
+	
+	public Element getXMLForSenseReverse(Document doc, Sense s) {
+		Element elem = doc.createElement("sense-ref");
+		elem.setAttribute("sense-id", s.getID());
+		elem.setAttribute("entry-id", s.getParent().getID());
+		
+		return elem;
 	}
 
 	public void printXML(Document doc, OutputStream stream) {

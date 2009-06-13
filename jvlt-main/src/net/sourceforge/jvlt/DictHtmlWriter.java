@@ -3,9 +3,13 @@ package net.sourceforge.jvlt;
 import java.io.*;
 
 public class DictHtmlWriter extends DictWriter {
+	private boolean _add_reverse = false;
+
 	public DictHtmlWriter(Dict dict, OutputStream stream) {
 		super(dict, stream);
 	}
+
+	public void setAddReverse(boolean add) { _add_reverse = add; }
 	
 	public void write() throws IOException {
 		final PipedOutputStream pos = new PipedOutputStream();
@@ -18,6 +22,7 @@ public class DictHtmlWriter extends DictWriter {
 		Thread xmlthread = new Thread() {
 			public void run() {
 				try {
+					xmlwriter.setAddReverse(_add_reverse);
 					xmlwriter.write();
 					pos.close();
 				}
