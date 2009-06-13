@@ -33,6 +33,7 @@ public class DictFileChooser extends JFileChooser {
 		} else if (type == HTML_FILES) {
 			filter = new SimpleFileFilter(
 				GUIUtils.getString("Labels", "html_files"));
+			filter.addExtension("html");
 		}
 		
 		if (filter != null)
