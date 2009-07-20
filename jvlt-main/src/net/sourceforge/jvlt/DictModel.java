@@ -33,11 +33,15 @@ public class DictModel extends AbstractModel {
 	}
 
 	public void addDictUpdateListener(DictUpdateListener listener) {
-		_dict_update_listeners.add(listener);
+		synchronized (_dict_update_listeners) {
+			_dict_update_listeners.add(listener);
+		}
 	}
 
 	public void removeDictUpdateListener(DictUpdateListener listener) {
-		_dict_update_listeners.remove(listener);
+		synchronized (_dict_update_listeners) {
+			_dict_update_listeners.remove(listener);
+		}
 	}
 	
 	public MetaData getMetaData(Class<? extends Object> cl) {
@@ -324,9 +328,11 @@ public class DictModel extends AbstractModel {
 			}
 		}
 		
-		Iterator<DictUpdateListener> it = _dict_update_listeners.iterator();
-		while (it.hasNext())
-			it.next().dictUpdated(event);
+		synchronized (_dict_update_listeners) {
+			Iterator<DictUpdateListener> it = _dict_update_listeners.iterator();
+			while (it.hasNext())
+				it.next().dictUpdated(event);
+		}
 	}
 }
 
