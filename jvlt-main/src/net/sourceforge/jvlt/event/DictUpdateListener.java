@@ -20,14 +20,14 @@ public interface DictUpdateListener {
 		public static final int ENTRIES_CHANGED = 2;
 		public static final int ENTRIES_REMOVED = 3;
 		
-		private Collection<Entry> _examples;
+		private Collection<Entry> _entries;
 		
 		public EntryDictUpdateEvent(int type, Collection<Entry> entries) {
 			super(type);
-			_examples = entries;
+			_entries = entries;
 		}
 		
-		public Collection<Entry> getEntries() { return _examples; }
+		public Collection<Entry> getEntries() { return _entries; }
 	}
 	
 	public static class ExampleDictUpdateEvent extends DictUpdateEvent {
