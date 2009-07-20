@@ -117,7 +117,8 @@
 	<target name="compile.base" unless="compile-hibernate">
 		<echo>Compiling base application...</echo>
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
-			excludes="net/sourceforge/jvlt/hibernate/*.java">
+			excludes="net/sourceforge/jvlt/hibernate/*.java"
+			source="1.5" target="1.5">
 			<classpath refid="project.classpath"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
@@ -125,7 +126,8 @@
 
 	<target name="compile.all" if="compile-hibernate">
 		<echo>Compiling application with hibernate...</echo>
-		<javac srcdir="${src}" destdir="${build}" debug="${debug}">
+		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
+			source="1.5" target="1.5">
 			<classpath refid="project.classpath"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
