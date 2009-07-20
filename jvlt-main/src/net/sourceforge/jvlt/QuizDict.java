@@ -6,18 +6,16 @@ public class QuizDict {
 	private JVLTModel _model;
 	private ArrayList<QueryResult> _results;
 	private QuizInfo _info = null;
+	private EntryFilter[] _filters = null;
 	
 	private ArrayList<Entry> _entries;
 
-	public QuizDict(JVLTModel model,
-			EntryFilter[] filters, QuizInfo info) {
+	public QuizDict(JVLTModel model) {
 		_model = model;
-		_info = info;
+		_filters = null;
+		_info = null;
 		_results = new ArrayList<QueryResult>();
-		
 		_entries = new ArrayList<Entry>();
-		
-		initEntryList(model.getDict().getEntries(), filters);
 	}
 	
 	public int getResultCount() { return _results.size(); }
@@ -30,7 +28,7 @@ public class QuizDict {
 	}
 	
 	public void setResult(int index, QueryResult result) {
-		if (index == _results.size())
+		if (index >= _results.size())
 			_results.add(result);
 		else
 			_results.set(index, result);
@@ -40,7 +38,12 @@ public class QuizDict {
 	
 	public int getEntryCount() { return _entries.size(); }
 	
-	public Entry getEntry(int pos) { return _entries.get(pos); }
+	public Entry getEntry(int pos) {
+		if (pos < 0 || pos >= _entries.size())
+			return null;
+		else
+			return _entries.get(pos);
+	}
 
 	public Entry[] getKnownEntries() {
 		ArrayList<Entry> list = new ArrayList<Entry>();
@@ -69,7 +72,8 @@ public class QuizDict {
 	/**
 	 * Reset the dictionary.
 	 * Clear the result list and reinitialize the entry list using the not
-	 * known entries. */
+	 * known entries.
+	 */
 	public void reset() {
 		Entry[] not_known = getNotKnownEntries();
 		_results.clear();
@@ -78,8 +82,50 @@ public class QuizDict {
 		Collections.shuffle(_entries, new Random(new Date().getTime()));
 	}
 	
-	private void initEntryList(Collection<Entry> entries,
+	/**
+	 * Update the quiz dictionary using a new set of filters and/or a different
+	 * quiz type.
+	 */
+	public void update(EntryFilter[] filters, QuizInfo info) {
+		_filters = filters;
+		_info = info;
+		
+		_results.clear();
+		_entries.clear();
+		_entries.addAll(getEntryList(_model.getDict().getEntries(), filters));
+	}
+	
+	/**
+	 * Update the quiz dictionary when entries have been added, changed or
+	 * removed.
+	 */
+	public void update(Collection<Entry> new_entries,
+			Collection<Entry> changed_entries,
+			Collection<Entry> removed_entries) {
+		if (new_entries != null) {
+			_entries.addAll(
+					getEntryList(new_entries, _filters));
+		}
+		
+		if (changed_entries != null) {
+			_entries.removeAll(changed_entries);
+			_entries.addAll(
+					getEntryList(changed_entries, _filters));
+			updateResultList(changed_entries);
+		}
+		
+		if (removed_entries != null) {
+			_entries.removeAll(removed_entries);
+			_entries.addAll(
+					getEntryList(removed_entries, _filters));
+			updateResultList(removed_entries);
+		}
+	}
+	
+	private List<Entry> getEntryList(Collection<Entry> entries,
 			EntryFilter[] filters) {
+		ArrayList<Entry> return_list = null;
+		
 		//-----
 		// Only add the entries that have been expired and where the quizzed
 		// attribute is set.
@@ -119,15 +165,31 @@ public class QuizDict {
 					
 				Collections.shuffle(
 					entry_list, new Random(new Date().getTime()));
-				_entries.addAll(entry_list);
+				return_list = entry_list;
 			}
 		}
 		//-----
 		// If there is no filter, all entries that have been expired are added.
 		//-----
 		else {
-			_entries.addAll(entry_array);
-			Collections.shuffle(_entries, new Random(new Date().getTime()));
+			Collections.shuffle(entry_array, new Random(new Date().getTime()));
+			return_list = entry_array;
+		}
+		
+		return return_list;
+	}
+	
+	/**
+	 * Remove all entries from the result list that are not contained in
+	 * the entry list.
+	 */
+	private void updateResultList(Collection<Entry> entries) {
+		Iterator<QueryResult> it = _results.iterator();
+		while (it.hasNext()) {
+			QueryResult result = it.next();
+			if (entries.contains(result.getEntry())
+					&& ! _entries.contains(result.getEntry()))
+				it.remove();
 		}
 	}
 }
