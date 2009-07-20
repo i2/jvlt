@@ -29,9 +29,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private class ChangeHandler implements ChangeListener {
 		public void stateChanged(ChangeEvent ev) {
 			Component tab = _tab_pane.getSelectedComponent();
-			if (tab == _quiz_wizard.getContent())
+			if (tab == _quiz_tab.getWizard().getContent())
 				JVLTUI.this._main_frame.getRootPane().setDefaultButton(
-					_quiz_wizard.getDefaultButton());
+					_quiz_tab.getWizard().getDefaultButton());
 			else
 				JVLTUI.this._main_frame.getRootPane().setDefaultButton(null);
 		}
@@ -60,7 +60,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private EntryPanel _entry_tab;
 	private ExamplePanel _example_tab;
-	private Wizard _quiz_wizard;
+	private QuizPanel _quiz_tab;
 	private JFrame _main_frame;
 	private CustomAction _undo_action;
 	private CustomAction _redo_action;
@@ -381,12 +381,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		_entry_tab = new EntryPanel(_model, notifier);
 		_entry_tab.loadState(JVLT.getConfig());
 		_entry_tab.addFilterListener(new EntryFilterListener());
-		_quiz_wizard = new Wizard(new QuizModel(_model, notifier));
+		_quiz_tab = new QuizPanel(_model, notifier);
 		
 		_tab_pane = new CustomTabbedPane();
 		_tab_pane.addTab("vocabulary", _entry_tab);
 		_tab_pane.addTab("examples", _example_tab);
-		_tab_pane.addTab("quiz", _quiz_wizard.getContent());
+		_tab_pane.addTab("quiz", _quiz_tab);
 		_tab_pane.addChangeListener(new ChangeHandler());
 		
 		//----------
@@ -621,7 +621,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 * @return false if the user selects "Cancel", and true otherwise.
 	 */
 	private boolean finishQuiz() {
-		QuizModel model = (QuizModel) _quiz_wizard.getModel();
+		QuizModel model = (QuizModel) _quiz_tab.getWizard().getModel();
 		if (model.existsUnfinishedQuiz()) {
 			int result = GUIUtils.showSaveDiscardCancelDialog(
 					_main_frame, "save_quiz");
