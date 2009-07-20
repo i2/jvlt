@@ -725,7 +725,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 		_entry_selection_data = new EntrySelectionDialogData(jm);
 		
 		_dict = null;
-		_qdict = null;
+		_qdict = new QuizDict(jm);
 		_default_quiz_info = QuizInfo.getDefaultQuizInfo();
 		
 		init();
@@ -736,12 +736,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 	
 	public QuizDict getQuizDict() { return _qdict; }
 
-	public int getSelectedEntries() {
-		if (_qdict == null)
-			return 0;
-		else
-			return _qdict.getEntryCount();
-	}
+	public int getSelectedEntries() { return _qdict.getEntryCount(); }
 
 	public QuizInfo getQuizInfo() {
 		Object name = _quiz_info_box.getSelectedItem();
@@ -766,15 +761,30 @@ class StatsDescriptor extends WizardPanelDescriptor
 			loadQuizInfoList();
 			updateEntrySelectionDialog();
 			update();
-		} else {
-			/*
-			 * Entries or examples have been added, modified or removed. There
-			 * is no need to reload the quiz info list.
-			 */ 
+		} else if (event instanceof EntryDictUpdateEvent) {
+			/* Update quiz dictionary */
+			EntryDictUpdateEvent entry_event = (EntryDictUpdateEvent) event;
+			int type = entry_event.getType();
+			switch (type) {
+			case EntryDictUpdateEvent.ENTRIES_ADDED:
+				_qdict.update(entry_event.getEntries(), null, null);
+				break;
+			case EntryDictUpdateEvent.ENTRIES_CHANGED:
+				_qdict.update(null, entry_event.getEntries(), null);
+				break;
+			case EntryDictUpdateEvent.ENTRIES_REMOVED:
+				_qdict.update(null, null, entry_event.getEntries());
+				break;
+			}
+			
+			/* Update view */
 			updateView();
+			
+			/* Enable/disable "Next" button */
+			_model.panelDescriptorUpdated(this);
 		}
 	}
-	
+		
 	public void actionPerformed(ActionEvent ev) {
 		Frame frame = JOptionPane.getFrameForComponent(_panel);
 		if (ev.getActionCommand().equals("select_words")) {
@@ -913,9 +923,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 		for (int i=0; i<oqs.length; i++)
 			filters[i] = new EntryFilter(oqs[i]);
 		
-		_qdict = new QuizDict(((QuizModel) _model).getJVLTModel(),
-				filters, info);
-		
+		_qdict.update(filters, info);
 		_model.panelDescriptorUpdated(this);
 	}
 	
@@ -992,7 +1000,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 		buffer.append(getRowString(label, avg_num_quizzed_str));
 		label = GUIUtils.getString("Labels", "avg_mistake_ratio") + ":";
 		buffer.append(getRowString(label, avg_mistake_ratio_str));
-		for (int i=0; i<max_batch; i++) {
+		for (int i=0; i<=max_batch; i++) {
 			if (! batches.containsKey(i) || batches.get(i) == 0)
 				continue;
 			
