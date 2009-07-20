@@ -66,6 +66,16 @@ public class EntryQueryDialog extends AbstractDialog
 		}
 	}
 	
+	private class DictUpdateHandler implements DictUpdateListener {
+		public void dictUpdated(DictUpdateEvent event) {
+			if (event instanceof NewDictDictUpdateEvent
+				|| event instanceof LanguageDictUpdateEvent) {
+				for (EntryQueryRow row: _query_rows)
+					row.reset();
+			}
+		}
+	}
+
 	private static final long serialVersionUID = 1L;
 	
 	private JVLTModel _model;
@@ -85,6 +95,8 @@ public class EntryQueryDialog extends AbstractDialog
 		super(owner, title, modal);
 		_model = model;
 		_query_rows = new LinkedList<EntryQueryRow>();
+		
+		_model.getDictModel().addDictUpdateListener(new DictUpdateHandler());
 		init();
 	}
 	
@@ -269,15 +281,6 @@ public class EntryQueryDialog extends AbstractDialog
 }
 
 class EntryQueryRow implements ActionListener {
-	private class DictUpdateHandler implements DictUpdateListener {
-		public void dictUpdated(DictUpdateEvent event) {
-			if (event instanceof NewDictDictUpdateEvent
-				|| event instanceof LanguageDictUpdateEvent) {
-				updateAttributeBox();
-			}
-		}
-	}
-
 	private ItemContainer _container;
 	private JVLTModel _model;
 	private ArrayList<ComponentReplacementListener> _listeners;
@@ -293,7 +296,6 @@ class EntryQueryRow implements ActionListener {
 		_container = new ItemContainer();
 		_container.setTranslateItems(true);
 		_model = model;
-		_model.getDictModel().addDictUpdateListener(new DictUpdateHandler());
 		_listeners = new ArrayList<ComponentReplacementListener>();
 		_translation_type_map = new HashMap<String, Integer>();
 		_type_translation_map = new HashMap<Integer, String>();
@@ -382,6 +384,8 @@ class EntryQueryRow implements ActionListener {
 						type.intValue());
 		}
 	}
+	
+	public void reset() { updateAttributeBox(); }
 	
 	private void updateAttributeBox() {
 		/*
