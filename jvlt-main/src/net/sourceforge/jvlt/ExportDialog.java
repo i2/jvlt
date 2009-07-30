@@ -53,12 +53,13 @@ class ExportWizardModel extends DialogWizardModel {
 
 		registerPanelDescriptor(new StartExportDescriptor(this));
 		registerPanelDescriptor(new FinishExportDescriptor(this));
+		registerPanelDescriptor(new ExportSuccessDescriptor(this));
 		
 		_current_descriptor = getPanelDescriptor("start");
 	}
 	
 	public String getButtonText(String button_command) {
-		if (_current_descriptor instanceof FinishExportDescriptor) {
+		if (_current_descriptor instanceof ExportSuccessDescriptor) {
 			if (button_command.equals(Wizard.NEXT_COMMAND))
 				return GUIUtils.getString("Actions", "finish");
 		}
@@ -70,6 +71,12 @@ class ExportWizardModel extends DialogWizardModel {
 			if (button_command.equals(Wizard.BACK_COMMAND))
 				return false;
 		}
+		else if (_current_descriptor instanceof ExportSuccessDescriptor) {
+			if (button_command.equals(Wizard.BACK_COMMAND)
+					|| button_command.equals(Wizard.CANCEL_COMMAND))
+				return false;
+		}
+		
 		return super.isButtonEnabled(button_command);
 	}
 
@@ -79,26 +86,30 @@ class ExportWizardModel extends DialogWizardModel {
 		if (_current_descriptor instanceof StartExportDescriptor) {
 			if (command.equals(Wizard.NEXT_COMMAND))
 				next = getPanelDescriptor("finish");
-		}
-		else if (_current_descriptor instanceof FinishExportDescriptor) {
+		} else if (_current_descriptor instanceof FinishExportDescriptor) {
 			StartExportDescriptor sed =
 				(StartExportDescriptor) getPanelDescriptor("start");
+			ExportSuccessDescriptor esd =
+				(ExportSuccessDescriptor) getPanelDescriptor("success");
 			FinishExportDescriptor fed =
 				(FinishExportDescriptor) _current_descriptor;
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				Dict dict = sed.getDict();
 				fed.setDict(dict);
 				fed.setClearStats(sed.getClearStats());
-				try { fed.export(); }
-				catch (IOException e) {
+				try {
+					fed.export();
+					next = esd;
+				} catch (IOException e) {
 					throw new InvalidInputException(
 						GUIUtils.getString("Messages", "exporting_failed"),
 						e.getMessage());
 				}
-				fireStateEvent(new StateEvent(this, FINISH_STATE));
 			}
 			else if (command.equals(Wizard.BACK_COMMAND))
 				next = sed;
+		} else if (_current_descriptor instanceof ExportSuccessDescriptor) {
+			fireStateEvent(new StateEvent(this, FINISH_STATE));
 		}
 		
 		_current_descriptor = next;
@@ -394,6 +405,22 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		_panel.add(new JButton(select_action), cc);
 		cc.update(0, 4, 0, 1.0);
 		_panel.add(Box.createVerticalGlue(), cc);
+	}
+}
+
+class ExportSuccessDescriptor extends WizardPanelDescriptor {
+	public ExportSuccessDescriptor(ExportWizardModel model) {
+		super(model);
+		
+		initUI();
+	}
+	
+	public String getID() { return "success"; }
+	
+	private void initUI() {
+		JLabel label = new JLabel(
+				GUIUtils.getString("Labels", "exporting_successful"));
+		_panel = label;
 	}
 }
 
