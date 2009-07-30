@@ -22,8 +22,8 @@
 	<p>
 	<b><xsl:value-of select="orth"/></b>
 	<xsl:text> </xsl:text>
-	<xsl:if test="string(pron)">
-		[<xsl:value-of select="."/>]
+	<xsl:if test="count(pron) > 0">
+		[<xsl:apply-templates select="pron"/>]
 		<xsl:text> </xsl:text>
 	</xsl:if>
 	<xsl:call-template name="process-attributes">
@@ -33,15 +33,24 @@
 	</p>
 </xsl:template>
 
+<xsl:template match="pron">
+	<xsl:if test="position() > 1">
+		<xsl:text>, </xsl:text>
+	</xsl:if>
+	<xsl:value-of select="."/>
+</xsl:template>
+
 <xsl:template name="process-attributes">
 	<xsl:param name="entry-id"/>
 	<xsl:variable name="entry" select="/dictionary/entry[@id=$entry-id]"/>
 	
 	<xsl:if test="$entry/@class">
+		<i>
 		<xsl:text>(</xsl:text>
 		<xsl:value-of select="xslutils:translate($entry/@class)"/>
 		<xsl:apply-templates select="attr"/>
 		<xsl:text>) </xsl:text>
+		</i>
 	</xsl:if>
 </xsl:template>
 
@@ -65,7 +74,7 @@
 		<xsl:value-of select="trans"/>
 		<xsl:text> </xsl:text>
 	</xsl:if>
-
+	<xsl:text> </xsl:text>
 	<xsl:call-template name="process-examples">
 		<xsl:with-param name="sense-id" select="@id"/>
 	</xsl:call-template>
@@ -75,6 +84,10 @@
 	<xsl:param name="sense-id"/>
 
 	<xsl:for-each select="/dictionary/example[ex/link/@sid=$sense-id]">
+		<xsl:if test="position() > 1">
+			<!-- HTML &diams; entity -->
+			<xsl:text>&#9830;</xsl:text>
+		</xsl:if>
 		<i>
 		<span style="font-size:small;">
 		<xsl:apply-templates select="ex/*|ex/text()">
@@ -120,6 +133,7 @@
 		<xsl:text> </xsl:text>
 		<xsl:value-of select="$entry/orth"/>
 	</xsl:if>
+	<xsl:text> </xsl:text>
 	<xsl:call-template name="process-examples">
 		<xsl:with-param name="sense-id" select="$sense-id"/>
 	</xsl:call-template>
