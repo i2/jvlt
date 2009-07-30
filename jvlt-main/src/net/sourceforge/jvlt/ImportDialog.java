@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
+import net.sourceforge.jvlt.WizardModel.InvalidInputException;
 import net.sourceforge.jvlt.event.StateListener;
 import net.sourceforge.jvlt.event.StateListener.StateEvent;
 
@@ -44,12 +45,13 @@ class ImportWizardModel extends DialogWizardModel {
 		
 		registerPanelDescriptor(new StartImportDescriptor(this));
 		registerPanelDescriptor(new ImportResultsDescriptor(this));
+		registerPanelDescriptor(new ImportSuccessDescriptor(this));
 		
 		_current_descriptor = getPanelDescriptor("start");
 	}
 	
 	public String getButtonText(String button_command) {
-		if (_current_descriptor instanceof ImportResultsDescriptor) {
+		if (_current_descriptor instanceof ImportSuccessDescriptor) {
 			if (button_command.equals(Wizard.NEXT_COMMAND))
 				return GUIUtils.getString("Actions", "finish");
 		}
@@ -60,6 +62,11 @@ class ImportWizardModel extends DialogWizardModel {
 	public boolean isButtonEnabled(String button_command) {
 		if (_current_descriptor instanceof StartImportDescriptor) {
 			if (button_command.equals(Wizard.BACK_COMMAND))
+				return false;
+		}
+		else if (_current_descriptor instanceof ImportSuccessDescriptor) {
+			if (button_command.equals(Wizard.BACK_COMMAND)
+					|| button_command.equals(Wizard.CANCEL_COMMAND))
 				return false;
 		}
 		
@@ -89,15 +96,23 @@ class ImportWizardModel extends DialogWizardModel {
 				(StartImportDescriptor) getPanelDescriptor("start");
 			ImportResultsDescriptor ird =
 				(ImportResultsDescriptor) getPanelDescriptor("results");
+			ImportSuccessDescriptor isd =
+				(ImportSuccessDescriptor) getPanelDescriptor("success");
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				_importer.setClearStats(ird.getClearStats());
 				try {
 					_importer.importDict(sid.getDict());
-					fireStateEvent(new StateEvent(this, FINISH_STATE));
-				} catch (Exception ex) { ex.printStackTrace(); }
+					next = isd;
+				} catch (Exception ex) {
+					throw new InvalidInputException(
+							GUIUtils.getString("Messages", "importing_failed"),
+							ex.getMessage());
+				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
 				next = sid;
 			}
+		} else if (_current_descriptor instanceof ImportSuccessDescriptor) {
+			fireStateEvent(new StateEvent(this, FINISH_STATE));
 		}
 		
 		_current_descriptor = next;
@@ -442,3 +457,18 @@ class ImportResultsDescriptor extends WizardPanelDescriptor {
 	}
 }
 
+class ImportSuccessDescriptor extends WizardPanelDescriptor {
+	public ImportSuccessDescriptor(ImportWizardModel model) {
+		super(model);
+		
+		initUI();
+	}
+	
+	public String getID() { return "success"; }
+	
+	private void initUI() {
+		JLabel label = new JLabel(
+				GUIUtils.getString("Labels", "importing_successful"));
+		_panel = label;
+	}
+}
