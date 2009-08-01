@@ -11,6 +11,11 @@
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
 	</head>
 	<body>
+	<h3>
+	<xsl:value-of select="xslutils:i18nString('original')"/>
+	<xsl:text> &#8658; </xsl:text>
+	<xsl:value-of select="xslutils:i18nString('translation')"/>
+	</h3>
 	<xsl:apply-templates select="entry"/>
 	<br/>
 	<xsl:apply-templates select="reverse"/>
@@ -115,6 +120,11 @@
 </xsl:template>
 
 <xsl:template match="reverse">
+	<h3>
+	<xsl:value-of select="xslutils:i18nString('translation')"/>
+	<xsl:text> &#8658; </xsl:text>
+	<xsl:value-of select="xslutils:i18nString('original')"/>
+	</h3>
 	<xsl:apply-templates select="sense-ref"/>
 </xsl:template>
 
