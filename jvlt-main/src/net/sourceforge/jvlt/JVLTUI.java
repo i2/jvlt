@@ -436,41 +436,32 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	private boolean saveAs() {
-		JFileChooser chooser = new DictFileChooser(_model.getDictFileName());
-		int val = chooser.showSaveDialog(_main_frame);
-		if (val == JFileChooser.APPROVE_OPTION) {
-			String file_name = chooser.getSelectedFile().getPath();
-			boolean has_suffix = true;
-			if (file_name.length() < 5)
-				has_suffix = false;
-			else if (! file_name.endsWith(".jvlt") &&
-				! file_name.endsWith(".JVLT"))
-				has_suffix = false;
-			if (! has_suffix)
-				file_name = file_name + ".jvlt";
-			
-			File file = new File (file_name);
-			boolean write_file = true;
-			if (file.exists()) {
-				int result = JOptionPane.showConfirmDialog(_main_frame,
+		String file_name = DictFileChooser.selectSaveFile(
+				_model.getDictFileName(),
+				DictFileChooser.FileType.JVLT_FILES,
+				_main_frame);
+		if (file_name == null)
+			return false;
+		
+		/* Show dialog if the file already exists */
+		boolean write_file = true;
+		if (new File(file_name).exists()) {
+			if (JOptionPane.showConfirmDialog(_main_frame,
 					GUIUtils.getString("Messages", "overwrite"),
 					GUIUtils.getString("Labels", "confirm"),
-					JOptionPane.YES_NO_OPTION);
-				if (result != JOptionPane.YES_OPTION)
-					write_file = false;
-			}
-			
-			if (write_file) {
-				try {
-					_model.save(file_name);
-					updateTitle();
-					updateRecentFilesMenu(file_name);
-					
-					return true;
-				}
-				catch (DetailedException ex) {
-					showError(ex.getShortMessage(), ex.getLongMessage());
-				}
+					JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+				write_file = false;
+		}
+
+		if (write_file) {
+			try {
+				_model.save(file_name);
+				updateTitle();
+				updateRecentFilesMenu(file_name);
+				
+				return true;
+			} catch (DetailedException ex) {
+				showError(ex.getShortMessage(), ex.getLongMessage());
 			}
 		}
 		
@@ -949,6 +940,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		System.getProperties().put("swing.plaf.metal.menuFont", font_str);
 		System.getProperties().put("swing.plaf.metal.systemFont", font_str);
 		System.getProperties().put("swing.plaf.metal.userFont", font_str);
+
+		// Extra settings for Macs
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+				"jVLT");
+
 		
 		// Set look & feel.
 		try {
