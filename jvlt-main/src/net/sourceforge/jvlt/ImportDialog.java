@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
-import net.sourceforge.jvlt.WizardModel.InvalidInputException;
 import net.sourceforge.jvlt.event.StateListener;
 import net.sourceforge.jvlt.event.StateListener.StateEvent;
 
@@ -180,10 +179,10 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 				String file = iwm.getJVLTModel().getDictFileName();
 				if (_type_box.getSelectedItem().equals(csv_file))
 					chooser = new DictFileChooser(
-						file, DictFileChooser.CSV_FILES);
+						file, DictFileChooser.FileType.CSV_FILES);
 				else
 					chooser = new DictFileChooser(
-						file, DictFileChooser.JVLT_FILES);
+						file, DictFileChooser.FileType.JVLT_FILES);
 				
 				int val = chooser.showOpenDialog(_panel);
 				if (val == JFileChooser.APPROVE_OPTION)
@@ -469,6 +468,8 @@ class ImportSuccessDescriptor extends WizardPanelDescriptor {
 	private void initUI() {
 		JLabel label = new JLabel(
 				GUIUtils.getString("Labels", "importing_successful"));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setVerticalAlignment(SwingConstants.CENTER);
 		_panel = label;
 	}
 }
