@@ -9,18 +9,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.event.StateListener;
@@ -95,15 +97,28 @@ class ExportWizardModel extends DialogWizardModel {
 				(FinishExportDescriptor) _current_descriptor;
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				Dict dict = sed.getDict();
-				fed.setDict(dict);
-				fed.setClearStats(sed.getClearStats());
-				try {
-					fed.export();
-					next = esd;
-				} catch (IOException e) {
-					throw new InvalidInputException(
-						GUIUtils.getString("Messages", "exporting_failed"),
-						e.getMessage());
+				String file_name = fed.getFileName();
+				
+				boolean write_file = true;
+				if (new File(file_name).exists()) {
+					if (JOptionPane.showConfirmDialog(fed.getPanelComponent(),
+							GUIUtils.getString("Messages", "overwrite"),
+							GUIUtils.getString("Labels", "confirm"),
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+						write_file = false;
+				}
+
+				if (write_file) {
+					fed.setDict(dict);
+					fed.setClearStats(sed.getClearStats());
+					try {
+						fed.export();
+						next = esd;
+					} catch (IOException e) {
+						throw new InvalidInputException(
+							GUIUtils.getString("Messages", "exporting_failed"),
+							e.getMessage());
+					}
 				}
 			}
 			else if (command.equals(Wizard.BACK_COMMAND))
@@ -120,15 +135,13 @@ class ExportWizardModel extends DialogWizardModel {
 	}
 	
 	public void loadState() {
-		StartExportDescriptor sed =
-			(StartExportDescriptor) getPanelDescriptor("start");
-		sed.loadState();
+		((StartExportDescriptor) getPanelDescriptor("start")).loadState();
+		((FinishExportDescriptor) getPanelDescriptor("finish")).loadState();
 	}
 
 	public void saveState() {
-		StartExportDescriptor sed =
-			(StartExportDescriptor) getPanelDescriptor("start");
-		sed.saveState();
+		((StartExportDescriptor) getPanelDescriptor("start")).saveState();
+		((FinishExportDescriptor) getPanelDescriptor("finish")).saveState();
 	}
 }
 
@@ -287,37 +300,36 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 class FinishExportDescriptor extends WizardPanelDescriptor {
 	class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String csv_file = GUIUtils.getString("Labels", "csv_file");
-			String html_file = GUIUtils.getString("Labels", "html_file");
-			String jvlt_file = GUIUtils.getString("Labels", "jvlt_file");
 			if (e.getActionCommand().equals("select_file")) {
-                DictFileChooser chooser;
+				DictFileChooser.FileType type;
+				if (_type_box.getSelectedIndex() == FILE_TYPE_CSV)
+					type = DictFileChooser.FileType.CSV_FILES;
+				else if (_type_box.getSelectedIndex() == FILE_TYPE_HTML)
+					type = DictFileChooser.FileType.HTML_FILES;
+				else
+					type = DictFileChooser.FileType.JVLT_FILES;
+				
 				ExportWizardModel ewm = (ExportWizardModel) _model;
 				String file = ewm.getJVLTModel().getDictFileName();
-				if (_type_box.getSelectedItem().equals(csv_file))
-					chooser = new DictFileChooser(
-						file, DictFileChooser.CSV_FILES);
-				else if (_type_box.getSelectedItem().equals(jvlt_file))
-					chooser = new DictFileChooser(
-						file, DictFileChooser.JVLT_FILES);
-				else
-					chooser = new DictFileChooser(
-						file, DictFileChooser.HTML_FILES);
-				
-				int val = chooser.showSaveDialog(_panel);
-				if (val == JFileChooser.APPROVE_OPTION)
-					_file_field.setText(chooser.getSelectedFile().getPath());
+				String file_name = DictFileChooser.selectSaveFile(file,
+						type, _panel);
+				if (file_name != null) {
+					_file_names.put(_type_box.getSelectedIndex(), file_name);
+					_file_field.setText(file_name);
+				}
 			}
 			else if (e.getActionCommand().equals("file_type")) {
 				_panel.remove(_csv_panel);
 				_panel.remove(_html_panel);
 				CustomConstraints cc = new CustomConstraints();
 				cc.update(0, 3, 1.0, 0.0, 3, 1);
-				if (_type_box.getSelectedItem().equals(csv_file)) {
+				if (_type_box.getSelectedIndex() == FILE_TYPE_CSV) {
 					_panel.add(_csv_panel, cc);
-				} else if (_type_box.getSelectedItem().equals(html_file)) {
+				} else if (_type_box.getSelectedIndex() == FILE_TYPE_HTML) {
 					_panel.add(_html_panel, cc);
 				}
+				
+				updateFileField();
 				
 				_panel.revalidate();
 				_panel.repaint(_panel.getVisibleRect());
@@ -325,11 +337,16 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		}
 	}
 	
+	private static final int FILE_TYPE_JVLT = 0;
+	private static final int FILE_TYPE_CSV = 1;
+	private static final int FILE_TYPE_HTML = 2;
+	
 	private LabeledComboBox _type_box;
 	private CustomTextField _file_field;
 	private CSVExportPanel _csv_panel;
 	private HTMLExportPanel _html_panel;
 	private Dict _dict;
+	private Map<Integer, String> _file_names = new HashMap<Integer, String>();
 	private boolean _clear_stats = false; 
 	
 	public FinishExportDescriptor(ExportWizardModel model) {
@@ -339,16 +356,16 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	
 	public String getID() { return "finish"; }
 	
+	public String getFileName() { return _file_field.getText(); }
+	
 	public void export() throws IOException {
 		File f = new File(_file_field.getText());
 		FileOutputStream stream = new FileOutputStream(f);
-		if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "jvlt_file"))) {
+		if (_type_box.getSelectedIndex() == FILE_TYPE_JVLT) {
 			DictXMLWriter writer = new DictXMLWriter(_dict, stream);
 			writer.setClearStats(_clear_stats);
 			writer.write();
-		} else if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "csv_file"))) {
+		} else if (_type_box.getSelectedIndex() == FILE_TYPE_CSV) {
 			DictCSVWriter writer = new DictCSVWriter(_dict, stream);
 			writer = new DictCSVWriter(_dict, stream);
 			writer.setCharset(_csv_panel.getCharset());
@@ -358,8 +375,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 			 * ignores the statistics fields.
 			 */
 			writer.write();
-		} else if (_type_box.getSelectedItem().equals(
-				GUIUtils.getString("Labels", "html_file"))) {
+		} else if (_type_box.getSelectedIndex() == FILE_TYPE_HTML) {
 			DictHtmlWriter writer = new DictHtmlWriter(_dict, stream);
 			writer.setAddReverse(_html_panel.isBidirectional());
 			writer.write();
@@ -370,18 +386,54 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	
 	public void setClearStats(boolean clear) { _clear_stats = clear; }
 	
+	public void loadState() {
+		_type_box.setSelectedIndex(JVLT.getConfig().getIntProperty(
+				"export_file_type", 0));
+		_file_names.put(FILE_TYPE_JVLT, JVLT.getConfig().getProperty(
+				"export_file_name_jvlt", ""));
+		_file_names.put(FILE_TYPE_CSV, JVLT.getConfig().getProperty(
+				"export_file_name_csv", ""));
+		_file_names.put(FILE_TYPE_HTML, JVLT.getConfig().getProperty(
+				"export_file_name_html", ""));
+		_html_panel.setBidirectional(JVLT.getConfig().getBooleanProperty(
+				"export_html_bidirectional", false));
+		
+		_csv_panel.loadState();
+		
+		updateFileField();
+	}
+	
+	public void saveState() {
+		JVLT.getConfig().setProperty("export_file_type",
+				_type_box.getSelectedIndex());
+		JVLT.getConfig().setProperty("export_file_name_jvlt",
+				_file_names.get(FILE_TYPE_JVLT));
+		JVLT.getConfig().setProperty("export_file_name_csv",
+				_file_names.get(FILE_TYPE_CSV));
+		JVLT.getConfig().setProperty("export_file_name_html",
+				_file_names.get(FILE_TYPE_HTML));
+		JVLT.getConfig().setProperty("export_html_bidirectional",
+				_html_panel.isBidirectional());
+		
+		_csv_panel.saveState();
+	}
+	
 	private void initUI() {
 		Action select_action =
 			GUIUtils.createTextAction(new ActionHandler(), "select_file");
 			
 		_file_field = new CustomTextField(20);
+		_file_field.setEnabled(false);
 		_file_field.setActionCommand("select_export_file");
 		
 		_type_box = new LabeledComboBox();
 		_type_box.setLabel("file_type");
-		_type_box.addItem(GUIUtils.getString("Labels", "jvlt_file"));
-		_type_box.addItem(GUIUtils.getString("Labels", "csv_file"));
-		_type_box.addItem(GUIUtils.getString("Labels", "html_file"));
+		_type_box.insertItemAt(GUIUtils.getString("Labels", "jvlt_file"),
+				FILE_TYPE_JVLT);
+		_type_box.insertItemAt(GUIUtils.getString("Labels", "csv_file"),
+				FILE_TYPE_CSV);
+		_type_box.insertItemAt(GUIUtils.getString("Labels", "html_file"),
+				FILE_TYPE_HTML);
 		_type_box.addActionListener(new ActionHandler());
 		
 		_csv_panel = new CSVExportPanel();
@@ -406,6 +458,10 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		cc.update(0, 4, 0, 1.0);
 		_panel.add(Box.createVerticalGlue(), cc);
 	}
+	
+	private void updateFileField() {
+		_file_field.setText(_file_names.get(_type_box.getSelectedIndex()));
+	}
 }
 
 class ExportSuccessDescriptor extends WizardPanelDescriptor {
@@ -420,6 +476,8 @@ class ExportSuccessDescriptor extends WizardPanelDescriptor {
 	private void initUI() {
 		JLabel label = new JLabel(
 				GUIUtils.getString("Labels", "exporting_successful"));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setVerticalAlignment(SwingConstants.CENTER);
 		_panel = label;
 	}
 }
@@ -443,5 +501,9 @@ class HTMLExportPanel extends JPanel {
 	}
 
 	public boolean isBidirectional() { return _bidirectional_box.isSelected(); }
+	
+	public void setBidirectional(boolean bidirectional) {
+		_bidirectional_box.setSelected(bidirectional);
+	}
 }
 
