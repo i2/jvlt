@@ -62,6 +62,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private ExamplePanel _example_tab;
 	private QuizPanel _quiz_tab;
 	private JFrame _main_frame;
+	private CustomAction _clear_recent_files_action;
 	private CustomAction _undo_action;
 	private CustomAction _redo_action;
 	private CustomAction _toolbar_redo_action;
@@ -148,6 +149,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} else if (command.startsWith("open_")) {
 			int index = Integer.parseInt(command.substring(command.length()-1));
 			load(_recent_files.get(index));
+		} else if (command.equals("clear_menu")) {
+			_recent_files.clear();
+			updateRecentFilesMenu();
 		} else if (command.equals("save")) {
 			save();
 		} else if (command.equals("save_as")) {
@@ -199,6 +203,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			}
 		} else if (command.equals("reset_stats")) {
 			reset_stats();
+		} else if (command.equals("error_log")) {
+			ErrorLogDialog dlg = new ErrorLogDialog(_main_frame);
+			GUIUtils.showDialog(_main_frame, dlg);
 		} else if (command.equals("settings")) {
 			SettingsDialogData ddata = new SettingsDialogData(_model);
 			CustomDialog dlg = new CustomDialog(ddata, _main_frame,
@@ -300,6 +307,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		CustomAction open_action=GUIUtils.createTextAction(this, "open");
 		CustomAction open_recent_action=GUIUtils.createTextAction(
 			this, "open_recent");
+		_clear_recent_files_action=GUIUtils.createTextAction(
+			this, "clear_menu");
 		CustomAction save_action=GUIUtils.createTextAction(this, "save");
 		CustomAction save_as_action=GUIUtils.createTextAction(this, "save_as");
 		CustomAction print_preview_action=GUIUtils.createTextAction(
@@ -324,6 +333,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Tools menu
 		CustomAction reset_stats_action = GUIUtils.createTextAction(
 				this, "reset_stats");
+		CustomAction error_log_action = GUIUtils.createTextAction(
+				this, "error_log"); 
 		CustomAction settings_action = GUIUtils.createTextAction(
 				this, "settings");
 		
@@ -342,6 +353,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		item.setIcon(null);
 		file_menu.add(item);
 		_recent_files_menu = new JMenu(open_recent_action);
+		_recent_files_menu.addSeparator();
+		_recent_files_menu.add(new JMenuItem(_clear_recent_files_action));
 		file_menu.add(_recent_files_menu);
 		file_menu.addSeparator();
 		item = new JMenuItem(save_action);
@@ -365,6 +378,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		JMenu tools_menu = GUIUtils.createMenu("menu_tools");
 		menu_bar.add(tools_menu);
 		tools_menu.add(reset_stats_action);
+		tools_menu.add(error_log_action);	
 		tools_menu.addSeparator();
 		tools_menu.add(settings_action);
 		JMenu help_menu = GUIUtils.createMenu("menu_help");
@@ -427,7 +441,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		//----------
 		updateStatusBar();
 		if (_recent_files.size() > 0)
-			updateRecentFilesMenu(_recent_files.get(0));
+			setMostRecentFile(_recent_files.get(0));
+		else
+			updateRecentFilesMenu();
 	}
 	
 	private void showError(String short_message, String long_message) {
@@ -457,7 +473,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				_model.save(file_name);
 				updateTitle();
-				updateRecentFilesMenu(file_name);
+				setMostRecentFile(file_name);
 				
 				return true;
 			} catch (DetailedException ex) {
@@ -474,7 +490,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		try {
 			_model.save();
-			updateRecentFilesMenu(_model.getDictFileName());
+			setMostRecentFile(_model.getDictFileName());
 			return true;
 		}
 		catch (DetailedException ex) {
@@ -525,7 +541,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			public void run() {
 				try {		
 					_model.load(file_name);
-					updateRecentFilesMenu(file_name);
+					setMostRecentFile(file_name);
 				}
 				catch (DictReaderException e) {
 					Exception ex = e.getException();
@@ -562,7 +578,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			_model.load(file, version);
 			DictUpdater updater = new DictUpdater(version);
 			updater.updateDict(_model.getDict());
-			updateRecentFilesMenu(file);
+			setMostRecentFile(file);
 		}
 		catch (Exception dre) {
 			handleLoadException(dre, file);
@@ -570,19 +586,34 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	private void handleLoadException(Exception ex, String file_name) {
+		String long_message = null;
+		String short_message = null;
 		if (ex instanceof DictReaderException) {
 			DictReaderException dre = (DictReaderException) ex;
-			showError(dre.getShortMessage(), dre.getLongMessage());
-		}
-		else if (ex instanceof IOException) {
+			short_message = dre.getShortMessage();
+			long_message = dre.getLongMessage();
+		} else if (ex instanceof IOException) {
 			IOException ioe = (IOException) ex;
-			String text = GUIUtils.getString("Messages", "loading_failed");
-			showError(text, ioe.getMessage());
-		}
-		else if (ex instanceof VersionException) {
+			short_message = GUIUtils.getString("Messages", "loading_failed");
+			long_message = ioe.getMessage();
+		} else if (ex instanceof VersionException) {
 			VersionException ve = (VersionException) ex;
-			String text = GUIUtils.getString("Messages", "version_too_large");
-			showError(text, ve.getMessage());
+			short_message = GUIUtils.getString("Messages", "version_too_large");
+			long_message = ve.getMessage();
+		} else {
+			short_message = GUIUtils.getString("Messages", "unknown_error");
+			long_message = ex.getMessage();
+		}
+		
+		if (_recent_files.contains(file_name)) {
+			int result = OpenErrorDialog.showDialog(
+					_main_frame, short_message, long_message);
+			if (result == OpenErrorDialog.REMOVE_OPTION) {
+				_recent_files.remove(file_name);
+				updateRecentFilesMenu();
+			}
+		} else {
+			showError(short_message, long_message);
 		}
 	}
 	
@@ -800,13 +831,18 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		_main_frame.setTitle(title);
 	}
 	
-	private void updateRecentFilesMenu(String file_name) {
+	private void setMostRecentFile(String file_name) {
 		_recent_files.remove(file_name);
 		_recent_files.addFirst(file_name);
 		while (_recent_files.size() > 5)
 			_recent_files.removeLast();
 		
-		_recent_files_menu.removeAll();
+		updateRecentFilesMenu();
+	}
+	
+	private void updateRecentFilesMenu() {
+		while (_recent_files_menu.getItemCount() > 2)
+			_recent_files_menu.remove(0);
 		Iterator<String> it = _recent_files.iterator();
 		int index = 0;
 		while (it.hasNext()) {
@@ -814,9 +850,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			CustomAction action = new CustomAction("open_"+index);
 			action.addActionListener(this);
 			action.putValue(Action.NAME, f.getName());
-			_recent_files_menu.add(new JMenuItem(action));
+			_recent_files_menu.add(new JMenuItem(action),
+					_recent_files_menu.getItemCount() - 2);
 			index++;
 		}
+		
+		_clear_recent_files_action.setEnabled(_recent_files.size() > 0);
 	}
 
 	private void loadRuntimeProperties() {
@@ -928,6 +967,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	public static void main (String[] args) {
+		ErrorLog.init();
 		JVLT jvlt = new JVLT();
 		jvlt.init();
 		Config config = JVLT.getConfig();
@@ -941,12 +981,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		System.getProperties().put("swing.plaf.metal.systemFont", font_str);
 		System.getProperties().put("swing.plaf.metal.userFont", font_str);
 
-		// Extra settings for Macs
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
-		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-				"jVLT");
-
-		
 		// Set look & feel.
 		try {
 			if (config.containsKey("look_and_feel"))
@@ -1042,5 +1076,53 @@ class AboutDialog extends JDialog {
 			_html_pane.setCaretPosition(0);
 		}
 		catch(Exception ex) { ex.printStackTrace(); }
+	}
+}
+
+class OpenErrorDialog extends MessageDialog {
+	private static final long serialVersionUID = 1L;
+	
+	public static final int REMOVE_OPTION=USER_OPTION;
+	
+	public static int showDialog(Frame parent, String message, String details) {
+		_dialog = new OpenErrorDialog (parent, message, details);
+		GUIUtils.showDialog(parent, _dialog);
+		return _dialog._result;
+	}
+	
+	private JButton _remove_recent_button;
+	
+	public void actionPerformed(ActionEvent ev) {
+		if (ev.getActionCommand().equals("remove_recent")) {
+			_result = REMOVE_OPTION;
+			setVisible(false);
+		} else {
+			super.actionPerformed(ev);
+		}
+	}
+	
+	protected void initUI() {
+		Action remove_recent_action = GUIUtils.createTextAction(
+				this, "remove_recent");
+		_remove_recent_button = new JButton(remove_recent_action);
+		
+		super.initUI();
+	}
+	
+	protected void updateButtonRow() {
+		CustomConstraints cc = new CustomConstraints();
+		_button_panel.remove(_ok_button);
+		_button_panel.remove(_remove_recent_button);
+		_button_panel.remove(_details_button);
+		cc.update(1, 0, 0.0, 0.0);
+		_button_panel.add(_ok_button, cc);
+		cc.update(2, 0, 0.0, 0.0);
+		_button_panel.add(_remove_recent_button, cc);
+		cc.update(3, 0, 0.0, 0.0);
+		_button_panel.add(_details_button, cc);
+	}
+	
+	private OpenErrorDialog(Frame parent, String message, String details) {
+		super(parent, ERROR_MESSAGE, message, details);
 	}
 }
