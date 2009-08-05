@@ -40,13 +40,17 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 	public void setSelectedItem(Object item) {
 		_selected_item = item;
 
-		Iterator<ListDataListener> it = _listeners.iterator();
-		while (it.hasNext())
-			it.next().contentsChanged(new ListDataEvent(this,
-					ListDataEvent.CONTENTS_CHANGED, 0, 0));
+		synchronized(_listeners) {
+			Iterator<ListDataListener> it = _listeners.iterator();
+			while (it.hasNext())
+				it.next().contentsChanged(new ListDataEvent(this,
+						ListDataEvent.CONTENTS_CHANGED, 0, 0));
+		}
 	} 
 
-	public void addListDataListener(ListDataListener l) { _listeners.add(l); }
+	public void addListDataListener(ListDataListener l) {
+		synchronized(_listeners) { _listeners.add(l); }
+	}
 
 	public Object getElementAt(int index) {
 		Iterator<Object> it = _items.iterator();
@@ -62,6 +66,6 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 	public int getSize() { return _items.size(); }
 
 	public void removeListDataListener(ListDataListener l) {
-		_listeners.remove(l);
+		synchronized(_listeners) { _listeners.remove(l); }
 	}
 }
