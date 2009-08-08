@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <info>
 	<name>jVLT - Vocabulary Learning Tool</name>
-	<version>1.1.6</version>
+	<version>090808</version>
 	<data-version>1.1</data-version>
 	<author>
 		<name>Henning Burchardt</name>
@@ -39,7 +39,7 @@
 		<name>Jaroslaw Rosiek</name>
 		<e-mail>
 			<local-part>jaroslaw.rosiek</local-part>
-			<domain>jaroslaw.rosiek</domain>
+			<domain>interia.pl</domain>
 		</e-mail>
 		<role>Polish translation</role>
 	</author>
