@@ -126,6 +126,9 @@ public class QuizDict {
 			EntryFilter[] filters) {
 		ArrayList<Entry> return_list = null;
 		
+		if (_info == null)
+			return Collections.emptyList();
+		
 		//-----
 		// Only add the entries that have been expired and where the quizzed
 		// attribute is set.
