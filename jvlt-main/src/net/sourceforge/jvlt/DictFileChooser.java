@@ -8,19 +8,19 @@ public class DictFileChooser extends JFileChooser {
 	private static final long serialVersionUID = 1L;
 
 	public enum FileType {
-		JVLT_FILES("jvlt", "jvlt_files"),
-		CSV_FILES("csv", "csv_files"),
-		HTML_FILES("html", "html_files");
+		JVLT_FILES(new String[] { "jvlt", "jvlt.zip" }, "jvlt_files"),
+		CSV_FILES(new String[] { "csv" }, "csv_files"),
+		HTML_FILES(new String[] { "html" }, "html_files");
 		
-		private String extension;
-		private String description;
+		private String[] extensions;
+		private String   description;
 		
-		private FileType(String extension, String description) {
-			this.extension = extension;
+		private FileType(String[] extensions, String description) {
+			this.extensions = extensions;
 			this.description = description;
 		}
 		
-		public String getExtension() { return this.extension; }
+		public String[] getExtensions() { return this.extensions; }
 		
 		public String getDescription() { return this.description; }
 	}
@@ -39,7 +39,7 @@ public class DictFileChooser extends JFileChooser {
 		
 		SimpleFileFilter filter = new SimpleFileFilter(
 				GUIUtils.getString("Labels", type.getDescription()));
-		filter.addExtension(type.getExtension());
+		filter.setExtensions(type.getExtensions());
 		setFileFilter(filter);
 	}
 	
@@ -52,7 +52,7 @@ public class DictFileChooser extends JFileChooser {
 		String selected_file = chooser.getSelectedFile().getPath();
 		
 		/* Add extension if necessary */
-		String extension = type.getExtension();
+		String extension = type.getExtensions()[0];
 		if (selected_file.length() < extension.length() + 1
 				|| ! selected_file.toLowerCase().endsWith("." + extension))
 			selected_file = selected_file + "." + extension;
