@@ -1,6 +1,30 @@
 package net.sourceforge.jvlt;
 
 public class QuizInfo {
+	private static QuizInfo[] _default_quiz_infos;
+	
+	static {
+		_default_quiz_infos = new QuizInfo[2];
+		
+		_default_quiz_infos[0] = new QuizInfo();
+		_default_quiz_infos[0].setName(
+				GUIUtils.getString("Labels", "original"));
+		_default_quiz_infos[0].setQuizzedAttribute("Orthography");
+		_default_quiz_infos[0].setShownAttributes(
+				new String[] { "Senses" });
+		
+		_default_quiz_infos[1] = new QuizInfo();
+		_default_quiz_infos[1].setName(
+				GUIUtils.getString("Labels", "meanings"));
+		_default_quiz_infos[1].setQuizzedAttribute("Senses");
+		_default_quiz_infos[1].setShownAttributes(
+				new String[] { "Orthography" });
+	}
+	
+	public static QuizInfo[] getDefaultQuizInfos() {
+		return _default_quiz_infos;
+	}
+
 	/* Serialized members */
 	private String _name = null;
 	private String _language = null;
@@ -28,15 +52,5 @@ public class QuizInfo {
 	}
 	
 	public int hashCode() { return _name.hashCode(); }
-
-	public static QuizInfo getDefaultQuizInfo() {
-		QuizInfo info = new QuizInfo();
-		info.setName(GUIUtils.getString("Labels", "default"));
-		info.setLanguage(null);
-		info.setQuizzedAttribute("Orthography");
-		info.setShownAttributes(new String[] { "Senses" });
-		
-		return info;
-	}
 }
 
