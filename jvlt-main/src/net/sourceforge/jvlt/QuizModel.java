@@ -549,7 +549,7 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		model.getJVLTModel().getDictModel().addDictUpdateListener(
 			new DictUpdateHandler());
 		_info_panel = new EntryInfoPanel(model.getJVLTModel(), notifier);
-		 _quiz_info = QuizInfo.getDefaultQuizInfo();
+		 _quiz_info = null;
 		init();
 	}
 	
@@ -597,16 +597,18 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 	}
 	
 	protected void updateInfoPanel() {
-		_info_panel.setDisplayedExampleAttributes(new String[0]);
-		
-		String[] attrs = _quiz_info.getShownAttributes();
-		_info_panel.setDisplayedEntryAttributes(attrs);
-		
-		AttributeResources ar = new AttributeResources();
-		String attr = _quiz_info.getQuizzedAttribute();
-		if (attr != null)
-			_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-				new Object[]{ar.getString(attr)}));
+		if (_quiz_info == null) {
+			_info_panel.setDisplayedEntryAttributes(new String[0]);
+		} else {
+			String[] attrs = _quiz_info.getShownAttributes();
+			_info_panel.setDisplayedEntryAttributes(attrs);
+			
+			AttributeResources ar = new AttributeResources();
+			String attr = _quiz_info.getQuizzedAttribute();
+			if (attr != null)
+				_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
+					new Object[]{ar.getString(attr)}));
+		}
 	}
 }
 
@@ -674,16 +676,18 @@ class EntryInputDescriptor extends EntryDescriptor
 	}
 
 	protected void updateInfoPanel() {
-		_info_panel.setDisplayedExampleAttributes(new String[0]);
-
-		String[] attrs = _quiz_info.getShownAttributes();
-		_info_panel.setDisplayedEntryAttributes(attrs);
-		
-		AttributeResources ar = new AttributeResources();
-		String attr = _quiz_info.getQuizzedAttribute();
-		if (attr != null)
-			_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-				new Object[]{ar.getString(attr)}));
+		if (_quiz_info == null) {
+			_info_panel.setDisplayedEntryAttributes(new String[0]);
+		} else {
+			String[] attrs = _quiz_info.getShownAttributes();
+			_info_panel.setDisplayedEntryAttributes(attrs);
+			
+			AttributeResources ar = new AttributeResources();
+			String attr = _quiz_info.getQuizzedAttribute();
+			if (attr != null)
+				_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
+					new Object[]{ar.getString(attr)}));
+		}
 	}
 }
 
@@ -692,7 +696,6 @@ class StatsDescriptor extends WizardPanelDescriptor
 	private HashMap<String, QuizInfo> _quiz_info_map;
 	private HashMap<String, QuizInfo> _visible_quiz_info_map;
 	private HashMap<String, QuizInfo> _invisible_quiz_info_map;
-	private QuizInfo _default_quiz_info;
 	private Dict _dict;
 	private QuizDict _qdict;
 	
@@ -726,7 +729,6 @@ class StatsDescriptor extends WizardPanelDescriptor
 		
 		_dict = null;
 		_qdict = new QuizDict(jm);
-		_default_quiz_info = QuizInfo.getDefaultQuizInfo();
 		
 		init();
 		loadQuizInfoList();
@@ -740,10 +742,12 @@ class StatsDescriptor extends WizardPanelDescriptor
 
 	public QuizInfo getQuizInfo() {
 		Object name = _quiz_info_box.getSelectedItem();
-		if (name.equals(GUIUtils.getString("Labels", "default")))
-			return _default_quiz_info;
-		else
-			return _quiz_info_map.get(name);
+		QuizInfo[] default_quiz_infos = QuizInfo.getDefaultQuizInfos();
+		for (int i = 0; i < default_quiz_infos.length; i++)
+			if (name.equals(default_quiz_infos[i].getName()))
+				return default_quiz_infos[i];
+
+		return _quiz_info_map.get(name);
 	}
 
 	public void update() {
@@ -1054,12 +1058,16 @@ class StatsDescriptor extends WizardPanelDescriptor
 		JVLTModel jm = ((QuizModel) _model).getJVLTModel();
 		Dict dict = jm.getDict();
 		String dict_lang = dict==null ? null : dict.getLanguage();
+		QuizInfo[] default_quiz_infos = QuizInfo.getDefaultQuizInfos();
 
 		_visible_quiz_info_map.clear();
 		_invisible_quiz_info_map.clear();
 		_quiz_info_box.removeActionListener(_quiz_info_box_listener);
 		_quiz_info_box.removeAllItems();
-		_quiz_info_box.addItem(GUIUtils.getString("Labels", "default"));
+		
+		for (int i = 0; i < default_quiz_infos.length; i++)
+			_quiz_info_box.addItem(default_quiz_infos[i].getName());
+		
 		for (Iterator<QuizInfo> it=_quiz_info_map.values().iterator();
 				it.hasNext(); ) {
 			QuizInfo info = (QuizInfo) it.next();
@@ -1070,14 +1078,15 @@ class StatsDescriptor extends WizardPanelDescriptor
 			} else
 				_invisible_quiz_info_map.put(info.getName(), info);
 		}
+		
 		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
 				"selected_quiz_type");
 		if (selected_quiz_type == null ||
 				! _visible_quiz_info_map.containsKey(selected_quiz_type))
-			_quiz_info_box.setSelectedItem(
-					GUIUtils.getString("Labels", "default"));
+			_quiz_info_box.setSelectedItem(default_quiz_infos[0].getName());
 		else
 			_quiz_info_box.setSelectedItem(selected_quiz_type);
+		
 		_quiz_info_box.addActionListener(_quiz_info_box_listener);
 	}
 }
