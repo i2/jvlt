@@ -567,7 +567,7 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		String[] entryattrs = model.getJVLTModel().getDictModel().getMetaData(
 			Entry.class).getAttributeNames();
 		String[] exampleattrs = model.getJVLTModel().getDictModel().getMetaData(
-			Example.class).getAttributeNames();
+				Example.class).getAttributeNames();
 		_info_panel.setDisplayedEntryAttributes(entryattrs);
 		_info_panel.setDisplayedExampleAttributes(exampleattrs);
 	}
@@ -599,9 +599,11 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 	protected void updateInfoPanel() {
 		if (_quiz_info == null) {
 			_info_panel.setDisplayedEntryAttributes(new String[0]);
+			_info_panel.setDisplayedExampleAttributes(new String[0]);
 		} else {
 			String[] attrs = _quiz_info.getShownAttributes();
 			_info_panel.setDisplayedEntryAttributes(attrs);
+			_info_panel.setDisplayedExampleAttributes(new String[0]);
 			
 			AttributeResources ar = new AttributeResources();
 			String attr = _quiz_info.getQuizzedAttribute();
@@ -678,9 +680,11 @@ class EntryInputDescriptor extends EntryDescriptor
 	protected void updateInfoPanel() {
 		if (_quiz_info == null) {
 			_info_panel.setDisplayedEntryAttributes(new String[0]);
+			_info_panel.setDisplayedExampleAttributes(new String[0]);
 		} else {
 			String[] attrs = _quiz_info.getShownAttributes();
 			_info_panel.setDisplayedEntryAttributes(attrs);
+			_info_panel.setDisplayedExampleAttributes(new String[0]);
 			
 			AttributeResources ar = new AttributeResources();
 			String attr = _quiz_info.getQuizzedAttribute();
