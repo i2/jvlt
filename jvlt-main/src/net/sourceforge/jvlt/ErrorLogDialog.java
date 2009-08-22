@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class ErrorLogDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -18,13 +20,20 @@ public class ErrorLogDialog extends JDialog {
 	private JTextArea _text_area;
 	
 	public ErrorLogDialog(Frame parent) {
-		super(parent, GUIUtils.getString("Labels", "error_log"), true);
+		super(parent, GUIUtils.getString("Labels", "error_log"), false);
 		
 		_text_area = new JTextArea();
 		_text_area.setEditable(false);
-		_text_area.setText(ErrorLog.getInstance().getLines());
 		JScrollPane scrpane = new JScrollPane(_text_area);
 		scrpane.setPreferredSize(new Dimension(400, 320));
+		
+		ErrorLog.getInstance().addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent event) {
+				_text_area.setText(ErrorLog.getInstance().getLines());
+				
+			}
+		});
 		
 		Action close_action = GUIUtils.createTextAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { setVisible(false); }
