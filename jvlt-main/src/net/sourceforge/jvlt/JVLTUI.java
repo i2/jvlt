@@ -70,6 +70,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private JLabel _left_status_label;
 	private JMenu _recent_files_menu;
 	private CustomTabbedPane _tab_pane;
+	private ErrorLogDialog _error_dialog;
 
 	public JVLTUI(JVLTModel model) {
 		_model = model;
@@ -204,8 +205,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} else if (command.equals("reset_stats")) {
 			reset_stats();
 		} else if (command.equals("error_log")) {
-			ErrorLogDialog dlg = new ErrorLogDialog(_main_frame);
-			GUIUtils.showDialog(_main_frame, dlg);
+			GUIUtils.showDialog(_main_frame, _error_dialog);
 		} else if (command.equals("settings")) {
 			SettingsDialogData ddata = new SettingsDialogData(_model);
 			CustomDialog dlg = new CustomDialog(ddata, _main_frame,
@@ -444,6 +444,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			setMostRecentFile(_recent_files.get(0));
 		else
 			updateRecentFilesMenu();
+		
+		//----------
+		// Dialogs
+		//----------
+		_error_dialog = new ErrorLogDialog(_main_frame);
 	}
 	
 	private void showError(String short_message, String long_message) {
@@ -477,6 +482,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				
 				return true;
 			} catch (DetailedException ex) {
+				ex.printStackTrace();
 				showError(ex.getShortMessage(), ex.getLongMessage());
 			}
 		}
@@ -601,6 +607,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			short_message = GUIUtils.getString("Messages", "version_too_large");
 			long_message = ve.getMessage();
 		} else {
+			ex.printStackTrace();
 			short_message = GUIUtils.getString("Messages", "unknown_error");
 			long_message = ex.getMessage();
 		}
