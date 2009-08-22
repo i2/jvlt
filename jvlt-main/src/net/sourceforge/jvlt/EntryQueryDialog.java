@@ -693,10 +693,10 @@ class StringListInput extends JPanel {
 		setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.insets = new Insets(0,0,0,0);
-		cc.update(0, 0, 1.0, 0.0);
-		add(_display, cc);
-		cc.update(1, 0, 0.0, 0.0);
+		cc.update(0, 0, 0.0, 0.0);
 		add(button, cc);
+		cc.update(1, 0, 1.0, 0.0);
+		add(_display, cc);
 	}
 	
 	public void setAvailableStrings(String[] strings) {
