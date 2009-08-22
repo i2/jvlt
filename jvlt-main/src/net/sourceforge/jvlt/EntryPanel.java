@@ -1,6 +1,8 @@
 package net.sourceforge.jvlt;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -20,6 +22,21 @@ import net.sourceforge.jvlt.event.SelectionNotifier;
 public class EntryPanel extends JPanel implements ActionListener,
 	DictUpdateListener, ListSelectionListener, SelectionListener {
 	private static final long serialVersionUID = 1L;
+	
+	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
+	private static final CustomFontCellRenderer PRONUNCIATION_RENDERER;
+	
+	static {
+		Font default_font = new Font("Dialog", Font.PLAIN, 12);
+		ORIGINAL_RENDERER = new CustomFontCellRenderer();
+		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
+		if (JVLT.getConfig().containsKey("ui_orth_font"))
+			ORIGINAL_RENDERER.setFont(JVLT.getConfig().getFontProperty(
+							"ui_orth_font", default_font));
+		if (JVLT.getConfig().containsKey("ui_pron_font"))
+			ORIGINAL_RENDERER.setFont(JVLT.getConfig().getFontProperty(
+							"ui_pron_font", default_font));
+	}
 	
 	private ArrayList<FilterListener<Entry>> _filter_listeners;
 	private JVLTModel _model;
@@ -66,6 +83,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 		config.setProperty("entry_table_sorting", Utils.arrayToString(
 			new Integer[]{new Integer(dir.getColumn()),
 				new Integer(dir.getDirection())} ));
+		
+		// Save filter panel's state
+		_filter_panel.saveState();
 	}
 	
 	public void loadState(Config config) {
@@ -94,6 +114,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			dir.setDirection(Integer.parseInt(dir_string[1]));
 		}
 		_entry_table_model.setSortingDirective(dir);
+		
+		// Load filter panel's state
+		_filter_panel.loadState();
 	}
 	
 	public void objectSelected(SelectionEvent e) {
@@ -110,7 +133,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		if (! _entry_table_model.containsObject(entry)) {
 			String filter = entry.getOrthography();
 			_filter_panel.setFilterString(filter);
-			_filter_panel.setMode(EntryFilterPanel.MODE_ORIGINAL);
+			_filter_panel.setMode(EntryFilterPanel.FilterMode.MODE_ORIGINAL);
 			applyFilter();
 		}
 		_entry_table.setSelectedObject(entry);
@@ -231,6 +254,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 		JScrollPane entry_scrpane = new JScrollPane();
 		entry_scrpane.getViewport().setView(_entry_table);
 		_entry_table.getSelectionModel().addListSelectionListener(this);
+		_entry_table.setCellRenderer("Original", ORIGINAL_RENDERER);
+		_entry_table.setCellRenderer("Pronunciations", PRONUNCIATION_RENDERER);
 	
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridBagLayout());
@@ -366,5 +391,23 @@ public class EntryPanel extends JPanel implements ActionListener,
 				"Actions", "remove_entries"));
 			_model.getDictModel().executeAction(action);
 		}
+	}
+}
+
+class CustomFontCellRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+	
+	private Font _font = null;
+
+	public void setFont(Font f) { _font = f; }
+	
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean is_selected, boolean has_focus, int row, int column) {
+		Component cell = super.getTableCellRendererComponent(table, value,
+				is_selected, has_focus, row, column);
+		if (_font != null)
+			cell.setFont(_font);
+		
+		return cell;
 	}
 }
