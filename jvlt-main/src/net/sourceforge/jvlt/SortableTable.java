@@ -3,7 +3,9 @@ package net.sourceforge.jvlt;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -34,6 +36,7 @@ public class SortableTable<T extends Object> extends JTable
 
 	private JPopupMenu _menu;
 	private SortableTableModel<T> _model;
+	private Map<String, TableCellRenderer> _cell_renderers;
 	private JMenuItem _sort_descending_item;
 	private JMenuItem _no_sorting_item;
 	private JMenuItem _sort_ascending_item;
@@ -45,6 +48,8 @@ public class SortableTable<T extends Object> extends JTable
 	public SortableTable(SortableTableModel<T> model) {
 		super(model);
 		_model = model;
+		
+		_cell_renderers = new HashMap<String, TableCellRenderer>();
 		
 		_mouse_handler = new MouseHandler();
 		getTableHeader().addMouseListener(_mouse_handler);
@@ -81,6 +86,19 @@ public class SortableTable<T extends Object> extends JTable
 			Rectangle rect = getCellRect(index, 0, true);
 			scrollRectToVisible(rect);
 		}
+	}
+	
+	public void setCellRenderer(String column_name, TableCellRenderer r) {
+		_cell_renderers.put(column_name, r);
+	}
+	
+	@Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
+		String column_name = _model.getColumnName(column);
+		if (_cell_renderers.containsKey(column_name))
+			return _cell_renderers.get(column_name);
+		else
+			return super.getCellRenderer(row, column);
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
