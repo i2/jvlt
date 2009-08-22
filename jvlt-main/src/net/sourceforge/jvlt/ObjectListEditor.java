@@ -1,5 +1,6 @@
 package net.sourceforge.jvlt;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -65,6 +66,11 @@ public abstract class ObjectListEditor {
 		_input_field = _single_input_field;
 		
 		setLabel(label);
+	}
+	
+	public void setFont(Font font) {
+		_multi_input_field.getComponent().setFont(font);
+		_single_input_field.getComponent().setFont(font);
 	}
 
 	public void setSelectedItems(Object[] items) {

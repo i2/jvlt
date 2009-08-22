@@ -1,6 +1,7 @@
 package net.sourceforge.jvlt;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,10 +65,20 @@ public class ObjectListPanel extends JPanel {
 	protected Action _add_action;
 	protected Action _remove_action;
 	protected DefaultListModel _list_model;
-	protected JList _list;
+	protected JList _list = null;
 	protected ListeningInputComponent _input_component = null;
 	
 	public ObjectListPanel() { this(new StringInputComponent()); }
+	
+	public void setFont(Font font) {
+		super.setFont(font);
+		
+		if (_list != null) 
+			_list.setFont(font);
+		
+		if (_input_component != null)
+			_input_component.getComponent().setFont(font);
+	}
 
 	public Object[] getSelectedObjects() { return _list_model.toArray(); }
 	
@@ -113,6 +124,9 @@ public class ObjectListPanel extends JPanel {
 		_list = new JList(_list_model);
 		_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_list.addListSelectionListener(new ListSelectionHandler());
+		_list.setFont(getFont());
+		
+		_input_component.getComponent().setFont(getFont());
 
 		JScrollPane list_scrpane = new JScrollPane();
 		list_scrpane.setPreferredSize(new Dimension(100, 100));
