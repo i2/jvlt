@@ -20,8 +20,13 @@ public class SenseArrayQueryItem extends ObjectQueryItem {
 
 	public boolean objectMatches(Object obj) {
 		Sense[] senses = (Sense[]) obj;
-		String val = _match_case ?
-			_value.toString() : _value.toString().toLowerCase();
+		String val = "";
+		if (_value != null)
+			if (_match_case)
+				val = _value.toString();
+			else
+				val = _value.toString().toLowerCase();
+
 		for (int i=0; i<senses.length; i++) {
 			String str;
 			if (_type == SenseArrayQueryItem.TRANSLATION_CONTAINS
