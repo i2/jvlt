@@ -17,6 +17,8 @@ public class SettingsDialogData extends CustomDialogData
 	private Font _old_print_font;
 	private Font _old_html_font;
 	private Font _old_ui_font;
+	private Font _old_ui_orth_font;
+	private Font _old_ui_pron_font;
 	private Font _old_orth_font;
 	private Font _old_pron_font;
 	private Locale _old_locale;
@@ -47,6 +49,8 @@ public class SettingsDialogData extends CustomDialogData
 	private FontChooserButton _print_font_button;
 	private FontChooserButton _html_font_button;
 	private FontChooserButton _ui_font_button;
+	private FontChooserButton _ui_orth_font_button;
+	private FontChooserButton _ui_pron_font_button;
 	private FontChooserButton _orth_font_button;
 	private FontChooserButton _pron_font_button;
 	private ExpirationTimePanel _expiration_panel;
@@ -62,6 +66,10 @@ public class SettingsDialogData extends CustomDialogData
 			new Font("Dialog", Font.PLAIN, 12));
 		_old_ui_font = config.getFontProperty("ui_font",
 			new Font("Dialog", Font.PLAIN, 12));
+		_old_ui_orth_font = config.getFontProperty("ui_orth_font",
+				new Font("Dialog", Font.PLAIN, 12));
+		_old_ui_pron_font = config.getFontProperty("ui_pron_font",
+				new Font("Dialog", Font.PLAIN, 12));
 		_old_orth_font = config.getFontProperty("orth_font",
 			new Font("Dialog", Font.PLAIN, 24));
 		_old_pron_font = config.getFontProperty("pron_font",
@@ -139,6 +147,8 @@ public class SettingsDialogData extends CustomDialogData
 		Font new_print_font=_print_font_button.getFontInfo().getFont();
 		Font new_html_font=_html_font_button.getFontInfo().getFont();
 		Font new_ui_font=_ui_font_button.getFontInfo().getFont();
+		Font new_ui_orth_font=_ui_orth_font_button.getFontInfo().getFont();
+		Font new_ui_pron_font=_ui_pron_font_button.getFontInfo().getFont();
 		Font new_orth_font=_orth_font_button.getFontInfo().getFont();
 		Font new_pron_font=_pron_font_button.getFontInfo().getFont();
 		boolean new_restore_previously_open = _restore_chbox.isSelected();
@@ -163,6 +173,8 @@ public class SettingsDialogData extends CustomDialogData
 		config.setProperty("print_font", new_print_font);
 		config.setProperty("html_font", new_html_font);
 		config.setProperty("ui_font", new_ui_font);
+		config.setProperty("ui_orth_font", new_ui_orth_font);
+		config.setProperty("ui_pron_font", new_ui_pron_font);
 		config.setProperty("orth_font", new_orth_font);
 		config.setProperty("pron_font", new_pron_font);
 		config.setProperty("locale", new_locale);
@@ -185,6 +197,8 @@ public class SettingsDialogData extends CustomDialogData
 			
 		if ((! new_html_font.equals(_old_html_font))
 			|| (! new_ui_font.equals(_old_ui_font))
+			|| (! new_ui_orth_font.equals(_old_ui_orth_font))
+			|| (! new_ui_pron_font.equals(_old_ui_pron_font))
 			|| (! new_orth_font.equals(_old_orth_font))
 			|| (! new_pron_font.equals(_old_pron_font))
 			|| (! _old_locale.equals(new_locale))
@@ -227,6 +241,12 @@ public class SettingsDialogData extends CustomDialogData
 		_ui_font_button = new FontChooserButton();
 		_ui_font_button.setFontInfo(new FontInfo(_old_ui_font));
 		_ui_font_button.setActionCommand("ui_font");
+		_ui_orth_font_button = new FontChooserButton();
+		_ui_orth_font_button.setFontInfo(new FontInfo(_old_ui_orth_font));
+		_ui_orth_font_button.setActionCommand("ui_orth_font");
+		_ui_pron_font_button = new FontChooserButton();
+		_ui_pron_font_button.setFontInfo(new FontInfo(_old_ui_pron_font));
+		_ui_pron_font_button.setActionCommand("ui_pron_font");
 		_orth_font_button = new FontChooserButton();
 		_orth_font_button.setFontInfo(new FontInfo(_old_orth_font));
 		_orth_font_button.setActionCommand("orth_font");
@@ -305,24 +325,32 @@ public class SettingsDialogData extends CustomDialogData
 		cc.update(1,1,1.0,0.0);
 		appearance_panel.add(_ui_font_button, cc);
 		cc.update(0,2,1.0,0.0);
-		appearance_panel.add(_html_font_button.getJLabel(), cc);
+		appearance_panel.add(_ui_orth_font_button.getJLabel(), cc);
 		cc.update(1,2,1.0,0.0);
-		appearance_panel.add(_html_font_button, cc);
+		appearance_panel.add(_ui_orth_font_button, cc);
 		cc.update(0,3,1.0,0.0);
-		appearance_panel.add(_orth_font_button.getJLabel(), cc);
+		appearance_panel.add(_ui_pron_font_button.getJLabel(), cc);
 		cc.update(1,3,1.0,0.0);
-		appearance_panel.add(_orth_font_button, cc);
+		appearance_panel.add(_ui_pron_font_button, cc);
 		cc.update(0,4,1.0,0.0);
-		appearance_panel.add(_pron_font_button.getJLabel(), cc);
+		appearance_panel.add(_html_font_button.getJLabel(), cc);
 		cc.update(1,4,1.0,0.0);
-		appearance_panel.add(_pron_font_button, cc);
+		appearance_panel.add(_html_font_button, cc);
 		cc.update(0,5,1.0,0.0);
-		appearance_panel.add(_locale_cobox.getLabel(), cc);
+		appearance_panel.add(_orth_font_button.getJLabel(), cc);
 		cc.update(1,5,1.0,0.0);
+		appearance_panel.add(_orth_font_button, cc);
+		cc.update(0,6,1.0,0.0);
+		appearance_panel.add(_pron_font_button.getJLabel(), cc);
+		cc.update(1,6,1.0,0.0);
+		appearance_panel.add(_pron_font_button, cc);
+		cc.update(0,7,1.0,0.0);
+		appearance_panel.add(_locale_cobox.getLabel(), cc);
+		cc.update(1,7,1.0,0.0);
 		appearance_panel.add(_locale_cobox, cc);
-		cc.update(0,6,1.0,0.0,2,1);
+		cc.update(0,8,1.0,0.0,2,1);
 		appearance_panel.add(_displayed_attrs_panel, cc);
-		cc.update(0,7,0.0,1.0);
+		cc.update(0,9,0.0,1.0);
 		appearance_panel.add(Box.createVerticalGlue(), cc);
 		
 		JPanel printing_panel = new JPanel();
