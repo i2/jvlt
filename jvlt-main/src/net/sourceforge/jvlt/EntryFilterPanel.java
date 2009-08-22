@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -13,15 +15,27 @@ import javax.swing.JPanel;
 import net.sourceforge.jvlt.event.DialogListener;
 
 public class EntryFilterPanel extends JPanel {
-	public static final int MODE_MULTI = 0;
-	public static final int MODE_ORIGINAL = 1;
-	public static final int MODE_PRONUNCIATION = 2;
-	public static final int MODE_TRANSLATION = 3;
-	public static final int MODE_DEFINITION = 4;
-	public static final int MODE_CATEGORY = 5;
-	public static final int MODE_LESSON = 6;
-	public static final int MODE_ADVANCED = 7;
-	
+	enum FilterMode {
+		MODE_MULTI("filter_all"),
+		MODE_ORIGINAL("original"),
+		MODE_PRONUNCIATION("pronunciation"),
+		MODE_TRANSLATION("translation"),
+		MODE_DEFINITION("definition"),
+		MODE_CATEGORY("category"),
+		MODE_LESSON("lesson"),
+		MODE_ADVANCED("filter_advanced");
+		
+		private String _value;
+		
+		private FilterMode(String value) {
+			 _value = value;
+		}
+		
+		public String toString() {
+			return GUIUtils.getString("Labels", _value);
+		}
+	}
+		
 	private static final long serialVersionUID = 1L;
 	
 	private static class BasicEntryFilter extends EntryFilter {
@@ -62,47 +76,25 @@ public class EntryFilterPanel extends JPanel {
 				fireActionEvent(new ActionEvent(EntryFilterPanel.this,
 						e.getID(), null));
 			} else if (e.getSource() == _mode_box) {
-				Object selected = _mode_box.getSelectedItem();
-				if (selected.equals(GUIUtils.getString("Labels", "filter_all")))
-					setMode(MODE_MULTI);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "original")))
-					setMode(MODE_ORIGINAL);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "pronunciation")))
-					setMode(MODE_PRONUNCIATION);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "translation")))
-					setMode(MODE_TRANSLATION);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "definition")))
-					setMode(MODE_DEFINITION);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "category")))
-					setMode(MODE_CATEGORY);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "lesson")))
-					setMode(MODE_LESSON);
-				else if (selected.equals(
-						GUIUtils.getString("Labels", "filter_advanced")))
-					setMode(MODE_ADVANCED);
+				setMode((FilterMode) _mode_box.getSelectedItem());
 
-				if (_mode != MODE_ADVANCED)
+				if (_mode != FilterMode.MODE_ADVANCED)
 					setFilterString(_filter_field.getText());
 				
 				fireActionEvent(new ActionEvent(EntryFilterPanel.this,
 						e.getID(), null));
 			} else if (e.getActionCommand().equals("ok")) {
-				if (_mode != MODE_ADVANCED)
+				if (_mode != FilterMode.MODE_ADVANCED)
 					setFilterString(_filter_field.getText());
 				
 				fireActionEvent(new ActionEvent(EntryFilterPanel.this,
 						e.getID(), null));
 			} else if (e.getActionCommand().equals("cancel")) {
-				if (_mode == MODE_ADVANCED) {
+				if (_mode == FilterMode.MODE_ADVANCED) {
 					ObjectQuery empty_query = new ObjectQuery();
 					_query_dialog.setObjectQuery(empty_query);
-					_filters.get(MODE_ADVANCED).setQuery(empty_query);
+					_filters.get(FilterMode.MODE_ADVANCED).setQuery(
+							empty_query);
 					updateAdvancedFilterField();
 				} else {
 					setFilterString("");
@@ -119,7 +111,7 @@ public class EntryFilterPanel extends JPanel {
 			if (e.getSource() == _query_dialog) {
 				if (e.getType() == AbstractDialog.APPLY_OPTION) {
 					ObjectQuery oq = _query_dialog.getObjectQuery();
-					_filters.get(MODE_ADVANCED).setQuery(oq);
+					_filters.get(FilterMode.MODE_ADVANCED).setQuery(oq);
 					updateAdvancedFilterField();
 					fireActionEvent(new ActionEvent(EntryFilterPanel.this,
 							ActionEvent.ACTION_PERFORMED, null));
@@ -130,10 +122,11 @@ public class EntryFilterPanel extends JPanel {
 		}
 	}
 	
-	private int _mode;
+	private FilterMode _mode;
 	private JVLTModel _model;
-	private Map<Integer, EntryFilter> _filters;
+	private Map<FilterMode, EntryFilter> _filters;
 	private Set<ActionListener> _listeners;
+	private ActionHandler _action_handler;
 	
 	private CustomTextField _filter_field;
 	private EntryQueryDialog _query_dialog;
@@ -143,34 +136,36 @@ public class EntryFilterPanel extends JPanel {
 	private JComboBox _mode_box;
 	
 	public EntryFilterPanel(JVLTModel model) {
-		_mode = MODE_MULTI;
+		_mode = FilterMode.MODE_MULTI;
 		_model = model;
 		_listeners = new HashSet<ActionListener>();
 		
 		//
 		// Create entry filters
 		//
-		_filters = new HashMap<Integer, EntryFilter>();
+		_filters = new HashMap<FilterMode, EntryFilter>();
 		EntryFilter filter = new SimpleEntryFilter();
 		((SimpleEntryFilter) filter).setMatchCase(false);
-		_filters.put(MODE_MULTI, filter);
-		_filters.put(MODE_ORIGINAL, new BasicEntryFilter(new StringQueryItem(
-				"Orthography", StringQueryItem.CONTAINS, "")));
-		_filters.put(MODE_PRONUNCIATION, new BasicEntryFilter(
+		_filters.put(FilterMode.MODE_MULTI, filter);
+		_filters.put(FilterMode.MODE_ORIGINAL, new BasicEntryFilter(
+				new StringQueryItem(
+						"Orthography", StringQueryItem.CONTAINS, "")));
+		_filters.put(FilterMode.MODE_PRONUNCIATION, new BasicEntryFilter(
 				new ObjectArrayQueryItem("Pronunciations",
 						ObjectArrayQueryItem.ITEM_CONTAINS, "")));
-		_filters.put(MODE_TRANSLATION, new BasicEntryFilter(
+		_filters.put(FilterMode.MODE_TRANSLATION, new BasicEntryFilter(
 				new SenseArrayQueryItem(
 						SenseArrayQueryItem.TRANSLATION_CONTAINS, "")));
-		_filters.put(MODE_DEFINITION, new BasicEntryFilter(
+		_filters.put(FilterMode.MODE_DEFINITION, new BasicEntryFilter(
 				new SenseArrayQueryItem(
 						SenseArrayQueryItem.DEFINITION_CONTAINS, "")));
-		_filters.put(MODE_CATEGORY, new BasicEntryFilter(
+		_filters.put(FilterMode.MODE_CATEGORY, new BasicEntryFilter(
 				new ObjectArrayQueryItem("Categories",
 						ObjectArrayQueryItem.ITEM_CONTAINS, "")));
-		_filters.put(MODE_LESSON, new BasicEntryFilter(new StringQueryItem(
-				"Lesson", StringQueryItem.CONTAINS, "")));
-		_filters.put(MODE_ADVANCED, new EntryFilter());
+		_filters.put(FilterMode.MODE_LESSON, new BasicEntryFilter(
+				new StringQueryItem(
+						"Lesson", StringQueryItem.CONTAINS, "")));
+		_filters.put(FilterMode.MODE_ADVANCED, new EntryFilter());
 		
 		//
 		// Create UI
@@ -180,30 +175,24 @@ public class EntryFilterPanel extends JPanel {
 				GUIUtils.getString("Labels", "advanced_filter"), _model);
 		_query_dialog.addDialogListener(new DialogHandler());
 		
-		ActionHandler handler = new ActionHandler();
+		_action_handler = new ActionHandler();
 		
 		_filter_field = new CustomTextField();
 		_filter_field.setActionCommand("filter");
-		_filter_field.addActionListener(handler);
+		_filter_field.addActionListener(_action_handler);
 		
 		_advanced_button = new JButton("...");
-		_advanced_button.addActionListener(handler);
+		_advanced_button.addActionListener(_action_handler);
 		
-		_ok_button = new JButton(GUIUtils.createIconAction(handler, "ok"));
+		_ok_button = new JButton(GUIUtils.createIconAction(
+				_action_handler, "ok"));
 		
 		_cancel_button = new JButton(
-				GUIUtils.createIconAction(handler, "cancel"));
+				GUIUtils.createIconAction(_action_handler, "cancel"));
 		
 		_mode_box = new JComboBox();
-		_mode_box.addActionListener(handler);
-		_mode_box.addItem(GUIUtils.getString("Labels", "filter_all"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "original"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "pronunciation"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "translation"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "definition"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "category"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "lesson"));
-		_mode_box.addItem(GUIUtils.getString("Labels", "filter_advanced"));
+		_mode_box.addActionListener(_action_handler);
+		_mode_box.setModel(new DefaultComboBoxModel(FilterMode.values()));
 		
 		setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
@@ -219,18 +208,18 @@ public class EntryFilterPanel extends JPanel {
 		add(_mode_box, cc);
 	}
 	
-	public int getMode() { return _mode; }
+	public FilterMode getMode() { return _mode; }
 	
-	public void setMode(int mode) {
+	public void setMode(FilterMode mode) {
 		if (mode == _mode)
 			return;
 		
-		int oldmode = _mode;
+		FilterMode oldmode = _mode;
 		_mode = mode;
 
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(3, 0, 0.0, 0.0);
-		if (mode == MODE_ADVANCED) {
+		if (mode == FilterMode.MODE_ADVANCED) {
 			// Update filter field text
 			updateAdvancedFilterField();
 
@@ -241,7 +230,7 @@ public class EntryFilterPanel extends JPanel {
 		} else {
 			// Update filter field text
 			_filter_field.setEnabled(true);
-			if (oldmode == MODE_ADVANCED)
+			if (oldmode == FilterMode.MODE_ADVANCED)
 				_filter_field.setText("");
 			
 			// Remove button for advanced dialog, add ok button
@@ -249,6 +238,11 @@ public class EntryFilterPanel extends JPanel {
 			add(_ok_button, cc);
 			revalidate();
 		}
+		
+		// Update mode box
+		FilterMode current_mode = (FilterMode) _mode_box.getSelectedItem();
+		if (! current_mode.equals(mode))
+			_mode_box.setSelectedItem(mode);
 	}
 	
 	public EntryFilter getFilter() { return _filters.get(_mode); }
@@ -276,6 +270,22 @@ public class EntryFilterPanel extends JPanel {
 	}
 	
 	public void addActionListener(ActionListener l) { _listeners.add(l); }
+	
+	public void loadState() {
+		int selected = JVLT.getConfig().getIntProperty(
+				"filter_mode", FilterMode.MODE_MULTI.ordinal());
+		
+		// Set the mode that has been read from the configuration. The
+		// action listener has to be removed temporarily to prevent an
+		// action event from being emitted.
+		_mode_box.removeActionListener(_action_handler);
+		setMode(FilterMode.values()[selected]);
+		_mode_box.addActionListener(_action_handler);
+	}
+	
+	public void saveState() {
+		JVLT.getConfig().setProperty("filter_mode", getMode().ordinal());
+	}
 	
 	private void fireActionEvent(ActionEvent e) {
 		for (Iterator<ActionListener> i = _listeners.iterator(); i.hasNext(); )
