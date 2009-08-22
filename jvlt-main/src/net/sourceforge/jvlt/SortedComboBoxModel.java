@@ -41,9 +41,10 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 		_selected_item = item;
 
 		synchronized(_listeners) {
-			Iterator<ListDataListener> it = _listeners.iterator();
-			while (it.hasNext())
-				it.next().contentsChanged(new ListDataEvent(this,
+			ListDataListener[] listeners = _listeners.toArray(
+					new ListDataListener[0]);
+			for (int i=0; i<listeners.length; i++)
+				listeners[i].contentsChanged(new ListDataEvent(this,
 						ListDataEvent.CONTENTS_CHANGED, 0, 0));
 		}
 	} 
