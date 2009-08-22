@@ -101,6 +101,14 @@ class SortableTableModel<T extends Object> implements TableModel {
 			this, TableModelEvent.HEADER_ROW));
 	}
 	
+	/** Returns the name of a column (either translated or not translated) */
+	public String getColumnName(int column, boolean translate) {
+		if (translate)
+			return getColumnName(column);
+		else
+			return _columns.get(column).toString();
+	}
+	
 	/** Return the column names (not translated version). */
 	public String[] getColumnNames() {
 		return _columns.toArray(new String[0]);
