@@ -51,8 +51,12 @@ public class AddEntryDialog extends AbstractEntryDialog {
 	public void init() {
 		super.init();
 		
-		// Initialize with empty entry
-		setCurrentEntry(new Entry(_model.getDict().getNextUnusedEntryID()));
+		// Initialize with empty entry. Use the lesson of the entry last added
+		Entry entry = new Entry(_model.getDict().getNextUnusedEntryID());
+		if (_current_entry != null)
+			entry.setLesson(_current_entry.getLesson());
+			
+		setCurrentEntry(entry);
 	}
 	
 	protected void updateComponents() {
