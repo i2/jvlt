@@ -36,7 +36,7 @@ public class SortableTable<T extends Object> extends JTable
 
 	private JPopupMenu _menu;
 	private SortableTableModel<T> _model;
-	private Map<String, TableCellRenderer> _cell_renderers;
+	private Map<String, CustomFontCellRenderer> _cell_renderers;
 	private JMenuItem _sort_descending_item;
 	private JMenuItem _no_sorting_item;
 	private JMenuItem _sort_ascending_item;
@@ -49,7 +49,7 @@ public class SortableTable<T extends Object> extends JTable
 		super(model);
 		_model = model;
 		
-		_cell_renderers = new HashMap<String, TableCellRenderer>();
+		_cell_renderers = new HashMap<String, CustomFontCellRenderer>();
 		
 		_mouse_handler = new MouseHandler();
 		getTableHeader().addMouseListener(_mouse_handler);
@@ -88,8 +88,16 @@ public class SortableTable<T extends Object> extends JTable
 		}
 	}
 	
-	public void setCellRenderer(String column_name, TableCellRenderer r) {
+	public void setCellRenderer(String column_name, CustomFontCellRenderer r) {
 		_cell_renderers.put(column_name, r);
+		
+		// Adjust row height
+		if (r.getFont() != null) {
+			int old_height = getRowHeight();
+			int new_height = getFontMetrics(r.getCustomFont()).getHeight();
+			if (new_height > old_height)
+				setRowHeight(new_height);
+		}
 	}
 	
 	@Override
