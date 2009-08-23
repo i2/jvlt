@@ -28,7 +28,6 @@ public class ErrorLogDialog extends JDialog {
 		scrpane.setPreferredSize(new Dimension(400, 320));
 		
 		ErrorLog.getInstance().addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent event) {
 				_text_area.setText(ErrorLog.getInstance().getLines());
 				
