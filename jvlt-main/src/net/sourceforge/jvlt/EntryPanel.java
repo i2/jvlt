@@ -1,6 +1,5 @@
 package net.sourceforge.jvlt;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -31,10 +30,12 @@ public class EntryPanel extends JPanel implements ActionListener,
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
 		if (JVLT.getConfig().containsKey("ui_orth_font"))
-			ORIGINAL_RENDERER.setFont(JVLT.getConfig().getFontProperty(
+			ORIGINAL_RENDERER.setCustomFont(
+					JVLT.getConfig().getFontProperty(
 							"ui_orth_font", default_font));
 		if (JVLT.getConfig().containsKey("ui_pron_font"))
-			ORIGINAL_RENDERER.setFont(JVLT.getConfig().getFontProperty(
+			PRONUNCIATION_RENDERER.setCustomFont(
+					JVLT.getConfig().getFontProperty(
 							"ui_pron_font", default_font));
 	}
 	
@@ -391,23 +392,5 @@ public class EntryPanel extends JPanel implements ActionListener,
 				"Actions", "remove_entries"));
 			_model.getDictModel().executeAction(action);
 		}
-	}
-}
-
-class CustomFontCellRenderer extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
-	
-	private Font _font = null;
-
-	public void setFont(Font f) { _font = f; }
-	
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean is_selected, boolean has_focus, int row, int column) {
-		Component cell = super.getTableCellRendererComponent(table, value,
-				is_selected, has_focus, row, column);
-		if (_font != null)
-			cell.setFont(_font);
-		
-		return cell;
 	}
 }
