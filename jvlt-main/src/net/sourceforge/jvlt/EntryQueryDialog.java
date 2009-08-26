@@ -494,6 +494,9 @@ class EntryQueryRow implements ActionListener {
 		if (item instanceof ChoiceQueryItem) {
 			if (type == ChoiceQueryItem.CONTAINS) {
 				_input_component = new StringInputComponent();
+			} else if (type == ChoiceQueryItem.EMPTY
+					|| type == ChoiceQueryItem.NOT_EMPTY) {
+				_input_component = new EmptyInputComponent();
 			} else {
 				ChoiceInputComponent cic = new ChoiceInputComponent();
 				if (attr.getClass().equals(CustomChoiceAttribute.class)) {
@@ -514,7 +517,7 @@ class EntryQueryRow implements ActionListener {
 			}
 		} else if (item instanceof ObjectArrayQueryItem) {
 			if (type == ObjectArrayQueryItem.EMPTY
-				|| type == ObjectArrayQueryItem.NOT_EMPTY)
+				|| type == ObjectArrayQueryItem.CONTAINS_AT_LEAST_ONE_ITEM)
 				_input_component = new EmptyInputComponent();
 			else if (type == ObjectArrayQueryItem.ITEM_CONTAINS)
 				_input_component = new StringInputComponent();
