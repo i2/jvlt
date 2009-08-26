@@ -92,7 +92,7 @@ public class SortableTable<T extends Object> extends JTable
 		_cell_renderers.put(column_name, r);
 		
 		// Adjust row height
-		if (r.getFont() != null) {
+		if (r.getCustomFont() != null) {
 			int old_height = getRowHeight();
 			int new_height = getFontMetrics(r.getCustomFont()).getHeight();
 			if (new_height > old_height)
