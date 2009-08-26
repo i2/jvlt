@@ -3,7 +3,7 @@ package net.sourceforge.jvlt;
 public class ObjectArrayQueryItem extends ObjectQueryItem {
 	public static final int ITEM_CONTAINS = 0;
 	public static final int EMPTY = 1;
-	public static final int NOT_EMPTY = 2;
+	public static final int CONTAINS_AT_LEAST_ONE_ITEM = 2;
 
 	private boolean _match_case = false;
 	
@@ -22,7 +22,7 @@ public class ObjectArrayQueryItem extends ObjectQueryItem {
 		
 		if (_type == EMPTY)
 			return array.length == 0;
-		else if (_type == NOT_EMPTY)
+		else if (_type == CONTAINS_AT_LEAST_ONE_ITEM)
 			return array.length > 0;
 		else if (_type == ITEM_CONTAINS) {
 			if (_value == null)
