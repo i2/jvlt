@@ -46,6 +46,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	
 	private CustomAction _add_action;
 	private CustomAction _edit_action;
+	private CustomAction _edit_as_new_action;
 	private CustomAction _remove_action;
 	private SortableTable<Entry> _entry_table;
 	private SortableTableModel<Entry> _entry_table_model;
@@ -53,6 +54,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	private AddEntryDialog _add_entry_dialog;
 	private EditEntryDialog _edit_entry_dialog;
 	private EntryFilterPanel _filter_panel;
+	private JPopupMenu _menu;
 
 	public EntryPanel (JVLTModel model, SelectionNotifier notifier) {
 		_filter_listeners = new ArrayList<FilterListener<Entry>>();
@@ -151,6 +153,17 @@ public class EntryPanel extends JPanel implements ActionListener,
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() > 0)
 				editEntries(entries);
+		} else if (e.getActionCommand().equals("edit_as_new")) {
+			List<Entry> entries = _entry_table.getSelectedObjects();
+			if (entries.size() == 1) {
+				// Use selected entry as template for new entry
+				Entry entry = (Entry) entries.get(0).clone();
+				entry.setID(_dict.getNextUnusedEntryID());
+				_add_entry_dialog.init();
+				_add_entry_dialog.setCurrentEntry(entry);
+				GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
+						_add_entry_dialog);
+			}
 		} else if (e.getActionCommand().equals("remove")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() > 0)
@@ -229,6 +242,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	private void init() {
 		_add_action = GUIUtils.createTextAction(this, "add");
 		_edit_action = GUIUtils.createTextAction(this, "edit");
+		_edit_as_new_action = GUIUtils.createTextAction(this, "edit_as_new");
 		_remove_action = GUIUtils.createTextAction(this, "remove");
 		
 		_filter_panel = new EntryFilterPanel(_model);
@@ -239,17 +253,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_entry_table = new SortableTable<Entry>(_entry_table_model);
 		_entry_table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount () != 2)
-					return;
-				
-				int index = _entry_table.rowAtPoint(e.getPoint());
-				if (index < 0)
-					return;
-				
-				Entry entry = _entry_table_model.getObjectAt(index);
-				ArrayList<Entry> list = new ArrayList<Entry>();
-				list.add(entry);
-				editEntries(list);
+				EntryPanel.this.handleTableMouseEvent(e);
 			}		
 		});
 		JScrollPane entry_scrpane = new JScrollPane();
@@ -266,8 +270,10 @@ public class EntryPanel extends JPanel implements ActionListener,
 		cc.update(0, 1);
 		button_panel.add(new JButton(_edit_action), cc);
 		cc.update(0, 2);
+		button_panel.add(new JButton(_edit_as_new_action), cc);
+		cc.update(0, 3);
 		button_panel.add(new JButton(_remove_action), cc);
-		cc.update(0, 3, 0.0, 1.0);
+		cc.update(0, 4, 0.0, 1.0);
 		button_panel.add(Box.createVerticalGlue(), cc);
 		
 		JPanel entry_list_panel = new JPanel();
@@ -295,6 +301,12 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_add_entry_dialog = new AddEntryDialog(frame,
 				GUIUtils.getString("Labels", "add_entry"), _model);
 		_edit_entry_dialog = new EditEntryDialog(frame, "", _model);
+		
+		// Initialize popup menu
+		_menu = new JPopupMenu();
+		_menu.add(_edit_action);
+		_menu.add(_edit_as_new_action);
+		_menu.add(_remove_action);
 	}
 	
 	private void applyFilter() {
@@ -309,6 +321,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 			(_entry_table.getSelectedObjects().size() != 0);
 		
 		_edit_action.setEnabled(element_selected);
+		_edit_as_new_action.setEnabled(
+				_entry_table.getSelectedObjects().size() == 1);
 		_remove_action.setEnabled(element_selected);
 	}
 	
@@ -391,6 +405,24 @@ public class EntryPanel extends JPanel implements ActionListener,
 			action.setMessage(GUIUtils.getString(
 				"Actions", "remove_entries"));
 			_model.getDictModel().executeAction(action);
+		}
+	}
+	
+	private void handleTableMouseEvent(MouseEvent e) {
+		int index = _entry_table.rowAtPoint(e.getPoint());
+		if (index < 0)
+			return;
+		
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getClickCount () != 2)
+				return;
+			
+			Entry entry = _entry_table_model.getObjectAt(index);
+			ArrayList<Entry> list = new ArrayList<Entry>();
+			list.add(entry);
+			editEntries(list);
+		} else if (e.getButton() == MouseEvent.BUTTON3) {
+			_menu.show(e.getComponent(), e.getX(), e.getY());
 		}
 	}
 }
