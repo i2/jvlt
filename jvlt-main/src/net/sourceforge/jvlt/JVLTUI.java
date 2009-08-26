@@ -880,7 +880,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			ObjectQuery[] oqs = (ObjectQuery[]) decoder.readObject();
 			JVLT.getRuntimeProperties().put("filters", oqs);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			JVLT.getRuntimeProperties().put("filter", new ObjectQuery[0]);
 		}
 			
@@ -894,7 +894,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				(EntrySelectionDialogData.State[]) decoder.readObject();
 			JVLT.getRuntimeProperties().put("quiz_entry_filters", states);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			JVLT.getRuntimeProperties().put("quiz_entry_filters", null);
 		}
 			
@@ -910,7 +910,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			JVLT.getRuntimeProperties().put("selected_quiz_type",
 				conf.getProperty("selected_quiz_type", ""));
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			JVLT.getRuntimeProperties().put("quiz_types", new QuizInfo[0]);
 			JVLT.getRuntimeProperties().put("selected_quiz_type", "");
 		}
