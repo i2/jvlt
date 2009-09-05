@@ -453,7 +453,8 @@ class StatsHandler extends AbstractHandler {
 
 			int num_queried = Integer.decode(queried).intValue();
 			int num_mistakes = Integer.decode(mistakes).intValue();
-			int user_flags = Integer.decode(flags).intValue();
+			int user_flags = flags == null ? 0
+					: Integer.decode(flags).intValue();
 			Boolean last_quiz_result = last_result == null ? null
 					: Boolean.parseBoolean(last_result);
 			
