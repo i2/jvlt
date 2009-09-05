@@ -13,7 +13,8 @@ public class DictObjectFormatter {
 		Element elem = _doc.createElement(name);
 		for (int i=0; i<attributes.length; i++) {
 			Attribute attr = attributes[i];
-			elem.appendChild(attr.getXMLElement(_doc, obj));
+			if (attr.getValue(obj) != null)
+				elem.appendChild(attr.getXMLElement(_doc, obj));
 		}
 		return elem;
 	}
