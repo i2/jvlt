@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -34,7 +33,6 @@ public class QuizModel extends WizardModel {
 	private JVLTModel _model;
 	private QuizDict _qdict;
 	private boolean _repeat_mode;
-	private boolean _input_answer;
 	private int _current_entry_pos;
 	private int _current_result_pos;
 	private Entry[] _known_entries;
@@ -44,8 +42,6 @@ public class QuizModel extends WizardModel {
 		_model = model;
 		_qdict = null;
 		_repeat_mode = false;
-		_input_answer
-			= JVLT.getConfig().getBooleanProperty("input_answer", false);
 		_current_entry_pos = 0;
 		_current_result_pos = 0;
 		_known_entries = new Entry[0];
@@ -54,15 +50,13 @@ public class QuizModel extends WizardModel {
 		WizardPanelDescriptor d = new StatsDescriptor(this);
 		registerPanelDescriptor(d);
 		_current_descriptor = d;
-		if (_input_answer)
-			d = new EntryInputDescriptor(this, notifier);
-		else
-			d = new EntryQuestionDescriptor(this, notifier);
+		d = new EntryInputDescriptor(this, notifier);
 		registerPanelDescriptor(d);
-		if (_input_answer)
-			d = new EntryInputAnswerDescriptor(this, notifier);
-		else
-			d = new EntryAnswerDescriptor(this, notifier);
+		d = new EntryQuestionDescriptor(this, notifier);
+		registerPanelDescriptor(d);
+		d = new EntryInputAnswerDescriptor(this, notifier);
+		registerPanelDescriptor(d);
+		d = new EntryAnswerDescriptor(this, notifier);
 		registerPanelDescriptor(d);
 		d = new RepeatDescriptor(this);
 		registerPanelDescriptor(d);
@@ -185,7 +179,7 @@ public class QuizModel extends WizardModel {
 			_known_entries = new Entry[0];
 			_notknown_entries = new Entry[0];
 
-			if (_input_answer)
+			if (JVLT.getConfig().getBooleanProperty("input_answer", false))
 				next = getPanelDescriptor("entry_input");
 			else
 				next = getPanelDescriptor("entry_question");
@@ -264,7 +258,8 @@ public class QuizModel extends WizardModel {
 				if (rd.getState() == YesNoPanel.NO_OPTION)
 					next = getPanelDescriptor("result");
 				else {
-					if (_input_answer)
+					if (JVLT.getConfig().getBooleanProperty(
+							"input_answer", false))
 						next = getPanelDescriptor("entry_input");
 					else
 						next = getPanelDescriptor("entry_question");
@@ -279,7 +274,8 @@ public class QuizModel extends WizardModel {
 					_current_entry_pos = 0;
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
-				if (_input_answer)
+				if (JVLT.getConfig().getBooleanProperty(
+						"input_answer", false))
 					next = getPanelDescriptor("entry_input_answer");
 				else
 					next = getPanelDescriptor("entry_answer");
@@ -295,6 +291,7 @@ public class QuizModel extends WizardModel {
 				if (rd.getState() == YesNoPanel.YES_OPTION) {
 					StatsUpdateAction sua = new StatsUpdateAction(
 						rd.getKnownEntries(), rd.getNotKnownEntries());
+					sua.setIgnoreBatches(_qdict.isIgnoreBatches());
 					sua.setMessage(GUIUtils.getString(
 						"Actions", "save_quiz_results"));
 					_model.getQueryModel().executeAction(sua);
@@ -303,7 +300,8 @@ public class QuizModel extends WizardModel {
 				if (_qdict.getNotKnownEntries().length > 0)
 					next = getPanelDescriptor("repeat");
 				else {
-					if (_input_answer)
+					if (JVLT.getConfig().getBooleanProperty(
+							"input_answer", false))
 						next = getPanelDescriptor("entry_input_answer");
 					else
 						next = getPanelDescriptor("entry_answer");
@@ -380,6 +378,7 @@ public class QuizModel extends WizardModel {
 		}
 
 		StatsUpdateAction sua = new StatsUpdateAction(known, notknown);
+		sua.setIgnoreBatches(_qdict.isIgnoreBatches());
 		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
 		_model.getQueryModel().executeAction(sua);
 	}
@@ -733,6 +732,8 @@ class StatsDescriptor extends WizardPanelDescriptor
 		
 		_dict = null;
 		_qdict = new QuizDict(jm);
+		_qdict.setIgnoreBatches(JVLT.getConfig().getBooleanProperty(
+				"ignore_batches", false));
 		
 		init();
 		loadQuizInfoList();
@@ -850,44 +851,71 @@ class StatsDescriptor extends WizardPanelDescriptor
 				updateQuizInfoList();
 				JVLT.getRuntimeProperties().put("quiz_types", quiz_info_list);
 			}
+		} else if (ev.getActionCommand().equals("options")) {
+			boolean old_ignore_batches = _qdict.isIgnoreBatches();
+			
+			QuizOptionsDialogData data = new QuizOptionsDialogData();
+			CustomDialog.showDialog(data, StatsDescriptor.this._panel,
+					GUIUtils.getString("Labels", "quiz_options"));
+			_qdict.setIgnoreBatches(JVLT.getConfig().getBooleanProperty(
+					"ignore_batches", false));
+			
+			if (old_ignore_batches != _qdict.isIgnoreBatches())
+				update();
 		}
 	}
 	
 	private void init() {
 		_select_words_label = new JLabel();
-		Action select_words_action
-			= GUIUtils.createTextAction(this, "select_words");
-		Action manage_quiz_types_action
-			= GUIUtils.createTextAction(this, "manage_quiz_types");
+		
+		Action select_words_action =
+			GUIUtils.createTextAction(this, "select_words");
+		Action manage_quiz_types_action =
+			GUIUtils.createTextAction(this, "manage_quiz_types");
+		Action options_action =
+			GUIUtils.createTextAction(this, "options");
+		
 		_quiz_info_box = new LabeledComboBox();
 		_quiz_info_box.setLabel("select_quiz_type");
 		_quiz_info_box.addActionListener(_quiz_info_box_listener);
 		
-		JPanel quiz_info_panel = new JPanel();
-		quiz_info_panel.setLayout(new GridBagLayout());
-		CustomConstraints cc = new CustomConstraints();
-		cc.update(0, 0, 0.0, 0.0);
-		quiz_info_panel.add(_quiz_info_box.getLabel(), cc);
-		cc.update(1, 0, 1.0, 0.0);
-		quiz_info_panel.add(Box.createHorizontalGlue(), cc);
-		cc.update(2, 0, 0.0, 0.0);
-		quiz_info_panel.add(_quiz_info_box, cc);
-		cc.update(3, 0, 0.0, 0.0);
-		quiz_info_panel.add(new JButton(manage_quiz_types_action), cc);
-		
-		JPanel select_words_panel = new JPanel();
-		select_words_panel.setLayout(new GridBagLayout());
-		cc.update(0, 0, 1.0, 0.0);
-		select_words_panel.add(
-			new JLabel(GUIUtils.getString("Labels", "select_filters")+":"), cc);
-		cc.update(1, 0, 0.0, 0.0);
-		select_words_panel.add(new JButton(select_words_action), cc);
-		
 		JPanel settings_panel = new JPanel();
-		settings_panel.setLayout(new GridLayout(3,1));
-		settings_panel.add(quiz_info_panel);
-		settings_panel.add(select_words_panel);
-		settings_panel.add(_select_words_label);
+		settings_panel.setLayout(new GridBagLayout());
+		CustomConstraints cc = new CustomConstraints();
+		cc.fill = CustomConstraints.VERTICAL;
+
+		/* First row */
+		cc.update(0, 0, 0.0, 0.0);
+		cc.anchor = CustomConstraints.WEST;
+		settings_panel.add(_quiz_info_box.getLabel(), cc);
+		cc.update(1, 0, 0.0, 0.0);
+		cc.anchor = CustomConstraints.EAST;
+		settings_panel.add(_quiz_info_box, cc);
+		cc.update(2, 0, 0.0, 0.0);
+		settings_panel.add(new JButton(manage_quiz_types_action), cc);
+		
+		/* Second row */
+		cc.update(0, 1, 0.0, 0.0, 1, 1);
+		cc.anchor = CustomConstraints.WEST;
+		settings_panel.add(
+				new JLabel(GUIUtils.getString("Labels", "options")+":"), cc);
+		cc.update(1, 1, 0.0, 0.0, 2, 1);
+		cc.anchor = CustomConstraints.EAST;
+		settings_panel.add(new JButton(options_action), cc);
+
+		/* Third row */
+		cc.update(0, 2, 0.0, 0.0);
+		cc.anchor = CustomConstraints.WEST;
+		settings_panel.add(
+			new JLabel(GUIUtils.getString("Labels", "select_filters")+":"), cc);
+		cc.update(1, 2, 0.0, 0.0, 2, 1);
+		cc.anchor = CustomConstraints.EAST;
+		settings_panel.add(new JButton(select_words_action), cc);
+		
+		/* Fourth row */
+		cc.update(0, 3, 0.0, 0.0, 3, 1);
+		cc.anchor = CustomConstraints.WEST;
+		settings_panel.add(_select_words_label, cc);
 		
 		_html_panel = new JEditorPane();
 		_html_panel.setEditable(false);
@@ -897,9 +925,13 @@ class StatsDescriptor extends WizardPanelDescriptor
 		
 		_panel = new JPanel();
 		_panel.setLayout(new GridBagLayout());
-		cc.update(0, 0, 1.0, 1.0);
+		cc.reset();
+		cc.anchor = CustomConstraints.WEST;
+		cc.update(0, 0, 1.0, 1.0, 2, 1);
 		_panel.add(spane, cc);
-		cc.update(0, 1, 1.0, 0.0);
+		cc.update(0, 1, 1.0, 0.0, 1, 1);
+		_panel.add(Box.createHorizontalGlue(), cc);
+		cc.update(1, 1, 0.0, 0.0, 1, 1);
 		_panel.add(settings_panel, cc);
 	}
 
