@@ -7,6 +7,7 @@ public class QuizDict {
 	private ArrayList<QueryResult> _results;
 	private QuizInfo _info = null;
 	private EntryFilter[] _filters = null;
+	private boolean _ignore_batches;
 	
 	private ArrayList<Entry> _entries;
 
@@ -17,6 +18,10 @@ public class QuizDict {
 		_results = new ArrayList<QueryResult>();
 		_entries = new ArrayList<Entry>();
 	}
+	
+	public boolean isIgnoreBatches() { return _ignore_batches; }
+	
+	public void setIgnoreBatches(boolean ignore) { _ignore_batches = ignore; }
 	
 	public int getResultCount() { return _results.size(); }
 	
@@ -130,8 +135,8 @@ public class QuizDict {
 			return Collections.emptyList();
 		
 		//-----
-		// Only add the entries that have been expired and where the quizzed
-		// attribute is set.
+		// Only add the entries where the quizzed attribute is set. If the
+		// batches are not ignored, only not expired entries are added
 		//-----
 		String attr_str = _info.getQuizzedAttribute(); 
 		Attribute attr = _model.getDictModel().getMetaData(
@@ -141,9 +146,11 @@ public class QuizDict {
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 			Entry entry = it.next();
 			Calendar expiry_date = entry.getExpireDate();
-			if (attr.getValue(entry)!=null && (entry.getBatch() == 0
-				|| expiry_date == null || expiry_date.before(now)))
-				entry_array.add(entry);
+			if (attr.getValue(entry) != null) {
+				if (_ignore_batches || entry.getBatch() == 0
+						|| expiry_date == null || expiry_date.before(now))
+					entry_array.add(entry);
+			}
 		}
 
 		//-----
