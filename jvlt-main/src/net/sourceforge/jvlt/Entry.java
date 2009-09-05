@@ -36,7 +36,10 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		public boolean equals(Object obj) { return super.equals(obj); }
 	}
 	
-	private class Stats implements Reinitializable {
+	public static class Stats implements Reinitializable {
+		public static final int FLAG_INACTIVE = (1 << 0);
+		public static final int FLAG_KNOWN = (1 << 1);
+		
 		public void reinit(Reinitializable obj) {
 			Stats stats = (Stats) obj;
 			
@@ -45,6 +48,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 			_num_mistakes = stats._num_mistakes;
 			_last_queried = stats._last_queried;
 			_date_added = stats._date_added;
+			_user_flags = stats._user_flags;
+			_last_quiz_result = stats._last_quiz_result;
 		}
 		
 		public Object clone() {
@@ -56,6 +61,9 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 				(Calendar) _last_queried.clone();
 			stats._date_added = _date_added == null ? null :
 				(Calendar) _date_added.clone();
+			stats._user_flags = _user_flags;
+			stats._last_quiz_result = _last_quiz_result == null ? null
+					: new Boolean(_last_quiz_result);
 			
 			return stats;
 		}
@@ -65,6 +73,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		public Calendar _last_queried = null;
 		public Calendar _date_added = null;
 		public int _batch = 0;
+		public int _user_flags = 0;
+		public Boolean _last_quiz_result = null;
 	}
 	
 	public static final String UNIT_DAYS  = "days";
@@ -207,13 +217,10 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		_senses.remove(sense);
 	}
 
-	public void setLastQueryResult(boolean known) {
-		if (! known)
-			setBatch(0);
-		else {
-			int num_batches = JVLT.getConfig().getIntProperty("num_batches",7);
-			setBatch(Math.min(_stats._batch+1, num_batches));
-		}
+	public Boolean getLastQuizResult() { return _stats._last_quiz_result; }
+	
+	public void setLastQuizResult(Boolean known) {
+		_stats._last_quiz_result = known;
 	}
 	
 	public void setBatch(int batch) { _stats._batch = batch; }
@@ -244,8 +251,21 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	
 	public void addMultimediaFile(String file) { _mm_files.add(file); }
 	
+	public int getUserFlags() { return _stats._user_flags; }
+	
+	public void setUserFlags(int flags) { _stats._user_flags = flags; }
+	
 	public void resetStats() {
 		_stats = new Stats();
+	}
+	
+	public void updateBatch() {
+		if (! _stats._last_quiz_result)
+			setBatch(0);
+		else {
+			int num_batches = JVLT.getConfig().getIntProperty("num_batches", 7);
+			setBatch(Math.min(_stats._batch+1, num_batches));
+		}
 	}
 	
 	public int compareTo (Entry e)	{
