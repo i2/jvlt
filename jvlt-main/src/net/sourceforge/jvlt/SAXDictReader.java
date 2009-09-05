@@ -439,6 +439,8 @@ class StatsHandler extends AbstractHandler {
 			String mistakes = attributes.getValue("mistakes");
 			String last_queried = attributes.getValue("last-queried");
 			String date_added = attributes.getValue("date-added");
+			String last_result = attributes.getValue("last-quiz-result");
+			String flags = attributes.getValue("flags");
 			if (entry_id == null)
 				throw getSAXException("invalid_xml",
 					"Attribute \"entry-id\" is missing.");
@@ -449,8 +451,11 @@ class StatsHandler extends AbstractHandler {
 				throw getSAXException("invalid_xml",
 					"Attribute \"mistakes\" is missing.");
 
-			int num_queried=Integer.decode(queried).intValue();
-			int num_mistakes=Integer.decode(mistakes).intValue();
+			int num_queried = Integer.decode(queried).intValue();
+			int num_mistakes = Integer.decode(mistakes).intValue();
+			int user_flags = Integer.decode(flags).intValue();
+			Boolean last_quiz_result = last_result == null ? null
+					: Boolean.parseBoolean(last_result);
 			
 			Entry entry = _dict.getEntry(entry_id);
 			if (entry != null) {
@@ -459,6 +464,9 @@ class StatsHandler extends AbstractHandler {
 				entry.setNumQueried(num_queried);
 				entry.setNumMistakes(num_mistakes);
 				entry.setBatch(batch);
+				entry.setUserFlags(user_flags);
+				if (last_quiz_result != null)
+					entry.setLastQuizResult(last_quiz_result);
 			}
 			else {
 				System.out.println("No entry with id \"" + entry_id + "\"");
