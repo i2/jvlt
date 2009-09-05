@@ -225,6 +225,10 @@ class XMLFormatter {
 			entry_elem.setAttribute("date-added",
 				Utils.calendarToString(entry.getDateAdded()));
 		entry_elem.setAttribute("batch", String.valueOf(entry.getBatch()));
+		entry_elem.setAttribute("flags", String.valueOf(entry.getUserFlags()));
+		if (entry.getLastQuizResult() != null)
+			entry_elem.setAttribute("last-result",
+				String.valueOf(entry.getLastQuizResult()));
 		
 		return entry_elem;
 	}
