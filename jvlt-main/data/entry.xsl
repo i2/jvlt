@@ -60,7 +60,7 @@
 	<!-- This td element contains the word statistics. -->
 	<xsl:if test="string(Entry/NumQueried) or string(Entry/NumMistakes) or
 		string(Entry/LastQueried) or string(Entry/Batch) or
-		string(Entry/ExpireDate)">
+		string(Entry/ExpireDate) or string(Entry/LastQuizResult)">
 		<xsl:call-template name="process-stats"/>
 	</xsl:if>
 	</td>
@@ -135,6 +135,23 @@
 		</i></td>
 		<td>
 		<xsl:value-of select="Entry/Batch"/>
+		</td>
+		</tr>
+	</xsl:if>
+	<xsl:if test="string(Entry/LastQuizResult)">
+		<tr>
+		<td><i>
+		<xsl:value-of select="xslutils:i18nString('last_quiz_result')"/>:
+		</i></td>
+		<td>
+		<xsl:choose>
+			<xsl:when test="Entry/LastQuizResult = 'true'">
+				<xsl:value-of select="xslutils:i18nString('known')"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="xslutils:i18nString('not_known')"/>
+			</xsl:otherwise>
+		</xsl:choose>
 		</td>
 		</tr>
 	</xsl:if>
