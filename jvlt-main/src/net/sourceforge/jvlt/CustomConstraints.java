@@ -31,6 +31,9 @@ public class CustomConstraints extends GridBagConstraints {
 		gridheight = grid_height;
 	}
 	
-	public void reset()	{ update (0, 0, 0.0, 0.0, 1, 1); }
+	public void reset()	{
+		fill = GridBagConstraints.BOTH;
+		update (0, 0, 0.0, 0.0, 1, 1);
+	}
 }
 
