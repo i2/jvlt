@@ -10,6 +10,7 @@ public class StatsUpdateAction extends QueryAction {
 	private Entry[] _unknown_entries;
 	private GregorianCalendar _now;
 	private ArrayList<EditDictObjectAction> _entry_actions;
+	private boolean _ignore_batches = false;
 	
 	public StatsUpdateAction(Entry[] known_entries, Entry[] unknown_entries) {
 		super();
@@ -31,6 +32,10 @@ public class StatsUpdateAction extends QueryAction {
 	public Entry[] getKnownEntries() { return _known_entries; }
 	
 	public Entry[] getUnknownEntries() { return _unknown_entries; }
+	
+	public boolean isIgnoreBatches() { return _ignore_batches; }
+	
+	public void setIgnoreBatches(boolean ignore) { _ignore_batches = ignore; }
 	
 	public void executeAction() {
 		Iterator<EditDictObjectAction> it = _entry_actions.iterator();
@@ -54,7 +59,9 @@ public class StatsUpdateAction extends QueryAction {
 		new_entry.setLastQueried(_now);
 		if (! known)
 			new_entry.setNumMistakes(new_entry.getNumMistakes()+1);
-		new_entry.setLastQueryResult(known);
+		new_entry.setLastQuizResult(known);
+		if (!_ignore_batches)
+			new_entry.updateBatch();
 		
 		return new_entry;
 	}
