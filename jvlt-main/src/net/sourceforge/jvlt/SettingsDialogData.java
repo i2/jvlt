@@ -9,8 +9,8 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.border.*;
 
 public class SettingsDialogData extends CustomDialogData
 	implements ActionListener {
@@ -23,11 +23,8 @@ public class SettingsDialogData extends CustomDialogData
 	private Font _old_pron_font;
 	private Locale _old_locale;
 	private boolean _old_restore_previously_open;
-	private boolean _old_input_answer;
-	private boolean _old_match_case;
 	private boolean _old_play_immediately;
 	private LookAndFeel _old_laf;
-	private String _old_default_answer;
 	private HashMap<String, Locale> _string_locale_map;
 	private HashMap<String, String> _string_laf_map;
 	private int _old_num_batches;
@@ -38,13 +35,9 @@ public class SettingsDialogData extends CustomDialogData
 	private JVLTModel _model;
 	
 	private JCheckBox _restore_chbox;
-	private JCheckBox _input_answer_chbox;
-	private JCheckBox _match_case_chbox;
 	private JCheckBox _play_immediately_chbox;
-	private JCheckBox _default_answer_chbox;
 	private LabeledComboBox _locale_cobox;
 	private LabeledComboBox _laf_cobox;
-	private LabeledComboBox _default_answer_cobox;
 	private FileTypePanel _file_type_panel;
 	private FontChooserButton _print_font_button;
 	private FontChooserButton _html_font_button;
@@ -76,16 +69,10 @@ public class SettingsDialogData extends CustomDialogData
 			new Font("Dialog", Font.PLAIN, 12));
 		_old_restore_previously_open = config.getBooleanProperty(
 			"restore_previously_open_file", false);
-		_old_input_answer = config.getBooleanProperty(
-			"input_answer", false);
-		_old_match_case = config.getBooleanProperty(
-			"match_case", true);
 		_old_play_immediately = config.getBooleanProperty(
 			"play_audio_immediately", false);
-		_old_default_answer = config.getProperty(
-			"default_answer", "");
 		_old_num_batches = config.getIntProperty(
-			"num_batches", 7);
+				"num_batches", 7);
 		_old_expiration_factor = config.getFloatProperty(
 			"expiration_factor", 3.0f);
 		_old_expiration_unit = config.getProperty(
@@ -152,17 +139,7 @@ public class SettingsDialogData extends CustomDialogData
 		Font new_orth_font=_orth_font_button.getFontInfo().getFont();
 		Font new_pron_font=_pron_font_button.getFontInfo().getFont();
 		boolean new_restore_previously_open = _restore_chbox.isSelected();
-		boolean new_input_answer = _input_answer_chbox.isSelected();
-		boolean new_match_case = ! _match_case_chbox.isSelected();
 		boolean new_play_immediately = _play_immediately_chbox.isSelected();
-		String new_default_answer = "";
-		if (_default_answer_chbox.isSelected()) {
-			String item = _default_answer_cobox.getSelectedItem().toString();
-			if (item.equals(GUIUtils.getString("Labels", "yes")))
-				new_default_answer = "yes";
-			else
-				new_default_answer = "no";
-		}
 		int new_num_batches = _expiration_panel.getNumBatches();
 		float new_expiration_factor = _expiration_panel.getExpirationFactor();
 		String new_expiration_unit = _expiration_panel.getExpirationUnit();
@@ -180,13 +157,8 @@ public class SettingsDialogData extends CustomDialogData
 		config.setProperty("locale", new_locale);
 		config.setProperty("restore_previously_open_file",
 			String.valueOf(new_restore_previously_open));
-		config.setProperty("input_answer",
-			String.valueOf(new_input_answer));
-		config.setProperty("match_case",
-			String.valueOf(new_match_case));
 		config.setProperty("look_and_feel", new_laf_string);
 		config.setProperty("play_audio_immediately", new_play_immediately);
-		config.setProperty("default_answer", new_default_answer);
 		config.setProperty("num_batches", new_num_batches);
 		config.setProperty("expiration_factor", new_expiration_factor);
 		config.setProperty("expiration_unit", new_expiration_unit);
@@ -202,8 +174,7 @@ public class SettingsDialogData extends CustomDialogData
 			|| (! new_orth_font.equals(_old_orth_font))
 			|| (! new_pron_font.equals(_old_pron_font))
 			|| (! _old_locale.equals(new_locale))
-			|| (! _old_laf.getClass().getName().equals(new_laf_string))
-			|| (_old_input_answer != new_input_answer))
+			|| (! _old_laf.getClass().getName().equals(new_laf_string)))
 				MessageDialog.showDialog(_content_pane,
 					MessageDialog.WARNING_MESSAGE,
 					GUIUtils.getString("Messages", "restart"));
@@ -215,17 +186,6 @@ public class SettingsDialogData extends CustomDialogData
 			boolean metal_theme = _string_laf_map.get(item).equals(
 					"javax.swing.plaf.metal.MetalLookAndFeel");
 			_ui_font_button.setEnabled(metal_theme);
-		}
-		else if (ev.getActionCommand().equals("input_answer")) {
-			boolean input_answer = _input_answer_chbox.isSelected();
-			_match_case_chbox.setEnabled(input_answer);
-			_default_answer_chbox.setEnabled(! input_answer);
-			_default_answer_cobox.setEnabled(! input_answer &&
-				_default_answer_chbox.isSelected());
-		}
-		else if (ev.getActionCommand().equals("default_answer")) {
-			_default_answer_cobox.setEnabled(
-				_default_answer_chbox.isSelected());
 		}
 	}
 	
@@ -281,30 +241,6 @@ public class SettingsDialogData extends CustomDialogData
 		_restore_chbox = new JCheckBox(GUIUtils.createTextAction(this,
 			"restore_previously_open"));
 		_restore_chbox.setSelected(_old_restore_previously_open);
-		
-		_input_answer_chbox = new JCheckBox(GUIUtils.createTextAction(this,
-			"input_answer"));
-		_input_answer_chbox.setSelected(_old_input_answer);
-		_match_case_chbox = new JCheckBox(GUIUtils.createTextAction(this,
-			"ignore_case"));
-		_match_case_chbox.setEnabled(_old_input_answer);
-		_match_case_chbox.setSelected(! _old_match_case);
-		_default_answer_chbox = new JCheckBox(GUIUtils.createTextAction(this,
-			"default_answer"));
-		_default_answer_chbox.setEnabled(! _old_input_answer);
-		_default_answer_chbox.setSelected(! _old_default_answer.equals(""));
-		_default_answer_cobox = new LabeledComboBox();
-		_default_answer_cobox.setLabel("default_answer_choice");
-		_default_answer_cobox.setEnabled(! _old_input_answer &&
-			! _old_default_answer.equals(""));
-		_default_answer_cobox.addItem(GUIUtils.getString("Labels", "yes"));
-		_default_answer_cobox.addItem(GUIUtils.getString("Labels", "no"));
-		if (_old_default_answer.equals("no"))
-			_default_answer_cobox.setSelectedItem(
-				GUIUtils.getString("Labels", "no"));
-		else
-			_default_answer_cobox.setSelectedItem(
-				GUIUtils.getString("Labels", "yes"));
 		
 		_file_type_panel = new FileTypePanel();
 		_file_type_panel.setBorder(new TitledBorder(new EtchedBorder(
@@ -363,32 +299,13 @@ public class SettingsDialogData extends CustomDialogData
 		cc.update(1, 0, 1.0, 0.0);
 		printing_panel.add(_print_font_button, cc);
 		
-		JPanel quizzes_panel = new JPanel();
-		quizzes_panel.setBorder(new TitledBorder(new EtchedBorder(
-			EtchedBorder.LOWERED), GUIUtils.getString("Labels", "quizzes")));
-		quizzes_panel.setLayout(new GridBagLayout());
-		JPanel default_answer_panel = new JPanel();
-		default_answer_panel.setLayout(new GridLayout());
-		default_answer_panel.add(_default_answer_cobox.getLabel());
-		default_answer_panel.add(_default_answer_cobox);
-		cc.update(0, 0, 1.0, 0.0);
-		quizzes_panel.add(_input_answer_chbox, cc);
-		cc.update(0, 1, 1.0, 0.0);
-		cc.insets.left = 15;
-		quizzes_panel.add(_match_case_chbox, cc);
-		cc.update(0, 2, 1.0, 0.0);
-		quizzes_panel.add(_default_answer_chbox, cc);
-		cc.update(0, 3, 1.0, 0.0);
-		cc.insets.left = 2;
-		quizzes_panel.add(default_answer_panel, cc);
-		
 		_expiration_panel = new ExpirationTimePanel();
 		_expiration_panel.setNumBatches(_old_num_batches);
 		_expiration_panel.setExpirationFactor(_old_expiration_factor);
 		_expiration_panel.setExpirationUnit(_old_expiration_unit);
 		_expiration_panel.setBorder(new TitledBorder(
-			new EtchedBorder(EtchedBorder.LOWERED),
-			GUIUtils.getString("Labels", "expiration_time")));
+				new EtchedBorder(EtchedBorder.LOWERED),
+				GUIUtils.getString("Labels", "expiration_time")));
 		
 		JPanel general_panel = new JPanel();
 		general_panel.setLayout(new GridBagLayout());
@@ -397,10 +314,8 @@ public class SettingsDialogData extends CustomDialogData
 		cc.update(0, 1, 1.0, 0.0);
 		general_panel.add(printing_panel, cc);
 		cc.update(0, 2, 1.0, 0.0);
-		general_panel.add(quizzes_panel, cc);
-		cc.update(0, 3, 1.0, 1.0);
 		general_panel.add(_expiration_panel, cc);
-		cc.update(0, 4, 0.0, 1.0);
+		cc.update(0, 3, 0.0, 1.0);
 		general_panel.add(Box.createVerticalGlue(), cc);
 		
 		JPanel multimedia_panel = new JPanel();
@@ -876,4 +791,3 @@ class ExpirationTimePanel extends JPanel {
 			return days_str;
 	}
 }
-
