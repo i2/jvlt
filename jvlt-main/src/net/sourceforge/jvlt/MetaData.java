@@ -67,6 +67,8 @@ public class MetaData {
 					addAttribute(new CalendarAttribute(name, cl));
 				else if (Number.class.isAssignableFrom(cl))
 					addAttribute(new NumberAttribute(name, cl));
+				else if (Boolean.class.isAssignableFrom(cl))
+					addAttribute(new BooleanAttribute(name, cl));
 				else if (Object[].class.isAssignableFrom(cl)) 
 					addAttribute(new ArrayAttribute(name, cl));
 				else
@@ -77,7 +79,8 @@ public class MetaData {
 	
 	/**
 	 * Add a custom attribute.
-	 * Existing attributes with the same name will be overwritten. */ 
+	 * Existing attributes with the same name will be overwritten.
+	 */ 
 	protected void addAttribute(Attribute attribute) {
 		if (_name_map.containsKey(attribute.getName()))
 			removeAttribute(attribute.getName());
