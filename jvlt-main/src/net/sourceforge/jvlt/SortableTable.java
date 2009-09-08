@@ -170,9 +170,9 @@ public class SortableTable<T extends Object> extends JTable
 			return null;
 		
 		if (dir.getDirection() == SortableTableModel.DESCENDING)
-			return _down_arrow;
-		else if (dir.getDirection() == SortableTableModel.ASCENDING)
 			return _up_arrow;
+		else if (dir.getDirection() == SortableTableModel.ASCENDING)
+			return _down_arrow;
 		else
 			return null;
 	}
