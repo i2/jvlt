@@ -143,7 +143,7 @@ public class ObjectSelectionPanel extends JPanel {
 		_selection_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_selection_list.addListSelectionListener(listhandler);
 		JScrollPane selection_scrpane = new JScrollPane();
-		selection_scrpane.setPreferredSize(new Dimension(100, 100));
+		selection_scrpane.setPreferredSize(new Dimension(150, 100));
 		selection_scrpane.getViewport().setView(_selection_list);
 
 		_choice_list_model = new DefaultListModel();
@@ -151,7 +151,7 @@ public class ObjectSelectionPanel extends JPanel {
 		_choice_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_choice_list.addListSelectionListener(listhandler);
 		JScrollPane choice_scrpane = new JScrollPane();
-		choice_scrpane.setPreferredSize(new Dimension(100, 100));
+		choice_scrpane.setPreferredSize(new Dimension(150, 100));
 		choice_scrpane.getViewport().setView(_choice_list);
 		
 		_button_panel = new ButtonPanel(
