@@ -8,15 +8,16 @@ public class QuizDict {
 	private QuizInfo _info = null;
 	private EntryFilter[] _filters = null;
 	private boolean _ignore_batches;
-	
-	private ArrayList<Entry> _entries;
+	private ArrayList<Entry> _available_entries;
+	private ArrayList<Entry> _current_entries;
 
 	public QuizDict(JVLTModel model) {
 		_model = model;
 		_filters = null;
 		_info = null;
 		_results = new ArrayList<QueryResult>();
-		_entries = new ArrayList<Entry>();
+		_available_entries = new ArrayList<Entry>();
+		_current_entries = new ArrayList<Entry>();
 	}
 	
 	public boolean isIgnoreBatches() { return _ignore_batches; }
@@ -41,13 +42,18 @@ public class QuizDict {
 	
 	public QuizInfo getQuizInfo() { return _info; }
 	
-	public int getEntryCount() { return _entries.size(); }
+	public int getAvailableEntryCount() { return _available_entries.size(); }
 	
-	public Entry getEntry(int pos) {
-		if (pos < 0 || pos >= _entries.size())
+	public int getCurrentEntryCount() { return _current_entries.size(); }
+	
+	/**
+	 * Get entry of current quiz
+	 */
+	public Entry getCurrentEntry(int pos) {
+		if (pos < 0 || pos >= _current_entries.size())
 			return null;
 		else
-			return _entries.get(pos);
+			return _current_entries.get(pos);
 	}
 
 	public Entry[] getKnownEntries() {
@@ -75,6 +81,15 @@ public class QuizDict {
 	}
 	
 	/**
+	 * Starts a new quiz
+	 */
+	public void start() {
+		_results.clear();
+		_current_entries.clear();
+		_current_entries.addAll(_available_entries);
+	}
+	
+	/**
 	 * Reset the dictionary.
 	 * Clear the result list and reinitialize the entry list using the not
 	 * known entries.
@@ -82,9 +97,9 @@ public class QuizDict {
 	public void reset() {
 		Entry[] not_known = getNotKnownEntries();
 		_results.clear();
-		_entries.clear();
-		_entries.addAll(Arrays.asList(not_known));
-		Collections.shuffle(_entries, new Random(new Date().getTime()));
+		_current_entries.clear();
+		_current_entries.addAll(Arrays.asList(not_known));
+		Collections.shuffle(_current_entries, new Random(new Date().getTime()));
 	}
 	
 	/**
@@ -95,9 +110,9 @@ public class QuizDict {
 		_filters = filters;
 		_info = info;
 		
-		_results.clear();
-		_entries.clear();
-		_entries.addAll(getEntryList(_model.getDict().getEntries(), filters));
+		_available_entries.clear();
+		_available_entries.addAll(
+				getEntryList(_model.getDict().getEntries(), filters));
 	}
 	
 	/**
@@ -108,21 +123,25 @@ public class QuizDict {
 			Collection<Entry> changed_entries,
 			Collection<Entry> removed_entries) {
 		if (new_entries != null) {
-			_entries.addAll(
+			_available_entries.addAll(
 					getEntryList(new_entries, _filters));
+			// Do not add entries to _current_entries, as _current_entries
+			// might contain only the not known entries
 		}
 		
 		if (changed_entries != null) {
-			_entries.removeAll(changed_entries);
-			_entries.addAll(
+			_current_entries.removeAll(changed_entries);
+			_current_entries.addAll(
+					getEntryList(changed_entries, _filters));
+			_available_entries.removeAll(changed_entries);
+			_available_entries.addAll(
 					getEntryList(changed_entries, _filters));
 			updateResultList(changed_entries);
 		}
 		
 		if (removed_entries != null) {
-			_entries.removeAll(removed_entries);
-			_entries.addAll(
-					getEntryList(removed_entries, _filters));
+			_available_entries.removeAll(removed_entries);
+			_current_entries.removeAll(removed_entries);
 			updateResultList(removed_entries);
 		}
 	}
@@ -198,7 +217,7 @@ public class QuizDict {
 		while (it.hasNext()) {
 			QueryResult result = it.next();
 			if (entries.contains(result.getEntry())
-					&& ! _entries.contains(result.getEntry()))
+					&& ! _current_entries.contains(result.getEntry()))
 				it.remove();
 		}
 	}
