@@ -311,6 +311,8 @@ class EntryQueryRow implements ActionListener {
 			new CalendarQueryItem());
 		_query_items.put(NumberAttribute.class,
 			new NumberQueryItem());
+		_query_items.put(BooleanAttribute.class,
+			new BooleanQueryItem());
 		_query_items.put(DefaultAttribute.class,
 			new StringQueryItem());
 		_query_items.put(CustomAttribute.class,
@@ -533,6 +535,8 @@ class EntryQueryRow implements ActionListener {
 			_input_component = new DateInputComponent();
 		} else if (item instanceof NumberQueryItem) {
 			_input_component = new NumberInputComponent();
+		} else if (item instanceof BooleanQueryItem) {
+			_input_component = new EmptyInputComponent();
 		} else if (item instanceof StringQueryItem) {
 			_input_component = new StringInputComponent();
 		} else if (item instanceof SenseArrayQueryItem) {
