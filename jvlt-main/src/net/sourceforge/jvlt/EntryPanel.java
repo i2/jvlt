@@ -157,10 +157,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() == 1) {
 				// Use selected entry as template for new entry
-				Entry entry = (Entry) entries.get(0).clone();
-				entry.setID(_dict.getNextUnusedEntryID());
-				_add_entry_dialog.init();
-				_add_entry_dialog.setCurrentEntry(entry);
+				Entry entry = entries.get(0).createDeepCopy();
+				_add_entry_dialog.init(entry);
 				GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 						_add_entry_dialog);
 			}
