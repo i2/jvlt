@@ -117,7 +117,7 @@ public class QuizModel extends WizardModel {
 			if (button_command.equals(Wizard.BACK_COMMAND))
 				return (_current_result_pos > 0);
 			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				if (_current_entry_pos >= _qdict.getEntryCount()-1)
+				if (_current_entry_pos >= _qdict.getCurrentEntryCount()-1)
 					return false;
 				else
 					return (ead.getState() != YesNoPanel.UNKNOWN_OPTION);
@@ -126,7 +126,7 @@ public class QuizModel extends WizardModel {
 			if (button_command.equals(Wizard.BACK_COMMAND))
 				return (_current_result_pos > 0);
 			else if (button_command.equals(Wizard.NEXT_COMMAND))
-				return (_current_entry_pos < _qdict.getEntryCount()-1);
+				return (_current_entry_pos < _qdict.getCurrentEntryCount()-1);
 		} else if (_current_descriptor.getID().equals("repeat")) {
 			if (button_command.equals(Wizard.CANCEL_COMMAND))
 				return false;
@@ -173,6 +173,7 @@ public class QuizModel extends WizardModel {
 		if (_current_descriptor instanceof StatsDescriptor) {
 			StatsDescriptor sd = (StatsDescriptor) _current_descriptor;
 			_qdict = sd.getQuizDict();
+			_qdict.start(); /* Start a new quiz */
 			_repeat_mode = false;
 			_current_entry_pos = 0;
 			_current_result_pos = 0;
@@ -291,7 +292,9 @@ public class QuizModel extends WizardModel {
 				if (rd.getState() == YesNoPanel.YES_OPTION) {
 					StatsUpdateAction sua = new StatsUpdateAction(
 						rd.getKnownEntries(), rd.getNotKnownEntries());
-					sua.setIgnoreBatches(_qdict.isIgnoreBatches());
+					sua.setUpdateBatches(!_qdict.isIgnoreBatches()
+							|| JVLT.getConfig().getBooleanProperty(
+									"update_batches", false));
 					sua.setMessage(GUIUtils.getString(
 						"Actions", "save_quiz_results"));
 					_model.getQueryModel().executeAction(sua);
@@ -318,23 +321,23 @@ public class QuizModel extends WizardModel {
 			((StatsDescriptor) next).update();
 		} else if (next instanceof EntryQuestionDescriptor) {
 			EntryQuestionDescriptor eqd = (EntryQuestionDescriptor) next;
-			Entry entry = _qdict.getEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
 			eqd.setEntry(entry);
 			eqd.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputDescriptor) {
 			EntryInputDescriptor eid = (EntryInputDescriptor) next;
-			Entry entry = _qdict.getEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
 			eid.setEntry(entry);
 			eid.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) next;
-			ead.setEntry(_qdict.getEntry(_current_entry_pos));
+			ead.setEntry(_qdict.getCurrentEntry(_current_entry_pos));
 			ead.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryInputAnswerDescriptor d = (EntryInputAnswerDescriptor) next;
-			d.setEntry(_qdict.getEntry(_current_entry_pos));
+			d.setEntry(_qdict.getCurrentEntry(_current_entry_pos));
 			d.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof RepeatDescriptor) {
 			if (! (_current_descriptor instanceof ResultDescriptor)) {
@@ -378,7 +381,9 @@ public class QuizModel extends WizardModel {
 		}
 
 		StatsUpdateAction sua = new StatsUpdateAction(known, notknown);
-		sua.setIgnoreBatches(_qdict.isIgnoreBatches());
+		sua.setUpdateBatches(!_qdict.isIgnoreBatches()
+				|| JVLT.getConfig().getBooleanProperty(
+						"update_batches", false));
 		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
 		_model.getQueryModel().executeAction(sua);
 	}
@@ -391,7 +396,7 @@ public class QuizModel extends WizardModel {
 	
 	private void saveResult(WizardPanelDescriptor d) {
 		QueryResult result = null;
-		Entry entry = _qdict.getEntry(_current_entry_pos);
+		Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
 		if (d instanceof EntryAnswerDescriptor) {
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) d;
 			if (ead.getState() == YesNoPanel.YES_OPTION)
@@ -743,7 +748,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 	
 	public QuizDict getQuizDict() { return _qdict; }
 
-	public int getSelectedEntries() { return _qdict.getEntryCount(); }
+	public int getSelectedEntries() { return _qdict.getAvailableEntryCount(); }
 
 	public QuizInfo getQuizInfo() {
 		Object name = _quiz_info_box.getSelectedItem();
@@ -755,6 +760,10 @@ class StatsDescriptor extends WizardPanelDescriptor
 		return _quiz_info_map.get(name);
 	}
 
+	/**
+	 * Updates the list of available entries and refreshes the view.
+	 * This function must not be called during a quiz.
+	 */
 	public void update() {
 		updateQuizDict();
 		updateView();
