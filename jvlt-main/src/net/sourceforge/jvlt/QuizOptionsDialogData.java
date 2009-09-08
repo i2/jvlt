@@ -18,10 +18,12 @@ public class QuizOptionsDialogData extends CustomDialogData {
 				_default_answer_chbox.setEnabled(! input_answer);
 				_default_answer_cobox.setEnabled(! input_answer &&
 					_default_answer_chbox.isSelected());
-			}
-			else if (ev.getActionCommand().equals("default_answer")) {
+			} else if (ev.getActionCommand().equals("default_answer")) {
 				_default_answer_cobox.setEnabled(
 					_default_answer_chbox.isSelected());
+			} else if (ev.getActionCommand().equals("ignore_batches")) {
+				_update_batches_chbox.setEnabled(
+					_ignore_batches_chbox.isSelected());
 			}
 		}
 	}
@@ -30,12 +32,14 @@ public class QuizOptionsDialogData extends CustomDialogData {
 	private boolean _old_match_case;
 	private String _old_default_answer;
 	private boolean _old_ignore_batches;
+	private boolean _old_update_batches;
 
 	private JCheckBox _input_answer_chbox;
 	private JCheckBox _match_case_chbox;
 	private JCheckBox _default_answer_chbox;
 	private LabeledComboBox _default_answer_cobox;
 	private JCheckBox _ignore_batches_chbox;
+	private JCheckBox _update_batches_chbox;
 
 	public QuizOptionsDialogData() {
 		Config config = JVLT.getConfig();
@@ -48,6 +52,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 				"default_answer", "");
 		_old_ignore_batches = config.getBooleanProperty(
 				"ignore_batches", false);
+		_old_update_batches = config.getBooleanProperty(
+				"update_batches", false);
 
 		initUi();
 	}
@@ -67,11 +73,13 @@ public class QuizOptionsDialogData extends CustomDialogData {
 				new_default_answer = "no";
 		}
 		boolean new_ignore_batches = _ignore_batches_chbox.isSelected();
+		boolean new_update_batches = _update_batches_chbox.isSelected();
 
 		config.setProperty("input_answer", String.valueOf(new_input_answer));
 		config.setProperty("match_case", String.valueOf(new_match_case));
 		config.setProperty("default_answer", new_default_answer);
 		config.setProperty("ignore_batches", new_ignore_batches);
+		config.setProperty("update_batches", new_update_batches);
 	}
 	
 	private void initUi() {
@@ -90,6 +98,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 		_default_answer_cobox.addItem(GUIUtils.getString("Labels", "no"));
 		_ignore_batches_chbox = new JCheckBox(GUIUtils.createTextAction(handler,
 				"ignore_batches"));
+		_update_batches_chbox = new JCheckBox(GUIUtils.createTextAction(handler,
+				"update_batches"));
 		
 		JPanel general_panel = new JPanel();
 		general_panel.setLayout(new GridBagLayout());
@@ -109,7 +119,10 @@ public class QuizOptionsDialogData extends CustomDialogData {
 		general_panel.add(default_answer_panel, cc);
 		cc.update(0, 4, 1.0, 0.0);
 		general_panel.add(_ignore_batches_chbox, cc);
-		cc.update(0, 5, 1.0, 1.0);
+		cc.update(0, 5, 1.0, 0.0);
+		cc.insets.left = 15;
+		general_panel.add(_update_batches_chbox, cc);
+		cc.update(0, 6, 1.0, 1.0);
 		general_panel.add(Box.createVerticalGlue(), cc);
 		
 		_content_pane = general_panel;
@@ -128,6 +141,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 				? GUIUtils.getString("Labels", "no")
 				: GUIUtils.getString("Labels", "yes"));
 		_ignore_batches_chbox.setSelected(_old_ignore_batches);
+		_update_batches_chbox.setEnabled(_old_ignore_batches);
+		_update_batches_chbox.setSelected(_old_update_batches);
 	}
 }
 
