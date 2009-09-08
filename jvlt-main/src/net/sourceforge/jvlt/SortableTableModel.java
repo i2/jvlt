@@ -202,12 +202,20 @@ class SortableTableModel<T extends Object> implements TableModel {
 		_model_to_view = null;
 	}
 	
-	private String getValue(int row, int col) {
+	private Object getValue(int row, int col) {
 		Object obj = _values.get(row);
 		Attribute attr = _data.getAttribute(_columns.get(col).toString());
-		return attr.getFormattedValue(obj);
+		if (Number.class.isAssignableFrom(attr.getType())
+				|| Boolean.class.isAssignableFrom(attr.getType()))
+			/*
+			 * For numbers and booleans use the native type, so the appropriate
+			 * cell renderers can be used
+			 */
+			return attr.getValue(obj);
+		else
+			return attr.getFormattedValue(obj);
 	}
-	
+
 	private int getModelIndex(int row) {
 		return getViewToModel().get(row).getIndex();
 	}
@@ -285,8 +293,8 @@ class SortableTableModel<T extends Object> implements TableModel {
 				return 0;
 
 			int direction = _directive.getDirection();
-			String val1 = getValue(row1, col);
-			String val2 = getValue(row2, col);
+			Object val1 = getValue(row1, col);
+			Object val2 = getValue(row2, col);
 			
 			int comparison = 0;
 			if (val1 == null && val2 == null)
@@ -295,8 +303,15 @@ class SortableTableModel<T extends Object> implements TableModel {
 				comparison = -1;
 			else if (val2 == null)
 				comparison = 1;
-			else
-				comparison = _collator.compare(val1, val2);
+			else {
+				if (val1 instanceof String)
+					comparison = _collator.compare(val1, val2);
+				else if (val1 instanceof Boolean)
+					comparison = ((Boolean) val1).compareTo((Boolean) val2);
+				else if (val1 instanceof Number)
+					comparison = ((Number) val1).intValue()
+									- ((Number) val2).intValue();
+			}
 			
 			if (comparison != 0)
 				return direction == DESCENDING ? -comparison : comparison;
