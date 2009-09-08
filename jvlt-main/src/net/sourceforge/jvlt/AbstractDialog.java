@@ -15,6 +15,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 	public static final int APPLY_OPTION = 2;
 	public static final int CANCEL_OPTION = 3;
 	public static final int CLOSE_OPTION = 4;
+	public static final int USER_OPTION = 5;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -72,6 +73,9 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 	}
 	
 	protected String getFieldNameForValue(int value) {
+		if (value >= USER_OPTION)
+			return getFieldNameForCustomValue(value);
+		
 		Field[] fields = AbstractDialog.class.getFields();
 		for (int i=0; i<fields.length; i++) {
 			Field field = fields[i];
@@ -89,11 +93,25 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		return null;
 	}
 	
+	/**
+	 * Function returning a field name for a custom value.
+	 * 
+	 * This function should be reimplemented by subclasses in order to support
+	 * options that correspond to an integer value equal or greater than
+	 * {@link AbstractDialog#USER_OPTION}.
+	 */
+	protected String getFieldNameForCustomValue(int value) {
+		return null;
+	}
+
 	protected int getValueForFieldName(String name) {
 		try {
-			Field field = AbstractDialog.class.getField(name);
+			Field[] fields = AbstractDialog.class.getFields();
+			for (int i=0; i<fields.length; i++)
+				if (fields[i].getName().equals(name))
+					return fields[i].getInt(null);
 			
-			return field.getInt(null);
+			return getValueForCustomFieldName(name);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -101,7 +119,18 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		
 		return -1;
 	}
-
+	
+	/**
+	 * Function for returning a value for a custom field name
+	 * 
+	 * This function should be reimplemented by subclasses in order to support
+	 * custom options.
+	 * @see 
+	 */
+	protected int getValueForCustomFieldName(String name) {
+		return -1;
+	}
+	
 	private Component getComponent(String name)	{
 		Component[] comps = _button_panel.getComponents();
 		for (int i=0; i<comps.length; i++) {
