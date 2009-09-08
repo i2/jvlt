@@ -10,7 +10,7 @@ public class StatsUpdateAction extends QueryAction {
 	private Entry[] _unknown_entries;
 	private GregorianCalendar _now;
 	private ArrayList<EditDictObjectAction> _entry_actions;
-	private boolean _ignore_batches = false;
+	private boolean _update_batches = true;
 	
 	public StatsUpdateAction(Entry[] known_entries, Entry[] unknown_entries) {
 		super();
@@ -20,24 +20,20 @@ public class StatsUpdateAction extends QueryAction {
 		_now = new GregorianCalendar();
 		_now.set(Calendar.SECOND, 0);
 		_entry_actions = new ArrayList<EditDictObjectAction>();
-		for (int i=0; i<_known_entries.length; i++)
-			_entry_actions.add(new EditDictObjectAction(_known_entries[i],
-				getUpdatedEntry(_known_entries[i], true)));
-		for (int i=0; i<_unknown_entries.length; i++)
-			_entry_actions.add(new EditDictObjectAction(_unknown_entries[i],
-				getUpdatedEntry(_unknown_entries[i], false)));
-		
 	}
 	
 	public Entry[] getKnownEntries() { return _known_entries; }
 	
 	public Entry[] getUnknownEntries() { return _unknown_entries; }
 	
-	public boolean isIgnoreBatches() { return _ignore_batches; }
+	public boolean isUpdateBatches() { return _update_batches; }
 	
-	public void setIgnoreBatches(boolean ignore) { _ignore_batches = ignore; }
+	public void setUpdateBatches(boolean update) { _update_batches = update; }
 	
 	public void executeAction() {
+		if (_entry_actions.size() == 0)
+			prepare();
+		
 		Iterator<EditDictObjectAction> it = _entry_actions.iterator();
 		while (it.hasNext()) {
 			try { it.next().executeAction(); }
@@ -53,6 +49,15 @@ public class StatsUpdateAction extends QueryAction {
 		}
 	}
 	
+	private void prepare() {
+		for (int i=0; i<_known_entries.length; i++)
+			_entry_actions.add(new EditDictObjectAction(_known_entries[i],
+				getUpdatedEntry(_known_entries[i], true)));
+		for (int i=0; i<_unknown_entries.length; i++)
+			_entry_actions.add(new EditDictObjectAction(_unknown_entries[i],
+				getUpdatedEntry(_unknown_entries[i], false)));
+	}
+	
 	private Entry getUpdatedEntry(Entry entry, boolean known) {
 		Entry new_entry = (Entry) entry.clone();
 		new_entry.setNumQueried(new_entry.getNumQueried()+1);
@@ -60,7 +65,7 @@ public class StatsUpdateAction extends QueryAction {
 		if (! known)
 			new_entry.setNumMistakes(new_entry.getNumMistakes()+1);
 		new_entry.setLastQuizResult(known);
-		if (!_ignore_batches)
+		if (_update_batches)
 			new_entry.updateBatch();
 		
 		return new_entry;
