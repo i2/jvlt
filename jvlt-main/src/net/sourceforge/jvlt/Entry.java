@@ -296,8 +296,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	public Object clone() {
 		Entry entry = new Entry(_id);
 		entry._orthography = new String(_orthography);
-		entry._senses = _senses;
-		entry._sense_set = _sense_set;
+		entry._senses.addAll(_senses);
+		entry._sense_set.addAll(_sense_set);
 		entry._categories.addAll(_categories);
 		entry._lesson = new String(_lesson);
 		if (_class == null)
@@ -307,6 +307,25 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		entry._mm_files.addAll(_mm_files);
 		entry._pronunciations.addAll(_pronunciations);
 		entry._stats = (Stats) _stats.clone();
+		
+		return entry;
+	}
+	
+	/**
+	 * Creates a copy of the entry like {@link Entry#clone()} does,
+	 * but it also clones the senses. 
+	 */
+	public Entry createDeepCopy()
+	{
+		Entry entry = (Entry) clone();
+		Sense[] senses = entry.getSenses();
+		
+		entry._senses.clear();
+		entry._sense_set.clear();
+		for (int i=0; i<senses.length; i++)
+			try {
+				entry.addSense((Sense) senses[i].clone());
+			} catch (DictException e) {} /* No exception should be thrown */
 		
 		return entry;
 	}
