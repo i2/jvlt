@@ -154,8 +154,9 @@ public class QuizDict {
 			return Collections.emptyList();
 		
 		//-----
-		// Only add the entries where the quizzed attribute is set. If the
-		// batches are not ignored, only not expired entries are added
+		// Only add the entries where the quizzed attribute is set and that
+		// do not have a flag set that disables them. If the batches
+		// are not ignored, only not expired entries are added.
 		//-----
 		String attr_str = _info.getQuizzedAttribute(); 
 		Attribute attr = _model.getDictModel().getMetaData(
@@ -165,11 +166,23 @@ public class QuizDict {
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 			Entry entry = it.next();
 			Calendar expiry_date = entry.getExpireDate();
-			if (attr.getValue(entry) != null) {
-				if (_ignore_batches || entry.getBatch() == 0
-						|| expiry_date == null || expiry_date.before(now))
-					entry_array.add(entry);
-			}
+			
+			/* Check whether quizzed attribute is set */
+			if (attr.getValue(entry) == null)
+				continue;
+			
+			/* Check for flags */
+			int flags = entry.getUserFlags();
+			if ((flags & Entry.Stats.UserFlag.INACTIVE.getValue()) != 0
+					|| (flags & Entry.Stats.UserFlag.KNOWN.getValue()) != 0)
+				continue;
+			
+			/* Check for batch and expiry date */
+			if (!_ignore_batches && entry.getBatch() != 0
+					&& expiry_date != null && !expiry_date.before(now))
+				continue;
+			
+			entry_array.add(entry);
 		}
 
 		//-----
