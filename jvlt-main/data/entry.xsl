@@ -176,6 +176,16 @@
 		</td>
 		</tr>
 	</xsl:if>
+	<xsl:if test="string(Entry/UserFlags)">
+		<tr>
+		<td><i>
+		<xsl:value-of select="xslutils:i18nString('flags')"/>:
+		</i></td>
+		<td>
+		<xsl:value-of select="Entry/UserFlags"/>
+		</td>
+		</tr>
+	</xsl:if>
 	</table>
 </xsl:template>
 
