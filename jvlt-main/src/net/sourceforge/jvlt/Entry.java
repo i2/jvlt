@@ -37,8 +37,31 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 	
 	public static class Stats implements Reinitializable {
-		public static final int FLAG_INACTIVE = (1 << 0);
-		public static final int FLAG_KNOWN = (1 << 1);
+		public enum UserFlag {
+			NONE(0, "flag_none", "flag_none"),
+			KNOWN(1 << 0, "flag_known_long", "flag_known_short"),
+			INACTIVE(1 << 1, "flag_inactive_long", "flag_inactive_short");
+			
+			private int _value;
+			private String _long_name;
+			private String _short_name;
+			
+			private UserFlag(int value, String long_name, String short_name) {
+				_value = value;
+				_long_name = long_name;
+				_short_name = short_name;
+			}
+			
+			public int getValue() { return _value; }
+			
+			public String getLongName() { return _long_name; }
+			
+			public String getShortName() { return _short_name; }
+			
+			public String toString() {
+				return GUIUtils.getString("Labels", _long_name);
+			}
+		}
 		
 		public void reinit(Reinitializable obj) {
 			Stats stats = (Stats) obj;

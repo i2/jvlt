@@ -34,6 +34,8 @@ public class EntryInfoPanel extends InfoPanel implements HyperlinkListener {
 		_example_attributes.addAll(Arrays.asList(example_data.getAttributes()));
 	}
 	
+	public Entry getEntry() { return _current_entry; }
+	
 	public void setEntry(Entry entry) {
 		_current_entry = entry;
 		updateView();

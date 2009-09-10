@@ -248,6 +248,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 		
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
 		_entry_table_model = new SortableTableModel<Entry>(data);
+		_entry_table_model.setFormatValue(
+				EntryMetaData.UserFlagsAttribute.class, true);
 		_entry_table = new SortableTable<Entry>(_entry_table_model);
 		_entry_table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

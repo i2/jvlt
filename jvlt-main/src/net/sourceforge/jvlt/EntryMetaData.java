@@ -1,6 +1,8 @@
 package net.sourceforge.jvlt;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,6 +43,26 @@ public class EntryMetaData extends MetaData {
 		}
 	}
 	
+	public static class UserFlagsAttribute extends DefaultAttribute {
+		public UserFlagsAttribute() { super("UserFlags", Integer.class); }
+		
+		public String getFormattedValue(Object o) {
+			Integer value = (Integer) getValue(o);
+			List<Entry.Stats.UserFlag> flags =
+				new ArrayList<Entry.Stats.UserFlag>();
+			for (Entry.Stats.UserFlag f: Entry.Stats.UserFlag.values())
+				if ((value & f.getValue()) != 0)
+					flags.add(f);
+			
+			String[] string_list = new String[flags.size()];
+			for (int i=0; i<string_list.length; i++)
+				string_list[i] = GUIUtils.getString(
+						"Labels", flags.get(i).getShortName());
+			
+			return Utils.arrayToString(string_list, ", ");
+		}
+	}
+	
 	private EntryAttributeSchema _schema = null;
 	private Vector<CustomAttribute> _custom_attributes;
 	
@@ -54,6 +76,7 @@ public class EntryMetaData extends MetaData {
 		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
 		addAttribute(new EntryClassAttribute());
+		addAttribute(new UserFlagsAttribute());
 	}
 	
 	public EntryAttributeSchema getAttributeSchema() { return _schema; }

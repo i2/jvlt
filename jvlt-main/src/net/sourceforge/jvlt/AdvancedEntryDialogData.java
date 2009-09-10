@@ -36,6 +36,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	private ChoiceListPanel _category_selection_panel;
 	private EntryAttributeSchemaPanel _schema_panel;
 	private FileSelectionPanel _file_selection_panel;
+	private FlagSelectionPanel _flag_selection_panel;
 	
 	public AdvancedEntryDialogData(List<Entry> entries, JVLTModel model) {
 		_entries = entries;
@@ -82,6 +83,9 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 				JVLT.getConfig().setProperty("use_relative_path", true);
 			else
 				JVLT.getConfig().setProperty("use_relative_path", false);
+		
+		/* Set flags */
+		_flag_selection_panel.apply();
 	}
 	
 	private void init()	{
@@ -114,11 +118,14 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		else
 			_schema_panel = new EntryAttributeSchemaPanel(schema);
 		
+		_flag_selection_panel = new FlagSelectionPanel(_entries);
+		
 		CustomTabbedPane tpane = new CustomTabbedPane();
 		if (_schema_panel != null)
 			tpane.addTab("details", _schema_panel);
 		tpane.addTab("categories", _category_selection_panel);
 		tpane.addTab("multimedia_files", _file_selection_panel);
+		tpane.addTab("flags", _flag_selection_panel);
 		
 		_content_pane = new JPanel();
 		_content_pane.setLayout(new GridLayout());
