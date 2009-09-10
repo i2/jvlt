@@ -6,6 +6,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -325,6 +327,8 @@ class EntryQueryRow implements ActionListener {
 			new SenseArrayQueryItem());
 		_query_items.put(EntryMetaData.EntryClassAttribute.class,
 			new EntryClassQueryItem());
+		_query_items.put(EntryMetaData.UserFlagsAttribute.class,
+			new BitmaskQueryItem());
 		_data = _model.getDictModel().getMetaData(Entry.class);
 
 		_name_box = new JComboBox();
@@ -547,6 +551,8 @@ class EntryQueryRow implements ActionListener {
 				ecic.setSchema(_model.getDict().getEntryAttributeSchema());
            
 			_input_component = ecic;
+		} else if (item instanceof BitmaskQueryItem) {
+			_input_component = new UserFlagsInputComponent();
 		} else {
 			_input_component = null;
 		}
@@ -724,3 +730,31 @@ class StringListInput extends JPanel {
 	}
 }
 
+class UserFlagsInputComponent extends ChoiceListInputComponent {
+	public UserFlagsInputComponent() {
+		List<Entry.Stats.UserFlag> flags = Arrays.asList(
+				Entry.Stats.UserFlag.values());
+		setChoices(flags.subList(1, flags.size()).toArray());
+		setTranslateItems(true);
+	}
+	
+	public Object getInput() {
+		int input = 0;
+		Object[] items = (Object[]) super.getInput();
+		for (Object item: items)
+			input |= ((Entry.Stats.UserFlag) item).getValue();
+		
+		return input;
+	}
+	
+	public void setInput(Object input) {
+		Integer value = (Integer) input;
+		List<Entry.Stats.UserFlag> items =
+			new ArrayList<Entry.Stats.UserFlag>();
+		for (Entry.Stats.UserFlag f: Entry.Stats.UserFlag.values())
+			if ((f.getValue() & value) != 0)
+				items.add(f);
+		
+		super.setInput(items.toArray());
+	}
+}
