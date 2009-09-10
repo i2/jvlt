@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -37,6 +38,7 @@ public class QuizModel extends WizardModel {
 	private int _current_result_pos;
 	private Entry[] _known_entries;
 	private Entry[] _notknown_entries;
+	private HashMap<Entry, Integer> _flag_map;
 
 	public QuizModel(JVLTModel model, SelectionNotifier notifier) {
 		_model = model;
@@ -46,6 +48,7 @@ public class QuizModel extends WizardModel {
 		_current_result_pos = 0;
 		_known_entries = new Entry[0];
 		_notknown_entries = new Entry[0];
+		_flag_map = new HashMap<Entry, Integer>();
 		
 		WizardPanelDescriptor d = new StatsDescriptor(this);
 		registerPanelDescriptor(d);
@@ -190,6 +193,9 @@ public class QuizModel extends WizardModel {
 			if (_current_descriptor instanceof EntryAnswerDescriptor)
 				input = false;
 			
+			/* Save current entry's flags */
+			saveEntry((EntryDescriptor) _current_descriptor);
+			
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				if (! input)
 					saveResult(_current_descriptor);
@@ -290,13 +296,8 @@ public class QuizModel extends WizardModel {
 				
 				ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 				if (rd.getState() == YesNoPanel.YES_OPTION) {
-					StatsUpdateAction sua = new StatsUpdateAction(
+					StatsUpdateAction sua = createStatsUpdateAction(
 						rd.getKnownEntries(), rd.getNotKnownEntries());
-					sua.setUpdateBatches(!_qdict.isIgnoreBatches()
-							|| JVLT.getConfig().getBooleanProperty(
-									"update_batches", false));
-					sua.setMessage(GUIUtils.getString(
-						"Actions", "save_quiz_results"));
 					_model.getQueryModel().executeAction(sua);
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
@@ -322,22 +323,24 @@ public class QuizModel extends WizardModel {
 		} else if (next instanceof EntryQuestionDescriptor) {
 			EntryQuestionDescriptor eqd = (EntryQuestionDescriptor) next;
 			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
-			eqd.setEntry(entry);
+			loadEntry(eqd, entry);
 			eqd.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputDescriptor) {
 			EntryInputDescriptor eid = (EntryInputDescriptor) next;
 			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
-			eid.setEntry(entry);
+			loadEntry(eid, entry);
 			eid.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) next;
-			ead.setEntry(_qdict.getCurrentEntry(_current_entry_pos));
+			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			loadEntry(ead, entry);
 			ead.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryInputAnswerDescriptor d = (EntryInputAnswerDescriptor) next;
-			d.setEntry(_qdict.getCurrentEntry(_current_entry_pos));
+			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			loadEntry(d, entry);
 			d.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof RepeatDescriptor) {
 			if (! (_current_descriptor instanceof ResultDescriptor)) {
@@ -380,11 +383,7 @@ public class QuizModel extends WizardModel {
 			notknown = _notknown_entries;
 		}
 
-		StatsUpdateAction sua = new StatsUpdateAction(known, notknown);
-		sua.setUpdateBatches(!_qdict.isIgnoreBatches()
-				|| JVLT.getConfig().getBooleanProperty(
-						"update_batches", false));
-		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
+		StatsUpdateAction sua = createStatsUpdateAction(known, notknown);
 		_model.getQueryModel().executeAction(sua);
 	}
 	
@@ -456,10 +455,34 @@ public class QuizModel extends WizardModel {
 			eiad.setResult(result);
 		}
 	}
+	
+	private void loadEntry(EntryDescriptor ed, Entry entry) {
+		ed.setEntry(entry);
+		ed.setUserFlags(
+				_flag_map.containsKey(entry) ? _flag_map.get(entry) : 0);
+	}
+	
+	private void saveEntry(EntryDescriptor ed) {
+		_flag_map.put(ed.getEntry(), ed.getUserFlags());
+	}
+	
+	private StatsUpdateAction createStatsUpdateAction(
+			Entry[] known, Entry[] unknown) {
+		StatsUpdateAction sua = new StatsUpdateAction(known, unknown);
+		sua.setUpdateBatches(!_qdict.isIgnoreBatches()
+			|| JVLT.getConfig().getBooleanProperty("update_batches", false));
+		sua.setMessage(GUIUtils.getString(
+			"Actions", "save_quiz_results"));
+		
+		/* Store flags */
+		for (Entry e: _flag_map.keySet())
+			sua.setUserFlag(e, _flag_map.get(e));
+		
+		return sua;
+	}
 }
 
-class EntryAnswerDescriptor extends EntryDescriptor
-	implements StateListener {
+class EntryAnswerDescriptor extends EntryDescriptor implements StateListener {
 	private YesNoPanel _yes_no_panel;
 	
 	public EntryAnswerDescriptor(QuizModel m, SelectionNotifier n) {
@@ -491,6 +514,8 @@ class EntryAnswerDescriptor extends EntryDescriptor
 		cc.update(0, 0, 1.0, 1.0);
 		_panel.add(_info_panel, cc);
 		cc.update(0, 1, 1.0, 0.0);
+		_panel.add(_flag_panel, cc);
+		cc.update(0, 2, 1.0, 0.0);
 		_panel.add(_yes_no_panel, cc);
 	}
 }
@@ -532,6 +557,8 @@ class EntryInputAnswerDescriptor extends EntryDescriptor {
 		cc.update(0, 0, 1.0, 1.0);
 		_panel.add(_info_panel, cc);
 		cc.update(0, 1, 1.0, 0.0);
+		_panel.add(_flag_panel, cc);
+		cc.update(0, 2, 1.0, 0.0);
 		_panel.add(_answer_label, cc);
 	}
 }
@@ -547,19 +574,46 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 	
 	protected EntryInfoPanel _info_panel;
 	protected QuizInfo _quiz_info;
+	protected FlagPanel _flag_panel;
 	
 	public EntryDescriptor(QuizModel model, SelectionNotifier notifier) {
 		super(model);
 		model.getJVLTModel().getDictModel().addDictUpdateListener(
 			new DictUpdateHandler());
 		_info_panel = new EntryInfoPanel(model.getJVLTModel(), notifier);
+		_flag_panel = new FlagPanel();
 		 _quiz_info = null;
 		init();
 	}
 	
 	protected abstract void init();
 
+	public Entry getEntry() { return _info_panel.getEntry(); }
+	
 	public void setEntry(Entry entry) { _info_panel.setEntry(entry); }
+	
+	public int getUserFlags() {
+		return _flag_panel.getSelectedItem().getValue();
+	}
+	
+	public void setUserFlags(int flags) {
+		Entry.Stats.UserFlag flag = Entry.Stats.UserFlag.NONE;
+		
+		/*
+		 * Set user flag. Though there may be more than one flag set,
+		 * only one is displayed.
+		 */
+		for (Entry.Stats.UserFlag f: Entry.Stats.UserFlag.values()) {
+			if (f.getValue() != 0)
+				if ((flags & f.getValue()) != 0)
+				{
+					flag = f;
+					break;
+				}
+		}
+		
+		_flag_panel.setSelectedItem(flag);
+	}
 	
 	public void setQuizInfo(QuizInfo info) {
 		_quiz_info = info;
@@ -891,40 +945,33 @@ class StatsDescriptor extends WizardPanelDescriptor
 		JPanel settings_panel = new JPanel();
 		settings_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
-		cc.fill = CustomConstraints.VERTICAL;
+		cc.anchor = CustomConstraints.WEST;
 
 		/* First row */
 		cc.update(0, 0, 0.0, 0.0);
-		cc.anchor = CustomConstraints.WEST;
 		settings_panel.add(_quiz_info_box.getLabel(), cc);
 		cc.update(1, 0, 0.0, 0.0);
-		cc.anchor = CustomConstraints.EAST;
 		settings_panel.add(_quiz_info_box, cc);
 		cc.update(2, 0, 0.0, 0.0);
 		settings_panel.add(new JButton(manage_quiz_types_action), cc);
 		
 		/* Second row */
-		cc.update(0, 1, 0.0, 0.0, 1, 1);
-		cc.anchor = CustomConstraints.WEST;
+		cc.update(0, 1, 0.0, 0.0);
 		settings_panel.add(
 				new JLabel(GUIUtils.getString("Labels", "options")+":"), cc);
-		cc.update(1, 1, 0.0, 0.0, 2, 1);
-		cc.anchor = CustomConstraints.EAST;
+		cc.update(1, 1, 0.0, 0.0);
+		settings_panel.add(Box.createHorizontalGlue(), cc);
+		cc.update(2, 1, 0.0, 0.0);
 		settings_panel.add(new JButton(options_action), cc);
 
 		/* Third row */
 		cc.update(0, 2, 0.0, 0.0);
-		cc.anchor = CustomConstraints.WEST;
 		settings_panel.add(
 			new JLabel(GUIUtils.getString("Labels", "select_filters")+":"), cc);
-		cc.update(1, 2, 0.0, 0.0, 2, 1);
-		cc.anchor = CustomConstraints.EAST;
+		cc.update(1, 2, 0.0, 0.0);
+		settings_panel.add(Box.createHorizontalGlue(), cc);
+		cc.update(2, 2, 0.0, 0.0);
 		settings_panel.add(new JButton(select_words_action), cc);
-		
-		/* Fourth row */
-		cc.update(0, 3, 0.0, 0.0, 3, 1);
-		cc.anchor = CustomConstraints.WEST;
-		settings_panel.add(_select_words_label, cc);
 		
 		_html_panel = new JEditorPane();
 		_html_panel.setEditable(false);
@@ -935,13 +982,14 @@ class StatsDescriptor extends WizardPanelDescriptor
 		_panel = new JPanel();
 		_panel.setLayout(new GridBagLayout());
 		cc.reset();
-		cc.anchor = CustomConstraints.WEST;
 		cc.update(0, 0, 1.0, 1.0, 2, 1);
 		_panel.add(spane, cc);
 		cc.update(0, 1, 1.0, 0.0, 1, 1);
 		_panel.add(Box.createHorizontalGlue(), cc);
 		cc.update(1, 1, 0.0, 0.0, 1, 1);
 		_panel.add(settings_panel, cc);
+		cc.update(0, 2, 1.0, 0.0, 2, 1);
+		_panel.add(_select_words_label, cc);
 	}
 
 	private synchronized void updateEntrySelectionDialog() {
@@ -1324,3 +1372,32 @@ class ResultDescriptor extends YesNoDescriptor
 	}
 }
 
+class FlagPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
+	private LabeledComboBox _flag_box;
+	
+	public FlagPanel() {
+		_flag_box = new LabeledComboBox();
+		_flag_box.setLabel("set_flag");
+		_flag_box.setModel(new DefaultComboBoxModel(
+				Entry.Stats.UserFlag.values()));
+		
+		setLayout(new GridBagLayout());
+		CustomConstraints cc = new CustomConstraints();
+		cc.update(0, 0, 1.0, 0.0);
+		add(Box.createHorizontalGlue(), cc);
+		cc.update(1, 0, 0.0, 0.0);
+		add(_flag_box.getLabel(), cc);
+		cc.update(2, 0, 0.0, 0.0);
+		add(_flag_box, cc);
+	}
+	
+	public Entry.Stats.UserFlag getSelectedItem() {
+		return (Entry.Stats.UserFlag) _flag_box.getSelectedItem();
+	}
+	
+	public void setSelectedItem(Entry.Stats.UserFlag flag) {
+		_flag_box.setSelectedItem(flag);
+	}
+}
