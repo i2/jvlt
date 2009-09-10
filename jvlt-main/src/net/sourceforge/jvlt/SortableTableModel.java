@@ -18,6 +18,7 @@ class SortableTableModel<T extends Object> implements TableModel {
 	private ArrayList<T> _values;
 	private Directive _directive;
 	private MetaData _data;
+	private Map<Class<? extends Attribute>, Boolean> _format_value;
 	
 	public SortableTableModel(MetaData data) {
 		_resources = new AttributeResources();
@@ -28,6 +29,7 @@ class SortableTableModel<T extends Object> implements TableModel {
 		_data = data;
 		_view_to_model = null;
 		_model_to_view = null;
+		_format_value = new HashMap<Class<? extends Attribute>, Boolean>();
 	}
 	
 	/** Implementation of TableModel.addTableModelListener(). */
@@ -37,7 +39,11 @@ class SortableTableModel<T extends Object> implements TableModel {
 	
 	/** Implementation of TableModel.getColumnClass(). */
 	public Class<? extends Object> getColumnClass(int col) {
-		return _data.getAttribute(_columns.get(col).toString()).getType();
+		Attribute attr = _data.getAttribute(_columns.get(col).toString());
+		if (_format_value.containsKey(attr.getClass()))
+			return String.class;
+		else
+			return _data.getAttribute(_columns.get(col).toString()).getType();
 	}
 	
 	/** Implementation of TableModel.getColumnCount(). */
@@ -197,6 +203,10 @@ class SortableTableModel<T extends Object> implements TableModel {
 		//	TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE)); 
 	}
 	
+	public void setFormatValue(Class<? extends Attribute> cl, boolean format) {
+		_format_value.put(cl, format);
+	}
+	
 	private void clearSortingState() {
 		_view_to_model = null;
 		_model_to_view = null;
@@ -205,6 +215,9 @@ class SortableTableModel<T extends Object> implements TableModel {
 	private Object getValue(int row, int col) {
 		Object obj = _values.get(row);
 		Attribute attr = _data.getAttribute(_columns.get(col).toString());
+		if (_format_value.containsKey(attr.getClass()))
+			return attr.getFormattedValue(obj);
+		
 		if (Number.class.isAssignableFrom(attr.getType())
 				|| Boolean.class.isAssignableFrom(attr.getType()))
 			/*
@@ -212,8 +225,8 @@ class SortableTableModel<T extends Object> implements TableModel {
 			 * cell renderers can be used
 			 */
 			return attr.getValue(obj);
-		else
-			return attr.getFormattedValue(obj);
+		
+		return attr.getFormattedValue(obj);
 	}
 
 	private int getModelIndex(int row) {
