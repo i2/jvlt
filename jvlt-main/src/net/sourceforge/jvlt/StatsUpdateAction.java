@@ -3,7 +3,9 @@ package net.sourceforge.jvlt;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class StatsUpdateAction extends QueryAction {
 	private Entry[] _known_entries;
@@ -11,6 +13,7 @@ public class StatsUpdateAction extends QueryAction {
 	private GregorianCalendar _now;
 	private ArrayList<EditDictObjectAction> _entry_actions;
 	private boolean _update_batches = true;
+	private Map<Entry, Integer> _user_flag_map;
 	
 	public StatsUpdateAction(Entry[] known_entries, Entry[] unknown_entries) {
 		super();
@@ -20,6 +23,11 @@ public class StatsUpdateAction extends QueryAction {
 		_now = new GregorianCalendar();
 		_now.set(Calendar.SECOND, 0);
 		_entry_actions = new ArrayList<EditDictObjectAction>();
+		_user_flag_map = new HashMap<Entry, Integer>();
+	}
+	
+	public void setUserFlag(Entry entry, int flag) {
+		_user_flag_map.put(entry, flag);
 	}
 	
 	public Entry[] getKnownEntries() { return _known_entries; }
@@ -67,6 +75,10 @@ public class StatsUpdateAction extends QueryAction {
 		new_entry.setLastQuizResult(known);
 		if (_update_batches)
 			new_entry.updateBatch();
+		
+		/* Update flags */
+		if (_user_flag_map.containsKey(entry))
+			new_entry.setUserFlags(_user_flag_map.get(entry));
 		
 		return new_entry;
 	}
