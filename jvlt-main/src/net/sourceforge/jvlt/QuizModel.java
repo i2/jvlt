@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -29,13 +30,54 @@ import javax.swing.event.TreeSelectionListener;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.event.StateListener;
+import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.LanguageDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.NewDictDictUpdateEvent;
 
 public class QuizModel extends WizardModel {
+	private class DictUpdateHandler implements DictUpdateListener {
+		public void dictUpdated(DictUpdateEvent event) {
+			/*
+			 * Notify panel descriptors
+			 */
+			for (WizardPanelDescriptor d: _descriptor_map.values()) {
+				if (d instanceof EntryDescriptor) {
+					((EntryDescriptor) d).dictUpdated(event);
+				} else if (d instanceof StatsDescriptor) {
+					((StatsDescriptor) d).dictUpdated(event);
+				}
+			}
+			
+			/*
+			 * Notify the wizard after all panel descriptors have been updated.
+			 */
+			if (event instanceof EntryDictUpdateEvent
+				&& event.getType() == EntryDictUpdateEvent.ENTRIES_REMOVED) {
+				if (_current_descriptor instanceof EntryDescriptor
+					&& ((EntryDescriptor) _current_descriptor).getEntry()
+						== null) {
+					/*
+					 * If the currently displayed entry has been removed, the
+					 * EntryDescriptor's dictUpdated() method already has set
+					 * its current entry to null. In this case the
+					 * EntryNullDescriptor is shown.
+					 */
+					WizardPanelDescriptor old_descriptor = _current_descriptor;
+					_current_descriptor = getPanelDescriptor("entry_null");
+					_wizard.newPanelDescriptorSelected(old_descriptor,
+							_current_descriptor);
+				}
+				else
+					/* Update buttons */
+					_wizard.panelDescriptorUpdated(_current_descriptor);
+			}
+		}
+	}
+	
 	private JVLTModel _model;
 	private QuizDict _qdict;
 	private boolean _repeat_mode;
-	private int _current_entry_pos;
-	private int _current_result_pos;
 	private Entry[] _known_entries;
 	private Entry[] _notknown_entries;
 	private HashMap<Entry, Integer> _flag_map;
@@ -44,8 +86,6 @@ public class QuizModel extends WizardModel {
 		_model = model;
 		_qdict = null;
 		_repeat_mode = false;
-		_current_entry_pos = 0;
-		_current_result_pos = 0;
 		_known_entries = new Entry[0];
 		_notknown_entries = new Entry[0];
 		_flag_map = new HashMap<Entry, Integer>();
@@ -65,23 +105,19 @@ public class QuizModel extends WizardModel {
 		registerPanelDescriptor(d);
 		d = new ResultDescriptor(this);
 		registerPanelDescriptor(d);
+		d = new EntryNullDescriptor(this);
+		registerPanelDescriptor(d);
+		
+		DictUpdateHandler handler = new DictUpdateHandler();
+		model.getDictModel().addDictUpdateListener(handler);
+		model.getQueryModel().addDictUpdateListener(handler);
 	}
 
 	public String getButtonText(String button_command) {
 		if (_current_descriptor.getID().equals("stats")) {
 			if (button_command.equals(Wizard.NEXT_COMMAND))
 				return GUIUtils.getString("Actions", "start");
-		} else if (_current_descriptor.getID().equals("entry_question")) {
-			if (button_command.equals(Wizard.CANCEL_COMMAND))
-				return GUIUtils.getString("Actions", "finish");
-		} else if (_current_descriptor.getID().equals("entry_input")) {
-			if (button_command.equals(Wizard.CANCEL_COMMAND))
-				return GUIUtils.getString("Actions", "finish");
-		} else if (_current_descriptor.getID().equals("entry_answer")
-			|| _current_descriptor.getID().equals("entry_input_answer")) {
-			if (button_command.equals(Wizard.CANCEL_COMMAND))
-				return GUIUtils.getString("Actions", "finish");
-		} else if (_current_descriptor.getID().equals("result")) {
+		} else  {
 			if (button_command.equals(Wizard.CANCEL_COMMAND))
 				return GUIUtils.getString("Actions", "finish");
 		}
@@ -99,12 +135,12 @@ public class QuizModel extends WizardModel {
 				return false;
 		} else if (_current_descriptor.getID().equals("entry_question")) {
 			if (button_command.equals(Wizard.BACK_COMMAND))
-				return (_current_result_pos > 0);
+				return _qdict.hasPreviousEntry();
 			else
 				return true;
 		} else if (_current_descriptor.getID().equals("entry_input")) {
 			if (button_command.equals(Wizard.BACK_COMMAND))
-				return (_current_result_pos > 0);
+				return _qdict.hasPreviousEntry();
 			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				EntryInputDescriptor eid
 					= (EntryInputDescriptor) _current_descriptor;
@@ -118,18 +154,18 @@ public class QuizModel extends WizardModel {
 				= (EntryAnswerDescriptor) _current_descriptor;
 			
 			if (button_command.equals(Wizard.BACK_COMMAND))
-				return (_current_result_pos > 0);
+				return _qdict.hasPreviousEntry();
 			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				if (_current_entry_pos >= _qdict.getCurrentEntryCount()-1)
+				if (! _qdict.hasNextEntry())
 					return false;
 				else
 					return (ead.getState() != YesNoPanel.UNKNOWN_OPTION);
 			}
 		} else if (_current_descriptor.getID().equals("entry_input_answer")) {
 			if (button_command.equals(Wizard.BACK_COMMAND))
-				return (_current_result_pos > 0);
+				return _qdict.hasPreviousEntry();
 			else if (button_command.equals(Wizard.NEXT_COMMAND))
-				return (_current_entry_pos < _qdict.getCurrentEntryCount()-1);
+				return _qdict.hasNextEntry();
 		} else if (_current_descriptor.getID().equals("repeat")) {
 			if (button_command.equals(Wizard.CANCEL_COMMAND))
 				return false;
@@ -146,6 +182,8 @@ public class QuizModel extends WizardModel {
 				ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 				return (rd.getState() != YesNoPanel.UNKNOWN_OPTION);
 			}
+		} else if (_current_descriptor.getID().equals("entry_null")) {
+			return button_command.equals(Wizard.NEXT_COMMAND);
 		}
 		
 		return super.isButtonEnabled(button_command);
@@ -178,8 +216,6 @@ public class QuizModel extends WizardModel {
 			_qdict = sd.getQuizDict();
 			_qdict.start(); /* Start a new quiz */
 			_repeat_mode = false;
-			_current_entry_pos = 0;
-			_current_result_pos = 0;
 			_known_entries = new Entry[0];
 			_notknown_entries = new Entry[0];
 
@@ -199,28 +235,25 @@ public class QuizModel extends WizardModel {
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				if (! input)
 					saveResult(_current_descriptor);
-				if (_current_result_pos < _qdict.getResultCount()-1) {
-					if (input)
-						next = getPanelDescriptor("entry_input_answer");
-					else
-						next = getPanelDescriptor("entry_answer");
+				
+				/* Switch to next entry */
+				Entry entry = _qdict.nextEntry();
+				
+				if (_qdict.getResult(entry) == null) {
+					next = getPanelDescriptor(input ? "entry_input"
+							: "entry_question");
 				} else {
-					if (input)
-						next = getPanelDescriptor("entry_input");
-					else
-						next = getPanelDescriptor("entry_question");
+					next = getPanelDescriptor(input ? "entry_input_answer"
+							: "entry_answer");
 				}
-
-				_current_entry_pos++;
-				_current_result_pos++;
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
 				if (input)
 					next = getPanelDescriptor("entry_input_answer");
 				else
 					next = getPanelDescriptor("entry_answer");
 				
-				_current_entry_pos--;
-				_current_result_pos--;
+				/* Switch to previous entry */
+				_qdict.previousEntry();
 			} else if (command.equals(Wizard.CANCEL_COMMAND)) {
 				if (! input)
 					saveResult(_current_descriptor);
@@ -249,8 +282,8 @@ public class QuizModel extends WizardModel {
 				else
 					next = getPanelDescriptor("entry_answer");
 				
-				_current_entry_pos--;
-				_current_result_pos--;
+				/* Switch to previous entry */
+				_qdict.previousEntry();
 			} else if (command.equals(Wizard.CANCEL_COMMAND)) {
 				if (_qdict.getNotKnownEntries().length > 0)
 					next = getPanelDescriptor("repeat");
@@ -277,8 +310,6 @@ public class QuizModel extends WizardModel {
 					}
 					_repeat_mode = true;
 					_qdict.reset();
-					_current_result_pos = 0;
-					_current_entry_pos = 0;
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
 				if (JVLT.getConfig().getBooleanProperty(
@@ -286,9 +317,6 @@ public class QuizModel extends WizardModel {
 					next = getPanelDescriptor("entry_input_answer");
 				else
 					next = getPanelDescriptor("entry_answer");
-				
-				_current_result_pos = _qdict.getResultCount()-1;
-				_current_entry_pos = _current_result_pos;
 			}
 		} else if (_current_descriptor instanceof ResultDescriptor) {
 			if (command.equals(Wizard.CANCEL_COMMAND)) {
@@ -309,12 +337,29 @@ public class QuizModel extends WizardModel {
 						next = getPanelDescriptor("entry_input_answer");
 					else
 						next = getPanelDescriptor("entry_answer");
-					
-					_current_result_pos = _qdict.getResultCount()-1;
-					_current_entry_pos = _current_result_pos;
 				}
 			}
 			// NEXT_COMMAND is disabled.
+		} else if (_current_descriptor instanceof EntryNullDescriptor) {
+			boolean input = JVLT.getConfig().getBooleanProperty(
+					"input_answer", false);
+			Entry entry = _qdict.getCurrentEntry();
+			
+			if (entry == null) { /* No entry left */
+				if (_qdict.getNotKnownEntries().length > 0)
+					next = getPanelDescriptor("repeat");
+				else if (! _repeat_mode && _qdict.getResultCount() == 0)
+					next = getPanelDescriptor("stats");
+				else
+					next = getPanelDescriptor("result");
+			} else {
+				if (_qdict.getResult(entry) != null)
+					next = getPanelDescriptor(input ? "entry_input_answer"
+							: "entry_answer");
+				else
+					next = getPanelDescriptor(input ? "entry_input"
+							: "entry_question");
+			}
 		}
 		
 		if (next instanceof StatsDescriptor) {
@@ -322,24 +367,24 @@ public class QuizModel extends WizardModel {
 			((StatsDescriptor) next).update();
 		} else if (next instanceof EntryQuestionDescriptor) {
 			EntryQuestionDescriptor eqd = (EntryQuestionDescriptor) next;
-			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry();
 			loadEntry(eqd, entry);
 			eqd.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputDescriptor) {
 			EntryInputDescriptor eid = (EntryInputDescriptor) next;
-			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry();
 			loadEntry(eid, entry);
 			eid.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) next;
-			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry();
 			loadEntry(ead, entry);
 			ead.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof EntryInputAnswerDescriptor) {
 			loadResult(_current_descriptor, next);
 			EntryInputAnswerDescriptor d = (EntryInputAnswerDescriptor) next;
-			Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+			Entry entry = _qdict.getCurrentEntry();
 			loadEntry(d, entry);
 			d.setQuizInfo(_qdict.getQuizInfo());
 		} else if (next instanceof RepeatDescriptor) {
@@ -395,7 +440,11 @@ public class QuizModel extends WizardModel {
 	
 	private void saveResult(WizardPanelDescriptor d) {
 		QueryResult result = null;
-		Entry entry = _qdict.getCurrentEntry(_current_entry_pos);
+		Entry entry = _qdict.getCurrentEntry();
+		
+		if (entry == null)
+			return;
+		
 		if (d instanceof EntryAnswerDescriptor) {
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) d;
 			if (ead.getState() == YesNoPanel.YES_OPTION)
@@ -426,7 +475,7 @@ public class QuizModel extends WizardModel {
 		}
 		
 		if (result != null)
-			_qdict.setResult(_current_result_pos, result);
+			_qdict.setResult(entry, result);
 	}
 	
 	/**
@@ -434,7 +483,7 @@ public class QuizModel extends WizardModel {
 	 * @param n Next descriptor
 	 */
 	private void loadResult(WizardPanelDescriptor c, WizardPanelDescriptor n) {
-		QueryResult result = _qdict.getResult(_current_result_pos);
+		QueryResult result = _qdict.getResult(_qdict.getCurrentEntry());
 		if (n instanceof EntryAnswerDescriptor) {
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) n;
 			if (result == null) {
@@ -463,7 +512,8 @@ public class QuizModel extends WizardModel {
 	}
 	
 	private void saveEntry(EntryDescriptor ed) {
-		_flag_map.put(ed.getEntry(), ed.getUserFlags());
+		if (ed.getEntry() != null)
+			_flag_map.put(ed.getEntry(), ed.getUserFlags());
 	}
 	
 	private StatsUpdateAction createStatsUpdateAction(
@@ -564,22 +614,12 @@ class EntryInputAnswerDescriptor extends EntryDescriptor {
 }
 
 abstract class EntryDescriptor extends WizardPanelDescriptor {
-	private class DictUpdateHandler implements DictUpdateListener {
-		public synchronized void dictUpdated(DictUpdateEvent event) {
-			if (event instanceof NewDictDictUpdateEvent
-					|| event instanceof LanguageDictUpdateEvent)
-				updateInfoPanel();
-		}
-	}
-	
 	protected EntryInfoPanel _info_panel;
 	protected QuizInfo _quiz_info;
 	protected FlagPanel _flag_panel;
 	
 	public EntryDescriptor(QuizModel model, SelectionNotifier notifier) {
 		super(model);
-		model.getJVLTModel().getDictModel().addDictUpdateListener(
-			new DictUpdateHandler());
 		_info_panel = new EntryInfoPanel(model.getJVLTModel(), notifier);
 		_flag_panel = new FlagPanel();
 		 _quiz_info = null;
@@ -617,10 +657,31 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 	
 	public void setQuizInfo(QuizInfo info) {
 		_quiz_info = info;
-		updateInfoPanel();
+		entryAttributesUpdated();
 	}
-		
-	protected void updateInfoPanel() {
+
+	public void dictUpdated(DictUpdateEvent event) {
+		if (event instanceof NewDictDictUpdateEvent
+				|| event instanceof LanguageDictUpdateEvent) {
+			entryAttributesUpdated();
+		} else if (event instanceof EntryDictUpdateEvent) {
+			if (event.getType() == EntryDictUpdateEvent.ENTRIES_REMOVED) {
+				EntryDictUpdateEvent edue = (EntryDictUpdateEvent) event;
+				if (edue.getEntries().contains(getEntry()))
+					/*
+					 * Set null entry so wizard knows that panels have to be
+					 * switched
+					 */
+					setEntry(null);
+			}
+		}
+		/*
+		 * Modifying entries or examples are all handled
+		 * by the info panel.
+		 */
+	}
+	
+	protected void entryAttributesUpdated() {
 		QuizModel model = (QuizModel) _model;
 		String[] entryattrs = model.getJVLTModel().getDictModel().getMetaData(
 			Entry.class).getAttributeNames();
@@ -654,7 +715,7 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 		_panel = p;
 	}
 	
-	protected void updateInfoPanel() {
+	protected void entryAttributesUpdated() {
 		if (_quiz_info == null) {
 			_info_panel.setDisplayedEntryAttributes(new String[0]);
 			_info_panel.setDisplayedExampleAttributes(new String[0]);
@@ -735,7 +796,7 @@ class EntryInputDescriptor extends EntryDescriptor
 		_panel.add(input_panel, cc);
 	}
 
-	protected void updateInfoPanel() {
+	protected void entryAttributesUpdated() {
 		if (_quiz_info == null) {
 			_info_panel.setDisplayedEntryAttributes(new String[0]);
 			_info_panel.setDisplayedExampleAttributes(new String[0]);
@@ -753,8 +814,7 @@ class EntryInputDescriptor extends EntryDescriptor
 	}
 }
 
-class StatsDescriptor extends WizardPanelDescriptor
-	implements DictUpdateListener, ActionListener {
+class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	private HashMap<String, QuizInfo> _quiz_info_map;
 	private HashMap<String, QuizInfo> _visible_quiz_info_map;
 	private HashMap<String, QuizInfo> _invisible_quiz_info_map;
@@ -783,10 +843,6 @@ class StatsDescriptor extends WizardPanelDescriptor
 		_invisible_quiz_info_map = new HashMap<String, QuizInfo>();
 		
 		JVLTModel jm = model.getJVLTModel();
-		jm.getDictModel().removeDictUpdateListener(this);
-		jm.getQueryModel().removeDictUpdateListener(this);
-		jm.getDictModel().addDictUpdateListener(this);
-		jm.getQueryModel().addDictUpdateListener(this);
 		_entry_selection_data = new EntrySelectionDialogData(jm);
 		
 		_dict = null;
@@ -823,7 +879,7 @@ class StatsDescriptor extends WizardPanelDescriptor
 		updateView();
 	}
 	
-	public synchronized void dictUpdated(DictUpdateEvent event) {
+	public void dictUpdated(DictUpdateEvent event) {
 		if (event instanceof NewDictDictUpdateEvent) {
 			_dict = ((NewDictDictUpdateEvent) event).getDict();
 			loadQuizInfoList();
@@ -1369,6 +1425,25 @@ class ResultDescriptor extends YesNoDescriptor
 			"not_known_words", new Object[]{value}));
 		_comp.revalidate();
 		_comp.repaint(_comp.getVisibleRect());
+	}
+}
+
+class EntryNullDescriptor extends WizardPanelDescriptor {
+	public EntryNullDescriptor(QuizModel model) {
+		super(model);
+		
+		init();
+	}
+	
+	public String getID() { return "entry_null"; }
+	
+	private void init() {
+		JLabel label = new JLabel(
+				GUIUtils.getString("Messages", "current_entry_removed"));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setVerticalAlignment(SwingConstants.CENTER);
+
+		_panel = label;
 	}
 }
 

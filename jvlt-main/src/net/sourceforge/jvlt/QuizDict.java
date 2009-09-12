@@ -4,18 +4,20 @@ import java.util.*;
 
 public class QuizDict {
 	private JVLTModel _model;
-	private ArrayList<QueryResult> _results;
 	private QuizInfo _info = null;
 	private EntryFilter[] _filters = null;
 	private boolean _ignore_batches;
-	private ArrayList<Entry> _available_entries;
-	private ArrayList<Entry> _current_entries;
+	private ArrayList<Entry> _available_entries; // Entries available for quiz
+	private ArrayList<Entry> _current_entries; // Entries during the quiz
+	private int _current_index;
+	private Map<Entry, QueryResult> _results;
 
 	public QuizDict(JVLTModel model) {
+		_current_index = 0;
 		_model = model;
 		_filters = null;
 		_info = null;
-		_results = new ArrayList<QueryResult>();
+		_results = new HashMap<Entry, QueryResult>();
 		_available_entries = new ArrayList<Entry>();
 		_current_entries = new ArrayList<Entry>();
 	}
@@ -26,18 +28,10 @@ public class QuizDict {
 	
 	public int getResultCount() { return _results.size(); }
 	
-	public QueryResult getResult(int pos) {
-		if (pos >= _results.size())
-			return null;
-		else
-			return _results.get(pos);
-	}
+	public QueryResult getResult(Entry entry) { return _results.get(entry); }
 	
-	public void setResult(int index, QueryResult result) {
-		if (index >= _results.size())
-			_results.add(result);
-		else
-			_results.set(index, result);
+	public void setResult(Entry entry, QueryResult result) {
+		_results.put(entry, result);
 	}
 	
 	public QuizInfo getQuizInfo() { return _info; }
@@ -46,36 +40,50 @@ public class QuizDict {
 	
 	public int getCurrentEntryCount() { return _current_entries.size(); }
 	
-	/**
-	 * Get entry of current quiz
-	 */
-	public Entry getCurrentEntry(int pos) {
-		if (pos < 0 || pos >= _current_entries.size())
+	public Entry getCurrentEntry() {
+		if (_current_index < 0 || _current_index >= _current_entries.size())
 			return null;
 		else
-			return _current_entries.get(pos);
+			return _current_entries.get(_current_index);
+	}
+	
+	public boolean hasNextEntry() {
+		return _current_index + 1 < _current_entries.size();
+	}
+	
+	public Entry nextEntry() {
+		_current_index = _current_index < _current_entries.size() - 1 ?
+				_current_index + 1 : _current_index;
+		
+		return getCurrentEntry();
+	}
+	
+	public boolean hasPreviousEntry() {
+		return _current_index - 1 >= 0
+			&& _current_index - 1 < _current_entries.size();
+	}
+	
+	public Entry previousEntry() {
+		_current_index = _current_index > 0 ?
+				_current_index - 1 : _current_index;
+		
+		return getCurrentEntry();
 	}
 
 	public Entry[] getKnownEntries() {
 		ArrayList<Entry> list = new ArrayList<Entry>();
-		Iterator<QueryResult> it = _results.iterator();
-		while (it.hasNext()) {
-			QueryResult result = it.next();
-			if (result.isKnown())
-				list.add(result.getEntry());
-		}
+		for (Map.Entry<Entry, QueryResult> entry: _results.entrySet())
+			if (entry.getValue().isKnown())
+				list.add(entry.getKey());
 		
 		return list.toArray(new Entry[0]);
 	}
 	
 	public Entry[] getNotKnownEntries() {
 		ArrayList<Entry> list = new ArrayList<Entry>();
-		Iterator<QueryResult> it = _results.iterator();
-		while (it.hasNext()) {
-			QueryResult result = it.next();
-			if (! result.isKnown())
-				list.add(result.getEntry());
-		}
+		for (Map.Entry<Entry, QueryResult> entry: _results.entrySet())
+			if (! entry.getValue().isKnown())
+				list.add(entry.getKey());
 		
 		return list.toArray(new Entry[0]);
 	}
@@ -87,6 +95,7 @@ public class QuizDict {
 		_results.clear();
 		_current_entries.clear();
 		_current_entries.addAll(_available_entries);
+		_current_index = 0;
 	}
 	
 	/**
@@ -100,6 +109,7 @@ public class QuizDict {
 		_current_entries.clear();
 		_current_entries.addAll(Arrays.asList(not_known));
 		Collections.shuffle(_current_entries, new Random(new Date().getTime()));
+		_current_index = 0;
 	}
 	
 	/**
@@ -126,23 +136,32 @@ public class QuizDict {
 			_available_entries.addAll(
 					getEntryList(new_entries, _filters));
 			// Do not add entries to _current_entries, as _current_entries
-			// might contain only the not known entries
+			// might only contain the not known entries
 		}
 		
 		if (changed_entries != null) {
-			_current_entries.removeAll(changed_entries);
-			_current_entries.addAll(
-					getEntryList(changed_entries, _filters));
 			_available_entries.removeAll(changed_entries);
 			_available_entries.addAll(
 					getEntryList(changed_entries, _filters));
-			updateResultList(changed_entries);
+			// Do not update _current_entries, so entries
+			// that do no longer match the filters are not removed
 		}
 		
 		if (removed_entries != null) {
 			_available_entries.removeAll(removed_entries);
-			_current_entries.removeAll(removed_entries);
-			updateResultList(removed_entries);
+			
+			for (Entry e: removed_entries) {
+				int index = _current_entries.indexOf(e);
+				
+				// Update current index
+				if (index < _current_index)
+					_current_index--;
+				
+				if (index >= 0) {
+					_current_entries.remove(index);
+					_results.remove(e);
+				}
+			}
 		}
 	}
 	
@@ -219,20 +238,6 @@ public class QuizDict {
 		}
 		
 		return return_list;
-	}
-	
-	/**
-	 * Remove all entries from the result list that are not contained in
-	 * the entry list.
-	 */
-	private void updateResultList(Collection<Entry> entries) {
-		Iterator<QueryResult> it = _results.iterator();
-		while (it.hasNext()) {
-			QueryResult result = it.next();
-			if (entries.contains(result.getEntry())
-					&& ! _current_entries.contains(result.getEntry()))
-				it.remove();
-		}
 	}
 }
 
