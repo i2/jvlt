@@ -44,6 +44,7 @@ public class SortableTable<T extends Object> extends JTable
 	private MouseHandler _mouse_handler;
 	private ImageIcon _up_arrow;
 	private ImageIcon _down_arrow;
+	private boolean _arrow_direction_reversed;
 
 	public SortableTable(SortableTableModel<T> model) {
 		super(model);
@@ -58,6 +59,8 @@ public class SortableTable<T extends Object> extends JTable
 				"/images/arrow_up.png"));
 		_down_arrow = new ImageIcon(SortableTable.class.getResource(
 				"/images/arrow_down.png"));
+		
+		_arrow_direction_reversed = false;
 		
 		int height = getFontMetrics(getFont()).getHeight();
 		setRowHeight(height);
@@ -107,6 +110,14 @@ public class SortableTable<T extends Object> extends JTable
 			return _cell_renderers.get(column_name);
 		else
 			return super.getCellRenderer(row, column);
+	}
+	
+	public boolean isArrowDirectionReversed() {
+		return _arrow_direction_reversed;
+	}
+	
+	public void setArrowDirectionReversed(boolean reversed) {
+		_arrow_direction_reversed = reversed;
 	}
 	
 	public void actionPerformed(ActionEvent ev) {
@@ -170,9 +181,9 @@ public class SortableTable<T extends Object> extends JTable
 			return null;
 		
 		if (dir.getDirection() == SortableTableModel.DESCENDING)
-			return _up_arrow;
+			return _arrow_direction_reversed ? _down_arrow : _up_arrow;
 		else if (dir.getDirection() == SortableTableModel.ASCENDING)
-			return _down_arrow;
+			return _arrow_direction_reversed ? _up_arrow : _down_arrow;
 		else
 			return null;
 	}

@@ -87,6 +87,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			new Integer[]{new Integer(dir.getColumn()),
 				new Integer(dir.getDirection())} ));
 		
+		config.setProperty("entry_table_arrow_direction_reversed",
+				_entry_table.isArrowDirectionReversed());
+		
 		// Save filter panel's state
 		_filter_panel.saveState();
 	}
@@ -117,6 +120,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			dir.setDirection(Integer.parseInt(dir_string[1]));
 		}
 		_entry_table_model.setSortingDirective(dir);
+		
+		_entry_table.setArrowDirectionReversed(config.getBooleanProperty(
+				"entry_table_arrow_direction_reversed", false));
 		
 		// Load filter panel's state
 		_filter_panel.loadState();
