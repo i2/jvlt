@@ -9,16 +9,16 @@ public class Wizard implements ActionListener {
 	public static final String NEXT_COMMAND = "next";
 	public static final String BACK_COMMAND = "back";
 	
-	private WizardModel _model;
+	protected WizardModel _model;
 	
-	private JLabel _status_label;
-	private JPanel _content;
-	private Action _cancel_action;
-	private Action _next_action;
-	private Action _back_action;
-	private JButton _cancel_button;
-	private JButton _next_button;
-	private JButton _back_button;
+	protected JLabel _status_label;
+	protected JPanel _content;
+	protected Action _cancel_action;
+	protected Action _next_action;
+	protected Action _back_action;
+	protected JButton _cancel_button;
+	protected JButton _next_button;
+	protected JButton _back_button;
 	
 	public Wizard(WizardModel model) {
 		_model = model;
@@ -64,6 +64,14 @@ public class Wizard implements ActionListener {
 	}
 	
 	public void panelDescriptorUpdated(WizardPanelDescriptor descriptor) {
+		updateButtons();
+	}
+	
+	public void newPanelDescriptorSelected(WizardPanelDescriptor old_descriptor,
+			WizardPanelDescriptor new_descriptor) {
+		hidePanel(old_descriptor);
+		showPanel(new_descriptor);
+		
 		updateButtons();
 	}
 	
