@@ -74,5 +74,13 @@ public class ObjectQuery {
 		}
 		return _type == MATCH_ALL;
 	}
+	
+	public boolean isValid() {
+		for (ObjectQueryItem item: _items)
+			if (item == null)
+				return false;
+		
+		return true;
+	}
 }
 
