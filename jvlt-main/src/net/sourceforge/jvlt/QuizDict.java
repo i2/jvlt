@@ -154,7 +154,7 @@ public class QuizDict {
 				int index = _current_entries.indexOf(e);
 				
 				// Update current index
-				if (index < _current_index)
+				if (index >= 0 && index < _current_index)
 					_current_index--;
 				
 				if (index >= 0) {
