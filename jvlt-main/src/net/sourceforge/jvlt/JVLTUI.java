@@ -873,11 +873,21 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		try {
 			//-----
-			// Load filters
+			// Load and check filters
 			//-----
 			decoder = new XMLDecoder(new BufferedInputStream(
 					new FileInputStream(home + "filters.xml")));
 			ObjectQuery[] oqs = (ObjectQuery[]) decoder.readObject();
+			
+			if (oqs == null)
+				throw new IOException("Invalid filter list (null)");
+			
+			for (int i=0; i<oqs.length; i++) {
+				if (oqs[i] == null)
+					throw new IOException("Invalid filter item (null)");
+				else if (! oqs[i].isValid())
+					throw new IOException("Invalid filter item (invalid data)");
+			}
 			JVLT.getRuntimeProperties().put("filters", oqs);
 		} catch (Exception e) {
 //			e.printStackTrace();
