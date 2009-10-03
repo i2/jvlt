@@ -228,8 +228,8 @@
 		<xsl:value-of select="position()"/>.
 	</xsl:if>
 	<xsl:if test="string(Definition)">
-		<i>(<xsl:value-of disable-output-escaping="yes"
-			select="Definition"/>)</i>
+		<span id="definition"><i>(<xsl:value-of disable-output-escaping="yes"
+			select="Definition"/>)</i></span>
 		<xsl:if test="string(Translation)">, </xsl:if>
 	</xsl:if>
 	<b><xsl:apply-templates select="Translation"/></b>
