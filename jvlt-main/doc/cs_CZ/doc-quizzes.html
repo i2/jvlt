@@ -7,7 +7,7 @@
 <body>
 <table>
 <tr>
-<td><img alt="jVLT logo" height="128" src="jvlt.png" width="128"></td><td>
+<td><img alt="logo jVLT" height="128" src="jvlt.png" width="128"></td><td>
 <h1>jVLT &ndash; nástroj pro učení se slovíček</h1>
 </td>
 </tr>
@@ -35,11 +35,11 @@
 </td><td class="content">
 
 jVLT nabízí možnost dělat na vaše slovíčka kvízy. Slova jsou
-zařazována do různých <i>sad</i> v závislosti na tom, zda jste je
+zařazována do různých sad v závislosti na tom, zda jste je
 při testu věděli. Číslo sady slov, která jste věděli, se zvyšuje
-(například, slovo v sadě č.&nbsp;<i>1</i> je po kvízu zařazeno do sady
-č.&nbsp;<i>2</i>), slova, která jste nevěděli, jsou zařazena do sady
-č.&nbsp;<i>0</i>. Po kvízu se slovo stane neaktivním na určitou dobu, jejíž
+(například, slovo v sadě č.&nbsp;1 je po kvízu zařazeno do sady
+č.&nbsp;2), slova, která jste nevěděli, jsou zařazena do sady
+č.&nbsp;0. Po kvízu se slovo stane neaktivním na určitou dobu, jejíž
 délka závisí na tom, ve které sadě slovo právě je. &bdquo;Neaktivní&ldquo;
 znamená, že toto slovo se v kvízu neobjeví. Datum, kdy se
 slovo stane znovu aktivním, se také nazývá &bdquo;datum vypršení&ldquo;.
@@ -69,16 +69,19 @@ Pro započetí kvízu stiskněte na záložce s kvízem tlačítko
 &bdquo;Start&ldquo;.<br>
 <br>
 
-<img alt="Quiz tab" src="quiz.png"> <br>
+<img alt="záložka s kvízem" src="quiz.png"> <br>
 <br>
 
 
 <h2>
 <a name="before_the_quiz">Před kvízem</a>
 </h2>
-Před započetím kvízu můžete omezit slova, která v něm budou, na určité
-skupiny slov, a to smáčknutím tlačítka &bdquo;Vybrat slova...&ldquo;, čímž
-se otevře stejnojmenný dialog. V tomto dialogu se nabízejí čtyři metody
+Před započetím kvízu můžete zvolit typ kvízu, specifikovat určitá
+nastavení a omezit množinu slov, které se v něm mohou objevit.
+
+<h3>Výběr slov</h3>
+Po smáčknutí tlačítka &bdquo;Vybrat slova...&ldquo; se otevře
+stejnojmenný dialog. V tomto dialogu se nabízejí čtyři metody
 pro výběr slov:
 <ul>
 
@@ -104,9 +107,9 @@ na tlačítko &bdquo;Spravovat filtry...&ldquo;.
 </li>
 
 <li>
-<b>Pouze slova odpovídající níže uvedené kategorii kritérií:</b>
-Chcete-li rychle vybrat kategorie, které by měly (neměly) být v kvízu,
-zvolte tuto možnost.
+<b>Pouze slova odpovídající níže uvedeným kritériím:</b>
+Chcete-li rychle vybrat lekce nebo kategorie, které by měly
+(neměly) být v kvízu, zvolte tuto možnost.
 </li>
 
 </ul>
@@ -114,17 +117,18 @@ zvolte tuto možnost.
 <br>
 <br>
 
-<img alt="Select words" src="select_words.png">
+<img alt="výběr slov" src="select_words.png">
 <br>
 <br>
 
+<h3>Výběr typu kvízu</h3>
 jVLT se v kvízu standardně ptá na pole &bdquo;Originál&ldquo;. V dialogu,
 který se zobrazí po stisku tlačítka &bdquo;Spravovat typy kvízu&ldquo;,
 můžete sestavit další typy kvízu.
 <br>
 <br>
 
-<img alt="Manage quiz types" src="quiz_type_dialog.png">
+<img alt="spravovat typy kvízu" src="quiz_type_dialog.png">
 <br>
 <br>
 V tomto dialogu vybíráte pole, na které budete dotazováni, a pole, která
@@ -140,17 +144,64 @@ Po přidání nového typu kvízu a zavření dialogu stisknutím tlačítka
 &bdquo;OK&ldquo;, můžete tento nový typ kvízu vybrat prostřednictvím
 rozbalovací nabídky &bdquo;Vybrat typ kvízu&ldquo;.
 
+<h3>Možnosti kvízu</h3>
+
+<p>V dialogu s možnostmi kvízu si můžete vybrat
+z několika možností, které určují,
+jak bude kvíz probíhat.
+</p>
+
+<p>
+<img alt="možnosti kvízu" src="quiz_options.png"></p>
+
+<ul>
+
+<li>
+<b>Zadávat odpověď:</b>
+Výběrem této možnosti určujete, zda během
+kvízu chcete odpovědi zapisovat.
+</li>
+
+<li>
+<b>Ignorovat velikost písmen v zadané odpovědi:</b>
+Toto nastavení určuje, zda se bude v zadané odpovědi
+rozlišovat mezi velkými a malými písmeny. Po výběru
+této možnosti se bude odpověď &bdquo;španělsko&ldquo;
+u slova &bdquo;Španělsko&ldquo; považovat za správnou.
+</li>
+
+<li>
+<b>Přednastavit odpověď:</b>
+Je-li toto políčko zaškrtnuto, můžete nastavit standardní odpověď pro
+každé slovo v kvízu (buď &bdquo;Ano&ldquo;, nebo &bdquo;Ne&ldquo;).
+</li>
+
+<li>
+<b>Ignorovat dobu vypršení:</b>
+Po výběru této možnosti se bude během kvízu ignorovat doba vypršení
+u slov. Tak se okamžitě můžete znovu vyzkoušet ze slovíček, která
+byla právě ve kvízu, a proto ještě nejsou po vypršení.
+</li>
+
+<li>
+<b>...ale po kvízu aktualizovat sady:</b>
+Je-li políčko u této možnosti zaškrtnuto, aktualizují se po kvízu
+sady slov i v případě, že se během kvízu ignoruje doba vypršení.
+</li>
+
+</ul>
+
+
 <h2>
 <a name="during_the_quiz">Během kvízu</a>
 </h2>
-V závislosti na tom, jak jste si nakonfigurovali
-<a href="doc-settings.html#quiz_settings">nastavení kvízu</a>,
+V závislosti na tom, jak jste si nakonfigurovali možnosti kvízu,
 se může kvíz dělat dvěma odlišnými způsoby. První možnost je,
 že řešení zadáváte, jak můžete vidět na níže uvedené ilustraci.
 <br>
 <br>
 
-<img alt="Input Answer" src="quiz_input_answer.png">
+<img alt="zadávat odpověď" src="quiz_input_answer.png">
 <br>
 <br>
 Poté, co jste stiskli tlačítko &bdquo;Další&ldquo;, se zobrazí řešení
@@ -158,7 +209,7 @@ a zpráva, ve které se říká, zda byla vaše odpověď správná.
 <br>
 <br>
 
-<img alt="Show Answer" src="quiz_show_answer.png">
+<img alt="zobrazit odpověď" src="quiz_show_answer.png">
 <br>
 <br>
 Druhá možnost je, že nebudete řešení zadávat (místo toho jej můžete
@@ -167,9 +218,14 @@ napsat na papír), a jVLT se vás po stisku tlačítka
 <br>
 <br>
 
-<img alt="Show Answer" src="quiz-2.png">
+<img alt="zobrazit odpověď" src="quiz-2.png">
 <br>
 <br>
+
+<p>Během kvízu je též možné nastavit příznaky popsané v dialogu
+<a href="doc-vocabulary.html#advanced_settings_flags">pokročilých
+nastavení</a>. Jakmile se nastaví příznak, je slovo vyjmuto z dalších kvízů.
+</p>
 Kvíz můžete kdykoli ukončit, a to stisknutím tlačítka &bdquo;Dokončit&ldquo;.
 V dalším oddíle je popsáno, co se potom stane.
 
@@ -185,7 +241,7 @@ Nakonec se můžete rozhodnout, zda se výsledky tohoto kvízu mají uložit, ab
 byly k dispozici pro budoucí kvízy.<br>
 <br>
 
-<img alt="Quiz results" src="quiz-3.png"><br>
+<img alt="výsledky kvízu" src="quiz-3.png"><br>
 <br>
 
 

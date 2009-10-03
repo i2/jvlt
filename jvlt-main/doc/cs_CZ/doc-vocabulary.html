@@ -7,7 +7,7 @@
 <body>
 <table>
 <tr>
-<td><img alt="jVLT logo" height="128" src="jvlt.png" width="128"></td><td>
+<td><img alt="logo jVLT" height="128" src="jvlt.png" width="128"></td><td>
 <h1>jVLT &ndash; nástroj pro učení se slovíček</h1>
 </td>
 </tr>
@@ -48,22 +48,23 @@ se zatržítkem nebo stisknout klávesu &bdquo;Enter&ldquo;. Stisknutím tlačí
 s křížkem filtr zrušíte a v důsledku toho se zobrazí všechna slova.<br>
 <br>
 
-<img alt="Filter" src="filter.png"> <br>
+<img alt="filtr" src="filter.png"> <br>
 <br>
 Pokud v rozbalovacím seznamu vyberete položku &bdquo;Pokročilý filtr&ldquo;,
 nahradí se tlačítko se zatržítkem tlačítkem s &bdquo;...&ldquo;. Po jeho
 stisknutí se objeví dialog, kde lze definovat sofistikovanější filtr.<br>
 Takovéto filtry se skládají z jednoho nebo mnoha subfiltrů; každý je
 představován řádkou, která obsahuje tři sloupce. V prvním sloupci vybíráte
-vlastnost (Originál, Výslovnost atd.), v druhém sloupci typ porovnávání, např.
+pole (Originál, Výslovnost atd.), v druhém sloupci typ porovnávání, např.
 &bdquo;se rovná&ldquo;, &bdquo;je větší než&ldquo; nebo &bdquo;je menší
 než&ldquo;. Do posledního sloupce se zadává hodnota. Tou je textový řetězec,
-číslo, datum nebo seznam textových řetězců, což závisí na vybrané vlastnosti
+číslo, datum nebo seznam textových řetězců, což závisí na vybraném poli
 a typu porovnávání. Subfiltry můžete přidávat a mazat stisknutím tlačítka
 &bdquo;Více&ldquo;, resp. &bdquo;Méně&ldquo; a celý filtr vyčistíte kliknutím
 na tlačítko &bdquo;Reset&ldquo;. Výběrem z možností &bdquo;Vyhovět všem
 následujícím&ldquo; a &bdquo;Vyhovět jednomu z následujících&ldquo; určujete,
 zda se musí vyhovět všem subfiltrům, nebo jen jednomu z nich.<br>
+<br>
 Filtr lze uložit zadáním názvu do textového pole v horní části dialogu a
 následným vybráním tlačítka &bdquo;Nový/Aktualizovat&ldquo;. Uložený
 filtr se nahraje jeho vybráním v rozbalovací nabídce. Pro jeho aktivaci musíte
@@ -73,7 +74,7 @@ Filtry lze mazat použitím tlačítka &bdquo;Smazat&ldquo;.
 <br>
 <br>
 
-<img alt="Advanced filter dialog" src="filter-2.png">
+<img alt="dialog pokročilého filtru" src="filter-2.png">
 <br>
 <br>
 
@@ -86,7 +87,7 @@ objeví se vyskakovací nabídka, která umožňuje seřadit seznam slov podle
 vybraného sloupce.<br>
 <br>
 
-<img alt="Sorting" src="sorting.png"> <br>
+<img alt="třídění" src="sorting.png"> <br>
 <br>
 Vyskakovací nabídka také obsahuje položku &bdquo;Vybrat sloupce...&ldquo;,
 která uživateli dovoluje vybrat sloupce pro seznam slov. Sloupce lze vybírat
@@ -96,7 +97,7 @@ měnit tlačítky se šipkou nahoru a se šipkou dolů. Sloupec, jehož název j
 v seznamu nejvíce nahoře, se v seznamu slov zobrazí nejvíce vlevo.<br>
 <br>
 
-<img alt="Select columns" src="select_columns.png">
+<img alt="výběr sloupců" src="select_columns.png">
 <br>
 <br>
 Stisknutím tlačítek &bdquo;Přidat&ldquo;, &bdquo;Upravit&ldquo; nebo
@@ -118,7 +119,7 @@ Kliknutím na odkaz &bdquo;Upravit&ldquo; vedle příkladu se dostanete do
 <br>
 <br>
 
-<img alt="Details" src="details.png"><br>
+<img alt="detaily" src="details.png"><br>
 <br>
 Chcete-li ke slovu přidat více informací, můžete uvést zvukové nebo
 obrazové soubory, což je popsáno v <a href="#add_word">
@@ -129,7 +130,7 @@ se obrázek zobrazí.
 <br>
 <br>
 
-<img alt="Multimedia" src="multimedia.png"> <br>
+<img alt="multimédia" src="multimedia.png"> <br>
 <br>
 
 
@@ -147,7 +148,7 @@ vybráním dané lekce z rozbalovací nabídky.<br>
 <br>
 <br>
 
-<img alt="Add word" src="add_word.png"> <br>
+<img alt="přidávání slova" src="add_word.png"> <br>
 <br>
 Slovo musí mít nejméně jeden význam. Významy můžete přidávat stisknutím
 tlačítka &bdquo;Přidat&ldquo; vedle náhledu na jejich seznam a zadáním
@@ -158,12 +159,15 @@ Má-li slovo více než jeden význam, můžete jejich pořadí měnit, a to
 pomocí tlačítek s šipkami na levé straně náhledu na seznam.<br>
 <br>
 
-<img alt="Add sense" src="add_sense.png"> <br>
+<img alt="přidávání významu" src="add_sense.png"> <br>
 <br>
-Poté, co jste s úpravami slova skončili, stiskněte &bdquo;Použít&ldquo;,
-a slovo se přidá. Dialog se pak nezavře &ndash; i nadále můžete přidávat
-slova, nebo se stisknutím tlačítka &bdquo;Zavřít&ldquo; můžete vrátit do
-hlavního okna.
+Poté, co jste s úpravami slova skončili, stiskněte &bdquo;Použít&ldquo;
+nebo &bdquo;Použít a upravit kopii&ldquo;, a slovo se přidá. Tímto druhým
+tlačítkem se nesmažou aktuální hodnoty, což může být užitečné v případě,
+že chcete zadávat několik podobných slov.
+Dialog se po stisknutí jednoho z tlačítek stiskněte &bdquo;Použít&ldquo;
+nezavře &ndash; i nadále můžete přidávat slova, nebo se stisknutím tlačítka
+&bdquo;Zavřít&ldquo; můžete vrátit do hlavního okna.
 
 
 <h3>
@@ -172,7 +176,7 @@ hlavního okna.
 Po stisknutí tlačítka &bdquo;Podrobnosti...&ldquo; můžete upravovat několik
 dodatečných vlastností slova.
 <p>
-<img alt="Advanced settings" src="add_word_details.png"></p>
+<img alt="pokročilá nastavení" src="add_word_details.png"></p>
 
 <h4>Detaily slova</h4>
 Zda se v dialogu, který se objeví, zobrazí záložka &bdquo;Detaily&ldquo;, je
@@ -186,7 +190,7 @@ Slovo může být (volitelně) zařazeno do kategorií (např. &bdquo;Rodinní
 příslušníci&ldquo;). Můžete buď vybrat existující kategorie z rozbalovacího
 seznamu, nebo zadat nový název kategorie. Poté stiskněte &bdquo;Přidat&ldquo;.
 <p>
-<img alt="Multimedia" src="add_word_categories.png"></p>
+<img alt="přidávání kategorií slov" src="add_word_categories.png"></p>
 
 <h4>Multimediální soubory</h4>
 Ke slovu můžete zadávat i zvukové a obrazové soubory, například soubor WAV,
@@ -203,8 +207,35 @@ Neumí-li jVLT přehrát nebo zobrazit soubory určitého typu, můžete v
 <a href="doc-settings.html#multimedia_settings">dialogu nastavení</a>
 zadat externí příkazy.
 <p>
-<img alt="Categories" src="add_word_multimedia.png"></p>
+<img alt="kategorie" src="add_word_multimedia.png"></p>
 
+<h4>
+<a name="advanced_settings_flags">Příznaky</a>
+</h4>
+V této záložce můžete nastavit příznaky, jimiž určíte, zda se dané
+slovo objeví v kvízu. Pamatujte si, že pokud nastavíte, aby se statistiky
+resetovaly (viz <a href="doc-menus.html#menu_tools">nabídka Nástroje</a>),
+tyto příznaky zmizí.
+V současné době jde o následující příznaky.
+<ul>
+ 
+<li>Toto slovo znám &ndash; už se neptat</li>
+
+<li>Ne moc potřebné &ndash; dát stranou</li>
+
+</ul>
+
+<p>
+<img alt="příznaky" src="add_word_flags.png"></p>
+
+
+<h2>
+<a name="edit_a_copy">Upravování kopií slov</a>
+</h2>
+Po stisknutí tlačítka s názvem &bdquo;Upravit kopii&ldquo; můžete přidat
+nové slovo, přičemž využijete některé stávající slovo jako šablonu. Protože
+nemůžete vložit dvakrát stejné slovo, musíte nové slovo před přidáním
+upravit.
 
 <h2>
 <a name="edit_word">Upravování slov</a>
@@ -237,7 +268,7 @@ Vezměte na vědomí, že všechny odkazy na mazaná slova budou z příkladů s
 Budou smazány i příklady, ve kterých nezbudou žádné odkazy. V dialogu se
 zobrazí počet příkladů, které budou smazány a které budou upraveny.
 <p>
-<img alt="Confirm deletion" src="confirm_word_deletion.png"></p>
+<img alt="potvrzení smazání" src="confirm_word_deletion.png"></p>
 
 <br>
 Chcete-li vidět seznam příkladů odkazujících se na konkrétní slovo, můžete se
