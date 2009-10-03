@@ -35,11 +35,11 @@
 </td><td class="content">
 
 jVLT offers an option to perform quizzes on your vocabulary. Words are
-assigned to different <i>batches</i> depending on whether
-you knew it	during the quiz. The batch number of known words increases
-(for example, a word with batch No. <i>1</i> is assigned
-to batch No. <i>2</i> after the quiz), not known words are
-assigned to batch No. <i>0</i>. After the quiz, a word
+assigned to different batches depending on whether
+you knew it during the quiz. The batch number of known words increases
+(for example, a word with batch No. 1 is assigned
+to batch No. 2 after the quiz), not known words are
+assigned to batch No. 0. After the quiz, a word
 becomes inactive for a certain period of time which depends on its
 current batch. "Inactive" means that a word will not appear in
 a quiz. The date a word becomes active again is also called
@@ -76,10 +76,13 @@ tab.<br>
 <h2>
 <a name="before_the_quiz">Before the quiz</a>
 </h2>
-Before starting a quiz, you can restrict the words to be quizzed
-to certain word groups by pressing on the "Select words..." button which
-opens a dialog of the same name. In the dialog, four methods for selecting
-words are offered:
+Before starting a quiz, you can select a quiz type,
+specify certain options, and restrict the
+set of words that may appear during a quiz.
+
+<h3>Selecting words</h3>
+After pressing the "Select words..." button a dialog appears
+that allows to select words by using one of four different methods.
 <ul>
 
 <li>
@@ -104,9 +107,9 @@ add new filters by clicking on the "Manager filters..." button.
 </li>
 
 <li>
-<b>Only words matching category criteria specified below:</b>
-Select this option if you want to quickly select the categories that
-should (not) be quizzed.
+<b>Only words matching criteria specified below:</b>
+Select this option if you want to quickly select the lessons
+or categories that should (not) be quizzed.
 </li>
 
 </ul>
@@ -118,6 +121,8 @@ should (not) be quizzed.
 <br>
 <br>
 
+
+<h3>Selecting the quiz type</h3>
 jVLT quizzes on the "Original" field by default. You can design
 other types of quizzes by using the dialog that appears after pressing
 the "Manage quiz types..." button.
@@ -139,11 +144,60 @@ After having added a new quiz type and closing the dialog by pressing
 "OK", you can select the new quiz type via the
 "Select quiz type" drop-down menu.
 
+<h3>Quiz options</h3>
+
+<p>In the quiz options dialog, you can choose
+between several options that determine
+how a quiz is performed.
+</p>
+
+<p>
+<img alt="Quiz options" src="quiz_options.png"></p>
+
+<ul>
+
+<li>
+<b>Input answer:</b>
+By selecting this option, you determine
+whether you want to enter the solution
+during a quiz.
+</li>
+
+<li>
+<b>Ignore upper and lower case of entered answer:</b>
+This determines whether the entered answer
+will be checked for upper and lower case.
+If the checkbox is selected, the answer "spain" for the word "Spain"
+will be considered correct.
+</li>
+
+<li>
+<b>Set default answer:</b>
+If this checkbox is selected, you can set a default answer
+(either "Yes" or "No") for each word in a quiz.
+</li>
+
+<li>
+<b>Ignore expiry time:</b>
+By selecting this option, the expiry time of words will be
+ignored during a quiz. That way you can immediately test words again
+that have just been quizzed and that therefore are not yet expired.
+</li>
+
+<li>
+<b>...but update the batches after the quiz:</b>
+If the check mark next to this option is visible, the words' batches are
+updated after a quiz even if the expiry time is ignored during a quiz.
+</li>
+
+</ul>
+
+
 <h2>
 <a name="during_the_quiz">During the quiz</a>
 </h2>
 Dependent on what you configured in the
-<a href="doc-settings.html#quiz_settings">quiz settings</a>,
+quiz options,
 a quiz can be performed in two different ways. The first possibility is
 that you enter the solution which is shown in the figure below.
 <br>
@@ -169,6 +223,12 @@ it on a piece of paper instead), and jVLT asks you - after you pressed
 <img alt="Show Answer" src="quiz-2.png">
 <br>
 <br>
+
+<p>It's also possible to set the flags described in the
+<a href="doc-vocabulary.html#advanced_settings_flags">advanced
+settings dialog</a> during a quiz. Once a flag is set, the word
+is excluded from later quizzes.
+</p>
 You can cancel a quiz at any time by pressing "Finish". In the next
 section, it is described what happens thereafter.
 
