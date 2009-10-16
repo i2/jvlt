@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
 
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>jVLT - Settings</title>
 
 <link href="style.css" rel="stylesheet" type="text/css"></head><body>
@@ -39,21 +40,26 @@
 <ul>
 
 <li>
-<b>Apparence : </b>Cette option détermine l’apparence générale de l’application. Les choix disponibles dépendent du système de votre ordinateur.
-Notez que la modification des polices de l’application n’est possible que si l’apparence “Metal” est choisie.</li>
+<b>Apparence : </b>Cette option détermine l’apparence générale de l’application. Les choix disponibles dépendent du système de votre ordinateur.</li>
 
 <li>
-<b>Police des boutons, menus, étiquettes et liste</b>
+<b>Police de l’interface utilisateur : </b>La police de l’interface
+utilisateur est utilisée pour tous les composants sauf la vue détaillée
+des mots et des exemples, ainsi que pour les éléments pour lesquels la
+police est fixée par les deux paramètres suivants. Veuillez noter que
+la modification de cette police n’est possible que si l’apparence
+“Métal” est utilisée.
 </li>
 
 <li>
-<b>Police des tableaux et champs de texte</b>
-</li>
+<b>Police du champ de saisie du mot original et de la colonne “Original” du tableau</b></li>
+        <li><b>Police du champ de saisie de la prononciation et de la colonne “Prononciation” du tableau</b></li>
+        <li><b>Police HTML : </b>Cette police est utilisée pour les zones HTML dans les onglets Vocabulaire, Exemples et Quiz.<br>
+        </li>
+
 
 <li>
-<b>Police du champ “Original” : </b>Ce paramètre est particulièrement
-utile pour les langues ayant des caractères complexes telles le chinois
-ou le japonais. Il détermine la police du champ&nbsp; “Original” dans
+<b>Police du champ “Original” : </b>Ce paramètre détermine la police du champ&nbsp; “Original” dans
 la <a href="doc-vocabulary.html#detailed_view">vue détaillée</a>.
 </li>
 
@@ -94,22 +100,7 @@ jVLT se souviendra du fichier sur lequel vous avez travaillé lors de la session
 
 <li>
 <b>Police d’impression :</b> En cliquant sur ce bouton, vous pouvez changer la police utilisée pour <a href="doc-misc.html#printing">l’impression</a>.
-</li>
-
-<li>
-<b>Entrer une réponse :</b> En cochant cette case, vous choisissez si vous voulez saisir une solution lors d’un quiz.
-</li>
-
-<li>
-<b>Ignore majuscules/minuscules dans la réponse saisie :</b>Détermine
-s’il y aura vérification des majuscules/minuscules lors de la saisie
-d’une réponse d’un quiz. Si cette case est cochée, la réponse “espagne”
-sera considérée correcte pour le mot “Espagne”.<br>
-
-</li>
-
-<li>
-<b>Déterminer la réponse par défaut :</b> Si cette case est cochée, vous pouvez choisir une réponse par défaut (“Oui” ou “Non”) pour chaque mot d’un quiz.</li></ul><br>
+</li></ul><br>
 <br>
 
 <img alt="General settings" src="settings_general.png">
@@ -122,7 +113,7 @@ sera considérée correcte pour le mot “Espagne”.<br>
 <ul>
 
 <li>
-<b>Nombre de lots :</b>Le numéro maximum du lot assigné à un mot. Si un
+<b>Nombre de lots :</b> Le numéro maximum du lot assigné à un mot. Si un
 mot qui se trouve déjà dans le lot au numéro le plus élevé est su
 pendant un quiz, son numéro de lot ne change pas (en principe il
 augmente d’un).
@@ -144,7 +135,7 @@ actif après une unité de temps, un mot du lot n° <i>2</i> après <i>X</i> uni
 
 
 <h2>
-<a name="multimedia_settings">Fichiers multimédia</a>
+<a name="multimedia_settings">Paramètres des fichiers multimédia</a>
 </h2>
 Dans cet onglet, vous pouvez décider comment jVLT gérera les fichiers multimédia specifiés dans la&nbsp; <a href="doc-vocabulary.html#add_word">fenêtre de mots</a>.
 <br>
