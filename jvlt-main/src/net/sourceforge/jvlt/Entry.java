@@ -211,6 +211,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		return (String[]) _mm_files.toArray(new String[0]);
 	}
 	
+	public Stats getStats() { return _stats; }
+	
 	public void setID(String id) { _id = id; }
 	
 	public void setOrthography(String o) { _orthography=o; }
@@ -277,6 +279,10 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	public int getUserFlags() { return _stats._user_flags; }
 	
 	public void setUserFlags(int flags) { _stats._user_flags = flags; }
+	
+	public void setStats(Stats stats) {
+		_stats.reinit(stats);
+	}
 	
 	public void resetStats() {
 		_stats = new Stats();
