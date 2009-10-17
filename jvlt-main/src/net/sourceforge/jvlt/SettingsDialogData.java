@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,13 +15,25 @@ import javax.swing.border.*;
 
 public class SettingsDialogData extends CustomDialogData
 	implements ActionListener {
-	private Font _old_print_font;
-	private Font _old_html_font;
-	private Font _old_ui_font;
-	private Font _old_ui_orth_font;
-	private Font _old_ui_pron_font;
-	private Font _old_orth_font;
-	private Font _old_pron_font;
+	private enum FontKey {
+		PRINT("print_font"),
+		HTML("html_font"),
+		HTML_ORTH("orth_font"),
+		HTML_PRON("pron_font"),
+		UI("ui_font"),
+		UI_ORTH("ui_orth_font"),
+		UI_PRON("ui_pron_font");
+		
+		private String _action_command;
+		
+		private FontKey(String action_command) {
+			_action_command = action_command;
+		}
+		
+		public String getActionCommand() { return _action_command; }
+	}
+	
+	private Map<FontKey, Font> _old_fonts = new HashMap<FontKey, Font>();
 	private Locale _old_locale;
 	private boolean _old_restore_previously_open;
 	private boolean _old_play_immediately;
@@ -39,13 +52,8 @@ public class SettingsDialogData extends CustomDialogData
 	private LabeledComboBox _locale_cobox;
 	private LabeledComboBox _laf_cobox;
 	private FileTypePanel _file_type_panel;
-	private FontChooserButton _print_font_button;
-	private FontChooserButton _html_font_button;
-	private FontChooserButton _ui_font_button;
-	private FontChooserButton _ui_orth_font_button;
-	private FontChooserButton _ui_pron_font_button;
-	private FontChooserButton _orth_font_button;
-	private FontChooserButton _pron_font_button;
+	private Map<FontKey, FontChooserComboBox> _font_boxes =
+		new HashMap<FontKey, FontChooserComboBox>();
 	private ExpirationTimePanel _expiration_panel;
 	private AttributeSelectionPanel _displayed_attrs_panel;
 
@@ -53,20 +61,13 @@ public class SettingsDialogData extends CustomDialogData
 		_model = model;
 		Config config = JVLT.getConfig();
 		
-		_old_print_font = config.getFontProperty("print_font",
-			new Font("Dialog", Font.PLAIN, 12));
-		_old_html_font = config.getFontProperty("html_font",
-			new Font("Dialog", Font.PLAIN, 12));
-		_old_ui_font = config.getFontProperty("ui_font",
-			new Font("Dialog", Font.PLAIN, 12));
-		_old_ui_orth_font = config.getFontProperty("ui_orth_font",
-				new Font("Dialog", Font.PLAIN, 12));
-		_old_ui_pron_font = config.getFontProperty("ui_pron_font",
-				new Font("Dialog", Font.PLAIN, 12));
-		_old_orth_font = config.getFontProperty("orth_font",
-			new Font("Dialog", Font.PLAIN, 24));
-		_old_pron_font = config.getFontProperty("pron_font",
-			new Font("Dialog", Font.PLAIN, 12));
+		_old_fonts.put(FontKey.PRINT, config.getFontProperty("print_font"));
+		_old_fonts.put(FontKey.HTML, config.getFontProperty("print_font"));
+		_old_fonts.put(FontKey.HTML_ORTH, config.getFontProperty("orth_font"));
+		_old_fonts.put(FontKey.HTML_PRON, config.getFontProperty("pron_font"));
+		_old_fonts.put(FontKey.UI, config.getFontProperty("ui_font"));
+		_old_fonts.put(FontKey.UI_ORTH, config.getFontProperty("ui_orth_font"));
+		_old_fonts.put(FontKey.UI_PRON, config.getFontProperty("ui_pron_font"));
 		_old_restore_previously_open = config.getBooleanProperty(
 			"restore_previously_open_file", false);
 		_old_play_immediately = config.getBooleanProperty(
@@ -131,13 +132,12 @@ public class SettingsDialogData extends CustomDialogData
 			_locale_cobox.getSelectedItem());
 		String new_laf_string = (String) _string_laf_map.get(
 			_laf_cobox.getSelectedItem());
-		Font new_print_font=_print_font_button.getFontInfo().getFont();
-		Font new_html_font=_html_font_button.getFontInfo().getFont();
-		Font new_ui_font=_ui_font_button.getFontInfo().getFont();
-		Font new_ui_orth_font=_ui_orth_font_button.getFontInfo().getFont();
-		Font new_ui_pron_font=_ui_pron_font_button.getFontInfo().getFont();
-		Font new_orth_font=_orth_font_button.getFontInfo().getFont();
-		Font new_pron_font=_pron_font_button.getFontInfo().getFont();
+		Map<FontKey, FontInfo> new_font_infos =
+			new HashMap<FontKey, FontInfo>();
+		Map<FontKey, Font> new_fonts =
+			new HashMap<FontKey, Font>();
+		for (Map.Entry<FontKey, FontChooserComboBox> e: _font_boxes.entrySet())
+			new_font_infos.put(e.getKey(), e.getValue().getFontInfo());
 		boolean new_restore_previously_open = _restore_chbox.isSelected();
 		boolean new_play_immediately = _play_immediately_chbox.isSelected();
 		int new_num_batches = _expiration_panel.getNumBatches();
@@ -145,15 +145,22 @@ public class SettingsDialogData extends CustomDialogData
 		String new_expiration_unit = _expiration_panel.getExpirationUnit();
 		Object[] new_displayed_attrs = 
 			_displayed_attrs_panel.getSelectedObjects();
+
+		for (Map.Entry<FontKey, FontChooserComboBox> e: _font_boxes.entrySet())
+			new_font_infos.put(e.getKey(), e.getValue().getFontInfo());
+		
+		for (Map.Entry<FontKey, FontInfo> e: new_font_infos.entrySet())
+			new_fonts.put(e.getKey(),
+					e.getValue() == null ? null : e.getValue().getFont());			
 		
 		Config config = JVLT.getConfig();
-		config.setProperty("print_font", new_print_font);
-		config.setProperty("html_font", new_html_font);
-		config.setProperty("ui_font", new_ui_font);
-		config.setProperty("ui_orth_font", new_ui_orth_font);
-		config.setProperty("ui_pron_font", new_ui_pron_font);
-		config.setProperty("orth_font", new_orth_font);
-		config.setProperty("pron_font", new_pron_font);
+		config.setProperty("print_font", new_fonts.get(FontKey.PRINT));
+		config.setProperty("html_font", new_fonts.get(FontKey.HTML));
+		config.setProperty("ui_font", new_fonts.get(FontKey.UI));
+		config.setProperty("ui_orth_font", new_fonts.get(FontKey.UI_ORTH));
+		config.setProperty("ui_pron_font", new_fonts.get(FontKey.UI_PRON));
+		config.setProperty("orth_font", new_fonts.get(FontKey.HTML_ORTH));
+		config.setProperty("pron_font", new_fonts.get(FontKey.HTML_PRON));
 		config.setProperty("locale", new_locale);
 		config.setProperty("restore_previously_open_file",
 			String.valueOf(new_restore_previously_open));
@@ -167,14 +174,14 @@ public class SettingsDialogData extends CustomDialogData
 		
 		_file_type_panel.save();
 			
-		if ((! new_html_font.equals(_old_html_font))
-			|| (! new_ui_font.equals(_old_ui_font))
-			|| (! new_ui_orth_font.equals(_old_ui_orth_font))
-			|| (! new_ui_pron_font.equals(_old_ui_pron_font))
-			|| (! new_orth_font.equals(_old_orth_font))
-			|| (! new_pron_font.equals(_old_pron_font))
-			|| (! _old_locale.equals(new_locale))
-			|| (! _old_laf.getClass().getName().equals(new_laf_string)))
+		if (isFontUpdated(FontKey.HTML, new_fonts)
+			|| isFontUpdated(FontKey.HTML_ORTH, new_fonts)
+			|| isFontUpdated(FontKey.HTML_PRON, new_fonts)
+			|| isFontUpdated(FontKey.UI, new_fonts)
+			|| isFontUpdated(FontKey.UI_ORTH, new_fonts)
+			|| isFontUpdated(FontKey.UI_PRON, new_fonts)
+			|| ! _old_locale.equals(new_locale)
+			|| ! _old_laf.getClass().getName().equals(new_laf_string))
 				MessageDialog.showDialog(_content_pane,
 					MessageDialog.WARNING_MESSAGE,
 					GUIUtils.getString("Messages", "restart"));
@@ -185,34 +192,21 @@ public class SettingsDialogData extends CustomDialogData
 			Object item = _laf_cobox.getSelectedItem();
 			boolean metal_theme = _string_laf_map.get(item).equals(
 					"javax.swing.plaf.metal.MetalLookAndFeel");
-			_ui_font_button.setEnabled(metal_theme);
+			_font_boxes.get(FontKey.UI).setEnabled(metal_theme);
 		}
 	}
 	
 	private void init() {
 		_content_pane = new JPanel();
 		
-		_print_font_button = new FontChooserButton();
-		_print_font_button.setFontInfo(new FontInfo(_old_print_font));
-		_print_font_button.setActionCommand("print_font");
-		_html_font_button = new FontChooserButton();
-		_html_font_button.setFontInfo(new FontInfo(_old_html_font));
-		_html_font_button.setActionCommand("html_font");
-		_ui_font_button = new FontChooserButton();
-		_ui_font_button.setFontInfo(new FontInfo(_old_ui_font));
-		_ui_font_button.setActionCommand("ui_font");
-		_ui_orth_font_button = new FontChooserButton();
-		_ui_orth_font_button.setFontInfo(new FontInfo(_old_ui_orth_font));
-		_ui_orth_font_button.setActionCommand("ui_orth_font");
-		_ui_pron_font_button = new FontChooserButton();
-		_ui_pron_font_button.setFontInfo(new FontInfo(_old_ui_pron_font));
-		_ui_pron_font_button.setActionCommand("ui_pron_font");
-		_orth_font_button = new FontChooserButton();
-		_orth_font_button.setFontInfo(new FontInfo(_old_orth_font));
-		_orth_font_button.setActionCommand("orth_font");
-		_pron_font_button = new FontChooserButton();
-		_pron_font_button.setFontInfo(new FontInfo(_old_pron_font));
-		_pron_font_button.setActionCommand("pron_font");
+		for (FontKey k: FontKey.values()) {
+			FontChooserComboBox b = new FontChooserComboBox();
+			_font_boxes.put(k, b);
+			
+			Font f = _old_fonts.get(k);
+			b.setFontInfo(f == null ? null : new FontInfo(f));
+			b.setActionCommand(k.getActionCommand());
+		}
 		
 		_laf_cobox = new LabeledComboBox();
 		_laf_cobox.setLabel("look_and_feel");
@@ -257,29 +251,31 @@ public class SettingsDialogData extends CustomDialogData
 		cc.update(1,0,1.0,0.0);
 		appearance_panel.add(_laf_cobox, cc);
 		cc.update(0,1,1.0,0.0);
-		appearance_panel.add(_ui_font_button.getJLabel(), cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI).getJLabel(), cc);
 		cc.update(1,1,1.0,0.0);
-		appearance_panel.add(_ui_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI), cc);
 		cc.update(0,2,1.0,0.0);
-		appearance_panel.add(_ui_orth_font_button.getJLabel(), cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI_ORTH).getJLabel(), cc);
 		cc.update(1,2,1.0,0.0);
-		appearance_panel.add(_ui_orth_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI_ORTH), cc);
 		cc.update(0,3,1.0,0.0);
-		appearance_panel.add(_ui_pron_font_button.getJLabel(), cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI_PRON).getJLabel(), cc);
 		cc.update(1,3,1.0,0.0);
-		appearance_panel.add(_ui_pron_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.UI_PRON), cc);
 		cc.update(0,4,1.0,0.0);
-		appearance_panel.add(_html_font_button.getJLabel(), cc);
+		appearance_panel.add(_font_boxes.get(FontKey.HTML).getJLabel(), cc);
 		cc.update(1,4,1.0,0.0);
-		appearance_panel.add(_html_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.HTML), cc);
 		cc.update(0,5,1.0,0.0);
-		appearance_panel.add(_orth_font_button.getJLabel(), cc);
+		appearance_panel.add(
+				_font_boxes.get(FontKey.HTML_ORTH).getJLabel(), cc);
 		cc.update(1,5,1.0,0.0);
-		appearance_panel.add(_orth_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.HTML_ORTH), cc);
 		cc.update(0,6,1.0,0.0);
-		appearance_panel.add(_pron_font_button.getJLabel(), cc);
+		appearance_panel.add(
+				_font_boxes.get(FontKey.HTML_PRON).getJLabel(), cc);
 		cc.update(1,6,1.0,0.0);
-		appearance_panel.add(_pron_font_button, cc);
+		appearance_panel.add(_font_boxes.get(FontKey.HTML_PRON), cc);
 		cc.update(0,7,1.0,0.0);
 		appearance_panel.add(_locale_cobox.getLabel(), cc);
 		cc.update(1,7,1.0,0.0);
@@ -295,9 +291,9 @@ public class SettingsDialogData extends CustomDialogData
 		printing_panel.setLayout(new GridBagLayout());
 		cc.reset();
 		cc.update(0, 0, 1.0, 0.0);
-		printing_panel.add(_print_font_button.getJLabel(), cc);
+		printing_panel.add(_font_boxes.get(FontKey.PRINT).getJLabel(), cc);
 		cc.update(1, 0, 1.0, 0.0);
-		printing_panel.add(_print_font_button, cc);
+		printing_panel.add(_font_boxes.get(FontKey.PRINT), cc);
 		
 		_expiration_panel = new ExpirationTimePanel();
 		_expiration_panel.setNumBatches(_old_num_batches);
@@ -332,6 +328,13 @@ public class SettingsDialogData extends CustomDialogData
 		
 		_content_pane.setLayout(new GridLayout());
 		_content_pane.add(tab_pane);
+	}
+	
+	private boolean isFontUpdated(FontKey key, Map<FontKey, Font> new_fonts) {
+		if (_old_fonts.get(key) == null)
+			return new_fonts.get(key) == null;
+		else
+			return _old_fonts.get(key).equals(new_fonts.get(key));
 	}
 }
 
