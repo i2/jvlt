@@ -24,22 +24,19 @@ public class XSLUtils {
 		catch (ParseException ex) { return "false"; }
 	}
 	
-	public static String fontFamily(String key, String default_value) {
-		Font font = new Font(default_value, Font.PLAIN, 12);
-		return JVLT.getConfig().getFontProperty(key, font).getFamily();
-	}
-
-	public static String fontFamily(String key) {
-		return fontFamily(key, "Dialog");
+	public static String fontStyle(String key) {
+		return fontStyleFamily(key) + "; " + fontStyleSize(key);
 	}
 	
-	public static String fontSize(String key, float default_value) {
-		Font font = new Font("Dialog", Font.PLAIN, (int) default_value);
-		return String.valueOf(
-			JVLT.getConfig().getFontProperty(key, font).getSize());
+	public static String fontStyleFamily(String key) {
+		Font f = JVLT.getConfig().getFontProperty(key);
+		return f == null ? "" : "font-family: " + f.getFamily();
 	}
 	
-	public static String fontSize(String key) { return fontSize(key, 12); }
+	public static String fontStyleSize(String key) {
+		Font f = JVLT.getConfig().getFontProperty(key);
+		return f == null ? "" : "font-size: " + f.getSize() + "pt";
+	}
 	
 	public static String formatDate(String date_string)	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
