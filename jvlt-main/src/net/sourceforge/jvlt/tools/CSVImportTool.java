@@ -1,10 +1,17 @@
-package net.sourceforge.jvlt;
+package net.sourceforge.jvlt.tools;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import net.sourceforge.jvlt.CSVDictReader;
+import net.sourceforge.jvlt.Dict;
+import net.sourceforge.jvlt.DictReaderException;
+import net.sourceforge.jvlt.DictXMLWriter;
+import net.sourceforge.jvlt.JVLT;
+import net.sourceforge.jvlt.Utils;
 
 public class CSVImportTool {
 	private CSVDictReader _reader;
