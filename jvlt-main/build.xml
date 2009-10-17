@@ -26,6 +26,7 @@
 			<fileset dir="${data}" includes="*.xsl,*.xml,*.xsd,*.css"/>
 			<fileset dir="${src}"
 				includes="net/sourceforge/jvlt/hibernate/*.hbm.xml"/>
+			<fileset dir="${src}" includes="META-INF/*.xml"/>
 		</copy>
 	</target>
 
@@ -34,13 +35,13 @@
 			dest="${build}"/>
 	</target>
 
-	<target name="compile" depends="init" unless="compile-hibernate"
-		description="compile the source">
-		<condition property="compile-hibernate">
-			<available file="${lib}/hibernate3.jar"/>
-		</condition>
-		<antcall target="compile.base"/>
-		<antcall target="compile.all"/>
+	<target name="compile" depends="init" description="compile the source">
+		<echo>Compiling base application...</echo>
+		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
+			source="1.5" target="1.5">
+			<classpath refid="project.classpath"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
 	</target>
 
 	<target name="run" depends="compile,i18n"
@@ -84,6 +85,7 @@
 			compression="bzip2">
 			<tarfileset dir="." prefix="jvlt/">
 				<include name="src/**/*.java"/>
+				<include name="src/**/*.xml"/>
 				<include name="images/*.png"/>
 				<include name="i18n/*.properties"/>
 				<include name="data/*.xsl"/>
@@ -112,25 +114,6 @@
 		<javadoc sourcepath="${src}" destdir="${javadoc}" package="yes">
 			<fileset dir="${src}" includes="*.java"/>
 		</javadoc>
-	</target>
-
-	<target name="compile.base" unless="compile-hibernate">
-		<echo>Compiling base application...</echo>
-		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
-			excludes="net/sourceforge/jvlt/hibernate/*.java"
-			source="1.5" target="1.5">
-			<classpath refid="project.classpath"/>
-			<compilerarg value="-Xlint:unchecked"/>
-		</javac>
-	</target>
-
-	<target name="compile.all" if="compile-hibernate">
-		<echo>Compiling application with hibernate...</echo>
-		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
-			source="1.5" target="1.5">
-			<classpath refid="project.classpath"/>
-			<compilerarg value="-Xlint:unchecked"/>
-		</javac>
 	</target>
 </project>
 
