@@ -1,11 +1,67 @@
 package net.sourceforge.jvlt;
 
+import java.awt.Component;
+import java.awt.Font;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 class DictEntryTree extends JTree {
 	private static final long serialVersionUID = 1L;
+	
+	private static class TreeCellRenderer extends DefaultTreeCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		private static final Font orth_font =
+			JVLT.getConfig().getFontProperty("ui_orth_font");
+		private static final Font pron_font =
+			JVLT.getConfig().getFontProperty("ui_pron_font");
+		
+		public Component getTreeCellRendererComponent(
+				JTree tree, Object value,
+				boolean selected, boolean expanded, boolean leaf, int row,
+				boolean hasFocus) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			
+			if (node.getUserObject() instanceof Entry) {
+				Entry entry = (Entry) node.getUserObject();
+				
+				StringBuffer html_buffer = new StringBuffer();
+				html_buffer.append("<html>");
+				if (orth_font == null) {
+					html_buffer.append("<span>");
+				} else {
+					html_buffer.append(
+							"<span style=\"font-family:" + orth_font.getFamily()
+							+ "; font-size: " + orth_font.getSize() + "\">");
+				}
+				html_buffer.append(entry.getOrthography());
+				html_buffer.append(" </span>");
+				if (pron_font == null) {
+					html_buffer.append("<span>");
+				} else {
+					html_buffer.append(
+							"<span style=\"font-family:" + pron_font.getFamily()
+							+ "; font-size: " + pron_font.getSize() + "\">");
+				}
+				html_buffer.append("("
+						+ Utils.arrayToString(entry.getPronunciations()) + ")");
+				html_buffer.append("</span>");
+				html_buffer.append("</html>");
+				
+				return super.getTreeCellRendererComponent(
+						tree, html_buffer.toString(),
+						selected, expanded, leaf, row, hasFocus);
+			} else
+				return super.getTreeCellRendererComponent(
+						tree, value,
+						selected, expanded, leaf, row, hasFocus);
+		}
+	}
 	
 	public DictEntryTree() {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -13,6 +69,8 @@ class DictEntryTree extends JTree {
 		setModel (model);
 		setRootVisible(false);
 		setLargeModel(true);
+		
+		setCellRenderer(new TreeCellRenderer());
 	}
 	
 	public Entry[] getEntries()	{
@@ -122,8 +180,8 @@ class DictEntryTree extends JTree {
 	}
 
 	public void addEntry(Entry entry) {
-		DefaultMutableTreeNode entrynode = addObject (
-			entry, (DefaultMutableTreeNode) getModel().getRoot());
+		DefaultMutableTreeNode entrynode = addObject(
+				entry, (DefaultMutableTreeNode) getModel().getRoot());
 			
 		Sense[] senses = entry.getSenses();
 		for (int j=0; j<senses.length; j++)
