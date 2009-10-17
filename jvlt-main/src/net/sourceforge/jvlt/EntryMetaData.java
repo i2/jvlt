@@ -71,7 +71,10 @@ public class EntryMetaData extends MetaData {
 		
 		_custom_attributes = new Vector<CustomAttribute>();
 		
+		// Remove attributes that shouldn't be visible for the user
 		removeAttribute("ID");
+		removeAttribute("Stats");
+
 		addAttribute(new SensesAttribute());
 		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
