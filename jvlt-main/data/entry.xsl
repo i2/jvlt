@@ -3,18 +3,14 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xslutils="net.sourceforge.jvlt.XSLUtils">
 
-<xsl:variable name="orth_font_family"
-	select="xslutils:fontFamily('orth_font')"/>
-<xsl:variable name="orth_font_size"
-	select="xslutils:fontSize('orth_font', 24)"/>
-<xsl:variable name="pron_font_family"
-	select="xslutils:fontFamily('pron_font')"/>
-<xsl:variable name="pron_font_size"
-	select="xslutils:fontSize('pron_font')"/>
-<xsl:variable name="font_family"
-	select="xslutils:fontFamily('html_font')"/>
-<xsl:variable name="font_size"
-	select="xslutils:fontSize('html_font')"/>
+<xsl:variable name="orth_font_style"
+	select="xslutils:fontStyle('orth_font')"/>
+<xsl:variable name="orth_font_style_family"
+	select="xslutils:fontStyleFamily('orth_font')"/>
+<xsl:variable name="pron_font_style"
+	select="xslutils:fontStyle('pron_font')"/>
+<xsl:variable name="default_font_style"
+	select="xslutils:fontStyle('html_font')"/>
 
 <xsl:template match="Dict">
 	<html>
@@ -23,8 +19,7 @@
 	<link href="style.css" rel="stylesheet" type="text/css"/>
 	</head>
 	
-	<body class="gradient"
-		style="font-family:{$font_family}; font-size:{$font_size}pt;">
+	<body class="gradient" style="{$default_font_style}">
 	
 	<div class="hbar"/>
 	<table width="100%" class="box1">
@@ -35,12 +30,12 @@
 	of the word.
 	-->
 	<xsl:if test="string(Entry/Orthography)">
-		<font style="font-family:{$orth_font_family}; font-size:{$orth_font_size}pt;">
+		<font style="{$orth_font_style}">
 		<xsl:value-of disable-output-escaping="yes" select="Entry/Orthography"/>
 		</font>
 	</xsl:if>
 	<xsl:if test="Entry/Pronunciations/item">
-		<font style="font-family:{$pron_font_family}; font-size:{$pron_font_size}pt;">
+		<font style="{$pron_font_style}">
 		[<xsl:call-template name="process-item-list">
 			<xsl:with-param name="item-list"
 				select="Entry/Pronunciations/item"/>
@@ -247,13 +242,12 @@
 <xsl:template name="process-example">
 	<xsl:param name="example-node"/>
 	<xsl:param name="sense-id"/>
-	<table cellpadding="0" cellspacing="0"
-		style="margin-top:2pt; font-family:{$orth_font_family}">
+	<table cellpadding="0" cellspacing="0" style="margin-top:2pt">
 	<tr>
 	<td width="30" align="right" valign="top">
 	<img src="/images/bullet.png" width="16" height="16"/>
 	</td>
-	<td>
+	<td style="{$orth_font_style_family}">
 	<xsl:for-each select="$example-node/TextFragments/Fragment">
 		<xsl:choose>
 			<xsl:when test="string(Link)">

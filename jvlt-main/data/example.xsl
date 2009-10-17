@@ -3,14 +3,12 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xslutils="net.sourceforge.jvlt.XSLUtils">
 
-	<xsl:variable name="orth_font_family"
-		select="xslutils:fontFamily('orth_font')"/>
-	<xsl:variable name="pron_font_family"
-		select="xslutils:fontFamily('pron_font')"/>
-	<xsl:variable name="font_family"
-		select="xslutils:fontFamily('html_font')"/>
-	<xsl:variable name="font_size"
-		select="xslutils:fontSize('html_font')"/>
+	<xsl:variable name="orth_font_style_family"
+		select="xslutils:fontStyleFamily('orth_font')"/>
+	<xsl:variable name="pron_font_style_family"
+		select="xslutils:fontStyleFamily('pron_font')"/>
+	<xsl:variable name="default_font_style"
+		select="xslutils:fontStyle('html_font')"/>
 
 	<xsl:template match="Dict">
 		<html>
@@ -19,7 +17,7 @@
 		<link href="style.css" rel="stylesheet" type="text/css"/>
 		</head>
 
-		<body style="font-family:{$font_family}; font-size:{$font_size}pt;">
+		<body style="{$default_font_style}">
 		
 		<div class="hbar"/>
 		<table width="100%" class="box1">
@@ -55,13 +53,13 @@
 		<xsl:choose>
 			<xsl:when test="Link">
 				<a href="{Link}" class="link">
-				<font style="font-family:{$orth_font_family};">
+				<font style="{$orth_font_style_family}">
 				<xsl:value-of disable-output-escaping="yes" select="Text"/>
 				</font>
 				</a>
 			</xsl:when>
 			<xsl:otherwise>
-				<font style="font-family:{$orth_font_family};">
+				<font style="{$orth_font_style_family}">
 				<xsl:value-of disable-output-escaping="yes" select="Text"/>
 				</font>
 			</xsl:otherwise>
@@ -73,13 +71,13 @@
 		<xsl:variable name="entry" select="/Dict/Entry[Senses/Sense/ID=$sid]"/>
 		<div style="margin-top:2pt;">
 		<a href="{$sid}" class="link">
-		<font style="font-family:{$orth_font_family};">
+		<font style="{$orth_font_style_family}">
 		<xsl:value-of disable-output-escaping="yes"
 			select="$entry/Orthography"/>
 		</font>
 		</a>
 		<xsl:if test="$entry/Pronunciations/item">
-			<font style="font-family:{$pron_font_family};">
+			<font style="{$pron_font_style_family}">
 			[<xsl:call-template name="process-item-list">
 				<xsl:with-param name="item-list"
 					select="$entry/Pronunciations/item"/>

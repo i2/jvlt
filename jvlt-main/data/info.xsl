@@ -4,12 +4,8 @@
 	xmlns:xslutils="net.sourceforge.jvlt.XSLUtils">
 
 	<xsl:template match="info">
-		<xsl:variable name="font_family"
-			select="xslutils:fontFamily('html_font')"/>
-		<xsl:variable name="font_size"
-			select="xslutils:fontSize('html_font')"/>
 		<html>
-		<body style="font-family:{$font_family}; font-size:{$font_size}pt;">
+		<body style="xslutils:fontStyle('html_font')">
 		<div align="center">
 		<img src="jvlt.png" alt="jVLT logo" width="128" height="128"/>
 		</div>
