@@ -18,8 +18,18 @@ import net.sourceforge.jvlt.event.SelectionListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 
 public class ExamplePanel extends JPanel implements ActionListener,
-	ListSelectionListener, DictUpdateListener, SelectionListener {
+		ListSelectionListener, DictUpdateListener, SelectionListener {
 	private static final long serialVersionUID = 1L;
+	
+	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
+
+	static {
+		Font font;
+		ORIGINAL_RENDERER = new CustomFontCellRenderer();
+		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		if (font != null)
+			ORIGINAL_RENDERER.setCustomFont(font);
+	}
 	
 	private ArrayList<FilterListener<Example>> _filter_listeners;
 	private JVLTModel _model;
@@ -242,6 +252,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		_table_model = new SortableTableModel<Example>(data);
 		_table_model.setColumnNames(new String[] {"Text"});
 		_example_table = new SortableTable<Example>(_table_model);
+		_example_table.setCellRenderer("Text", ORIGINAL_RENDERER);
 		_example_table.getSelectionModel().addListSelectionListener(this);
 		_example_table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
