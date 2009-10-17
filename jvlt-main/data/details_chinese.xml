@@ -5,5 +5,15 @@
 	<class name="adjective"/>
 	<class name="adverb"/>
 	<class name="measure_word"/>
+	<class name="prefix"/>
+	<class name="interjection"/>
+	<class name="particle"/>
+	<class name="preposition"/>
+	<class name="pron"/>
+	<class name="auxiliary"/>
+	<class name="aux_verb"/>
+	<class name="conjunction"/>
+	<class name="numeral"/>
+	<class name="suffix"/>
 </schema>
 
