@@ -29,8 +29,7 @@ public class TablePrinter implements Printable {
 	public TablePrinter() {
 		PrinterJob job = PrinterJob.getPrinterJob();
 		_format = job.defaultPage();
-		_font = JVLT.getConfig().getFontProperty("print_font",
-			new Font("Dialog", Font.PLAIN, 12));
+		_font = JVLT.getConfig().getFontProperty("print_font");
 		
 		_colwidth_map = new HashMap<Integer, Double>();
 		_pages_map = new HashMap<String, Vector<Integer>>();
@@ -54,7 +53,9 @@ public class TablePrinter implements Printable {
 
 	public void paintPage(Graphics2D g2d, int page)
 		throws PrinterException {
-		g2d.setFont(_font);
+		if (_font != null)
+			g2d.setFont(_font);
+		
 		g2d.setColor(Color.white);
 		g2d.fill(new Rectangle2D.Double(0,0,
 			_format.getWidth(),_format.getHeight()));
@@ -93,7 +94,9 @@ public class TablePrinter implements Printable {
 		throws PrinterException {
 		setPageFormat(format);
 		Graphics2D g2d = (Graphics2D) graphics;
-		g2d.setFont(_font);
+		if (_font != null)
+			g2d.setFont(_font);
+		
 		if (! _pages_map.containsKey(g2d.getClass().getName()))
 			renderPages(g2d);
 		Vector<Integer> pages = _pages_map.get(g2d.getClass().getName());
@@ -116,7 +119,8 @@ public class TablePrinter implements Printable {
 		if (_model == null || _model.getRowCount() == 0)
 			return 0;
 		
-		g2d.setFont(_font);
+		if (_font != null)
+			g2d.setFont(_font);
 		
 		Vector<Integer> pages;
 		if (_pages_map.containsKey(g2d.getClass().getName())) {
