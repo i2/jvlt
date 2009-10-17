@@ -81,6 +81,9 @@ public class Utils {
 	}
 	
 	public static String fontToString(Font font) {
+		if (font == null)
+			return "";
+		
 		int style = font.getStyle();
 		String style_str;
 		switch (style) {
