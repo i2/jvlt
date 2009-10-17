@@ -1,7 +1,16 @@
-package net.sourceforge.jvlt;
+package net.sourceforge.jvlt.tools;
 
 import java.io.*;
 import java.util.*;
+
+import net.sourceforge.jvlt.Dict;
+import net.sourceforge.jvlt.DictReaderException;
+import net.sourceforge.jvlt.Entry;
+import net.sourceforge.jvlt.Example;
+import net.sourceforge.jvlt.JVLT;
+import net.sourceforge.jvlt.JVLTModel;
+import net.sourceforge.jvlt.MetaData;
+import net.sourceforge.jvlt.Sense;
 
 public class JVLTUtils {
 	private JVLTModel _model;
@@ -118,14 +127,38 @@ public class JVLTUtils {
 		}
 	}
 	
+	public void importStats(String target, String source) {
+		try {
+			open(target);
+			JVLTModel statsModel = new JVLTModel();
+			Dict statsDict = open(source, statsModel);
+			for (Entry e: _dict.getEntries()) {
+				Entry statsEntry = statsDict.getEntry(e);
+				if (statsEntry != null)
+					e.setStats(statsEntry.getStats());
+			}
+			_model.save(_current_file);
+		} catch (DictReaderException e) {
+			System.err.println(e.getShortMessage()
+					+ "(" + e.getLongMessage() + ")");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void open(String file_name)
 		throws DictReaderException, IOException {
 		if (file_name.equals(_current_file))
 			return;
 		
-		_model.load(file_name);
-		_dict = _model.getDict();
+		_dict = open(file_name, _model);
 		_current_file = file_name;
+	}
+	
+	private Dict open(String file_name, JVLTModel model)
+			throws DictReaderException, IOException {
+		model.load(file_name);
+		return model.getDict();
 	}
 
 	public static void main (String[] args) {
@@ -135,16 +168,16 @@ public class JVLTUtils {
 		}
 
 		String file = args[args.length-1];
-		TreeSet<String> arg_set = new TreeSet<String>();
+		List<String> arg_set = new ArrayList<String>();
 		for (int i=0; i<args.length; i++)
 			arg_set.add(args[i]);
 		
 		JVLTUtils utils = new JVLTUtils();
-		if (arg_set.contains("--find-duplicates"))
+		if (arg_set.contains("--find-duplicates")) {
 			utils.findDuplicates(file);
-		else if (arg_set.contains("--example-link-count"))
+		} else if (arg_set.contains("--example-link-count")) {
 			utils.exampleLinkCount(file);
-		else if (arg_set.contains("--print-words")) {
+		} else if (arg_set.contains("--print-words")) {
 			Iterator<String> it = arg_set.iterator();
 			String field = "Orthography";
 			while (it.hasNext()) {
@@ -156,9 +189,13 @@ public class JVLTUtils {
 					}
 			}
 			utils.print(file, field);
-		}
-		else
+		} else if (arg_set.contains("--import-stats")) {
+			int index = arg_set.indexOf("--import-stats");
+			if (index >= 0)
+				utils.importStats(file, arg_set.get(index + 1));
+		} else {
 			printHelp();
+		}
 	}
 	
 	private static void printHelp() {
@@ -170,5 +207,6 @@ public class JVLTUtils {
 		System.out.println("--sort-by=<field>"
 			+ "  Can be used together with --print-words. <field> is "
 			+ "  either \"Orthography\" or \"Pronunciations\"");
+		System.out.println("--import-stats <file>");
 	}
 }
