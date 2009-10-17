@@ -39,11 +39,13 @@ public class Config extends Properties {
 			return default_val;
 	}
 
-	public Font getFontProperty(String key, Font default_val) {
-		String default_str = Utils.fontToString(default_val);
-		String str = getProperty(key, default_str);
+	public Font getFontProperty(String key) {
+		String str = getProperty(key);
 		
-		return Font.decode(str);
+		if (str == null || str.equals(""))
+			return null;
+		else
+			return Font.decode(str);
 	}
 	
 	public String[] getStringListProperty(String key, String[] def)	{
