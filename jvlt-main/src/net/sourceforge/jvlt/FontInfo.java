@@ -3,9 +3,9 @@ package net.sourceforge.jvlt;
 import java.awt.Font;
 
 public class FontInfo {
-	private String _family;
-	private int _size;
-	private int _style;
+	private String _family = null;
+	private int _size = 0;
+	private int _style = 0;
 	
 	public FontInfo(String family, int style, int size) {
 		_family = family;
@@ -14,7 +14,11 @@ public class FontInfo {
 	}
 	
 	public FontInfo(Font font) {
-		this(font.getFamily(), font.getStyle(), font.getSize());
+		if (font != null) {
+			_family = font.getFamily();
+			_style = font.getStyle();
+			_size =  font.getSize();
+		}
 	}
 	
 	public String getFamily() { return _family; }
