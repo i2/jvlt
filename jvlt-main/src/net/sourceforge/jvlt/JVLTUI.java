@@ -990,13 +990,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		Config config = JVLT.getConfig();
 		
 		// Set fonts.
-		Font def = new Font("Dialog", Font.PLAIN, 12);
-		Font font = JVLT.getConfig().getFontProperty("ui_font", def);
-		String font_str = Utils.fontToString(font);
-		System.getProperties().put("swing.plaf.metal.controlFont", font_str);
-		System.getProperties().put("swing.plaf.metal.menuFont", font_str);
-		System.getProperties().put("swing.plaf.metal.systemFont", font_str);
-		System.getProperties().put("swing.plaf.metal.userFont", font_str);
+		Font font = JVLT.getConfig().getFontProperty("ui_font");
+		if (font != null) {
+			String font_str = Utils.fontToString(font);
+			System.getProperties().put("swing.plaf.metal.controlFont", font_str);
+			System.getProperties().put("swing.plaf.metal.menuFont", font_str);
+			System.getProperties().put("swing.plaf.metal.systemFont", font_str);
+			System.getProperties().put("swing.plaf.metal.userFont", font_str);
+		}
 
 		// Set look & feel.
 		try {
