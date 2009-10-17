@@ -34,8 +34,9 @@ public class SortableTable<T extends Object> extends JTable
 		}
 	}
 
+	protected SortableTableModel<T> _model;
+	
 	private JPopupMenu _menu;
-	private SortableTableModel<T> _model;
 	private Map<String, CustomFontCellRenderer> _cell_renderers;
 	private JMenuItem _sort_descending_item;
 	private JMenuItem _no_sorting_item;
@@ -110,6 +111,18 @@ public class SortableTable<T extends Object> extends JTable
 			return _cell_renderers.get(column_name);
 		else
 			return super.getCellRenderer(row, column);
+	}
+	
+	@Override
+	public String getToolTipText(MouseEvent event) {
+		int row = rowAtPoint(event.getPoint());
+		int col = columnAtPoint(event.getPoint());
+		Object o = _model.getValueAt(row, col);
+		
+		if (o != null)
+			return o.toString();
+		else
+			return super.getToolTipText(event);
 	}
 	
 	public boolean isArrowDirectionReversed() {
