@@ -1081,8 +1081,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	}
 	
 	private synchronized void updateView() {
-		Font font = JVLT.getConfig().getFontProperty("html_font",
-			_panel.getFont());
+		Font font = JVLT.getConfig().getFontProperty("html_font");
 		GregorianCalendar now = new GregorianCalendar();
 		Collection<Entry> entries = _dict.getEntries();
 		int num_entries = entries.size();
@@ -1140,8 +1139,12 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		StringBuffer buffer = new StringBuffer();
 		String label;
 		buffer.append("<html>\n");
-		buffer.append("<body style=\"font-family:" + font.getFamily()
-			+ "; font-size:" + font.getSize() + "pt;\">\n");
+		if (font == null) {
+			buffer.append("<body>");
+		} else {
+			buffer.append("<body style=\"font-family:" + font.getFamily()
+				+ "; font-size:" + font.getSize() + "pt;\">\n");
+		}
 		buffer.append("<table width=\"100%\">\n");
 		label = GUIUtils.getString("Labels", "num_entries") + ":";
 		buffer.append(getRowString(label, num_entries_str));
