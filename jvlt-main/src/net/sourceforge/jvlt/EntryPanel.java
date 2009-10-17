@@ -26,17 +26,15 @@ public class EntryPanel extends JPanel implements ActionListener,
 	private static final CustomFontCellRenderer PRONUNCIATION_RENDERER;
 	
 	static {
-		Font default_font = new Font("Dialog", Font.PLAIN, 12);
+		Font font;
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
-		if (JVLT.getConfig().containsKey("ui_orth_font"))
-			ORIGINAL_RENDERER.setCustomFont(
-					JVLT.getConfig().getFontProperty(
-							"ui_orth_font", default_font));
-		if (JVLT.getConfig().containsKey("ui_pron_font"))
-			PRONUNCIATION_RENDERER.setCustomFont(
-					JVLT.getConfig().getFontProperty(
-							"ui_pron_font", default_font));
+		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		if (font != null)
+			ORIGINAL_RENDERER.setCustomFont(font);
+		font = JVLT.getConfig().getFontProperty("ui_pron_font");
+		if (font != null)
+			PRONUNCIATION_RENDERER.setCustomFont(font);
 	}
 	
 	private ArrayList<FilterListener<Entry>> _filter_listeners;
