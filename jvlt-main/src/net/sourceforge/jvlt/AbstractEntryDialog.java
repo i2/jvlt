@@ -243,18 +243,20 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	
 	private void initUi() {
 		ActionHandler handler = new ActionHandler();
-		Font default_font = new Font("Dialog", Font.PLAIN, 12);
+		Font font;
 		
 		_orth_field  = new CustomTextField(20);
 		_orth_field.setActionCommand("orthography");
-		_orth_field.setFont(JVLT.getConfig().getFontProperty(
-				"ui_orth_font", default_font));
+		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		if (font != null)
+			_orth_field.setFont(font);
 
 		_pronunciation_editor = new StringListEditor("pronunciation");
 		_pronunciation_editor.addComponentReplacementListener(
 			new ComponentReplacementHandler());
-		_pronunciation_editor.setFont(JVLT.getConfig().getFontProperty(
-				"ui_pron_font", default_font));
+		font = JVLT.getConfig().getFontProperty("ui_pron_font");
+		if (font != null)
+			_pronunciation_editor.setFont(font);
 		_pronunciation_component = _pronunciation_editor.getInputComponent();
 		
 		_lesson_box = new LabeledComboBox(new SortedComboBoxModel());
