@@ -33,7 +33,7 @@ public class ExampleDialogData extends CustomDialogData
 	private ExampleTextField _example_field;
 	private CustomTextField _filter_field;
 	private JTextArea _translation_field;
-	private ExampleSenseList _current_senses_list;
+	private ExampleSenseTable _current_senses_table;
 	private DictEntryTree _selected_senses_tree;
 	private CustomAction _add_sense_action;
 	private CustomAction _remove_sense_action;
@@ -139,7 +139,7 @@ public class ExampleDialogData extends CustomDialogData
 					MessageDialog.WARNING_MESSAGE, ex.getMessage());
 			}
 		
-			_current_senses_list.update();
+			_current_senses_table.update();
 			if (_example_field.getCaret().getDot()==0)
 				_example_field.getCaret().setDot(_current_selection_end);
 			else
@@ -149,9 +149,9 @@ public class ExampleDialogData extends CustomDialogData
 		else if (e.getActionCommand().equals("remove")) {
 			ExampleBuilder builder = new ExampleBuilder(_example);
 			builder.removeTextFragment(
-				_current_senses_list.getSelectedTextFragment());
+				_current_senses_table.getSelectedTextFragment());
 				
-			_current_senses_list.update();
+			_current_senses_table.update();
 			updatePreviewPane();
 		}
 		else if (e.getActionCommand().equals("filter"))
@@ -164,6 +164,8 @@ public class ExampleDialogData extends CustomDialogData
 	}
 	
 	private void init() {
+		Font orth_font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		
 		//-----------
 		// Setup the preview pane which displays the example and its
 		// translation. For the example, it is shown which parts are connected
@@ -195,10 +197,11 @@ public class ExampleDialogData extends CustomDialogData
 		// List displaying the senses connected with the currently
 		// active example
 		//----------
-		_current_senses_list = new ExampleSenseList(_example);
-		_current_senses_list.addListSelectionListener(this);
+		_current_senses_table = new ExampleSenseTable(_example);
+		_current_senses_table.getSelectionModel().addListSelectionListener(
+				this);
 		JScrollPane current_senses_scrpane = new JScrollPane();
-		current_senses_scrpane.getViewport().setView(_current_senses_list);
+		current_senses_scrpane.getViewport().setView(_current_senses_table);
 		_current_senses_label = new JLabel();
 		
 		//----------
@@ -214,6 +217,8 @@ public class ExampleDialogData extends CustomDialogData
 		_filter_field = new CustomTextField();
 		_filter_field.setActionCommand("filter");
 		_filter_field.addActionListener(this);
+		if (orth_font != null)
+			_filter_field.setFont(orth_font);
 		JPanel filter_panel = new JPanel();
 		filter_panel.setLayout(new BorderLayout(5, 0));
 		filter_panel.add(_filter_field.getLabel(), BorderLayout.WEST);
@@ -282,7 +287,7 @@ public class ExampleDialogData extends CustomDialogData
 		_example_field.setExample(_example);
 		_translation_field.setText(_example.getTranslation());
 		
-		_content_pane.setPreferredSize(new Dimension(500,400));
+		_content_pane.setPreferredSize(new Dimension(500,500));
 	}
 	
 	private void updatePreviewPane() {
@@ -291,19 +296,32 @@ public class ExampleDialogData extends CustomDialogData
 		// _example_field then this text is highlighted. Otherwise, the text
 		// fragments that are linked to a sense are highlighted.
 		//---------
-		Font font = JVLT.getConfig().getFontProperty(
-			"html_font", new Font("Dialog", Font.PLAIN, 12));
+		Font html_font = JVLT.getConfig().getFontProperty("html_font");
+		Font orth_font = JVLT.getConfig().getFontProperty("orth_font");
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<html>");
-		buffer.append("<body style=\"font-family:"+font.getFamily()+
-			"; font-size:"+font.getSize()+";\">");
+		if (html_font == null) {
+			buffer.append("<body>");
+		} else {
+			buffer.append("<body style=\"font-family:"+html_font.getFamily()+
+					"; font-size:"+html_font.getSize()+";\">");
+		}
 		buffer.append("<table width=\"100%\" cellpadding=\"0\""+
 			"cellspacing=\"0\">");
 		buffer.append("<tr>");
-		buffer.append("<td>");
+		
+		//
+		// Example text
+		//
+		if (orth_font == null)
+			buffer.append("<td>");
+		else
+			buffer.append("<td style=\"font-family: "
+					+ orth_font.getFamily() + "\">");
+			
 		if (_current_selection_start<0 || _current_selection_end<0) {
 			Example.TextFragment selected_fragment
-				= _current_senses_list.getSelectedTextFragment();
+				= _current_senses_table.getSelectedTextFragment();
 			Example.TextFragment[] fragments = _example.getTextFragments();
 			for (int i=0; i<fragments.length; i++) {
 				Example.TextFragment fragment = fragments[i];
@@ -318,8 +336,7 @@ public class ExampleDialogData extends CustomDialogData
 					buffer.append("\">"+fragment.getText()+"</font>");
 				}
 			}
-		}
-		else {
+		} else {
 			String str = _example.getText();
 			String prefix = str.substring(0, _current_selection_start);
 			String mid = str.substring(
@@ -331,7 +348,9 @@ public class ExampleDialogData extends CustomDialogData
 		}
 		buffer.append("</td>");
 
-		// Display translation
+		//
+		// Example translation
+		//
 		String translation = _translation_field.getText();
 		if (translation != null && ! translation.equals("")) {
 			buffer.append("<td style=\"margin:10; width:20;\"></td>");
@@ -390,7 +409,8 @@ public class ExampleDialogData extends CustomDialogData
 	}
 	
 	private void updateActions() {
-		boolean element_selected=(_current_senses_list.getSelectedIndex()!=-1);
+		boolean element_selected =
+			_current_senses_table.getSelectedObjects().size() > 0;
 		_remove_sense_action.setEnabled(element_selected);
 		_add_sense_action.setEnabled(
 			_selected_senses_tree.getSelectedObject() != null);
@@ -399,7 +419,7 @@ public class ExampleDialogData extends CustomDialogData
 	private void updateStatusLabels() {
 		//-----
 		// Update _current_senses_label
-		Example.TextFragment tf=_current_senses_list.getSelectedTextFragment();
+		Example.TextFragment tf=_current_senses_table.getSelectedTextFragment();
 		if (tf == null)
 			_current_senses_label.setText(" ");
 		else {
@@ -453,6 +473,10 @@ class ExampleTextField extends JTextArea {
 	public ExampleTextField () {
 		super();
 		_example = null;
+		
+		Font f = JVLT.getConfig().getFontProperty("ui_orth_font");
+		if (f != null)
+			setFont(f);
 	}
 	
 	protected Document createDefaultModel() { return new ExampleDocument(); }
