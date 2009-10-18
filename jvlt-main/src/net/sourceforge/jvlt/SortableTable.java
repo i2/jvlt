@@ -119,10 +119,21 @@ public class SortableTable<T extends Object> extends JTable
 		int col = columnAtPoint(event.getPoint());
 		Object o = _model.getValueAt(row, col);
 		
-		if (o != null)
-			return o.toString();
-		else
+		if (o == null) {
 			return super.getToolTipText(event);
+		} else {
+			TableCellRenderer renderer = getCellRenderer(row, col);
+			if (renderer instanceof CustomFontCellRenderer) {
+				CustomFontCellRenderer r = (CustomFontCellRenderer) renderer;
+				Font f = r.getCustomFont();
+				if (f != null)
+					return "<html><span style=\"font-family: " + f.getFamily()
+							+ "; font-size: " + f.getSize() + "\">"
+							+ o.toString() + "</span></html>";
+			}
+			
+			return o.toString();
+		}
 	}
 	
 	public boolean isArrowDirectionReversed() {
