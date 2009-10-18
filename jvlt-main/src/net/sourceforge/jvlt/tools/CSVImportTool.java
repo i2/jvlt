@@ -81,6 +81,7 @@ public class CSVImportTool {
 			System.err.println(e.getShortMessage());
 			System.err.println(e.getLongMessage());
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 }
