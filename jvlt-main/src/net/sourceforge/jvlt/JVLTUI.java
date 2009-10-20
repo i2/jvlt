@@ -71,8 +71,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private JMenu _recent_files_menu;
 	private CustomTabbedPane _tab_pane;
 	private ErrorLogDialog _error_dialog;
+	private boolean _is_mac;
 
-	public JVLTUI(JVLTModel model) {
+
+	public JVLTUI(JVLTModel model, boolean is_on_mac) {
+		_is_mac = is_on_mac;
+
 		_model = model;
 		_matched_entries = null;
 		_matched_examples = null;
@@ -112,6 +116,18 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// start with an empty one.
 		if (_model.getDict() == null)
 			_model.newDict();
+
+		if (System.getProperty("mrj.version") != null) { 
+			try {
+				Class ControllerClass = Class.forName("net.sourceforge.jvlt.MacOSController");
+				OSController controller = (OSController)ControllerClass.newInstance();
+				controller.setMainView(this);
+			}
+			catch (Exception ex) {
+				MessageDialog.showDialog(_main_frame,
+																 MessageDialog.WARNING_MESSAGE, ex.getMessage());
+			}
+		}
 	}
 	
 	public void actionPerformed (ActionEvent e) {
@@ -207,10 +223,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} else if (command.equals("error_log")) {
 			GUIUtils.showDialog(_main_frame, _error_dialog);
 		} else if (command.equals("settings")) {
-			SettingsDialogData ddata = new SettingsDialogData(_model);
-			CustomDialog dlg = new CustomDialog(ddata, _main_frame,
-				GUIUtils.getString("Labels", "settings"));
-			GUIUtils.showDialog(_main_frame, dlg);
+			showSettings();
 		} else if (command.equals("help")) {
 			Locale locale = Locale.getDefault();
 			URL url = JVLTUI.class.getResource("/doc/" + locale.toString()
@@ -221,11 +234,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			BrowserDialog dlg = new BrowserDialog(_main_frame, url);
 			GUIUtils.showDialog(_main_frame, dlg);
 		} else if (command.equals("about")) {
-			AboutDialog dlg = new AboutDialog(_main_frame);
-			GUIUtils.showDialog(_main_frame, dlg);
+			showAbout();
 		}
 	}
-	
+
 	public void actionPerformed(UndoableActionEvent event) {
 		updateMenu();
 		updateTitle();
@@ -367,8 +379,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		file_menu.addSeparator();
 		file_menu.add(import_action);
 		file_menu.add(export_action);
-		file_menu.addSeparator();
-		file_menu.add(quit_action);
+		if (!_is_mac) {
+			file_menu.addSeparator();
+			file_menu.add(quit_action);
+		}
+
 		JMenu edit_menu = GUIUtils.createMenu("menu_edit");
 		menu_bar.add(edit_menu);
 		edit_menu.add(_undo_action);
@@ -379,12 +394,18 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		menu_bar.add(tools_menu);
 		tools_menu.add(reset_stats_action);
 		tools_menu.add(error_log_action);	
-		tools_menu.addSeparator();
-		tools_menu.add(settings_action);
+
+		if (!_is_mac) {
+			tools_menu.addSeparator();
+			tools_menu.add(settings_action);
+		}
+
 		JMenu help_menu = GUIUtils.createMenu("menu_help");
 		menu_bar.add(help_menu);
 		help_menu.add(help_action);
-		help_menu.add(about_action);
+		if (!_is_mac)
+			help_menu.add(about_action);
+
 		_main_frame.setJMenuBar(menu_bar);
 	
 		SelectionNotifier notifier = new SelectionNotifier();
@@ -625,25 +646,46 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 	
 	private void tryToQuit() {
+		if (requestQuit())
+			exit();
+		// Else cancel.
+	}
+  
+  
+	boolean requestQuit() {
 		if (! finishQuiz())
-			return;
+			return false;
 		
 		if (! _model.isDataModified())
-			exit();
+			return true;
 		else {
-			int result = GUIUtils.showSaveDiscardCancelDialog(
-					_main_frame, "save_changes");
+			int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame, "save_changes");
 			if (result == JOptionPane.YES_OPTION) {
 				if (save())
-					exit();
-				// Else cancel.
+					return true;
 			}
 			else if (result == JOptionPane.NO_OPTION)
-				exit();
-			// Else cancel.
+				return true;
 		}
+
+		return false;
 	}
+
 	
+	void showAbout() {
+		AboutDialog dlg = new AboutDialog(_main_frame);
+		GUIUtils.showDialog(_main_frame, dlg);
+	}
+
+
+	void showSettings() {
+		SettingsDialogData ddata = new SettingsDialogData(_model);
+		CustomDialog dlg = new CustomDialog(ddata, _main_frame,
+																				GUIUtils.getString("Labels", "settings"));
+		GUIUtils.showDialog(_main_frame, dlg);
+	}
+
+
 	/**
 	 * Checks whether there is an unfinished quiz and - if yes - asks
 	 * the user whether to save or discard the quiz results, or to cancel.
@@ -988,7 +1030,16 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		JVLT jvlt = new JVLT();
 		jvlt.init();
 		Config config = JVLT.getConfig();
-		
+		boolean is_on_mac = false;
+
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		if (lcOSName.startsWith("mac os x") && 
+				System.getProperty("mrj.version") != null) {
+			is_on_mac = true;
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "jVLT");
+		}
+
 		// Set fonts.
 		Font font = JVLT.getConfig().getFontProperty("ui_font");
 		if (font != null) {
@@ -1011,7 +1062,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			e.printStackTrace();
 		}
 		
-		final JVLTUI ui = new JVLTUI(jvlt.getModel());
+		final JVLTUI ui = new JVLTUI(jvlt.getModel(), is_on_mac);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{

@@ -16,6 +16,11 @@
 		<fileset dir="${lib}"><include name="*.jar"/></fileset>
 	</path>
 
+	<condition property="isMac">
+		<!--<istrue value="false"/>-->
+		<os family="mac" />
+	</condition>
+
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${lib}"/>
@@ -35,13 +40,29 @@
 			dest="${build}"/>
 	</target>
 
-	<target name="compile" depends="init" description="compile the source">
+	<target name="compile_all" depends="init" description="compile the source">
 		<echo>Compiling base application...</echo>
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
-			source="1.5" target="1.5">
+					 source="1.5" target="1.5"
+					 excludes="**/MacOSController.java">
 			<classpath refid="project.classpath"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
+	</target>
+
+	<target name="compile_macosx_support" depends="init"
+					description="Compiles MacOSX specific code"
+					if="isMac">
+		<echo>Compile Mac OS X specific codde...</echo>
+		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
+					 source="1.5" target="1.5"
+					 includes="**/MacOSController.java">
+			<classpath refid="project.classpath"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="compile" depends="compile_all,compile_macosx_support">
 	</target>
 
 	<target name="run" depends="compile,i18n"
