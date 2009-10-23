@@ -119,13 +119,16 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		if (System.getProperty("mrj.version") != null) { 
 			try {
-				Class ControllerClass = Class.forName("net.sourceforge.jvlt.MacOSController");
-				OSController controller = (OSController)ControllerClass.newInstance();
+				@SuppressWarnings("unchecked")
+				Class ControllerClass = Class.forName(
+						"net.sourceforge.jvlt.MacOSController");
+				OSController controller =
+					(OSController) ControllerClass.newInstance();
 				controller.setMainView(this);
 			}
 			catch (Exception ex) {
 				MessageDialog.showDialog(_main_frame,
-																 MessageDialog.WARNING_MESSAGE, ex.getMessage());
+						MessageDialog.WARNING_MESSAGE, ex.getMessage());
 			}
 		}
 	}
@@ -659,7 +662,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		if (! _model.isDataModified())
 			return true;
 		else {
-			int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame, "save_changes");
+			int result = GUIUtils.showSaveDiscardCancelDialog(
+					_main_frame, "save_changes");
 			if (result == JOptionPane.YES_OPTION) {
 				if (save())
 					return true;
@@ -681,7 +685,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	void showSettings() {
 		SettingsDialogData ddata = new SettingsDialogData(_model);
 		CustomDialog dlg = new CustomDialog(ddata, _main_frame,
-																				GUIUtils.getString("Labels", "settings"));
+				GUIUtils.getString("Labels", "settings"));
 		GUIUtils.showDialog(_main_frame, dlg);
 	}
 
@@ -1037,7 +1041,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				System.getProperty("mrj.version") != null) {
 			is_on_mac = true;
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "jVLT");
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name", "jVLT");
 		}
 
 		// Set fonts.
