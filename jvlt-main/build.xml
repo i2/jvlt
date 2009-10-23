@@ -8,22 +8,28 @@
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
 	<property name="lib" value="lib"/>
+	<property name="lib_mac" value="lib_mac"/>
 	<property name="debug" value="true"/>
 	<property name="javadoc" value="javadoc"/>
+	<property name="do_compile_mac" value="false"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
 		<fileset dir="${lib}"><include name="*.jar"/></fileset>
+		<fileset dir="${lib_mac}"><include name="*.jar"/></fileset>
 	</path>
 
-	<condition property="isMac">
-		<!--<istrue value="false"/>-->
-		<os family="mac" />
+	<condition property="compile_mac">
+		<or>
+			<istrue value="${do_compile_mac}"/>
+			<os family="mac"/>
+		</or>
 	</condition>
 
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${lib}"/>
+		<mkdir dir="${lib_mac}"/>
 		<mkdir dir="${build}"/>
 		<copy todir="${build}">
 			<fileset dir="." includes="images/*.png"/>
@@ -52,8 +58,8 @@
 
 	<target name="compile_macosx_support" depends="init"
 					description="Compiles MacOSX specific code"
-					if="isMac">
-		<echo>Compile Mac OS X specific codde...</echo>
+					if="compile_mac">
+		<echo>Compile Mac OS X specific code...</echo>
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
 					 source="1.5" target="1.5"
 					 includes="**/MacOSController.java">
@@ -74,34 +80,8 @@
 			fork="true"/>
 	</target>
 
-	<target name="dist" description="generate the distribution">
-		<antcall target="clean">
-			<param name="build" value="${dist}/build"/>
-		</antcall>
-
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/build"/>
-		
-		<antcall target="i18n">
-			<param name="build" value="${dist}/build"/>
-		</antcall>
-		<antcall target="compile">
-			<param name="build" value="${dist}/build"/>
-			<param name="debug" value="false"/>
-		</antcall>
-
-		<tstamp/>
-
-		<jar jarfile="${dist}/jVLT-${DSTAMP}.jar">
-			<fileset dir="${dist}/build" includes="**/*"/>
-			<zipgroupfileset dir="${lib}" includes="*.jar"/>
-			<manifest>
-				<attribute name="Main-Class"
-					value="net.sourceforge.jvlt.JVLTUI"/>
-			</manifest>
-		</jar>
-
+	<target name="dist" description="generate the distribution"
+			depends="dist_all,dist_macosx_support">
 		<tar destfile="${dist}/jVLT-src-${DSTAMP}.tar.bz2"
 			compression="bzip2">
 			<tarfileset dir="." prefix="jvlt/">
@@ -122,6 +102,49 @@
 				<include name="LICENSE"/>
 			</tarfileset>
 		</tar>
+	</target>
+	
+	<target name="dist_all">
+		<antcall target="dist_jar">
+			<param name="jar_prefix" value="jVLT"/>
+			<param name="compile_target" value="compile_all"/>
+		</antcall>
+	</target>
+	
+	<target name="dist_macosx_support" if="compile_mac">
+		<antcall target="dist_jar">
+			<param name="jar_prefix" value="jVLT-MacOSX"/>
+			<param name="compile_target" value="compile"/>
+		</antcall>
+	</target>
+
+	<target name="dist_jar">
+		<antcall target="clean">
+			<param name="build" value="${dist}/build"/>
+		</antcall>
+
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/build"/>
+		
+		<antcall target="i18n">
+			<param name="build" value="${dist}/build"/>
+		</antcall>
+		<antcall target="${compile_target}">
+			<param name="build" value="${dist}/build"/>
+			<param name="debug" value="false"/>
+		</antcall>
+
+		<tstamp/>
+
+		<jar jarfile="${dist}/${jar_prefix}-${DSTAMP}.jar">
+			<fileset dir="${dist}/build" includes="**/*"/>
+			<zipgroupfileset dir="${lib}" includes="*.jar"/>
+			<manifest>
+				<attribute name="Main-Class"
+					value="net.sourceforge.jvlt.JVLTUI"/>
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="clean" description="clean up" >
