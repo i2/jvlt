@@ -82,6 +82,8 @@
 
 	<target name="dist" description="generate the distribution"
 			depends="dist_all,dist_macosx_support">
+		<tstamp/>
+
 		<tar destfile="${dist}/jVLT-src-${DSTAMP}.tar.bz2"
 			compression="bzip2">
 			<tarfileset dir="." prefix="jvlt/">
