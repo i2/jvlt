@@ -11,7 +11,7 @@
 	<property name="lib_mac" value="lib_mac"/>
 	<property name="debug" value="true"/>
 	<property name="javadoc" value="javadoc"/>
-	<property name="do_compile_mac" value="false"/>
+	<property name="do_compile_mac" value="true"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
@@ -147,6 +147,58 @@
 					value="net.sourceforge.jvlt.JVLTUI"/>
 			</manifest>
 		</jar>
+	</target>
+
+	<!--
+	Create a Mac OS X application bundle (doesn't require compilation, but
+	the application jar file has to exist)
+	-->
+	<target name="dist_macosx_appbundle">
+		<delete dir="${dist}/jVLT.app"/>
+		
+		<tstamp/>
+		
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/jVLT.app"/>
+		<mkdir dir="${dist}/jVLT.app/Contents"/>
+		<mkdir dir="${dist}/jVLT.app/Contents/MacOS"/>
+		<mkdir dir="${dist}/jVLT.app/Contents/Resources"/>
+		<mkdir dir="${dist}/jVLT.app/Contents/Resources/Java"/>
+		
+		<copy todir="${dist}/jVLT.app/Contents/">
+			<fileset dir="${data}/mac" includes="PkgInfo,*.plist"/>
+		</copy>
+
+		<copy todir="${dist}/jVLT.app/Contents/Resources">
+			<fileset dir="${data}/mac" includes="*.icns"/>
+		</copy>
+		
+		<copy file="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub"
+					todir="${dist}/jVLT.app/Contents/MacOS"/>
+		<chmod file="${dist}/jVLT.app/Contents/MacOS/JavaApplicationStub" 
+					 perm="ugo+rx"/>
+		
+		<copy file="${dist}/jVLT-MacOSX-${DSTAMP}.jar"
+					tofile="${dist}/jVLT.app/Contents/Resources/Java/jVLT.jar"/>
+		
+		<exec executable="/Developer/Tools/SetFile">
+			<arg value="-a"/>
+			<arg value="B"/>
+			<arg value="${dist}/jVLT.app"/>
+		</exec>
+	</target>
+
+	<!--
+	Create a Mac OS X disk image containing the application bundle
+	-->
+	<target name="dist_macosx_dmg" depends="dist_macosx_appbundle">
+		<exec executable="hdiutil">
+			<arg value="create"/>
+			<arg value="-ov"/>
+			<arg value="-srcfolder"/>
+			<arg value="${dist}/jVLT.app"/>
+			<arg value="${dist}/jVLT.dmg"/>
+		</exec>
 	</target>
 
 	<target name="clean" description="clean up" >
