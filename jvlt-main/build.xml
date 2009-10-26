@@ -11,7 +11,7 @@
 	<property name="lib_mac" value="lib_mac"/>
 	<property name="debug" value="true"/>
 	<property name="javadoc" value="javadoc"/>
-	<property name="do_compile_mac" value="true"/>
+	<property name="do_compile_mac" value="false"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
