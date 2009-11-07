@@ -168,6 +168,7 @@ class DictHandler extends AbstractHandler {
 	private Sense _current_sense = null;
 	private String _current_trans = null;
 	private String _current_def = null;
+	private String[] _current_custom_field = null;
 	private EntryClass _current_class = null;
 	private SchemaAttribute _current_attr = null;
 	private ArrayList<AttributeChoice> _current_items = null;
@@ -293,6 +294,20 @@ class DictHandler extends AbstractHandler {
 		} else if (qname.equals("category")) {
 			if (_current_entry != null)
 				_current_entry.addCategory(getChars());
+		} else if (qname.equals("custom-field")) {
+			if (_current_entry != null && _current_custom_field != null
+					&& _current_custom_field[0] != null
+					&& _current_custom_field[1] != null)
+				_current_entry.setCustomField(
+						_current_custom_field[0], _current_custom_field[1]);
+			
+			_current_custom_field = null;
+		} else if (qname.equals("key")) {
+			if (_current_custom_field != null) // "custom-field" is parent tag
+				_current_custom_field[0] = getChars();
+		} else if (qname.equals("value")) {
+			if (_current_custom_field != null) // "custom-field" is parent tag
+				_current_custom_field[1] = getChars();
 		} else if (qname.equals("lesson")) {
 			if (_current_entry != null)
 				_current_entry.setLesson(getChars());
@@ -387,8 +402,15 @@ class DictHandler extends AbstractHandler {
 			|| qname.equals("trans") || qname.equals("def")
 			|| qname.equals("ex") || qname.equals("tr")
 			|| qname.equals("category") || qname.equals("lesson")
-			|| qname.equals("multimedia"))
+			|| qname.equals("multimedia")
+			|| qname.equals("key") || qname.equals("value")) {
 			getChars(); // Clear character cache.
+		}
+		else if (qname.equals("custom-field")) {
+			getChars();
+			
+			_current_custom_field = new String[2];
+		}
 		else if (qname.equals("attr")) {
 			getChars();
 			if (_current_class == null)

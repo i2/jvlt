@@ -3,7 +3,9 @@ package net.sourceforge.jvlt;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -63,6 +65,29 @@ public class EntryMetaData extends MetaData {
 		}
 	}
 	
+	public static class CustomFieldsAttribute extends DefaultChoiceAttribute {
+		public CustomFieldsAttribute() {
+			super("CustomFields", Map.class);
+		}
+
+		public Element getXMLElement(Document doc, Object o) {
+			Element elem = doc.createElement("CustomFields");
+			
+			@SuppressWarnings(value="unchecked")
+			Map<String, String> fields = (Map<String, String>) getValue(o);
+			for (Map.Entry<String, String> e: fields.entrySet()) {
+				Element item = doc.createElement("item");
+				item.appendChild(
+						XMLUtils.createTextElement(doc, "key", e.getKey()));
+				item.appendChild(
+						XMLUtils.createTextElement(doc, "value", e.getValue()));
+				elem.appendChild(item);
+			}
+
+			return elem;
+		}
+	}
+	
 	private EntryAttributeSchema _schema = null;
 	private Vector<CustomAttribute> _custom_attributes;
 	
@@ -78,6 +103,7 @@ public class EntryMetaData extends MetaData {
 		addAttribute(new SensesAttribute());
 		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
+		addAttribute(new CustomFieldsAttribute());
 		addAttribute(new EntryClassAttribute());
 		addAttribute(new UserFlagsAttribute());
 	}

@@ -112,6 +112,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	private TreeSet<String> _pronunciations;
 	private TreeSet<Sense> _sense_set;
 	private TreeSet<String> _categories;
+	private TreeMap<String, String> _custom_fields;
 	private String _lesson;
 	private TreeSet<String> _mm_files;
 	private EntryClass _class;
@@ -124,6 +125,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		_sense_set = new TreeSet<Sense>(new Sense.Comparator());
 		_class = null;
 		_categories = new TreeSet<String>();
+		_custom_fields = new TreeMap<String, String>();
 		_lesson = "";
 		_mm_files = new TreeSet<String>();
 		_pronunciations = new TreeSet<String>();
@@ -138,6 +140,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		// _sense_set = entry._sense_set;
 		_class = entry._class;
 		_categories = entry._categories;
+		_custom_fields = entry._custom_fields;
 		_lesson = entry._lesson;
 		_mm_files = entry._mm_files;
 		_pronunciations = entry._pronunciations;
@@ -202,6 +205,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	public String[] getCategories() {
 		return (String[]) _categories.toArray(new String[0]);
 	}
+	
+	public Map<String, String> getCustomFields() { return _custom_fields; }
 
 	public String getLesson() { return _lesson; }
 	
@@ -264,6 +269,15 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 
 	public void addCategory(String category) { _categories.add(category); }
+	
+	public void setCustomFields(Map<String, String> fields) {
+		_custom_fields.clear();
+		_custom_fields.putAll(fields);
+	}
+	
+	public void setCustomField(String key, String value) {
+		_custom_fields.put(key, value);
+	}
 	
 	public void setLesson(String lesson) { _lesson = lesson; }
 
@@ -328,6 +342,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		entry._senses.addAll(_senses);
 		entry._sense_set.addAll(_sense_set);
 		entry._categories.addAll(_categories);
+		entry._custom_fields.putAll(_custom_fields);
 		entry._lesson = new String(_lesson);
 		if (_class == null)
 			entry._class = null;

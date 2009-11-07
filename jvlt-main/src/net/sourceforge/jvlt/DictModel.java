@@ -290,22 +290,8 @@ public class DictModel extends AbstractModel {
 	private void fireDictUpdateEvent(DictUpdateEvent event) {
 		if (event instanceof NewDictDictUpdateEvent) {
 			Dict dict = ((NewDictDictUpdateEvent) event).getDict();
-			ChoiceAttribute attr;
-			Iterator<Entry> it;
-
-			// Update category list
-			attr = (ChoiceAttribute) _entry_data.getAttribute("Categories");
-			attr.setValues(new String[0]);
-			it = dict.getEntries().iterator();
-			while (it.hasNext())
-				attr.addValues(it.next().getCategories());
-			
-			// Update lesson list
-			attr = (ChoiceAttribute) _entry_data.getAttribute("Lesson");
-			attr.setValues(new String[0]);
-			it = dict.getEntries().iterator();
-			while (it.hasNext())
-				attr.addValues(new String[] { it.next().getLesson() });
+			// Update attributes
+			updateAttributes(dict.getEntries(), true);
 			
 			// Update metadata
 			_entry_data.setAttributeSchema(_dict.getEntryAttributeSchema());
@@ -313,18 +299,8 @@ public class DictModel extends AbstractModel {
 			EntryDictUpdateEvent eevent = (EntryDictUpdateEvent) event;
 			if (eevent.getType() == EntryDictUpdateEvent.ENTRIES_ADDED
 				|| eevent.getType() == EntryDictUpdateEvent.ENTRIES_CHANGED) {
-				Collection<Entry> entries = eevent.getEntries();
-				ChoiceAttribute attr;
-
-				// Update category list
-				attr = (ChoiceAttribute) _entry_data.getAttribute("Categories");
-				for (Iterator<Entry> it=entries.iterator(); it.hasNext(); )
-					attr.addValues(it.next().getCategories());
-
-				// Update lesson list
-				attr = (ChoiceAttribute) _entry_data.getAttribute("Lesson");
-				for (Iterator<Entry> it=entries.iterator(); it.hasNext(); )
-					attr.addValues(new String[] { it.next().getLesson() });
+				// Update attributes
+				updateAttributes(eevent.getEntries(), false);
 			}
 		}
 		
@@ -332,6 +308,32 @@ public class DictModel extends AbstractModel {
 			Iterator<DictUpdateListener> it = _dict_update_listeners.iterator();
 			while (it.hasNext())
 				it.next().dictUpdated(event);
+		}
+	}
+	
+	private void updateAttributes(
+			Collection<Entry> new_entries, boolean reset) {
+		ChoiceAttribute categories_attr =
+			(ChoiceAttribute) _entry_data.getAttribute("Categories");
+		ChoiceAttribute custom_fields_attr =
+			(ChoiceAttribute) _entry_data.getAttribute("CustomFields");
+		ChoiceAttribute lesson_attr =
+			(ChoiceAttribute) _entry_data.getAttribute("Lesson");
+		
+		// Reset attributes
+		if (reset) {
+			categories_attr.setValues(new String[0]);
+			custom_fields_attr.setValues(new String[0]);
+			lesson_attr.setValues(new String[0]);
+		}
+		
+		
+		// Add values
+		for (Entry e: new_entries) {
+			categories_attr.addValues(e.getCategories());
+			custom_fields_attr.addValues(
+					e.getCustomFields().keySet().toArray(new String[0]));
+			lesson_attr.addValues(new String[] { e.getLesson() });
 		}
 	}
 }
