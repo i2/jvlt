@@ -71,6 +71,18 @@
 		</td>
 		</tr>
 	</xsl:if>
+	
+	<xsl:variable name="non_empty_fields"
+		select="Entry/CustomFields/item[string(value)]"/>
+	<xsl:if test="count($non_empty_fields)>0">
+		<tr>
+		<td>
+		<xsl:call-template name="process-custom-fields">
+			<xsl:with-param name="non_empty_fields" select="$non_empty_fields"/>
+		</xsl:call-template>
+		</td>
+		</tr>
+	</xsl:if>
 
 	<xsl:if test="Entry/MultimediaFiles/item">
 		<tr>
@@ -215,6 +227,37 @@
 			</table>
 		</xsl:otherwise>
 	</xsl:choose>
+</xsl:template>
+
+<xsl:template name="process-custom-fields">
+	<xsl:param name="non_empty_fields"/>
+	<table cellspacing="0" cellpadding="0">
+	<tr>
+	<td valign="top">
+	<table cellspacing="2" cellpadding="1">
+	<xsl:for-each select="$non_empty_fields[position() mod 2 = 1]">
+		<tr>
+		<td><i><xsl:value-of select="key"/>:</i></td>
+		<td><xsl:value-of select="value"/></td>
+		</tr>
+	</xsl:for-each>
+	</table>
+	</td>
+	<xsl:if test="count($non_empty_fields) > 1">
+		<td valign="center" class="vbar"/>
+		<td valign="top">
+		<table cellspacing="2" cellpadding="1">
+		<xsl:for-each select="$non_empty_fields[position() mod 2 = 0]">
+			<tr>
+			<td><i><xsl:value-of select="key"/>:</i></td>
+			<td><xsl:value-of select="value"/></td>
+			</tr>
+		</xsl:for-each>
+		</table>
+		</td>
+	</xsl:if>
+	</tr>
+	</table>
 </xsl:template>
 
 <xsl:template match="Sense">
