@@ -158,11 +158,21 @@ public class ExampleDialogData extends CustomDialogData
 			updateSelectedSensesTree();
 	}
 	
-	public void prepareToShow()
-	{
+	public void prepareToShow() {
 		_example_field.requestFocusInWindow();
 	}
 	
+	@Override
+	protected void loadState(Config config) {
+		_content_pane.setPreferredSize(config.getDimensionProperty(
+					"ExampleDialog.size", new Dimension(500, 500)));
+	}
+	
+	@Override
+	protected void saveState(Config config) {
+		config.setProperty("ExampleDialog.size", _content_pane.getSize());
+	}
+
 	private void init() {
 		Font orth_font = JVLT.getConfig().getFontProperty("ui_orth_font");
 		
@@ -286,8 +296,6 @@ public class ExampleDialogData extends CustomDialogData
 		//----------
 		_example_field.setExample(_example);
 		_translation_field.setText(_example.getTranslation());
-		
-		_content_pane.setPreferredSize(new Dimension(500,500));
 	}
 	
 	private void updatePreviewPane() {
