@@ -35,7 +35,9 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 		
 		Frame frame = JOptionPane.getFrameForComponent(parent);
 		_dialog = new CustomDialog (data, frame, title);
+		data.loadState(JVLT.getConfig());
 		GUIUtils.showDialog(parent, _dialog);
+		data.saveState(JVLT.getConfig());
 		int value = _dialog._value;
 		_dialog = null;
 		
