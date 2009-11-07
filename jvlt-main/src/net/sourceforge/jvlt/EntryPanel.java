@@ -90,6 +90,10 @@ public class EntryPanel extends JPanel implements ActionListener,
 		
 		// Save filter panel's state
 		_filter_panel.saveState();
+		
+		// Save dialog states
+		_edit_entry_dialog.saveState(config);
+		_add_entry_dialog.saveState(config);
 	}
 	
 	public void loadState(Config config) {
@@ -124,6 +128,10 @@ public class EntryPanel extends JPanel implements ActionListener,
 		
 		// Load filter panel's state
 		_filter_panel.loadState();
+		
+		// Load dialog states
+		_edit_entry_dialog.loadState(config);
+		_add_entry_dialog.loadState(config);
 	}
 	
 	public void objectSelected(SelectionEvent e) {
