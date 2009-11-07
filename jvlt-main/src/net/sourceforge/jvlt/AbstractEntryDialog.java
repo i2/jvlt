@@ -147,6 +147,15 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		_orth_field.requestFocusInWindow();
 	}
 	
+	public void loadState(Config config) {
+		getContentPane().setPreferredSize(config.getDimensionProperty(
+				"EntryDialog.size", new Dimension(400, 300)));
+	}
+	
+	public void saveState(Config config) {
+		config.setProperty("EntryDialog.size", getContentPane().getSize());
+	}
+	
 	protected void setCurrentEntry(Entry entry) {
 		_current_entry = entry;
 		_sense_map.clear();

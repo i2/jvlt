@@ -47,5 +47,9 @@ public abstract class CustomDialogData {
 			it.hasNext(); )
 			it.next().componentReplaced(ev);
 	}
+	
+	protected void loadState(Config config) {}
+	
+	protected void saveState(Config config) {}
 }
 
