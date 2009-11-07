@@ -1,5 +1,6 @@
 package net.sourceforge.jvlt;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.*;
 
@@ -81,6 +82,26 @@ public class Config extends Properties {
 		return loc;
 	}
 	
+	public Dimension getDimensionProperty(String key, Dimension default_dim) {
+		String val;
+		if (default_dim != null)
+			val = getProperty(key, String.valueOf(default_dim.width) + ";"
+					+ String.valueOf(default_dim.height));
+		else
+			val = getProperty(key);
+		
+		try {
+			String[] size = val.split(";");
+			if (size.length != 2)
+				return null;
+			
+			return new Dimension(Integer.parseInt(size[0]),
+					Integer.parseInt(size[1]));
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+	
 	public void setProperty(String key, boolean value) {
 		put(key, String.valueOf(value));
 	}
@@ -104,6 +125,11 @@ public class Config extends Properties {
 
 	public void setProperty(String key, Locale value) {
 		put(key, value.toString());
+	}
+	
+	public void setProperty(String key, Dimension dim) {
+		put(key, Utils.arrayToString(new String[] {
+				String.valueOf(dim.width), String.valueOf(dim.height)}, ";"));
 	}
 }
 
