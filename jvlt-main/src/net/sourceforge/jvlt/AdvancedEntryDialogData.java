@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -31,9 +32,11 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	
 	private EntryClass _orig_class;
 	private String[] _orig_categories;
+	private Map<String, String> _orig_custom_fields;
 	private String[] _orig_mmfiles;
 	
 	private ChoiceListPanel _category_selection_panel;
+	private CustomFieldPanel _custom_field_panel;
 	private EntryAttributeSchemaPanel _schema_panel;
 	private FileSelectionPanel _file_selection_panel;
 	private FlagSelectionPanel _flag_selection_panel;
@@ -45,6 +48,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	}
 	
 	public void updateData() throws InvalidDataException {
+		/* Entry class */
 		if (_schema_panel != null) {
 			EntryClass ec = _schema_panel.getValue();
 			if (_entries.size() == 1) {
@@ -67,12 +71,20 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 			}
 		}
 
+		/* Categories */
 		String[] categories = Utils.objectArrayToStringArray(
 				_category_selection_panel.getSelectedObjects());
 		if (! Utils.arraysEqual(categories, _orig_categories))
 			for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
 				it.next().setCategories(categories);
+		
+		/* Custom fields */
+		Map<String, String> custom_fields = _custom_field_panel.getValueMap();
+		if (! custom_fields.equals(_orig_custom_fields))
+			for (Entry e: _entries)
+				e.setCustomFields(custom_fields);
 
+		/* Multimedia files */
 		String[] files = _file_selection_panel.getFiles();
 		if (! Utils.arraysEqual(files, _orig_mmfiles))
 			for (Iterator<Entry> it=_entries.iterator(); it.hasNext(); )
@@ -88,9 +100,22 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		_flag_selection_panel.apply();
 	}
 	
+	@Override
+	protected void loadState(Config config) {
+		_content_pane.setPreferredSize(config.getDimensionProperty(
+					"AdvancedEntryDialog.size", new Dimension(300, 200)));
+	}
+	
+	@Override
+	protected void saveState(Config config) {
+		config.setProperty("AdvancedEntryDialog.size", _content_pane.getSize());
+	}
+
 	private void init()	{
 		_category_selection_panel = new ChoiceListPanel();
 		_category_selection_panel.setAllowCustomChoices(true);
+		
+		_custom_field_panel = new CustomFieldPanel();
 		
 		_file_selection_panel = new FileSelectionPanel();
 		String dict_file_name = _model.getDictFileName();
@@ -124,6 +149,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		if (_schema_panel != null)
 			tpane.addTab("details", _schema_panel);
 		tpane.addTab("categories", _category_selection_panel);
+		tpane.addTab("custom_fields", _custom_field_panel);
 		tpane.addTab("multimedia_files", _file_selection_panel);
 		tpane.addTab("flags", _flag_selection_panel);
 		
@@ -135,15 +161,24 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		// Init data
 		//-----
 		MetaData data=_model.getDictModel().getMetaData(Entry.class);
-		ChoiceAttribute attr=(ChoiceAttribute) data.getAttribute("Categories");
-		_category_selection_panel.setAvailableObjects(attr.getValues());
+		ChoiceAttribute choices_attr =
+			(ChoiceAttribute) data.getAttribute("Categories");
+		_category_selection_panel.setAvailableObjects(choices_attr.getValues());
+		
+		ChoiceAttribute custom_field_attr =
+			(ChoiceAttribute) data.getAttribute("CustomFields");
+		_custom_field_panel.setChoices(custom_field_attr.getValues());
+		
 		_orig_categories = _entries.get(0).getCategories();
+		_orig_custom_fields = _entries.get(0).getCustomFields();
 		_orig_mmfiles = _entries.get(0).getMultimediaFiles();
 		_orig_class = _entries.get(0).getEntryClass();
 		for (int i=1; i<_entries.size(); i++) {
 			if (_orig_categories.length > 0 && ! Utils.arraysEqual(
 					_orig_categories, _entries.get(i).getCategories()))
 				_orig_categories = new String[0];
+			if (! _orig_custom_fields.equals(_entries.get(i).getCustomFields()))
+				_orig_custom_fields = null;
 			if (_orig_mmfiles.length > 0 &&	! Utils.arraysEqual(_orig_mmfiles,
 						_entries.get(i).getMultimediaFiles()))
 				_orig_mmfiles = new String[0];
@@ -151,13 +186,14 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 				! _orig_class.equals(_entries.get(i).getEntryClass()))
 				_orig_class = null;
 		}
+		
 		_category_selection_panel.setSelectedObjects(_orig_categories);
+		_custom_field_panel.setValueMap(_orig_custom_fields);
 		_file_selection_panel.setFiles(_orig_mmfiles);
 		if (schema != null)
 			_schema_panel.setValue(_orig_class);
 	}
 }
-
 
 class FileSelectionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
