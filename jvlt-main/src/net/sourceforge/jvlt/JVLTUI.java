@@ -72,6 +72,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private CustomTabbedPane _tab_pane;
 	private ErrorLogDialog _error_dialog;
 	private boolean _is_mac;
+	private String lastOpenPath = null;
 
 
 	public JVLTUI(JVLTModel model, boolean is_on_mac) {
@@ -159,12 +160,21 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		if (command.equals("new")) {
 			_model.newDict();
 		} else if (command.equals("open")) {
-			JFileChooser chooser = new DictFileChooser(
-				_model.getDictFileName());
+            if(lastOpenPath==null) {
+                lastOpenPath = _model.getDictFileName();
+            }
+
+			JFileChooser chooser = new DictFileChooser(lastOpenPath);
 			int val = chooser.showOpenDialog(_main_frame);
 			if (val == JFileChooser.APPROVE_OPTION) {
 				String file_name = chooser.getSelectedFile().getPath();
 				load(file_name);
+			}
+			try {
+				lastOpenPath = chooser.getCurrentDirectory().getCanonicalPath()+"/";
+			} catch(IOException ex) {
+				ex.printStackTrace();
+				lastOpenPath = null;
 			}
 		} else if (command.startsWith("open_")) {
 			int index = Integer.parseInt(command.substring(command.length()-1));
