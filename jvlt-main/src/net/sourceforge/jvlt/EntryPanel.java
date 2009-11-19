@@ -90,10 +90,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 		
 		// Save filter panel's state
 		_filter_panel.saveState();
-		
-		// Save dialog states
-		_edit_entry_dialog.saveState(config);
-		_add_entry_dialog.saveState(config);
 	}
 	
 	public void loadState(Config config) {
@@ -128,10 +124,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 		
 		// Load filter panel's state
 		_filter_panel.loadState();
-		
-		// Load dialog states
-		_edit_entry_dialog.loadState(config);
-		_add_entry_dialog.loadState(config);
 	}
 	
 	public void objectSelected(SelectionEvent e) {
@@ -158,9 +150,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		if (e.getSource() == _filter_panel) {
 			applyFilter();
 		} else if (e.getActionCommand().equals("add")) {
-			_add_entry_dialog.init();
-			GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
-					_add_entry_dialog);
+			addEntry(null);
 		} else if (e.getActionCommand().equals("edit")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() > 0)
@@ -170,9 +160,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 			if (entries.size() == 1) {
 				// Use selected entry as template for new entry
 				Entry entry = entries.get(0).createDeepCopy();
+				addEntry(entry);
 				_add_entry_dialog.init(entry);
-				GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
-						_add_entry_dialog);
 			}
 		} else if (e.getActionCommand().equals("remove")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
@@ -382,10 +371,12 @@ public class EntryPanel extends JPanel implements ActionListener,
 		String title = entries.size() == 1 ?
 						GUIUtils.getString("Labels", "edit_entry") :
 						GUIUtils.getString("Labels", "edit_entries");
+		_edit_entry_dialog.loadState(JVLT.getConfig());
 		_edit_entry_dialog.setTitle(title);
 		_edit_entry_dialog.init(entries);
 		GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 				_edit_entry_dialog);
+		_edit_entry_dialog.saveState(JVLT.getConfig());
 	}
 	
 	private void removeEntries(List<Entry> entries) {
@@ -436,5 +427,19 @@ public class EntryPanel extends JPanel implements ActionListener,
 		} else if (e.getButton() == MouseEvent.BUTTON3) {
 			_menu.show(e.getComponent(), e.getX(), e.getY());
 		}
+	}
+	
+	private void addEntry(Entry template) {
+		_add_entry_dialog.loadState(JVLT.getConfig());
+		
+		if (template != null)
+			_add_entry_dialog.init(template);
+		else
+			_add_entry_dialog.init();
+		
+		GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
+				_add_entry_dialog);
+		
+		_add_entry_dialog.saveState(JVLT.getConfig());
 	}
 }
