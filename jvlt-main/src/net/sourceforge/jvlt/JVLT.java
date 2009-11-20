@@ -32,7 +32,7 @@ public class JVLT {
 			System.getProperty("user.home") + File.separator + ".jvlt" +
 			File.separator + "config";
 		FileOutputStream fos = new FileOutputStream(prop_file_name);
-		_config.store(fos, "jVLT property file");
+		_config.store(fos);
 	}
 	
 	public static Locale[] getSupportedLocales() { return _locales; }

@@ -389,12 +389,9 @@ class FileTypePanel extends JPanel
 	
 	public void save() {
 		// Remove all extension_* keys from the config file
-		Iterator<Object> it = JVLT.getConfig().keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next().toString();
-			if (key.startsWith("extension_"))
-				it.remove();
-		}
+		for (String s: JVLT.getConfig().getKeys())
+			if (s.startsWith("extension_"))
+				JVLT.getConfig().remove(s);
 		
 		// Insert all custom file types
 		Iterator<String>it2 = _extensions.keySet().iterator();

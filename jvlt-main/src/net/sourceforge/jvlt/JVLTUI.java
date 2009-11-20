@@ -731,9 +731,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		//-----
 		String dict_file_name = _model.getDictFileName();
 		if (dict_file_name == null)
-			conf.put("dict_file", "");
+			conf.setProperty("dict_file", "");
 		else
-			conf.put("dict_file", dict_file_name);
+			conf.setProperty("dict_file", dict_file_name);
 		
 		//-----
 		// Save list of recent files

@@ -2,10 +2,36 @@ package net.sourceforge.jvlt;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.util.*;
 
-public class Config extends Properties {
-	private static final long serialVersionUID = 1L;
+public class Config {
+	private TreeMap<String, String> properties = new TreeMap<String, String>();
+	
+	public String[] getKeys() {
+		return properties.keySet().toArray(new String[0]);
+	}
+	
+	public boolean containsKey(String key) {
+		return properties.containsKey(key);
+	}
+	
+	public String getProperty(String key) {
+		return getProperty(key, null);
+	}
+	
+	public String getProperty(String key, String default_value) {
+		if (properties.containsKey(key))
+			return properties.get(key);
+		else
+			return default_value;
+	}
 	
 	public float getFloatProperty (String key, float default_val) {
 		String str = getProperty(key, String.valueOf(default_val));
@@ -102,34 +128,76 @@ public class Config extends Properties {
 		}
 	}
 	
+	public void setProperty(String key, String value) {
+		properties.put(key, value);
+	}
+	
 	public void setProperty(String key, boolean value) {
-		put(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 	}
 		
 	public void setProperty(String key, int value) {
-		put(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 	}
 
 	public void setProperty(String key, float value) {
-		put(key, String.valueOf(value));
+		setProperty(key, String.valueOf(value));
 	}
 
 	public void setProperty(String key, Font value)	{
-		put(key, Utils.fontToString(value));
+		setProperty(key, Utils.fontToString(value));
 	}
 	
 	public void setProperty(String key, Object[] values) {
 		String str = Utils.arrayToString(values);
-		put(key, str);
+		setProperty(key, str);
 	}
 
 	public void setProperty(String key, Locale value) {
-		put(key, value.toString());
+		setProperty(key, value.toString());
 	}
 	
 	public void setProperty(String key, Dimension dim) {
-		put(key, Utils.arrayToString(new String[] {
+		setProperty(key, Utils.arrayToString(new String[] {
 				String.valueOf(dim.width), String.valueOf(dim.height)}, ";"));
+	}
+	
+	public void remove(String key) { properties.remove(key); }
+	
+	public void load(FileInputStream in) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		try {
+			while (reader.ready()) {
+				String line = reader.readLine();
+				if (line.startsWith("#"))
+					continue;
+				
+				int pos = line.indexOf('=');
+				if (pos < 0)
+					continue;
+				
+				String key = line.substring(0, pos);
+				String value = line.substring(pos + 1, line.length());
+				properties.put(key, value);
+			}
+		} finally {
+			reader.close();
+		}
+	}
+	
+	public void store(FileOutputStream out) throws IOException {
+		PrintWriter writer = new PrintWriter(out);
+		try {
+			writer.println("#jVLT property file");
+			writer.println("#"
+					+ DateFormat.getDateTimeInstance().format(new Date()));
+			for (Map.Entry<String, String> e: properties.entrySet()) {
+				writer.println(e.getKey() + "=" + e.getValue());
+			}
+		} finally {
+			writer.flush();
+			writer.close();
+		}
 	}
 }
 
