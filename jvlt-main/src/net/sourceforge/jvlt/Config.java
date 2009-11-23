@@ -80,6 +80,10 @@ public class Config {
 		return Utils.split(prop, ";");
 	}
 	
+	public String[] getStringListProperty(String key) {
+		return Utils.split(getProperty(key), ";");
+	}
+	
 	public double[] getNumberListProperty(String key, double[] def)	{
 		String[] defstr = new String[def.length];
 		for (int i=0; i<def.length; i++)
