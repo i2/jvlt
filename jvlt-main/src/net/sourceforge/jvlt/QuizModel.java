@@ -683,11 +683,17 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 	
 	protected void entryAttributesUpdated() {
 		QuizModel model = (QuizModel) _model;
-		String[] entryattrs = model.getJVLTModel().getDictModel().getMetaData(
-			Entry.class).getAttributeNames();
+		
+		Object[] displayedattrs = (Object[]) JVLT.getRuntimeProperties().get(
+				"displayed_attributes");
+		if (displayedattrs == null)
+			displayedattrs = model.getJVLTModel().getDictModel().getMetaData(
+					Entry.class).getAttributeNames();
+		_info_panel.setDisplayedEntryAttributes(
+				Utils.objectArrayToStringArray(displayedattrs));
+
 		String[] exampleattrs = model.getJVLTModel().getDictModel().getMetaData(
 				Example.class).getAttributeNames();
-		_info_panel.setDisplayedEntryAttributes(entryattrs);
 		_info_panel.setDisplayedExampleAttributes(exampleattrs);
 	}
 }
