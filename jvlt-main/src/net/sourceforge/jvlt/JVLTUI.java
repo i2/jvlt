@@ -93,6 +93,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Load runtime properties
 		loadRuntimeProperties();
 		
+		// Handle new data versions
+		String last_data_version = JVLT.getConfig().getProperty(
+				"last_data_version", JVLT.getDataVersion());
+		if (last_data_version.compareTo(JVLT.getDataVersion()) < 0)
+			handleNewDataVersion(last_data_version, JVLT.getDataVersion());
+		
 		// Listen to model events
 		_model.getDictModel().addUndoableActionListener(this);
 		_model.getDictModel().addModelResetEventListener(this);
@@ -748,6 +754,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	
 		// Save runtime properties
 		saveRuntimeProperties();
+		
+		// Save current data version
+		conf.setProperty("last_data_version", JVLT.getDataVersion());
 
 		try {
 			JVLT.saveConfig();
@@ -1036,6 +1045,26 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			JVLT.getConfig().setProperty(key, displayed_attributes);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void handleNewDataVersion(
+			String last_version, String current_version) {
+		if (last_version.compareTo(current_version) >= 0)
+			return;
+		
+		if (current_version.equals("1.2.1")) {
+			// Add new attribute "CustomFields" to displayed_attributes_*
+			// settings
+			Config config = JVLT.getConfig();
+			for (String key: config.getKeys())
+				if (key.startsWith("displayed_attributes")) {
+					Set<String> attrs = new HashSet<String>();
+					attrs.addAll(Arrays.asList(
+							config.getStringListProperty(key)));
+					attrs.add("CustomFields");
+					config.setProperty(key, attrs.toArray());
+				}
 		}
 	}
 	
