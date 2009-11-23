@@ -332,10 +332,10 @@ public class EntryPanel extends JPanel implements ActionListener,
 		Object[] displayedattrs = (Object[]) JVLT.getRuntimeProperties().get(
 				"displayed_attributes");
 		if (displayedattrs == null)
-			_entry_info_panel.setDisplayedEntryAttributes(new String[0]);
-		else
-			_entry_info_panel.setDisplayedEntryAttributes(
-					Utils.objectArrayToStringArray(displayedattrs));
+			displayedattrs = _model.getDictModel().getMetaData(
+					Entry.class).getAttributeNames();
+		_entry_info_panel.setDisplayedEntryAttributes(
+				Utils.objectArrayToStringArray(displayedattrs));
 		MetaData example_data = _model.getDictModel().getMetaData(
 			Example.class);
 		_entry_info_panel.setDisplayedExampleAttributes(
