@@ -48,7 +48,8 @@ class DictEntryTree extends JTree {
 							"<span style=\"font-family:" + pron_font.getFamily()
 							+ "; font-size: " + pron_font.getSize() + "\">");
 				}
-				html_buffer.append("("
+				if (entry.getPronunciations().length > 0)
+					html_buffer.append("("
 						+ Utils.arrayToString(entry.getPronunciations()) + ")");
 				html_buffer.append("</span>");
 				html_buffer.append("</html>");
