@@ -148,8 +148,9 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	}
 	
 	public void loadState(Config config) {
-		getContentPane().setPreferredSize(config.getDimensionProperty(
-				"EntryDialog.size", new Dimension(400, 300)));
+		if (config.containsKey("EntryDialog.size"))
+			getContentPane().setPreferredSize(config.getDimensionProperty(
+					"EntryDialog.size", new Dimension(400, 300)));
 	}
 	
 	public void saveState(Config config) {

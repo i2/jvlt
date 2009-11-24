@@ -102,8 +102,9 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	
 	@Override
 	protected void loadState(Config config) {
-		_content_pane.setPreferredSize(config.getDimensionProperty(
-					"AdvancedEntryDialog.size", new Dimension(300, 200)));
+		if (config.containsKey("AdvancedEntryDialog.size"))
+			_content_pane.setPreferredSize(config.getDimensionProperty(
+						"AdvancedEntryDialog.size", new Dimension(300, 200)));
 	}
 	
 	@Override
