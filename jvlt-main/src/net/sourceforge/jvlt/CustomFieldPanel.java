@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
@@ -179,11 +177,6 @@ public class CustomFieldPanel extends JPanel {
 		table.getColumnModel().getColumn(1).setCellRenderer(
 				new CustomFieldCellRenderer());
 		table.setRowHeight(table.getFontMetrics(getFont()).getHeight() + 5);
-		table.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				table_model.removeRow(table.getSelectedRow());
-			}
-		});
 		table.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) { maybeShowPopup(e); }
 			
