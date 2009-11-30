@@ -3,6 +3,12 @@ package net.sourceforge.jvlt;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +20,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -64,7 +71,7 @@ public class CustomFieldPanel extends JPanel {
 		public int getRowCount() { return keys.size() + 1; }
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			if (rowIndex >= keys.size())
+			if (rowIndex < 0 || rowIndex >= keys.size())
 				return null;
 			
 			if (columnIndex == 0)
@@ -103,9 +110,11 @@ public class CustomFieldPanel extends JPanel {
 					fireTableRowsUpdated(rowIndex, rowIndex);
 				}
 			} else if (columnIndex == 1) {
-				/* Set/replace a value */
-				values.set(rowIndex, (String) value);
-				fireTableRowsUpdated(rowIndex, rowIndex);
+				if (rowIndex < values.size()) {
+					/* Set/replace a value */
+					values.set(rowIndex, (String) value);
+					fireTableRowsUpdated(rowIndex, rowIndex);
+				}
 			}
 		}
 		
@@ -116,14 +125,27 @@ public class CustomFieldPanel extends JPanel {
 			else
 				return GUIUtils.getString("Labels", "field_value");
 		}
+		
+		public void removeRow(int row) {
+			if (row < 0 || row >= keys.size())
+				return;
+			
+			keys.remove(row);
+			values.remove(row);
+			fireTableRowsDeleted(row, row);
+		}
 	}
 	
 	private CustomFieldTableModel table_model;
+	private int popupRow = -1; // Row on which popup menu was opened
 	
 	private JTable table;
 	private JComboBox keyBox;
 	private JTextField valueField;
 	private JLabel messageLabel;
+	private DefaultCellEditor keyCellEditor;
+	private DefaultCellEditor valueCellEditor;
+	private JPopupMenu menu;
 	
 	public CustomFieldPanel() {
 		keyBox = new JComboBox();
@@ -138,16 +160,35 @@ public class CustomFieldPanel extends JPanel {
 			}
 		});
 		
+		ActionListener remove_listener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table_model.removeRow(popupRow);
+			}
+		};
+		menu = new JPopupMenu();
+		menu.add(GUIUtils.createTextAction(remove_listener, "remove"));
+		
+		keyCellEditor = new DefaultCellEditor(keyBox);
+		valueCellEditor = new DefaultCellEditor(valueField);
+		
 		table = new JTable(table_model);
-		table.getColumnModel().getColumn(0).setCellEditor(
-				new DefaultCellEditor(keyBox));
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new DefaultCellEditor(valueField));
+		table.getColumnModel().getColumn(0).setCellEditor(keyCellEditor);
+		table.getColumnModel().getColumn(1).setCellEditor(valueCellEditor);
 		table.getColumnModel().getColumn(0).setCellRenderer(
 				new CustomFieldCellRenderer());
 		table.getColumnModel().getColumn(1).setCellRenderer(
 				new CustomFieldCellRenderer());
 		table.setRowHeight(table.getFontMetrics(getFont()).getHeight() + 5);
+		table.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				table_model.removeRow(table.getSelectedRow());
+			}
+		});
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) { maybeShowPopup(e); }
+			
+			public void mouseReleased(MouseEvent e) { maybeShowPopup(e); }
+		});
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(new Dimension(400, 200));
@@ -189,6 +230,12 @@ public class CustomFieldPanel extends JPanel {
 		}
 	}
 	
+	public void updateData() {
+		// Save data
+		keyCellEditor.stopCellEditing();
+		valueCellEditor.stopCellEditing();
+	}
+	
 	private void updateMessageLabel() {
 		/* Check whether there are duplicates in the key list */
 		String duplicate = null;
@@ -205,5 +252,13 @@ public class CustomFieldPanel extends JPanel {
 					duplicate));
 		else
 			messageLabel.setText("");
+	}
+	
+	private void maybeShowPopup(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			popupRow = table.rowAtPoint(e.getPoint());
+			if (table_model.getValueAt(popupRow, 0) != null)
+				menu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 }
