@@ -1,11 +1,14 @@
 package net.sourceforge.jvlt;
 
-public class SimpleEntryFilter extends EntryFilter {
+public class SimpleEntryFilter extends EntryFilter
+		implements StringEntryFilter {
 	private StringQueryItem _orth_item;
 	private ObjectArrayQueryItem _pron_item;
 	private SenseArrayQueryItem _trans_item;
 	private SenseArrayQueryItem _def_item;
 	private ObjectArrayQueryItem _category_item;
+	private MapQueryItem _custom_field_key_item;
+	private MapQueryItem _custom_field_value_item;
 	private StringQueryItem _lesson_item;
 	
 	public SimpleEntryFilter() {
@@ -20,6 +23,10 @@ public class SimpleEntryFilter extends EntryFilter {
 			SenseArrayQueryItem.DEFINITION_CONTAINS, "");
 		_category_item = new ObjectArrayQueryItem(
 				"Categories", ObjectArrayQueryItem.ITEM_CONTAINS, "");
+		_custom_field_key_item = new MapQueryItem(
+				"CustomFields", MapQueryItem.KEY_CONTAINS, "");
+		_custom_field_value_item = new MapQueryItem(
+				"CustomFields", MapQueryItem.VALUE_CONTAINS, "");
 		_lesson_item = new StringQueryItem(
 				"Lesson", StringQueryItem.CONTAINS, "");
 		_query = new ObjectQuery(Entry.class);
@@ -29,6 +36,8 @@ public class SimpleEntryFilter extends EntryFilter {
 		_query.addItem(_trans_item);
 		_query.addItem(_def_item);
 		_query.addItem(_category_item);
+		_query.addItem(_custom_field_key_item);
+		_query.addItem(_custom_field_value_item);
 		_query.addItem(_lesson_item);
 	}
 	
@@ -40,6 +49,8 @@ public class SimpleEntryFilter extends EntryFilter {
 		_trans_item.setValue(value);
 		_def_item.setValue(value);
 		_category_item.setValue(value);
+		_custom_field_key_item.setValue(value);
+		_custom_field_value_item.setValue(value);
 		_lesson_item.setValue(value);
 	}
 
@@ -49,6 +60,8 @@ public class SimpleEntryFilter extends EntryFilter {
 		_trans_item.setMatchCase(match);
 		_def_item.setMatchCase(match);
 		_category_item.setMatchCase(match);
+		_custom_field_key_item.setMatchCase(match);
+		_custom_field_value_item.setMatchCase(match);
 		_lesson_item.setMatchCase(match);
 	}
 }
