@@ -22,6 +22,7 @@ public class EntryFilterPanel extends JPanel {
 		MODE_TRANSLATION("translation"),
 		MODE_DEFINITION("definition"),
 		MODE_CATEGORY("category"),
+		MODE_CUSTOM_FIELD("custom_field"),
 		MODE_LESSON("lesson"),
 		MODE_ADVANCED("filter_advanced");
 		
@@ -38,7 +39,8 @@ public class EntryFilterPanel extends JPanel {
 		
 	private static final long serialVersionUID = 1L;
 	
-	private static class BasicEntryFilter extends EntryFilter {
+	private static class BasicEntryFilter extends EntryFilter
+			implements StringEntryFilter {
 		private ObjectQueryItem _item = null;
 		
 		public BasicEntryFilter(ObjectQueryItem item) {
@@ -58,6 +60,35 @@ public class EntryFilterPanel extends JPanel {
 		public String getFilterString() { return (String) _item.getValue(); }
 		
 		public void setFilterString(String str) { _item.setValue(str); }
+	}
+	
+	private static class CustomFieldFilter extends EntryFilter
+			implements StringEntryFilter {
+		private MapQueryItem _key_item;
+		private MapQueryItem _value_item;
+		
+		public CustomFieldFilter() {
+			_key_item = new MapQueryItem("CustomFields",
+					MapQueryItem.KEY_CONTAINS, "");
+			_key_item.setMatchCase(false);
+			
+			_value_item = new MapQueryItem("CustomFields",
+					MapQueryItem.VALUE_CONTAINS, "");
+			_value_item.setMatchCase(false);
+			
+			_query.setType(ObjectQuery.MATCH_ONE);
+			_query.addItem(_key_item);
+			_query.addItem(_value_item);
+		}
+
+		public String getFilterString() {
+			return (String) _key_item.getValue();
+		}
+		
+		public void setFilterString(String str) {
+			_key_item.setValue(str);
+			_value_item.setValue(str);
+		}
 	}
 	
 	private class ActionHandler implements ActionListener {
@@ -162,6 +193,7 @@ public class EntryFilterPanel extends JPanel {
 		_filters.put(FilterMode.MODE_CATEGORY, new BasicEntryFilter(
 				new ObjectArrayQueryItem("Categories",
 						ObjectArrayQueryItem.ITEM_CONTAINS, "")));
+		_filters.put(FilterMode.MODE_CUSTOM_FIELD, new CustomFieldFilter());
 		_filters.put(FilterMode.MODE_LESSON, new BasicEntryFilter(
 				new StringQueryItem(
 						"Lesson", StringQueryItem.CONTAINS, "")));
@@ -249,10 +281,8 @@ public class EntryFilterPanel extends JPanel {
 	
 	public String getFilterString() {
 		EntryFilter filter = _filters.get(_mode);
-		if (filter instanceof SimpleEntryFilter) {
-			return ((SimpleEntryFilter) filter).getFilterString();
-		} else if (filter instanceof BasicEntryFilter) {
-			return ((BasicEntryFilter) filter).getFilterString();
+		if (filter instanceof StringEntryFilter) {
+			return ((StringEntryFilter) filter).getFilterString();
 		} else {
 			return null;
 		}
@@ -260,11 +290,8 @@ public class EntryFilterPanel extends JPanel {
 	
 	public void setFilterString(String str) {
 		EntryFilter filter = _filters.get(_mode);
-		if (filter instanceof SimpleEntryFilter) {
-			((SimpleEntryFilter) filter).setFilterString(str);
-		} else if (filter instanceof BasicEntryFilter) {
-			((BasicEntryFilter) filter).setFilterString(str);
-		}
+		if (filter instanceof StringEntryFilter)
+			((StringEntryFilter) filter).setFilterString(str);
 		
 		_filter_field.setText(str);
 	}
