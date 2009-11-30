@@ -79,6 +79,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 				it.next().setCategories(categories);
 		
 		/* Custom fields */
+		_custom_field_panel.updateData();
 		Map<String, String> custom_fields = _custom_field_panel.getValueMap();
 		if (! custom_fields.equals(_orig_custom_fields))
 			for (Entry e: _entries)
