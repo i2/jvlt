@@ -205,7 +205,9 @@ public class CustomFieldPanel extends JPanel {
 	public Map<String, String> getValueMap() {
 		Map<String, String> valueMap = new HashMap<String, String>();
 		for (int i=0; i<table_model.keys.size(); i++) {
-			if (table_model.values.get(i) != null)
+			if (table_model.keys.get(i) != null
+					&& ! table_model.keys.get(i).equals("")
+					&& table_model.values.get(i) != null)
 				valueMap.put(table_model.keys.get(i),
 						table_model.values.get(i));
 		}
@@ -223,21 +225,32 @@ public class CustomFieldPanel extends JPanel {
 		}
 	}
 	
-	public void updateData() {
+	public void updateData() throws InvalidDataException {
 		// Save data
 		keyCellEditor.stopCellEditing();
 		valueCellEditor.stopCellEditing();
+		
+		// Check for duplicates
+		String duplicate = getDuplicate();
+		if (duplicate != null)
+			throw new InvalidDataException(MessageFormat.format(
+					GUIUtils.getString("Labels", "duplicate_name"),
+					duplicate));
+	}
+	
+	/** Returns the first found duplicate or null if there are no duplicates */
+	private String getDuplicate() {
+		for (int i=0; i<table_model.keys.size(); i++)
+			for (int j=i+1; j<table_model.keys.size(); j++)
+				if (table_model.keys.get(i).equals(table_model.keys.get(j)))
+					return table_model.keys.get(i);
+		
+		return null;
 	}
 	
 	private void updateMessageLabel() {
 		/* Check whether there are duplicates in the key list */
-		String duplicate = null;
-		for (int i=0; i<table_model.keys.size(); i++)
-			for (int j=i+1; j<table_model.keys.size(); j++)
-				if (table_model.keys.get(i).equals(table_model.keys.get(j))) {
-					duplicate = table_model.keys.get(i);
-					break;
-				}
+		String duplicate = getDuplicate();
 		
 		if (duplicate != null)
 			messageLabel.setText(MessageFormat.format(
