@@ -238,7 +238,9 @@
 	<xsl:for-each select="$non_empty_fields[position() mod 2 = 1]">
 		<tr>
 		<td><i><xsl:value-of select="key"/>:</i></td>
-		<td><xsl:value-of select="value"/></td>
+		<td>
+		<xsl:value-of disable-output-escaping="yes" select="value"/>
+		</td>
 		</tr>
 	</xsl:for-each>
 	</table>
@@ -250,7 +252,9 @@
 		<xsl:for-each select="$non_empty_fields[position() mod 2 = 0]">
 			<tr>
 			<td><i><xsl:value-of select="key"/>:</i></td>
-			<td><xsl:value-of select="value"/></td>
+			<td>
+			<xsl:value-of disable-output-escaping="yes" select="value"/>
+			</td>
 			</tr>
 		</xsl:for-each>
 		</table>
