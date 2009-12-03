@@ -69,7 +69,7 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 			_value = OK_OPTION;
 			try {
 				_data.updateData();
-				setVisible(false);
+				dispose();
 			} catch (InvalidDataException e) {
 				MessageDialog.showDialog(this, MessageDialog.WARNING_MESSAGE,
 					e.getMessage());
@@ -77,7 +77,7 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 		} else if (ev.getType() == AbstractDialog.CANCEL_OPTION
 			|| ev.getType() == AbstractDialog.CLOSE_OPTION) {
 			_value = CANCEL_OPTION;
-			setVisible(false);
+			dispose();
 		}
 	}
 	
