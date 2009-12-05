@@ -200,12 +200,12 @@ class XMLFormatter {
 			entry_elem.appendChild(
 					XMLUtils.createTextElement(doc, "category", categories[i]));
 		
-		for (Map.Entry<String, String> e: entry.getCustomFields().entrySet()) {
+		for (StringPair p: entry.getCustomFields()) {
 			Element field_elem = doc.createElement("custom-field");
 			field_elem.appendChild(
-					XMLUtils.createTextElement(doc, "key", e.getKey()));
+					XMLUtils.createTextElement(doc, "key", p.getFirst()));
 			field_elem.appendChild(
-					XMLUtils.createTextElement(doc, "value", e.getValue()));
+					XMLUtils.createTextElement(doc, "value", p.getSecond()));
 			entry_elem.appendChild(field_elem);
 		}
 			

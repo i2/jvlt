@@ -7,9 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -32,7 +32,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	
 	private EntryClass _orig_class;
 	private String[] _orig_categories;
-	private Map<String, String> _orig_custom_fields;
+	private StringPair[] _orig_custom_fields;
 	private String[] _orig_mmfiles;
 	
 	private ChoiceListPanel _category_selection_panel;
@@ -80,8 +80,8 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		
 		/* Custom fields */
 		_custom_field_panel.updateData();
-		Map<String, String> custom_fields = _custom_field_panel.getValueMap();
-		if (! custom_fields.equals(_orig_custom_fields))
+		StringPair[] custom_fields = _custom_field_panel.getKeyValuePairs();
+		if (! Arrays.equals(custom_fields, _orig_custom_fields))
 			for (Entry e: _entries)
 				e.setCustomFields(custom_fields);
 
@@ -179,7 +179,8 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 			if (_orig_categories.length > 0 && ! Utils.arraysEqual(
 					_orig_categories, _entries.get(i).getCategories()))
 				_orig_categories = new String[0];
-			if (! _orig_custom_fields.equals(_entries.get(i).getCustomFields()))
+			if (! Arrays.equals(_orig_custom_fields,
+					_entries.get(i).getCustomFields()))
 				_orig_custom_fields = null;
 			if (_orig_mmfiles.length > 0 &&	! Utils.arraysEqual(_orig_mmfiles,
 						_entries.get(i).getMultimediaFiles()))
@@ -190,7 +191,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		}
 		
 		_category_selection_panel.setSelectedObjects(_orig_categories);
-		_custom_field_panel.setValueMap(_orig_custom_fields);
+		_custom_field_panel.setKeyValuePairs(_orig_custom_fields);
 		_file_selection_panel.setFiles(_orig_mmfiles);
 		if (schema != null)
 			_schema_panel.setValue(_orig_class);

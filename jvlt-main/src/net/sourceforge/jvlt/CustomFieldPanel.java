@@ -7,12 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
@@ -22,8 +19,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -140,7 +135,6 @@ public class CustomFieldPanel extends JPanel {
 	private JTable table;
 	private JComboBox keyBox;
 	private JTextField valueField;
-	private JLabel messageLabel;
 	private DefaultCellEditor keyCellEditor;
 	private DefaultCellEditor valueCellEditor;
 	private JPopupMenu menu;
@@ -152,11 +146,6 @@ public class CustomFieldPanel extends JPanel {
 		valueField = new JTextField();
 		
 		table_model = new CustomFieldTableModel();
-		table_model.addTableModelListener(new TableModelListener() {
-			public void tableChanged(TableModelEvent e) {
-				updateMessageLabel();
-			}
-		});
 		
 		ActionListener remove_listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -186,14 +175,10 @@ public class CustomFieldPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(new Dimension(400, 200));
 		
-		messageLabel = new JLabel();
-		
 		setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 1.0);
 		add(scrollPane, cc);
-		cc.update(0, 1, 1.0, 0.0);
-		add(messageLabel, cc);
 	}
 	
 	public void setChoices(Object[] choices) {
@@ -202,26 +187,26 @@ public class CustomFieldPanel extends JPanel {
 			keyBox.addItem(o.toString());
 	}
 	
-	public Map<String, String> getValueMap() {
-		Map<String, String> valueMap = new HashMap<String, String>();
+	public StringPair[] getKeyValuePairs() {
+		ArrayList<StringPair> valueList = new ArrayList<StringPair>();
 		for (int i=0; i<table_model.keys.size(); i++) {
 			if (table_model.keys.get(i) != null
 					&& ! table_model.keys.get(i).equals("")
 					&& table_model.values.get(i) != null)
-				valueMap.put(table_model.keys.get(i),
-						table_model.values.get(i));
+				valueList.add(new StringPair(table_model.keys.get(i),
+						table_model.values.get(i)));
 		}
 		
-		return valueMap;
+		return valueList.toArray(new StringPair[0]);
 	}
 	
-	public void setValueMap(Map<String, String> valueMap) {
-		if (valueMap == null)
+	public void setKeyValuePairs(StringPair[] pairs) {
+		if (pairs == null)
 			return;
 		
-		for (Map.Entry<String, String> e: valueMap.entrySet()) {
-			table_model.keys.add(e.getKey());
-			table_model.values.add(e.getValue());
+		for (StringPair p: pairs) {
+			table_model.keys.add(p.getFirst());
+			table_model.values.add(p.getSecond());
 		}
 	}
 	
@@ -229,35 +214,6 @@ public class CustomFieldPanel extends JPanel {
 		// Save data
 		keyCellEditor.stopCellEditing();
 		valueCellEditor.stopCellEditing();
-		
-		// Check for duplicates
-		String duplicate = getDuplicate();
-		if (duplicate != null)
-			throw new InvalidDataException(MessageFormat.format(
-					GUIUtils.getString("Labels", "duplicate_name"),
-					duplicate));
-	}
-	
-	/** Returns the first found duplicate or null if there are no duplicates */
-	private String getDuplicate() {
-		for (int i=0; i<table_model.keys.size(); i++)
-			for (int j=i+1; j<table_model.keys.size(); j++)
-				if (table_model.keys.get(i).equals(table_model.keys.get(j)))
-					return table_model.keys.get(i);
-		
-		return null;
-	}
-	
-	private void updateMessageLabel() {
-		/* Check whether there are duplicates in the key list */
-		String duplicate = getDuplicate();
-		
-		if (duplicate != null)
-			messageLabel.setText(MessageFormat.format(
-					GUIUtils.getString("Labels", "duplicate_name"),
-					duplicate));
-		else
-			messageLabel.setText("");
 	}
 	
 	private void maybeShowPopup(MouseEvent e) {

@@ -64,16 +64,16 @@ public class EntryFilterPanel extends JPanel {
 	
 	private static class CustomFieldFilter extends EntryFilter
 			implements StringEntryFilter {
-		private MapQueryItem _key_item;
-		private MapQueryItem _value_item;
+		private StringPairQueryItem _key_item;
+		private StringPairQueryItem _value_item;
 		
 		public CustomFieldFilter() {
-			_key_item = new MapQueryItem("CustomFields",
-					MapQueryItem.KEY_CONTAINS, "");
+			_key_item = new StringPairQueryItem("CustomFields",
+					StringPairQueryItem.KEY_CONTAINS, "");
 			_key_item.setMatchCase(false);
 			
-			_value_item = new MapQueryItem("CustomFields",
-					MapQueryItem.VALUE_CONTAINS, "");
+			_value_item = new StringPairQueryItem("CustomFields",
+					StringPairQueryItem.VALUE_CONTAINS, "");
 			_value_item.setMatchCase(false);
 			
 			_query.setType(ObjectQuery.MATCH_ONE);

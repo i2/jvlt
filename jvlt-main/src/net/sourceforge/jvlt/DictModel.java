@@ -331,9 +331,9 @@ public class DictModel extends AbstractModel {
 		// Add values
 		for (Entry e: new_entries) {
 			categories_attr.addValues(e.getCategories());
-			custom_fields_attr.addValues(
-					e.getCustomFields().keySet().toArray(new String[0]));
 			lesson_attr.addValues(new String[] { e.getLesson() });
+			for (StringPair p: e.getCustomFields())
+				custom_fields_attr.addValues(new String[] { p.getFirst() });
 		}
 	}
 }

@@ -7,8 +7,8 @@ public class SimpleEntryFilter extends EntryFilter
 	private SenseArrayQueryItem _trans_item;
 	private SenseArrayQueryItem _def_item;
 	private ObjectArrayQueryItem _category_item;
-	private MapQueryItem _custom_field_key_item;
-	private MapQueryItem _custom_field_value_item;
+	private StringPairQueryItem _custom_field_key_item;
+	private StringPairQueryItem _custom_field_value_item;
 	private StringQueryItem _lesson_item;
 	
 	public SimpleEntryFilter() {
@@ -23,10 +23,10 @@ public class SimpleEntryFilter extends EntryFilter
 			SenseArrayQueryItem.DEFINITION_CONTAINS, "");
 		_category_item = new ObjectArrayQueryItem(
 				"Categories", ObjectArrayQueryItem.ITEM_CONTAINS, "");
-		_custom_field_key_item = new MapQueryItem(
-				"CustomFields", MapQueryItem.KEY_CONTAINS, "");
-		_custom_field_value_item = new MapQueryItem(
-				"CustomFields", MapQueryItem.VALUE_CONTAINS, "");
+		_custom_field_key_item = new StringPairQueryItem(
+				"CustomFields", StringPairQueryItem.KEY_CONTAINS, "");
+		_custom_field_value_item = new StringPairQueryItem(
+				"CustomFields", StringPairQueryItem.VALUE_CONTAINS, "");
 		_lesson_item = new StringQueryItem(
 				"Lesson", StringQueryItem.CONTAINS, "");
 		_query = new ObjectQuery(Entry.class);

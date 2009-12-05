@@ -3,7 +3,6 @@ package net.sourceforge.jvlt;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import org.w3c.dom.Document;
@@ -67,20 +66,19 @@ public class EntryMetaData extends MetaData {
 	
 	public static class CustomFieldsAttribute extends DefaultChoiceAttribute {
 		public CustomFieldsAttribute() {
-			super("CustomFields", Map.class);
+			super("CustomFields", StringPair[].class);
 		}
 
 		public Element getXMLElement(Document doc, Object o) {
 			Element elem = doc.createElement("CustomFields");
 			
-			@SuppressWarnings(value="unchecked")
-			Map<String, String> fields = (Map<String, String>) getValue(o);
-			for (Map.Entry<String, String> e: fields.entrySet()) {
+			StringPair[] fields = (StringPair[]) getValue(o);
+			for (StringPair p: fields) {
 				Element item = doc.createElement("item");
 				item.appendChild(
-						XMLUtils.createTextElement(doc, "key", e.getKey()));
+					XMLUtils.createTextElement(doc, "key", p.getFirst()));
 				item.appendChild(
-						XMLUtils.createTextElement(doc, "value", e.getValue()));
+					XMLUtils.createTextElement(doc, "value", p.getSecond()));
 				elem.appendChild(item);
 			}
 
