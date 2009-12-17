@@ -111,7 +111,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	private Vector<Sense> _senses;
 	private TreeSet<String> _pronunciations;
 	private TreeSet<Sense> _sense_set;
-	private TreeSet<String> _categories;
+	private ArrayList<String> _categories;
 	private Vector<StringPair> _custom_fields;
 	private String _lesson;
 	private TreeSet<String> _mm_files;
@@ -124,7 +124,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		_senses = new Vector<Sense>();
 		_sense_set = new TreeSet<Sense>(new Sense.Comparator());
 		_class = null;
-		_categories = new TreeSet<String>();
+		_categories = new ArrayList<String>();
 		_custom_fields = new Vector<StringPair>();
 		_lesson = "";
 		_mm_files = new TreeSet<String>();
