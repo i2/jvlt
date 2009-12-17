@@ -42,6 +42,16 @@ public class ObjectListPanel extends JPanel {
 					else if (index-1 >= 0)
 						_list.setSelectedIndex(index-1);
 				}
+			} else if (ev.getActionCommand().equals("up")) {
+				int index = _list.getSelectedIndex();
+				Object obj = _list_model.remove(index);
+				_list_model.add(index - 1, obj);
+				_list.setSelectedIndex(index - 1);
+			} else if (ev.getActionCommand().equals("down")) {
+				int index = _list.getSelectedIndex();
+				Object obj = _list_model.remove(index);
+				_list_model.add(index + 1, obj);
+				_list.setSelectedIndex(index + 1);
 			}
 		}
 	}
@@ -64,6 +74,8 @@ public class ObjectListPanel extends JPanel {
 	
 	protected Action _add_action;
 	protected Action _remove_action;
+	protected Action _move_up_action;
+	protected Action _move_down_action;
 	protected DefaultListModel _list_model;
 	protected JList _list = null;
 	protected ListeningInputComponent _input_component = null;
@@ -119,6 +131,8 @@ public class ObjectListPanel extends JPanel {
 		ActionHandler handler = new ActionHandler();
 		_add_action = GUIUtils.createTextAction(handler, "add");
 		_remove_action = GUIUtils.createTextAction(handler, "remove");
+		_move_up_action = GUIUtils.createIconAction(handler, "up");
+		_move_down_action = GUIUtils.createIconAction(handler, "down");
 
 		_list_model = new DefaultListModel();
 		_list = new JList(_list_model);
@@ -138,18 +152,26 @@ public class ObjectListPanel extends JPanel {
 		add(_input_component.getComponent(), cc);
 		cc.update(1, 0, 0.0, 0.0);
 		add(new JButton(_add_action), cc);
-		cc.update(0, 1, 1.0, 1.0, 1, 2);
+		cc.update(0, 1, 1.0, 1.0, 1, 4);
 		add(list_scrpane, cc);
 		cc.update(1, 1, 0.0, 0.0, 1, 1);
 		add(new JButton(_remove_action), cc);
-		cc.update(1, 2, 0.0, 1.0, 1, 1);
+		cc.update(1, 2, 0.0, 0.0, 1, 1);
+		add(new JButton(_move_up_action), cc);
+		cc.update(1, 3, 0.0, 0.0, 1, 1);
+		add(new JButton(_move_down_action), cc);
+		cc.update(1, 4, 0.0, 1.0, 1, 1);
 		add(Box.createVerticalGlue(), cc);
 	}
 	
 	protected void update() {
+		int index = _list.getSelectedIndex();
 		String s = toString(_input_component.getInput());
 		_add_action.setEnabled(s != null && ! _list_model.contains(s));
-		_remove_action.setEnabled(_list.getSelectedIndex() >= 0);
+		_remove_action.setEnabled(index >= 0);
+		_move_up_action.setEnabled(index >= 1);
+		_move_down_action.setEnabled(index >= 0
+				&& index < _list_model.size() - 1);
 	}
 	
 	protected String toString(Object o) {
