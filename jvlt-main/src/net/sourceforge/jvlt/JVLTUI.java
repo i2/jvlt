@@ -932,8 +932,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void loadRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = System.getProperty("user.home") + File.separator
-			+ ".jvlt" + File.separator;
+		String home = JVLT.CONFIG_DIR + File.separator;
 		XMLDecoder decoder;
 
 		try {
@@ -993,8 +992,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	
 	private void saveRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = System.getProperty("user.home") + File.separator
-			+ ".jvlt" + File.separator;
+		String home = JVLT.CONFIG_DIR + File.separator;
 		XMLEncoder encoder;
 
 		try {

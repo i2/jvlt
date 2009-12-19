@@ -7,6 +7,28 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class JVLT {
+	public static final String CONFIG_DIR;
+	static {
+		String os = System.getProperty("os.name");
+		if (os.toLowerCase().startsWith("windows")) {
+			CONFIG_DIR = System.getenv("APPDATA") + File.separator + "jvlt";
+		} else if (os.toLowerCase().startsWith("mac os x")) {
+			CONFIG_DIR = System.getProperty("user.home") + File.separator
+					+ "Library" + File.separator + "Application Support"
+					+ File.separator + "jvlt";
+		} else {
+			String dir = System.getenv("XDG_CONFIG_HOME");
+			if (dir == null || dir.equals(""))
+				dir = System.getProperty("user.home") + File.separator
+						+ ".config";
+			
+			CONFIG_DIR = dir + File.separator + "jvlt";
+		}
+	}
+	
+	private static final String OLD_CONFIG_DIR =
+		System.getProperty("user.home") + File.separator + ".jvlt"; // TODO: Remove
+
 	private static final Locale[] _locales = {
 		Locale.US, 
 		Locale.FRANCE, 
@@ -28,9 +50,7 @@ public class JVLT {
 	public static Config getConfig() { return _config; }
 	
 	public static void saveConfig() throws IOException {
-		String prop_file_name =
-			System.getProperty("user.home") + File.separator + ".jvlt" +
-			File.separator + "config";
+		String prop_file_name = CONFIG_DIR + File.separator + "config";
 		FileOutputStream fos = new FileOutputStream(prop_file_name);
 		_config.store(fos);
 	}
@@ -76,15 +96,22 @@ public class JVLT {
 		//----------
 		// Create .jvlt directory if necessary
 		//----------
-		File dir = new File(System.getProperty("user.home") +
-				File.separator + ".jvlt");
+		File dir = new File(CONFIG_DIR);
+		File old_dir = new File(OLD_CONFIG_DIR);
 		if (dir.exists()) {
 			if (! dir.isDirectory())
 				System.out.println(dir.getPath() +
 						" already exists but it is not a directory");
 		} else {
-			if (! dir.mkdir())
-				System.out.println(dir.getPath() + " could not be created.");
+			if (old_dir.exists()) {
+				old_dir.renameTo(dir);
+				System.out.println(old_dir.getPath()
+						+ " migrated to " + dir.getPath());
+			} else {
+				if (! dir.mkdir())
+					System.out.println(dir.getPath()
+							+ " could not be created.");
+			}
 		}
 		
 		//----------
@@ -94,7 +121,7 @@ public class JVLT {
 		try	{
 			String prop_file_name = dir.getPath() + File.separator + "config";
 			FileInputStream fis = new FileInputStream(prop_file_name);
-			_config.load(new FileInputStream(prop_file_name));
+			_config.load(fis);
 			fis.close();
 		}
 		catch (IOException e) {
