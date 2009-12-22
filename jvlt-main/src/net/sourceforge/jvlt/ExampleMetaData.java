@@ -68,8 +68,13 @@ public class ExampleMetaData extends MetaData {
 
 	public ExampleMetaData() {
 		super(Example.class);
+		
 		addAttribute(new TextFragmentsAttribute());
 		addAttribute(new TranslationAttribute());
+		
+		removeAttribute("ID");
+		removeAttribute("TextFragments");
+		removeAttribute("Senses");
 	}
 }
 
