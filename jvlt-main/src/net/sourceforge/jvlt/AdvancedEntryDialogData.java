@@ -238,10 +238,10 @@ class FileSelectionPanel extends JPanel {
 				if (val == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
 					if (_relative_path_box.isSelected())
-						_list_model.addElement(
-							FileUtils.getRelativePath(new File(_path), f));
+						_field.setText(
+								FileUtils.getRelativePath(new File(_path), f));
 					else
-						_list_model.addElement(f.getAbsolutePath());
+						_field.setText(f.getAbsolutePath());
 				}
 			} else if (ev.getActionCommand().equals("relative_path")) {
 				int index = _list.getSelectedIndex();
