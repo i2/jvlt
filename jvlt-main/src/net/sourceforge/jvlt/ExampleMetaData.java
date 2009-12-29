@@ -73,8 +73,6 @@ public class ExampleMetaData extends MetaData {
 		addAttribute(new TranslationAttribute());
 		
 		removeAttribute("ID");
-		removeAttribute("TextFragments");
-		removeAttribute("Senses");
 	}
 }
 
