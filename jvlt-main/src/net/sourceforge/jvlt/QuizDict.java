@@ -177,17 +177,25 @@ public class QuizDict {
 		// do not have a flag set that disables them. If the batches
 		// are not ignored, only not expired entries are added.
 		//-----
-		String attr_str = _info.getQuizzedAttribute(); 
-		Attribute attr = _model.getDictModel().getMetaData(
-					Entry.class).getAttribute(attr_str);
+		
+		String[] attr_str = _info.getQuizzedAttributes(); 
+		Attribute[] attr = new Attribute[attr_str.length];
+		for (int i=0; i<attr.length; i++) {
+			attr[i] = _model.getDictModel().getMetaData(
+					Entry.class).getAttribute(attr_str[i]);
+		}
+
 		GregorianCalendar now = new GregorianCalendar();
 		ArrayList<Entry> entry_array = new ArrayList<Entry>();
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); ) {
 			Entry entry = it.next();
 			Calendar expiry_date = entry.getExpireDate();
 			
-			/* Check whether quizzed attribute is set */
-			if (attr.getValue(entry) == null)
+			/* Check whether at least one quizzed attribute is set */
+			boolean attribute_set = false;
+			for (int i=0; i<attr.length; i++)
+				attribute_set |= (attr[i].getValue(entry) != null);
+			if (!attribute_set)
 				continue;
 			
 			/* Check for flags */

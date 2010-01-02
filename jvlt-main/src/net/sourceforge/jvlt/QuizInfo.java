@@ -9,14 +9,16 @@ public class QuizInfo {
 		_default_quiz_infos[0] = new QuizInfo();
 		_default_quiz_infos[0].setName(
 				GUIUtils.getString("Labels", "original"));
-		_default_quiz_infos[0].setQuizzedAttribute("Orthography");
+		_default_quiz_infos[0].setQuizzedAttributes(
+				new String[] { "Orthography" });
 		_default_quiz_infos[0].setShownAttributes(
 				new String[] { "Senses" });
 		
 		_default_quiz_infos[1] = new QuizInfo();
 		_default_quiz_infos[1].setName(
 				GUIUtils.getString("Labels", "meanings"));
-		_default_quiz_infos[1].setQuizzedAttribute("Senses");
+		_default_quiz_infos[1].setQuizzedAttributes(
+				new String[] { "Senses" });
 		_default_quiz_infos[1].setShownAttributes(
 				new String[] { "Orthography" });
 	}
@@ -28,7 +30,7 @@ public class QuizInfo {
 	/* Serialized members */
 	private String _name = null;
 	private String _language = null;
-	private String _quizzed_attribute = null;
+	private String[] _quizzed_attributes = new String[0];
 	private String[] _shown_attributes = new String[0];
 	
 	public String getName() { return _name; }
@@ -39,10 +41,10 @@ public class QuizInfo {
 
 	public void setLanguage(String language) { _language = language; }
 
-	public String getQuizzedAttribute() { return _quizzed_attribute; }
+	public String[] getQuizzedAttributes() { return _quizzed_attributes; }
 	
-	public void setQuizzedAttribute(String attribute) {
-		_quizzed_attribute = attribute;
+	public void setQuizzedAttributes(String[] attributes) {
+		_quizzed_attributes = attributes;
 	}
 	
 	public String[] getShownAttributes() { return _shown_attributes; }

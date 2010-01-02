@@ -147,7 +147,7 @@ public class QuizModel extends WizardModel {
 				if (! eid.isAnswerKnown())
 					return true;
 				else
-					return (eid.getAnswer().length() > 0);
+					return (eid.getAnswer().length == eid.getNumberOfQuestions());
 			}
 		} else if (_current_descriptor.getID().equals("entry_answer")) {
 			EntryAnswerDescriptor ead
@@ -452,26 +452,59 @@ public class QuizModel extends WizardModel {
 			else if (ead.getState() == YesNoPanel.NO_OPTION)
 				result = new QueryResult(entry, false);
 		} else if (d instanceof EntryInputDescriptor) {
-			String attr_name = _qdict.getQuizInfo().getQuizzedAttribute();
-			Attribute attr = _model.getDictModel().getMetaData(
-					Entry.class).getAttribute(attr_name);
+			String attr_names[] = _qdict.getQuizInfo().getQuizzedAttributes();
+			Vector<String> solutions = new Vector<String>();
+			for (int i=0; i<attr_names.length; i++) {
+				Attribute attr  = _model.getDictModel().getMetaData(
+						Entry.class).getAttribute(attr_names[i]);
+				
+				String solution = attr.getFormattedValue(entry);
+				
+				// Strip leading and trailing blank spaces
+				solution = solution.replaceAll("^\\s+", "");
+				solution = solution.replaceAll("\\s+$", "");
+				
+				if (solution.equals(""))
+					continue;
+				
+				solutions.add(solution);
+			}
+
 			EntryInputDescriptor eid = (EntryInputDescriptor) d;
-			String answer = eid.getAnswer();
-			String solution = attr.getFormattedValue(entry);
-			// Strip leading and trailing blank spaces
-			solution = solution.replaceAll("^\\s+", "");
-			solution = solution.replaceAll("\\s+$", "");
+			String answers[] = eid.getAnswer();
 			boolean match_case = JVLT.getConfig().getBooleanProperty(
-				"match_case", true);
+					"match_case", true);
+
 			if (! eid.isAnswerKnown())
 				result = new QueryResult(entry, false);
-			else if (match_case && answer.equals(solution))
-				result = new QueryResult(entry, true, answer);
-			else if (! match_case && answer.toLowerCase().equals(
-				solution.toLowerCase()))
-				result = new QueryResult(entry, true, answer);
-			else
-				result = new QueryResult(entry, false, answer);
+			else if (answers.length < solutions.size())
+				result = new QueryResult(entry, false);
+			else {
+				String bad_answers = "";
+				String good_answers = "";
+				String answers_delimiter =
+					JVLT.getConfig().getProperty("answers_delimiter", ",");
+				for (int i=0; i<answers.length; i++) {
+					boolean correct_answer =
+						(match_case && answers[i].equals(solutions.get(i)) ||
+								(!match_case && answers[i].toLowerCase().equals(
+										solutions.get(i).toLowerCase())));
+
+					if (!correct_answer) {
+						if (bad_answers != "")
+							bad_answers += answers_delimiter;
+						bad_answers += answers[i];
+					} else {
+						if (good_answers != "")
+							good_answers += answers_delimiter;
+						good_answers += answers[i];
+					}
+				}
+				if (bad_answers != "") 
+					result = new QueryResult(entry, false, bad_answers);
+				else 
+					result = new QueryResult(entry, true, good_answers);
+			}
 		}
 		
 		if (result != null)
@@ -696,6 +729,22 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 				Example.class).getAttributeNames();
 		_info_panel.setDisplayedExampleAttributes(exampleattrs);
 	}
+	
+	protected String formatAttributeList(String[] attributes) {
+		AttributeResources ar = new AttributeResources();
+		String attr = "";
+		for (int i=0; i<attributes.length; i++) {
+			attr += ar.getString(attributes[i]);
+			if (i < attributes.length - 2)
+				attr += GUIUtils.getString(
+						"Labels", "enumeration_delimiter");
+			else if (i == attributes.length - 2)
+				attr += GUIUtils.getString(
+						"Labels", "enumeration_delimiter_last");
+		}
+		
+		return attr;
+	}
 }
 
 class EntryQuestionDescriptor extends EntryDescriptor {
@@ -730,11 +779,11 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 			_info_panel.setDisplayedEntryAttributes(attrs);
 			_info_panel.setDisplayedExampleAttributes(new String[0]);
 			
-			AttributeResources ar = new AttributeResources();
-			String attr = _quiz_info.getQuizzedAttribute();
-			if (attr != null)
-				_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-					new Object[]{ar.getString(attr)}));
+			String quizzed_attrs[] = _quiz_info.getQuizzedAttributes();
+			String attr = formatAttributeList(quizzed_attrs);
+			if (attr != null && ! attr.equals(""))
+				_lbl.setText(GUIUtils.getString("Messages",
+						"entry_known_question", new Object[]{attr}));
 		}
 	}
 }
@@ -744,6 +793,7 @@ class EntryInputDescriptor extends EntryDescriptor
 	private CustomTextField _input_field;
 	private JCheckBox _box;
 	private JLabel _lbl;
+	private int _questions = 0;
 	
 	public EntryInputDescriptor(QuizModel m, SelectionNotifier n) {
 		super(m,n);
@@ -752,12 +802,24 @@ class EntryInputDescriptor extends EntryDescriptor
 	public String getID() { return "entry_input"; }
 
 	public boolean isAnswerKnown() { return _box.isSelected(); }
+
+	public int getNumberOfQuestions() { return _questions; };
 	
-	public String getAnswer() {
-		String answer = _input_field.getText();
+	public String[] getAnswer() {
+		String answers_delimiter = JVLT.getConfig().getProperty(
+				"answers_delimiter", ",");
+		String text = _input_field.getText();
+ 		if (text.length() == 0)
+ 			return new String[0];
+ 		
+		String answer[] = text.split(answers_delimiter);
+		
 		// Strip leading and trailing blank spaces
-		answer = answer.replaceAll("^\\s+", "");
-		answer = answer.replaceAll("\\s+$", "");
+		for(int i=0; i<answer.length; i++) {
+			answer[i] = answer[i].replaceAll("^\\s+", "");
+			answer[i] = answer[i].replaceAll("\\s+$", "");
+		}
+		
 		return answer;
 	}
 	
@@ -810,12 +872,36 @@ class EntryInputDescriptor extends EntryDescriptor
 			String[] attrs = _quiz_info.getShownAttributes();
 			_info_panel.setDisplayedEntryAttributes(attrs);
 			_info_panel.setDisplayedExampleAttributes(new String[0]);
-			
-			AttributeResources ar = new AttributeResources();
-			String attr = _quiz_info.getQuizzedAttribute();
-			if (attr != null)
-				_lbl.setText(GUIUtils.getString("Messages", "entry_known_question",
-					new Object[]{ar.getString(attr)}));
+
+			Entry entry = getEntry();
+			String quizzed_attrs[] = _quiz_info.getQuizzedAttributes();
+		
+			// Only attributes with value will be included.
+			Vector<String> quizzed_present_attrs = new Vector<String>();
+			QuizModel model = (QuizModel) _model;
+			for (int i=0; i<quizzed_attrs.length; i++) {
+				Attribute attr =
+					model.getJVLTModel().getDictModel().getMetaData(
+							Entry.class).getAttribute(quizzed_attrs[i]);
+				if (attr.getValue(entry) != null) {
+					quizzed_present_attrs.add(quizzed_attrs[i]);
+				}
+			}
+			_questions = quizzed_present_attrs.size();
+
+			String attr = formatAttributeList(
+					quizzed_present_attrs.toArray(new String[0]));
+			String labelText = GUIUtils.getString(
+					"Messages", "entry_known_question", new Object[]{attr});
+ 
+			if (quizzed_present_attrs.size() > 1) {
+				String answers_delimiter = JVLT.getConfig().getProperty(
+						"answers_delimiter", ",");
+				labelText += " " + GUIUtils.getString(
+						"Messages", "use_answers_delimiter",
+						new Object[]{answers_delimiter});
+			} 
+			_lbl.setText(labelText);
 		}
 	}
 }

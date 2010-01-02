@@ -3,8 +3,6 @@ package net.sourceforge.jvlt;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
-import java.util.TreeSet;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -42,17 +40,14 @@ public class QuizDialogData extends CustomDialogData {
 		}
 	}
 	
-	private AttributeResources _resources = new AttributeResources();
-	private HashMap<String, Attribute> _name_attribute_map;
 	private JVLTModel _model = null;
 	
 	private QuizListPanel _quiz_list_panel;
-	private LabeledComboBox _quizzed_attribute_box;
+	private AttributeSelectionPanel _quizzed_attribute_box;
 	private AttributeSelectionPanel _shown_attributes_panel;
 	
 	public QuizDialogData(JVLTModel model) {
 		_model = model;
-		_name_attribute_map = new HashMap<String, Attribute>();
 		
 		init();
 	}
@@ -79,8 +74,11 @@ public class QuizDialogData extends CustomDialogData {
 	private void init() {
 		_quiz_list_panel = new QuizListPanel();
 
-		_quizzed_attribute_box = new LabeledComboBox();
-		_quizzed_attribute_box.setLabel("quizzed_attribute");
+		_quizzed_attribute_box = new AttributeSelectionPanel();
+		_quizzed_attribute_box.setAllowReordering(false);
+		_quizzed_attribute_box.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED),
+				GUIUtils.getString("Labels", "quizzed_attributes")));
 
 		_shown_attributes_panel = new AttributeSelectionPanel();
 		_shown_attributes_panel.setAllowReordering(false);
@@ -93,8 +91,6 @@ public class QuizDialogData extends CustomDialogData {
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0, 2, 1);
 		_content_pane.add(_quiz_list_panel, cc);
-		cc.update(0, 1, 0.5, 0.0, 1, 1);
-		_content_pane.add(_quizzed_attribute_box.getLabel(), cc);
 		cc.update(1, 1, 0.5, 0.0, 1, 1);
 		_content_pane.add(_quizzed_attribute_box, cc);
 		cc.update(0, 2, 1.0, 1.0, 2, 1);
@@ -103,22 +99,7 @@ public class QuizDialogData extends CustomDialogData {
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
 		Attribute[] attrs = data.getAttributes();
 		_shown_attributes_panel.setAvailableObjects(attrs);
-
-		TreeSet<String> standard_attr_set = new TreeSet<String>();
-		TreeSet<String> custom_attr_set = new TreeSet<String>();
-		for (int i=0; i<attrs.length; i++) {
-			String s = _resources.getString(attrs[i].getName());
-			_name_attribute_map.put(s, attrs[i]);
-			if (! (attrs[i] instanceof CustomAttribute))
-				standard_attr_set.add(s);
-			else
-				custom_attr_set.add(s);
-		}
-
-		for (Iterator<String> it=standard_attr_set.iterator(); it.hasNext(); )
-			_quizzed_attribute_box.addItem(it.next());
-		for (Iterator<String> it=custom_attr_set.iterator(); it.hasNext(); )
-			_quizzed_attribute_box.addItem(it.next());
+		_quizzed_attribute_box.setAvailableObjects(attrs);
 	}
 	
 	private QuizInfo getCurrentQuizInfo() {
@@ -126,18 +107,21 @@ public class QuizDialogData extends CustomDialogData {
 		if (name == null || name.equals(""))
 			return null;
 		
-		Object[] selected = _shown_attributes_panel.getSelectedObjects();
-		String[] attr_list = new String[selected.length];
-		for (int i=0; i<selected.length; i++)
-			attr_list[i] = ((Attribute) selected[i]).getName();
+		Object[] shown_selected = _shown_attributes_panel.getSelectedObjects();
+		String[] shown_attr_list = new String[shown_selected.length];
+		for (int i=0; i<shown_selected.length; i++)
+			shown_attr_list[i] = ((Attribute) shown_selected[i]).getName();
+
+		Object[] quizzed_selected = _quizzed_attribute_box.getSelectedObjects();
+		String[] quizzed_attr_list = new String[quizzed_selected.length];
+		for (int i=0; i<quizzed_selected.length; i++)
+			quizzed_attr_list[i] = ((Attribute) quizzed_selected[i]).getName();
 		
 		QuizInfo info = new QuizInfo();
 		info.setName(name);
 		info.setLanguage(_model.getDict().getLanguage());
-		Attribute attr = (Attribute)
-			_name_attribute_map.get(_quizzed_attribute_box.getSelectedItem());
-		info.setQuizzedAttribute(attr.getName());
-		info.setShownAttributes(attr_list);
+		info.setQuizzedAttributes(quizzed_attr_list);
+		info.setShownAttributes(shown_attr_list);
 		
 		return info;
 	}
@@ -148,15 +132,17 @@ public class QuizDialogData extends CustomDialogData {
 		 * Obtain the real attributes from the entry meta data.
 		 */
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
-		String[] names = info.getShownAttributes();
-		Attribute[] attrs = new Attribute[names.length];
-		for (int i=0; i<attrs.length; i++)
-			attrs[i] = data.getAttribute(names[i]);
-		_shown_attributes_panel.setSelectedObjects(attrs);
-		
-		/* The currently selected item is given as a string */
-		_quizzed_attribute_box.setSelectedItem(
-			_resources.getString(info.getQuizzedAttribute()));
+		String[] shown_names = info.getShownAttributes();
+		Attribute[] shown_attrs = new Attribute[shown_names.length];
+		for (int i=0; i<shown_attrs.length; i++)
+			shown_attrs[i] = data.getAttribute(shown_names[i]);
+		_shown_attributes_panel.setSelectedObjects(shown_attrs);
+
+		String[] quizzed_names = info.getQuizzedAttributes();
+		Attribute[] quizzed_attrs = new Attribute[quizzed_names.length];
+		for (int i=0; i<quizzed_attrs.length; i++)
+			quizzed_attrs[i] = data.getAttribute(quizzed_names[i]);
+		_quizzed_attribute_box.setSelectedObjects(quizzed_attrs);
 	}
 }
 
