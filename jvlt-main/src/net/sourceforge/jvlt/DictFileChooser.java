@@ -55,10 +55,15 @@ public class DictFileChooser extends JFileChooser {
 		String selected_file = chooser.getSelectedFile().getPath();
 		
 		/* Add extension if necessary */
-		String extension = type.getExtensions()[0];
-		if (selected_file.length() < extension.length() + 1
-				|| ! selected_file.toLowerCase().endsWith("." + extension))
-			selected_file = selected_file + "." + extension;
+		boolean has_extension = false;
+		for (String ext: type.getExtensions()) {
+			if (selected_file.toLowerCase().endsWith("." + ext)) {
+				has_extension = true;
+				break;
+			}
+		}
+		if (! has_extension)
+			selected_file += "." + type.getExtensions()[0];
 		
 		return selected_file;
 	}
