@@ -1030,7 +1030,8 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				Iterator<EntrySelectionDialogData.State> it =
 					statelist.iterator();
 				while (it.hasNext())
-					if (it.next().getLanguage().equals(state.getLanguage())) {
+					if (DefaultComparator.getInstance().compare(
+							it.next().getLanguage(), state.getLanguage()) == 0){
 						it.remove();
 						break;
 					}
@@ -1147,7 +1148,8 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		if (states != null) {
 			int i;
 			for (i=0; i<states.length; i++)
-				if (states[i].getLanguage().equals(_dict.getLanguage())) {
+				if (DefaultComparator.getInstance().compare(
+						states[i].getLanguage(), _dict.getLanguage()) == 0) {
 					_entry_selection_data.initFromState(states[i]);
 					break;
 				}
