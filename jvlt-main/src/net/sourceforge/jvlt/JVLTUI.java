@@ -1158,7 +1158,7 @@ class AboutDialog extends JDialog {
 		_html_pane.setEditable(false);
 		_html_pane.setContentType("text/html");
 		JScrollPane scrpane = new JScrollPane(_html_pane);
-		scrpane.setPreferredSize(new Dimension(320,400));
+		scrpane.setPreferredSize(new Dimension(500,400));
 		
 		getContentPane().setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
