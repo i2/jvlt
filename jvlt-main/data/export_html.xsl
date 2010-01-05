@@ -25,6 +25,7 @@
 
 <xsl:template match="entry">
 	<p>
+	<xsl:apply-templates select="multimedia"/>
 	<b><xsl:value-of select="orth"/></b>
 	<xsl:text> </xsl:text>
 	<xsl:if test="count(pron) > 0">
@@ -36,6 +37,16 @@
 	</xsl:call-template>
 	<xsl:apply-templates select="sense"/>
 	</p>
+	<div style="clear: both;"/>
+</xsl:template>
+
+<xsl:template match="multimedia">
+	<xsl:if test="xslutils:mimeType(.) = 'image'">
+		<img>
+		<xsl:attribute name="src"><xsl:value-of select="."/></xsl:attribute>
+		<xsl:attribute name="style">float: left;</xsl:attribute>
+		</img>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="pron">
@@ -96,7 +107,7 @@
 		<i>
 		<span style="font-size:small;">
 		<xsl:apply-templates select="ex/*|ex/text()">
-        	<xsl:with-param name="sense-id" select="$sense-id"/>
+			<xsl:with-param name="sense-id" select="$sense-id"/>
 		</xsl:apply-templates>
 		<xsl:if test="string(tr)">
 			- <xsl:value-of select="tr"/>
