@@ -61,6 +61,16 @@ public class XSLUtils {
 		return resources.getString(key);
 	}
 	
+	public static String mimeType(String file_name) {
+		MultimediaFile file =
+			MultimediaUtils.getMultimediaFileForName(file_name);
+		switch (file.getType()) {
+		case MultimediaFile.AUDIO_FILE: return "audio";
+		case MultimediaFile.IMAGE_FILE: return "image";
+		default: return "other";
+		}
+	}
+	
 	public static String mimeTypeImage(String file_name) {
 		MultimediaFile file =
 			MultimediaUtils.getMultimediaFileForName(file_name);
