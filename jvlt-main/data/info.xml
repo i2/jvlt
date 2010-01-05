@@ -1,48 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <info>
 	<name>jVLT - Vocabulary Learning Tool</name>
-	<version>091107</version>
-	<data-version>1.2.1</data-version>
-	<author>
-		<name>Henning Burchardt</name>
-		<e-mail>
-			<local-part>burchardt</local-part>
-			<domain>users.sourceforge.net</domain>
-		</e-mail>
-		<role>Developer</role>
-	</author>
-	<author>
-		<name>Guy Leavitt</name>
-		<e-mail>
-			<local-part>camatkara</local-part>
-			<domain>users.sourceforge.net</domain>
-		</e-mail>
-		<role>Sanskrit language support</role>
-	</author>
-	<author>
-		<name>Vít Profant</name>
-		<e-mail>
-			<local-part>vit.profant</local-part>
-			<domain>gmail.com</domain>
-		</e-mail>
-		<role>Czech translation</role>
-	</author>
-	<author>
-		<name>Stéphane Lelaure</name>
-		<e-mail>
-			<local-part>misterel</local-part>
-			<domain>users.sourceforge.net</domain>
-		</e-mail>
-		<role>French translation</role>
-	</author>
-	<author>
-		<name>Jaroslaw Rosiek</name>
-		<e-mail>
-			<local-part>jaroslaw.rosiek</local-part>
-			<domain>interia.pl</domain>
-		</e-mail>
-		<role>Polish translation</role>
-	</author>
+	<version>100105</version>
+	<data-version>1.3</data-version>
+	<developers>
+		<person>
+			<name>Henning Burchardt</name>
+			<e-mail>
+				<local-part>burchardt</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>Developer</role>
+		</person>
+	</developers>
+	<translators>
+		<person>
+			<name>Vít Profant</name>
+			<e-mail>
+				<local-part>vit.profant</local-part>
+				<domain>gmail.com</domain>
+			</e-mail>
+			<role>Czech translation</role>
+		</person>
+		<person>
+			<name>Stéphane Lelaure</name>
+			<e-mail>
+				<local-part>misterel</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>French translation</role>
+		</person>
+		<person>
+			<name>Jaroslaw Rosiek</name>
+			<e-mail>
+				<local-part>jaroslaw.rosiek</local-part>
+				<domain>interia.pl</domain>
+			</e-mail>
+			<role>Polish translation</role>
+		</person>
+	</translators>
+	<contributors>
+		<person>
+			<name>Cristian Klein</name>
+			<e-mail>
+				<local-part>cristiklein</local-part>
+				<domain>gmail.com</domain>
+			</e-mail>
+			<role>Patch writer</role>
+		</person>
+		<person>
+			<name>Gregor Klinke</name>
+			<e-mail>
+				<local-part>eyestep</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>Mac OS X support</role>
+		</person>
+		<person>
+			<name>Guy Leavitt</name>
+			<e-mail>
+				<local-part>camatkara</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>Sanskrit language support</role>
+		</person>
+		<person>
+			<name>Miroslav Novotný</name>
+			<e-mail>
+				<local-part>miroslav.novotny</local-part>
+				<domain>runbox.com</domain>
+			</e-mail>
+			<role>Patch writer</role>
+		</person>
+		<person>
+			<name>Vlad Mihai Sima</name>
+			<e-mail>
+				<local-part>vladmihaisima</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>Patch writer</role>
+		</person>
+	</contributors>
 	<language name="chinese"/>
 	<language name="english"/>
 	<language name="french"/>
