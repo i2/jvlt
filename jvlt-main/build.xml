@@ -8,36 +8,22 @@
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
 	<property name="lib" value="lib"/>
-	<property name="lib_mac" value="lib_mac"/>
 	<property name="debug" value="true"/>
 	<property name="javadoc" value="javadoc"/>
-	<property name="do_compile_mac" value="false"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
 		<fileset dir="${lib}"><include name="*.jar"/></fileset>
-		<fileset dir="${lib_mac}"><include name="*.jar"/></fileset>
 	</path>
-
-	<condition property="compile_mac">
-		<or>
-			<istrue value="${do_compile_mac}"/>
-			<os family="mac"/>
-		</or>
-	</condition>
 
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${lib}"/>
-		<mkdir dir="${lib_mac}"/>
 		<mkdir dir="${build}"/>
 		<copy todir="${build}">
 			<fileset dir="." includes="images/*.png"/>
 			<fileset dir="." includes="doc/**/*"/>
-			<fileset dir="${data}" includes="*.xsl,*.xml,*.xsd,*.css"/>
-			<fileset dir="${src}"
-				includes="net/sourceforge/jvlt/hibernate/*.hbm.xml"/>
-			<fileset dir="${src}" includes="META-INF/*.xml"/>
+			<fileset dir="${data}" includes="*.xsl,*.xml,*.css"/>
 		</copy>
 	</target>
 
@@ -46,7 +32,7 @@
 			dest="${build}"/>
 	</target>
 
-	<target name="compile_all" depends="init" description="compile the source">
+	<target name="compile" depends="init" description="compile the source">
 		<echo>Compiling base application...</echo>
 		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
 					 source="1.5" target="1.5"
@@ -54,21 +40,6 @@
 			<classpath refid="project.classpath"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
-	</target>
-
-	<target name="compile_macosx_support" depends="init"
-					description="Compiles MacOSX specific code"
-					if="compile_mac">
-		<echo>Compile Mac OS X specific code...</echo>
-		<javac srcdir="${src}" destdir="${build}" debug="${debug}"
-					 source="1.5" target="1.5"
-					 includes="**/MacOSController.java">
-			<classpath refid="project.classpath"/>
-			<compilerarg value="-Xlint:unchecked"/>
-		</javac>
-	</target>
-
-	<target name="compile" depends="compile_all,compile_macosx_support">
 	</target>
 
 	<target name="run" depends="compile,i18n"
@@ -80,13 +51,29 @@
 			fork="true"/>
 	</target>
 
-	<target name="dist" description="generate the distribution"
-			depends="dist_all,dist_macosx_support">
+	<target name="dist" depends="dist-init,dist-src">
+		<antcall target="dist-jar">
+			<param name="jar-prefix" value="jVLT"/>
+			<param name="compile-target" value="compile"/>
+		</antcall>
+	</target>
+
+	<target name="dist-init">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/build"/>
+
+		<antcall target="clean">
+			<param name="build" value="${dist}/build"/>
+		</antcall>
+	</target>
+	
+	<target name="dist-src" description="generate the source distribution">
 		<tstamp/>
 
 		<tar destfile="${dist}/jVLT-src-${DSTAMP}.tar.bz2"
 			compression="bzip2">
-			<tarfileset dir="." prefix="jvlt/">
+			<tarfileset dir="." prefix="jvlt-${DSTAMP}/">
 				<include name="src/**/*.java"/>
 				<include name="src/**/*.xml"/>
 				<include name="images/*.png"/>
@@ -97,6 +84,7 @@
 				<include name="data/*.css"/>
 				<include name="doc/**/*"/>
 				<include name="build.xml"/>
+				<include name="build-mac.xml"/>
 				<include name="README"/>
 				<include name="COPYING"/>
 				<include name="AUTHORS"/>
@@ -106,40 +94,18 @@
 		</tar>
 	</target>
 	
-	<target name="dist_all">
-		<antcall target="dist_jar">
-			<param name="jar_prefix" value="jVLT"/>
-			<param name="compile_target" value="compile_all"/>
-		</antcall>
-	</target>
-	
-	<target name="dist_macosx_support" if="compile_mac">
-		<antcall target="dist_jar">
-			<param name="jar_prefix" value="jVLT-MacOSX"/>
-			<param name="compile_target" value="compile"/>
-		</antcall>
-	</target>
-
-	<target name="dist_jar">
-		<antcall target="clean">
-			<param name="build" value="${dist}/build"/>
-		</antcall>
-
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/build"/>
-		
+	<target name="dist-jar">
 		<antcall target="i18n">
 			<param name="build" value="${dist}/build"/>
 		</antcall>
-		<antcall target="${compile_target}">
+		<antcall target="${compile-target}">
 			<param name="build" value="${dist}/build"/>
 			<param name="debug" value="false"/>
 		</antcall>
 
 		<tstamp/>
 
-		<jar jarfile="${dist}/${jar_prefix}-${DSTAMP}.jar">
+		<jar jarfile="${dist}/${jar-prefix}-${DSTAMP}.jar">
 			<fileset dir="${dist}/build" includes="**/*"/>
 			<zipgroupfileset dir="${lib}" includes="*.jar"/>
 			<manifest>
@@ -147,58 +113,6 @@
 					value="net.sourceforge.jvlt.JVLTUI"/>
 			</manifest>
 		</jar>
-	</target>
-
-	<!--
-	Create a Mac OS X application bundle (doesn't require compilation, but
-	the application jar file has to exist)
-	-->
-	<target name="dist_macosx_appbundle">
-		<delete dir="${dist}/jVLT.app"/>
-		
-		<tstamp/>
-		
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/jVLT.app"/>
-		<mkdir dir="${dist}/jVLT.app/Contents"/>
-		<mkdir dir="${dist}/jVLT.app/Contents/MacOS"/>
-		<mkdir dir="${dist}/jVLT.app/Contents/Resources"/>
-		<mkdir dir="${dist}/jVLT.app/Contents/Resources/Java"/>
-		
-		<copy todir="${dist}/jVLT.app/Contents/">
-			<fileset dir="${data}/mac" includes="PkgInfo,*.plist"/>
-		</copy>
-
-		<copy todir="${dist}/jVLT.app/Contents/Resources">
-			<fileset dir="${data}/mac" includes="*.icns"/>
-		</copy>
-		
-		<copy file="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub"
-					todir="${dist}/jVLT.app/Contents/MacOS"/>
-		<chmod file="${dist}/jVLT.app/Contents/MacOS/JavaApplicationStub" 
-					 perm="ugo+rx"/>
-		
-		<copy file="${dist}/jVLT-MacOSX-${DSTAMP}.jar"
-					tofile="${dist}/jVLT.app/Contents/Resources/Java/jVLT.jar"/>
-		
-		<exec executable="/Developer/Tools/SetFile">
-			<arg value="-a"/>
-			<arg value="B"/>
-			<arg value="${dist}/jVLT.app"/>
-		</exec>
-	</target>
-
-	<!--
-	Create a Mac OS X disk image containing the application bundle
-	-->
-	<target name="dist_macosx_dmg" depends="dist_macosx_appbundle">
-		<exec executable="hdiutil">
-			<arg value="create"/>
-			<arg value="-ov"/>
-			<arg value="-srcfolder"/>
-			<arg value="${dist}/jVLT.app"/>
-			<arg value="${dist}/jVLT.dmg"/>
-		</exec>
 	</target>
 
 	<target name="clean" description="clean up" >
