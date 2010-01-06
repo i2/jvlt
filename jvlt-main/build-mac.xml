@@ -1,15 +1,15 @@
 <project name="jVLT - mac" default="dist-mac" basedir=".">
 	<import file="./build.xml"/>
 
-	<property name="lib" value="lib_mac"/>
+	<property name="lib-mac" value="lib-mac"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
-		<fileset dir="${lib_mac}"><include name="*.jar"/></fileset>
+		<fileset dir="${lib-mac}"><include name="*.jar"/></fileset>
 	</path>
 
 	<target name="init-mac" depends="init">
-		<mkdir dir="${lib_mac}"/>
+		<mkdir dir="${lib-mac}"/>
 	</target>
 
 	<target name="compile-mac" depends="init-mac,compile"
