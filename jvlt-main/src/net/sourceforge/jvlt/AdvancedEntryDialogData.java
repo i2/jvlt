@@ -304,6 +304,7 @@ class FileSelectionPanel extends JPanel {
 
 	public void setUseRelativePath(boolean relative) {
 		_use_relative_path = relative;
+		_relative_path_box.setSelected(relative);
 	}
 	
 	private void init() {
