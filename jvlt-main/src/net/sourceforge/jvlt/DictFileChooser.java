@@ -38,6 +38,8 @@ public class DictFileChooser extends JFileChooser {
 			} else {
 				setCurrentDirectory(file);
 			}
+		} else {
+			setCurrentDirectory(new File("."));
 		}
 		
 		SimpleFileFilter filter = new SimpleFileFilter(
