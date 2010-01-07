@@ -37,15 +37,6 @@ public class JVLTModel implements UndoableActionListener,
 	public void newDict() {
 		_dict = new Dict();
 		_dict_file_name = null;
-
-		// Setting the current directory as the default place for a new
-		// dict or for opening another file
-		try {
-			_dict_file_name =  new File(".").getCanonicalPath();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		_query_model.setDict(_dict);
 		// This causes a DictUpdateEvent:
 		_dict_model.setDict(_dict);
