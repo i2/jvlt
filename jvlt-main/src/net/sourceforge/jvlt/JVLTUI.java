@@ -114,8 +114,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		Config conf = JVLT.getConfig();
 		if (conf.getBooleanProperty("restore_previously_open_file", false)) {
-			String dict_file_name = conf.getProperty("dict_file", "dict.jvlt");
-			if (! dict_file_name.equals(""))
+			String dict_file_name = conf.getProperty("dict_file");
+			if (dict_file_name != null && ! dict_file_name.equals(""))
 				load(dict_file_name);
 		}
 		
