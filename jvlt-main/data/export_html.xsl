@@ -43,7 +43,9 @@
 <xsl:template match="multimedia">
 	<xsl:if test="xslutils:mimeType(.) = 'image'">
 		<img>
-		<xsl:attribute name="src"><xsl:value-of select="."/></xsl:attribute>
+		<xsl:attribute name="src">
+			<xsl:value-of select="xslutils:filePath(.)"/>
+		</xsl:attribute>
 		<xsl:attribute name="style">float: left;</xsl:attribute>
 		</img>
 	</xsl:if>

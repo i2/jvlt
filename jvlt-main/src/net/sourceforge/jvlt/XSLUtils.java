@@ -1,6 +1,7 @@
 package net.sourceforge.jvlt;
 
 import java.awt.Font;
+import java.io.File;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.text.DateFormat;
@@ -80,6 +81,15 @@ public class XSLUtils {
 			return "/images/image.png";
 		else // if (file.getType() == MultimediaFile.OTHER_FILE)
 			return "/images/unknown.png";
+	}
+	
+	public static String filePath(String file_name) {
+		if (FileUtils.isPathRelative(file_name)) {
+			return file_name;
+		} else {
+			File f = new File(file_name);
+			return f.toURI().toString();
+		}
 	}
 }
 
