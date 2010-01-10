@@ -33,11 +33,8 @@ public class DictFileChooser extends JFileChooser {
 		if (file_name != null && ! file_name.equals("")) {
 			File file = new File(file_name);
 			File parent = file.getParentFile();
-			if (parent != null && file.isFile()) {
+			if (parent != null)
 				setCurrentDirectory(parent);
-			} else {
-				setCurrentDirectory(file);
-			}
 		} else {
 			setCurrentDirectory(new File("."));
 		}
