@@ -72,8 +72,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private CustomTabbedPane _tab_pane;
 	private ErrorLogDialog _error_dialog;
 	private boolean _is_mac;
-	private String lastOpenPath = null;
-
 
 	public JVLTUI(JVLTModel model, boolean is_on_mac) {
 		_is_mac = is_on_mac;
@@ -123,21 +121,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// start with an empty one.
 		if (_model.getDict() == null)
 			_model.newDict();
-
-		if (System.getProperty("mrj.version") != null) { 
-			try {
-				@SuppressWarnings("unchecked")
-				Class ControllerClass = Class.forName(
-						"net.sourceforge.jvlt.MacOSController");
-				OSController controller =
-					(OSController) ControllerClass.newInstance();
-				controller.setMainView(this);
-			}
-			catch (Exception ex) {
-				MessageDialog.showDialog(_main_frame,
-						MessageDialog.WARNING_MESSAGE, ex.getMessage());
-			}
-		}
 	}
 	
 	public void actionPerformed (ActionEvent e) {
@@ -166,21 +149,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		if (command.equals("new")) {
 			_model.newDict();
 		} else if (command.equals("open")) {
-            if(lastOpenPath==null) {
-                lastOpenPath = _model.getDictFileName();
-            }
-
-			JFileChooser chooser = new DictFileChooser(lastOpenPath);
+			JFileChooser chooser = new DictFileChooser(
+					_model.getDictFileName());
 			int val = chooser.showOpenDialog(_main_frame);
 			if (val == JFileChooser.APPROVE_OPTION) {
 				String file_name = chooser.getSelectedFile().getPath();
 				load(file_name);
-			}
-			try {
-				lastOpenPath = chooser.getCurrentDirectory().getCanonicalPath()+"/";
-			} catch(IOException ex) {
-				ex.printStackTrace();
-				lastOpenPath = null;
 			}
 		} else if (command.startsWith("open_")) {
 			int index = Integer.parseInt(command.substring(command.length()-1));
@@ -670,7 +644,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Else cancel.
 	}
   
-  
 	boolean requestQuit() {
 		if (! finishQuiz())
 			return false;
@@ -691,12 +664,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		return false;
 	}
 
-	
 	void showAbout() {
 		AboutDialog dlg = new AboutDialog(_main_frame);
 		GUIUtils.showDialog(_main_frame, dlg);
 	}
-
 
 	void showSettings() {
 		SettingsDialogData ddata = new SettingsDialogData(_model);
@@ -704,7 +675,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				GUIUtils.getString("Labels", "settings"));
 		GUIUtils.showDialog(_main_frame, dlg);
 	}
-
 
 	/**
 	 * Checks whether there is an unfinished quiz and - if yes - asks
@@ -1072,14 +1042,28 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		jvlt.init();
 		Config config = JVLT.getConfig();
 		boolean is_on_mac = false;
+		OSController controller = null;
 
-		String lcOSName = System.getProperty("os.name").toLowerCase();
-		if (lcOSName.startsWith("mac os x") && 
+		String os_name = System.getProperty("os.name").toLowerCase();
+		if (os_name.startsWith("mac os x") && 
 				System.getProperty("mrj.version") != null) {
-			is_on_mac = true;
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty(
-					"com.apple.mrj.application.apple.menu.about.name", "jVLT");
+			try {
+				@SuppressWarnings("unchecked")
+				Class ControllerClass = Class.forName(
+						"net.sourceforge.jvlt.MacOSController");
+				controller = (OSController) ControllerClass.newInstance();
+
+				is_on_mac = true;
+
+				System.setProperty("apple.laf.useScreenMenuBar", "true");
+				System.setProperty(
+						"com.apple.mrj.application.apple.menu.about.name",
+						"jVLT");
+			}
+			catch (Exception ex) {
+				System.err.println("Could not load class \""
+						+ "net.sourceforge.jvlt.MacOSController\"");
+			}
 		}
 
 		// Set fonts.
@@ -1105,6 +1089,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		}
 		
 		final JVLTUI ui = new JVLTUI(jvlt.getModel(), is_on_mac);
+		if (controller != null)
+			controller.setMainView(ui);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
