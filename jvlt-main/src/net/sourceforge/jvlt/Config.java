@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.*;
@@ -169,7 +170,8 @@ public class Config {
 	public void remove(String key) { properties.remove(key); }
 	
 	public void load(FileInputStream in) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(in, "UTF-8"));
 		try {
 			while (reader.ready()) {
 				String line = reader.readLine();
@@ -190,7 +192,8 @@ public class Config {
 	}
 	
 	public void store(FileOutputStream out) throws IOException {
-		PrintWriter writer = new PrintWriter(out);
+		PrintWriter writer = new PrintWriter(new OutputStreamWriter(
+				out, "UTF-8"));
 		try {
 			writer.println("#jVLT property file");
 			writer.println("#"
