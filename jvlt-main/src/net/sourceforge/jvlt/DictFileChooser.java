@@ -2,6 +2,8 @@ package net.sourceforge.jvlt;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JFileChooser;
 
 public class DictFileChooser extends JFileChooser {
@@ -30,14 +32,15 @@ public class DictFileChooser extends JFileChooser {
 	}
 
 	public DictFileChooser(String file_name, FileType type) {
-		if (file_name != null && ! file_name.equals("")) {
-			File file = new File(file_name);
-			File parent = file.getParentFile();
-			if (parent != null)
-				setCurrentDirectory(parent);
-		} else {
-			setCurrentDirectory(new File("."));
-		}
+		File dir = null;
+		if (file_name != null && ! file_name.equals(""))
+			dir = new File(file_name).getParentFile();
+		else
+			dir = new File(".");
+		
+		if (dir != null)
+			try { setCurrentDirectory(dir.getCanonicalFile()); }
+			catch (IOException e) { e.printStackTrace(); }
 		
 		SimpleFileFilter filter = new SimpleFileFilter(
 				GUIUtils.getString("Labels", type.getDescription()));
