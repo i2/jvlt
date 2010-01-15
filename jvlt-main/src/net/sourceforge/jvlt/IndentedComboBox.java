@@ -44,7 +44,7 @@ public class IndentedComboBox extends LabeledComboBox {
 		public void insertElementAt(
 			Object item, int indentation_level, int index) {
 			_container.addItem(item);
-			_indentation_levels.put(item, new Integer(indentation_level));
+			_indentation_levels.put(item, indentation_level);
 			super.insertElementAt(_container.getTranslation(item), index);
 		}
 		

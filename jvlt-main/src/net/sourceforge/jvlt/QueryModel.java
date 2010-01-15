@@ -4,7 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.sourceforge.jvlt.event.DictUpdateListener;
-import net.sourceforge.jvlt.event.DictUpdateListener.*;
+import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
 
 public class QueryModel extends AbstractModel {
 	private LinkedList<DictUpdateListener> _dict_update_listeners;

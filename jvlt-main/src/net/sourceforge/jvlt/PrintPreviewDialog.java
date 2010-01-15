@@ -71,7 +71,7 @@ public class PrintPreviewDialog extends JDialog
 		settings_panel.add(spinner, cc);
 		cc.update(2, 0, 0.0, 0.0);
 		settings_panel.add(new JLabel(GUIUtils.getString("Labels",
-			"total_pages",  new Object[]{new Integer(max_page)})), cc);
+			"total_pages",  new Object[]{max_page})), cc);
 		cc.update(3, 0, 1.0, 0.0);
 		settings_panel.add(Box.createHorizontalGlue(), cc);
 		

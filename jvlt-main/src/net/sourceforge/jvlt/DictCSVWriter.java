@@ -112,12 +112,12 @@ public class DictCSVWriter extends DictWriter {
 		writer.write(System.getProperty("line.separator"));
 
 		for (Iterator<Entry> it=entries.iterator(); it.hasNext(); )
-			write_entry(writer, info, it.next());
+			writeEntry(writer, info, it.next());
 
 		writer.close();
 	}
 	
-	private void write_entry(Writer writer, DictInfo info, Entry entry)
+	private void writeEntry(Writer writer, DictInfo info, Entry entry)
 			throws IOException {
 		// Write orthography
 		writer.write(getField(entry.getOrthography()));

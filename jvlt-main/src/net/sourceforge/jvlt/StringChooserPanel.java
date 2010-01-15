@@ -151,7 +151,7 @@ class StringChooserModel extends AbstractTableModel {
 	
 	public Object getValueAt(int row, int column) {
 		if (column == 0)
-			return new Boolean(row < _first_deselected_index);
+			return row < _first_deselected_index;
 		else if (column == 1)
 			return _string_list.get(row);
 		else

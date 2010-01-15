@@ -74,8 +74,8 @@ public class ExamplePanel extends JPanel implements ActionListener,
 
 		SortableTableModel.Directive dir = _table_model.getSortingDirective();
 		config.setProperty("example_table_sorting", Utils.arrayToString(
-			new Integer[]{new Integer(dir.getColumn()),
-				new Integer(dir.getDirection())} ));
+			new Integer[]{dir.getColumn(),
+				dir.getDirection()} ));
 	}
 	
 	public void loadState(Config config) {

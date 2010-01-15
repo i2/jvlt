@@ -16,7 +16,7 @@ public class Example implements Reinitializable, Comparable<Example> {
 		private Sense _sense;
 	
 		public TextFragment (String text, Sense sense) {
-			_text = new String(text);
+			_text = text;
 			_sense = sense;
 		}
 		
@@ -60,7 +60,7 @@ public class Example implements Reinitializable, Comparable<Example> {
 	 * instances of class Sense. */
 	public Object clone() {
 		Example example = new Example (_id);
-		example.setTranslation(new String(_translation));
+		example.setTranslation(_translation);
 		Iterator<TextFragment> it=_fragments.iterator();
 		while (it.hasNext()) {
 			TextFragment tf = new TextFragment(it.next());

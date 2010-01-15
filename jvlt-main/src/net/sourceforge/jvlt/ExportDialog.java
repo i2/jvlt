@@ -274,7 +274,7 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 			GUIUtils.getString("Labels", i18n));
 		String str = formatter.format(total);
 		return GUIUtils.getString("Labels", "exported",
-			new Object[]{new Integer(num), str});
+			new Object[]{num, str});
 	}
 	
 	private void updateUI() {

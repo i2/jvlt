@@ -1,9 +1,17 @@
 package net.sourceforge.jvlt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import net.sourceforge.jvlt.event.DictUpdateListener;
-import net.sourceforge.jvlt.event.DictUpdateListener.*;
+import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.ExampleDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.LanguageDictUpdateEvent;
+import net.sourceforge.jvlt.event.DictUpdateListener.NewDictDictUpdateEvent;
 
 public class DictModel extends AbstractModel {
 	private EntryMetaData _entry_data;

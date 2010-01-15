@@ -64,6 +64,6 @@ public class ResetStatsDialogData extends CustomDialogData {
 		
 		_message_label.setText(GUIUtils.getString(
 				"Messages", "stats_deletion_warning",
-				new Object[] { new Integer(num_cleaned_entries) }));
+				new Object[] { num_cleaned_entries }));
 	}
 }

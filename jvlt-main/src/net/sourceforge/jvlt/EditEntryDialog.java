@@ -35,7 +35,7 @@ public class EditEntryDialog extends AbstractEntryDialog {
 						actions.toArray(new EditEntryAction[0]));
 					action.setMessage(
 							GUIUtils.getString("Actions", "edit_entries",
-							new Object[] { new Integer(actions.size()) }));
+							new Object[] { actions.size() }));
 					_model.getDictModel().executeAction(action);
 					
 					setVisible(false);

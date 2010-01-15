@@ -113,7 +113,7 @@ public class CSVImportPanel extends CSVPanel {
 					for (int j=0; j<columns; j++)
 						names.add(GUIUtils.getString("Labels",
 							"nth_attribute_column",
-							new Object[] { translation, new Integer(j+1) }));
+							new Object[] { translation, j+1 }));
 				}
 			}
 			
@@ -122,7 +122,7 @@ public class CSVImportPanel extends CSVPanel {
 		
 		private String getTranslation(String key, int argument) {
 			return GUIUtils.getString("Labels", key,
-				new Object[] { new Integer(argument) });
+				new Object[] { argument });
 		}
 	}
 	
@@ -154,7 +154,7 @@ public class CSVImportPanel extends CSVPanel {
 		_language_box.addActionListener(ah);
 		
 		_num_senses_spinner_model = createSpinnerModel();
-		_num_senses_spinner_model.setValue(new Integer(1));
+		_num_senses_spinner_model.setValue(1);
 		_num_senses_spinner = new LabeledSpinner(
 			_num_senses_spinner_model);
 		_num_senses_spinner.setLabel("num_senses");
@@ -246,14 +246,14 @@ public class CSVImportPanel extends CSVPanel {
 			config.getProperty("CSVImport.FieldDelimiter", ","));
 		_charset_box.setSelectedItem(
 			config.getProperty("CSVImport.Charset", "UTF-8"));
-		_num_senses_spinner_model.setValue(new Integer(
-			config.getIntProperty("CSVImport.NumSenses", 1)));
-		_num_categories_spinner_model.setValue(new Integer(
-			config.getIntProperty("CSVImport.NumCategories", 0)));
-		_num_multimedia_files_spinner_model.setValue(new Integer(
-			config.getIntProperty("CSVImport.NumMultimediaFiles", 0)));
-		_num_examples_spinner_model.setValue(new Integer(
-			config.getIntProperty("CSVImport.NumExamples", 0)));
+		_num_senses_spinner_model.setValue(
+			config.getIntProperty("CSVImport.NumSenses", 1));
+		_num_categories_spinner_model.setValue(
+			config.getIntProperty("CSVImport.NumCategories", 0));
+		_num_multimedia_files_spinner_model.setValue(
+			config.getIntProperty("CSVImport.NumMultimediaFiles", 0));
+		_num_examples_spinner_model.setValue(
+			config.getIntProperty("CSVImport.NumExamples", 0));
 		_ignore_first_row_box.setSelected(
 			config.getBooleanProperty("CSVImport.IgnoreFirstRow", false));
 		String attr_string = config.getProperty("CSVImport.Attributes", "");
@@ -358,10 +358,10 @@ public class CSVImportPanel extends CSVPanel {
 	
 	private SpinnerNumberModel createSpinnerModel() {
 		SpinnerNumberModel model = new SpinnerNumberModel();
-		model.setStepSize(new Integer(1));
-		model.setMinimum(new Integer(0));
-		model.setMaximum(new Integer(10));
-		model.setValue(new Integer(0));
+		model.setStepSize(1);
+		model.setMinimum(0);
+		model.setMaximum(10);
+		model.setValue(0);
 		return model;
 	}
 	
@@ -414,7 +414,7 @@ class AttributeTable extends JTable {
 					return _attributes.get(row);
 				else {
 					Object val = _num_columns.get(row);
-					return val==null ? new Integer(1) : val;
+					return val==null ? 1 : val;
 				}
 			}
 		}
@@ -574,9 +574,9 @@ class SpinnerEditor extends AbstractCellEditor implements TableCellEditor {
 
 	public SpinnerEditor() {
 		SpinnerNumberModel model = new SpinnerNumberModel();
-		model.setStepSize(new Integer(1));
-		model.setMinimum(new Integer(0));
-		model.setMaximum(new Integer(10));
+		model.setStepSize(1);
+		model.setMinimum(0);
+		model.setMaximum(10);
 		_spinner.setModel(model);
 	}
 

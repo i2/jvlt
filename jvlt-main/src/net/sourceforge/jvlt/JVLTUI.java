@@ -212,7 +212,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				_model.getDictModel().executeAction(lca);
 			}
 		} else if (command.equals("reset_stats")) {
-			reset_stats();
+			resetStats();
 		} else if (command.equals("error_log")) {
 			GUIUtils.showDialog(_main_frame, _error_dialog);
 		} else if (command.equals("settings")) {
@@ -737,7 +737,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		System.exit(0);
 	}
 	
-	private void reset_stats() {
+	private void resetStats() {
 		ResetStatsDialogData data = new ResetStatsDialogData(
 				_dict.getEntryCount(), _matched_entries.size());
 		int result = CustomDialog.showDialog(data, _main_frame,
@@ -763,7 +763,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			EditEntriesAction action = new EditEntriesAction(
 					actions.toArray(new EditEntryAction[0]));
 			action.setMessage(GUIUtils.getString("Actions", "edit_entries",
-					new Object[] { new Integer(entries.size()) }));
+					new Object[] { entries.size() }));
 			_model.getDictModel().executeAction(action);
 		}
 	}
@@ -806,7 +806,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		String examples_string = formatter.format(shown_examples);
 		String text = GUIUtils.getString("Labels", "words_examples",
 			new Object[]{entries_string, examples_string,
-				new Integer(total_entries), new Integer(total_examples)});
+				total_entries, total_examples});
 		_left_status_label.setText(text);
 	}
 	

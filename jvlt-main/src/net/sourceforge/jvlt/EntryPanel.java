@@ -82,8 +82,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 		SortableTableModel.Directive dir
 			 = _entry_table_model.getSortingDirective();
 		config.setProperty("entry_table_sorting", Utils.arrayToString(
-			new Integer[]{new Integer(dir.getColumn()),
-				new Integer(dir.getDirection())} ));
+			new Integer[]{dir.getColumn(),
+				dir.getDirection()} ));
 		
 		config.setProperty("entry_table_arrow_direction_reversed",
 				_entry_table.isArrowDirectionReversed());
@@ -389,8 +389,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 			ChoiceFormatter formatter = new ChoiceFormatter();
 			formatter.applyPattern(GUIUtils.getString("Labels","words"));
 			String s1 = formatter.format(entries.size());
-			Integer n1 = new Integer(num_modified_examples);
-			Integer n2 = new Integer(num_removed_examples);
+			Integer n1 = num_modified_examples;
+			Integer n2 = num_removed_examples;
 			String msg = GUIUtils.getString("Messages",
 				"confirm_entry_deletion", new Object[]{s1,n1,n2});
 			result = MessageDialog.showDialog(this,

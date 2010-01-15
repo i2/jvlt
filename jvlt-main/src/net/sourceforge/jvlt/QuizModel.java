@@ -203,7 +203,7 @@ public class QuizModel extends WizardModel {
 			String s = formatter.format(words);
 			
 			return GUIUtils.getString("Messages", "quizzed_words",
-				new Object[] {s, new Integer(known), new Integer(not_known)});
+				new Object[] {s, known, not_known});
 		} else
 			return super.getStatusString();
 	}
@@ -1255,14 +1255,14 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				continue;
 			
 			label = GUIUtils.getString("Labels", "batch_no",
-				new Integer[]{new Integer(i)}) + ":";
+				new Integer[]{i}) + ":";
 			ChoiceFormatter formatter = new ChoiceFormatter(
 				GUIUtils.getString("Labels", "num_words"));
 			String value = formatter.format(batches.get(i));
 			int num_exp = expired.containsKey(i) ? expired.get(i) : 0;
 			if (i > 0)
 				value =	GUIUtils.getString("Labels", "words_expired",
-					new Object[] {value, new Integer(num_exp)});
+					new Object[] {value, num_exp});
 
 			buffer.append(getRowString(label, value));
 		}
@@ -1272,7 +1272,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		_html_panel.setText(buffer.toString());
 		
 		label = GUIUtils.getString("Messages", "selected_words",
-			new Object[] { new Integer(getSelectedEntries()) });
+			new Object[] { getSelectedEntries() });
 		_select_words_label.setText(label);
 	}
 
@@ -1357,7 +1357,7 @@ abstract class YesNoDescriptor extends WizardPanelDescriptor
 	
 	public void setState(int state) { _yes_no_panel.setState(state); }
 	
-	public void setMessage(String message) {
+	public final void setMessage(String message) {
 		_yes_no_panel.setMessage(message);
 	}
 	

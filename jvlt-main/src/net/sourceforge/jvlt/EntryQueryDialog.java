@@ -371,7 +371,7 @@ class EntryQueryRow implements ActionListener {
 	public void setQueryItem(ObjectQueryItem item) {
 		String name = item.getName();
 		setAttribute(_data.getAttribute(name));
-		Integer type = new Integer(item.getType());
+		Integer type = item.getType();
 		if (_type_translation_map.containsKey(type))
 			_type_box.setSelectedItem(_type_translation_map.get(type));
 
@@ -469,8 +469,8 @@ class EntryQueryRow implements ActionListener {
 			try {
 				Field field = item.getClass().getField(types[i]);
 				int type_value = field.getInt(item);
-				_translation_type_map.put(translation, new Integer(type_value));
-				_type_translation_map.put(new Integer(type_value), translation);
+				_translation_type_map.put(translation, type_value);
+				_type_translation_map.put(type_value, translation);
 			}
 			catch (Exception ex) { ex.printStackTrace(); }
 		}
@@ -488,7 +488,7 @@ class EntryQueryRow implements ActionListener {
 		 * in order to prevent actionPerformed() from being called.
 		 */
 		_type_box.removeActionListener(this);
-		_type_box.setSelectedItem(_type_translation_map.get(new Integer(type)));
+		_type_box.setSelectedItem(_type_translation_map.get(type));
 		_type_box.addActionListener(this);
 		
 		JComponent old_component = null;

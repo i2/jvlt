@@ -360,7 +360,7 @@ class FileTypePanel extends JPanel
 		update();
 	}
 	
-	public void load() {
+	public final void load() {
 		_extensions.clear();
 		_default_extensions.clear();
 		String[] exts = MultimediaUtils.AUDIO_FILE_EXTENSIONS;
@@ -402,7 +402,7 @@ class FileTypePanel extends JPanel
 			if (file instanceof CustomMultimediaFile) {
 				CustomMultimediaFile cmf = (CustomMultimediaFile) file;
 				JVLT.getConfig().setProperty("extension_"+extension,
-					new Object[]{new Integer(cmf.getType()),cmf.getCommand()});
+					new Object[]{cmf.getType(),cmf.getCommand()});
 				custom_extensions.add(extension);
 			}
 		}
@@ -686,10 +686,10 @@ class ExpirationTimePanel extends JPanel {
 		JScrollPane pane = new JScrollPane(table);
 		
 		_batches_spinner_model = new SpinnerNumberModel();
-		_batches_spinner_model.setStepSize(new Integer(1));
-		_batches_spinner_model.setMinimum(new Integer(1));
-		_batches_spinner_model.setMaximum(new Integer(20));
-		_batches_spinner_model.setValue(new Integer(7));
+		_batches_spinner_model.setStepSize(1);
+		_batches_spinner_model.setMinimum(1);
+		_batches_spinner_model.setMaximum(20);
+		_batches_spinner_model.setValue(7);
 		LabeledSpinner batches_spinner = new LabeledSpinner(
 			_batches_spinner_model);
 		batches_spinner.addChangeListener(new ActionHandler());
@@ -735,7 +735,7 @@ class ExpirationTimePanel extends JPanel {
 		return _batches_spinner_model.getNumber().intValue(); }
 	
 	public void setNumBatches(int num) {
-		_batches_spinner_model.setValue(new Integer(num)); }
+		_batches_spinner_model.setValue(num); }
 	
 	public float getExpirationFactor() {
 		return _factor_spinner_model.getNumber().floatValue(); }

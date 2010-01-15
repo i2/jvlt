@@ -452,7 +452,7 @@ class ImportResultsDescriptor extends WizardPanelDescriptor {
 			GUIUtils.getString("Labels", i18n));
 		String str = formatter.format(total);
 		return GUIUtils.getString("Labels", "imported",
-			new Object[]{new Integer(num), str});
+			new Object[]{num, str});
 	}
 }
 

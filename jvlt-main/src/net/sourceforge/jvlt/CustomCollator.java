@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CustomCollator extends RuleBasedCollator {
+public final class CustomCollator extends RuleBasedCollator {
 	private static CustomCollator _instance = null;
 	
 	private CustomCollator(String rules) throws ParseException {

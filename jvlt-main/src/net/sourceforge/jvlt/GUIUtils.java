@@ -105,7 +105,7 @@ public class GUIUtils {
 		if (index >= 0) {
 			char mnemonic = Character.toUpperCase(str.charAt(index+1));
 
-			return new Integer(mnemonic);
+			return Integer.valueOf(mnemonic);
 		}
 		else
 			return null;

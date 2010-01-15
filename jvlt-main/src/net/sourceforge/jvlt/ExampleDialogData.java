@@ -444,7 +444,7 @@ public class ExampleDialogData extends CustomDialogData
 				num++;
 
 			_current_senses_label.setText(GUIUtils.getString("Labels",
-				"num_linked_examples", new Object[]{new Integer(num)}));
+				"num_linked_examples", new Object[]{num}));
 		}
 		
 		//-----
@@ -468,7 +468,7 @@ public class ExampleDialogData extends CustomDialogData
 				num--;
 
 			_available_senses_label.setText(GUIUtils.getString("Labels",
-				"num_linked_examples", new Object[]{new Integer(num)}));
+				"num_linked_examples", new Object[]{num}));
 		}
 	}
 }

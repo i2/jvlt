@@ -47,7 +47,7 @@ public class TablePrinter implements Printable {
 	}
 	
 	public void setColWidth(int col, int percent) {
-		_colwidth_map.put(new Integer(col), new Double(percent/100.0));
+		_colwidth_map.put(col, new Double(percent/100.0));
 		_pages_map.clear();
 	}
 
@@ -149,7 +149,7 @@ public class TablePrinter implements Printable {
 				if (height < 0) {
 					// new page
 					r2d.setRect(0,0,0,_format.getImageableHeight());
-					pages.add(new Integer(row-1));
+					pages.add(row-1);
 					row_fits_on_page = false;
 					break;
 				}
@@ -168,7 +168,7 @@ public class TablePrinter implements Printable {
 						GUIUtils.getString("Messages", "page_full"));
 			}
 		}
-		pages.add(new Integer(num_rows-1));
+		pages.add(num_rows-1);
 		_page_number = pages.size();
 		
 		return pages.size();
@@ -211,7 +211,7 @@ public class TablePrinter implements Printable {
 		double remaining_ratio = 1.0;
 		int num_novalue = 0;
 		for (int col=0; col<num_cols; col++) {
-			Integer key = new Integer(col);
+			Integer key = col;
 			if (_colwidth_map.containsKey(key)) {
 				double val = ((Double) _colwidth_map.get(key)).doubleValue();
 				val = Math.min(remaining_ratio, val);
