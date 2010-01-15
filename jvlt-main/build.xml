@@ -1,15 +1,7 @@
 <project name="jVLT" default="dist" basedir=".">
-	<!-- set global properties for this build -->
-	<property name="src" location="src"/>
-	<property name="i18n" location="i18n"/>
-	<property name="img" location="images"/>
-	<property name="doc" location="doc"/>
-	<property name="data" location="data"/>
-	<property name="build" location="build"/>
-	<property name="dist"  location="dist"/>
-	<property name="lib" value="lib"/>
-	<property name="debug" value="true"/>
-	<property name="javadoc" value="javadoc"/>
+	
+	<!-- load global properties for this build -->
+	<property file="build.properties"/>
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
@@ -21,14 +13,14 @@
 		<mkdir dir="${lib}"/>
 		<mkdir dir="${build}"/>
 		<copy todir="${build}">
-			<fileset dir="." includes="images/*.png"/>
+			<fileset dir="${data}" includes="${image_files}"/>
 			<fileset dir="." includes="doc/**/*"/>
-			<fileset dir="${data}" includes="*.xsl,*.xml,*.css"/>
+			<fileset dir="${data}" includes="${xml_files}"/>
 		</copy>
 	</target>
 
 	<target name="i18n" depends="init">
-		<native2ascii encoding="UTF8" src="i18n" includes="*.properties"
+		<native2ascii encoding="UTF8" src="${data}" includes="${i18n}/*.properties"
 			dest="${build}"/>
 	</target>
 
@@ -59,13 +51,11 @@
 	</target>
 
 	<target name="dist-init">
+		<antcall target="clean" />
+		
 		<!-- Create the distribution directory -->
 		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/build"/>
-
-		<antcall target="clean">
-			<param name="build" value="${dist}/build"/>
-		</antcall>
+		<mkdir dir="${build}"/>
 	</target>
 	
 	<target name="dist-src" description="generate the source distribution">
@@ -74,15 +64,15 @@
 		<tar destfile="${dist}/jVLT-src-${DSTAMP}.tar.bz2"
 			compression="bzip2">
 			<tarfileset dir="." prefix="jvlt-${DSTAMP}/">
-				<include name="src/**/*.java"/>
-				<include name="src/**/*.xml"/>
-				<include name="images/*.png"/>
-				<include name="i18n/*.properties"/>
-				<include name="data/*.xsl"/>
-				<include name="data/*.xml"/>
-				<include name="data/*.xsd"/>
-				<include name="data/*.css"/>
-				<include name="doc/**/*"/>
+				<include name="${src}/**/*.java"/>
+				<include name="${src}/**/*.xml"/>
+				<include name="${data}/${images}/*.png"/>
+				<include name="${data}/${i18n}/*.properties"/>
+				<include name="${data}/${xml}/*.xsl"/>
+				<include name="${data}/${xml}/*.xml"/>
+				<include name="${data}/${xml}/*.xsd"/>
+				<include name="${data}/${xml}/*.css"/>
+				<include name="${doc}/**/*"/>
 				<include name="build.xml"/>
 				<include name="build-mac.xml"/>
 				<include name="README"/>
@@ -95,18 +85,15 @@
 	</target>
 	
 	<target name="dist-jar">
-		<antcall target="i18n">
-			<param name="build" value="${dist}/build"/>
-		</antcall>
+		<antcall target="i18n" />
 		<antcall target="${compile-target}">
-			<param name="build" value="${dist}/build"/>
 			<param name="debug" value="false"/>
 		</antcall>
 
 		<tstamp/>
 
 		<jar jarfile="${dist}/${jar-prefix}-${DSTAMP}.jar">
-			<fileset dir="${dist}/build" includes="**/*"/>
+			<fileset dir="${build}" includes="**/*"/>
 			<zipgroupfileset dir="${lib}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Main-Class"

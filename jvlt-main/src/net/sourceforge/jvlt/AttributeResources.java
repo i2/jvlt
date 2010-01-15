@@ -12,7 +12,7 @@ public class AttributeResources extends ResourceBundle {
 	
 	public AttributeResources() {
 		_keys = new HashSet<String>();
-		_bundle = ResourceBundle.getBundle("Attributes", Locale.getDefault());		
+		_bundle = ResourceBundle.getBundle("i18n/Attributes", Locale.getDefault());		
 		for (Enumeration<String> e=_bundle.getKeys(); e.hasMoreElements(); )
 			_keys.add(e.nextElement());
 	}

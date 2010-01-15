@@ -1155,11 +1155,11 @@ class AboutDialog extends JDialog {
 		cc.fill = CustomConstraints.NONE;
 		getContentPane().add(new JButton(close_action), cc);
 		
-		InputStream xsl = AboutDialog.class.getResourceAsStream("/info.xsl");
+		InputStream xsl = AboutDialog.class.getResourceAsStream("/xml/info.xsl");
 		XSLTransformer transformer = new XSLTransformer(xsl);
 		try {
 			InputStream xml = AboutDialog.class.getResourceAsStream(
-					"/info.xml");
+					"/xml/info.xml");
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = fac.newDocumentBuilder();
 			Document doc = builder.parse(xml);

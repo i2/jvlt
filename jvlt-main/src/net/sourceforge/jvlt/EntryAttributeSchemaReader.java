@@ -15,7 +15,7 @@ import org.xml.sax.InputSource;
 public class EntryAttributeSchemaReader {
 	public EntryAttributeSchema readSchema(String language)
 		throws XPathExpressionException {
-		String file_name = "/details_"+language+".xml";
+		String file_name = "/xml/details_"+language+".xml";
 		XPathFactory xpf = XPathFactory.newInstance();
 		XPath path = xpf.newXPath();
 		InputStream input =

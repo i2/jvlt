@@ -83,7 +83,7 @@ public class GUIUtils {
 	
 	public static String getString (String resource_bundle, String name,
 		Object[] args) {
-		ResourceBundle messages = ResourceBundle.getBundle(
+		ResourceBundle messages = ResourceBundle.getBundle("i18n/" + 
 			resource_bundle, Locale.getDefault());
 		String str = messages.getString(name);
 		

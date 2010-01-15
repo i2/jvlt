@@ -25,7 +25,7 @@ public class EntryInfoPanel extends InfoPanel implements HyperlinkListener {
 	public EntryInfoPanel(JVLTModel model, SelectionNotifier notifier) {
 		super(model, notifier);
 		
-		_entry_transformer = createTransformer("/entry.xsl");
+		_entry_transformer = createTransformer("/xml/entry.xsl");
 		MetaData entry_data = model.getDictModel().getMetaData(
 			Entry.class);
 		_entry_attributes.addAll(Arrays.asList(entry_data.getAttributes()));

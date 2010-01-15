@@ -20,7 +20,7 @@ public class ExampleInfoPanel extends InfoPanel implements HyperlinkListener {
 		super(model, notifier);
 		
 		_current_example = null;		
-		_transformer = createTransformer("/example.xsl");
+		_transformer = createTransformer("/xml/example.xsl");
 	}
 	
 	public void setExample(Example example) {

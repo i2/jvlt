@@ -82,7 +82,7 @@ public class JVLT {
 		//----------
 		// Read version info
 		//----------
-		InputStream xml_stream = JVLT.class.getResourceAsStream("/info.xml");
+		InputStream xml_stream = JVLT.class.getResourceAsStream("/xml/info.xml");
 		InputSource src = new InputSource(xml_stream);
 		XPathFactory fac = XPathFactory.newInstance();
 		XPath path = fac.newXPath();

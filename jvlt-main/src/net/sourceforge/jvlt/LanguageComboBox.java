@@ -24,7 +24,7 @@ public class LanguageComboBox extends LabeledComboBox {
 		addItem(GUIUtils.getString("Labels", "other_language"));
 		try {
 			InputStream is = LanguageComboBox.class.getResourceAsStream(
-				"/info.xml");
+				"/xml/info.xml");
 			InputSource src = new InputSource(is);
 			XPathFactory fac = XPathFactory.newInstance();
 			XPath xpath = fac.newXPath();

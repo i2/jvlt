@@ -17,7 +17,7 @@ public class DictHtmlWriter extends DictWriter {
 		final DictXMLWriter xmlwriter = new DictXMLWriter(_dict, pos,
 				DictXMLWriter.FORMAT_XML);
 		final XSLTransformer xsltransformer = new XSLTransformer(
-				DictHtmlWriter.class.getResourceAsStream("/export_html.xsl"));
+				DictHtmlWriter.class.getResourceAsStream("/xml/export_html.xsl"));
 
 		Thread xmlthread = new Thread() {
 			public void run() {

@@ -42,9 +42,9 @@ public class SAXDictReader extends DictReader {
 		String dataversion = JVLT.getDataVersion();
 		if (_version.compareTo(dataversion) < 0) {
 			InputStream dict_xslt = SAXDictReader.class.getResourceAsStream(
-				"/transform-dict-"+dataversion+".xsl");
+				"/xml/transform-dict-"+dataversion+".xsl");
 			InputStream stats_xslt = SAXDictReader.class.getResourceAsStream(
-				"/transform-stats-"+dataversion+".xsl");
+				"/xml/transform-stats-"+dataversion+".xsl");
 			if (dict_xslt != null && stats_xslt != null) {
 				dict_stream = transform(dict_xslt, dict_stream);
 				stats_stream = transform(stats_xslt, stats_stream);

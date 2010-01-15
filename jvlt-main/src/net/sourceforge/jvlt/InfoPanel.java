@@ -67,7 +67,7 @@ public class InfoPanel extends JPanel
 		_html_pane.addMouseListener(new CopyPastePopupListener(_html_pane));
 		_html_pane.setContentType("text/html");
 		
-		URL url = InfoPanel.class.getResource("/style.css");
+		URL url = InfoPanel.class.getResource("/xml/style.css");
 		HTMLDocument doc = (HTMLDocument) _html_pane.getDocument();
 		doc.setBase(Utils.getDirectory(url));
 		
