@@ -124,7 +124,7 @@ public class Wizard implements ActionListener {
 	private void setActionText(Action action, String text) {
 		Integer mnemonic = GUIUtils.getMnemonicKey(text);
 		action.putValue(Action.MNEMONIC_KEY,
-			KeyEvent.CHAR_UNDEFINED);
+			(int)KeyEvent.CHAR_UNDEFINED);
 		if (mnemonic != null) {
 			action.putValue(Action.MNEMONIC_KEY, mnemonic);
 			text = text.replaceAll("\\$", "");
