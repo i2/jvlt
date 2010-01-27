@@ -7,11 +7,11 @@ import net.sourceforge.jvlt.event.SelectionListener.SelectionEvent;
 
 public class SelectionNotifier {
 	private ArrayList<SelectionListener> _listeners;
-	
+
 	public SelectionNotifier() {
 		_listeners = new ArrayList<SelectionListener>();
 	}
-	
+
 	public void addSelectionListener(SelectionListener l) {
 		_listeners.add(l);
 	}
@@ -19,10 +19,10 @@ public class SelectionNotifier {
 	public void removeSelectionListener(SelectionListener l) {
 		_listeners.remove(l);
 	}
-	
+
 	public void fireSelectionEvent(SelectionEvent e) {
 		Iterator<SelectionListener> it = _listeners.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 			it.next().objectSelected(e);
 	}
 }

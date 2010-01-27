@@ -7,15 +7,16 @@ public interface DialogListener {
 		private static final long serialVersionUID = 1L;
 
 		private int _type;
-		
-		public DialogEvent (Object source, int type) {
+
+		public DialogEvent(Object source, int type) {
 			super(source);
 			_type = type;
 		}
-		
-		public int getType() { return _type; }
+
+		public int getType() {
+			return _type;
+		}
 	}
 
 	public void dialogStateChanged(DialogEvent ev);
 }
-

@@ -1,12 +1,28 @@
 package net.sourceforge.jvlt;
 
-import java.io.*;
-import java.util.*;
-import javax.xml.xpath.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.PropertyMap;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 public class JVLT {
+	private static final Logger logger = Logger.getLogger(JVLT.class);
+
 	public static final String CONFIG_DIR;
 	static {
 		String os = System.getProperty("os.name");
@@ -21,22 +37,18 @@ public class JVLT {
 			if (dir == null || dir.equals(""))
 				dir = System.getProperty("user.home") + File.separator
 						+ ".config";
-			
+
 			CONFIG_DIR = dir + File.separator + "jvlt";
 		}
 	}
-	
-	private static final String OLD_CONFIG_DIR =
-		System.getProperty("user.home") + File.separator + ".jvlt"; // TODO: Remove
 
-	private static final Locale[] _locales = {
-		Locale.US, 
-		Locale.FRANCE, 
-		Locale.GERMANY, 
-		new Locale("cs", "CZ"),
-		new Locale("pl", "PL")
-	};
-	
+	private static final String OLD_CONFIG_DIR = System
+			.getProperty("user.home")
+			+ File.separator + ".jvlt"; // TODO: Remove
+
+	private static final Locale[] _locales = { Locale.US, Locale.FRANCE,
+			Locale.GERMANY, new Locale("cs", "CZ"), new Locale("pl", "PL") };
+
 	private JVLTModel _model;
 	private static PropertyMap _runtime_properties;
 	private static JVLT _instance = null;
@@ -45,30 +57,41 @@ public class JVLT {
 	private static String _version = null;
 	private static String _data_version = null;
 
-	public static JVLT getInstance() { return _instance; }
-	
-	public static Config getConfig() { return _config; }
-	
+	public static JVLT getInstance() {
+		return _instance;
+	}
+
+	public static Config getConfig() {
+		return _config;
+	}
+
 	public static void saveConfig() throws IOException {
 		String prop_file_name = CONFIG_DIR + File.separator + "config";
 		FileOutputStream fos = new FileOutputStream(prop_file_name);
 		_config.store(fos);
 	}
-	
-	public static Locale[] getSupportedLocales() { return _locales; }
+
+	public static Locale[] getSupportedLocales() {
+		return _locales;
+	}
 
 	/**
-	 * Returns a map that contains a set of properties.
-	 * Unlike the properties stored in the Config object returned by method
-	 * getConfig(), this map is not stored in a config file. */
+	 * Returns a map that contains a set of properties. Unlike the properties
+	 * stored in the Config object returned by method getConfig(), this map is
+	 * not stored in a config file.
+	 */
 	public static PropertyMap getRuntimeProperties() {
 		return _runtime_properties;
 	}
-	
-	public static String getVersion() { return _version; }
-	
-	public static String getDataVersion() { return _data_version; }
-	
+
+	public static String getVersion() {
+		return _version;
+	}
+
+	public static String getDataVersion() {
+		return _data_version;
+	}
+
 	public JVLT() {
 		_model = null;
 		_config = null;
@@ -76,13 +99,16 @@ public class JVLT {
 		_runtime_properties = new PropertyMap();
 	}
 
-	public JVLTModel getModel() { return _model; }
-	
+	public JVLTModel getModel() {
+		return _model;
+	}
+
 	public void init() {
-		//----------
+		// ----------
 		// Read version info
-		//----------
-		InputStream xml_stream = JVLT.class.getResourceAsStream("/xml/info.xml");
+		// ----------
+		InputStream xml_stream = JVLT.class
+				.getResourceAsStream("/xml/info.xml");
 		InputSource src = new InputSource(xml_stream);
 		XPathFactory fac = XPathFactory.newInstance();
 		XPath path = fac.newXPath();
@@ -90,51 +116,50 @@ public class JVLT {
 			Node root = (Node) path.evaluate("/info", src, XPathConstants.NODE);
 			_version = path.evaluate("version", root);
 			_data_version = path.evaluate("data-version", root);
+		} catch (XPathExpressionException ex) {
+			ex.printStackTrace();
 		}
-		catch (XPathExpressionException ex) { ex.printStackTrace(); }
 
-		//----------
+		// ----------
 		// Create .jvlt directory if necessary
-		//----------
+		// ----------
 		File dir = new File(CONFIG_DIR);
 		File old_dir = new File(OLD_CONFIG_DIR);
 		if (dir.exists()) {
-			if (! dir.isDirectory())
-				System.out.println(dir.getPath() +
-						" already exists but it is not a directory");
+			if (!dir.isDirectory())
+				logger.info(dir.getPath()
+						+ " already exists but it is not a directory");
 		} else {
 			if (old_dir.exists()) {
 				old_dir.renameTo(dir);
-				System.out.println(old_dir.getPath()
-						+ " migrated to " + dir.getPath());
+				logger
+						.info(old_dir.getPath() + " migrated to "
+								+ dir.getPath());
 			} else {
-				if (! dir.mkdir())
-					System.out.println(dir.getPath()
-							+ " could not be created.");
+				if (!dir.mkdir())
+					logger.info(dir.getPath() + " could not be created.");
 			}
 		}
-		
-		//----------
+
+		// ----------
 		// Read settings.
-		//----------		
+		// ----------
 		_config = new Config();
-		try	{
+		try {
 			String prop_file_name = dir.getPath() + File.separator + "config";
 			FileInputStream fis = new FileInputStream(prop_file_name);
 			_config.load(fis);
 			fis.close();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
-		catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
-		
+
 		_model = new JVLTModel();
-		
-		//----------
+
+		// ----------
 		// Set locale.
-		//----------
+		// ----------
 		Locale loc = Locale.getDefault();
-		Locale.setDefault(_config.getLocaleProperty("locale", loc));		
+		Locale.setDefault(_config.getLocaleProperty("locale", loc));
 	}
 }
-

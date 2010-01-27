@@ -1,22 +1,37 @@
 package net.sourceforge.jvlt.tools;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
-import net.sourceforge.jvlt.Dict;
-import net.sourceforge.jvlt.DictReaderException;
-import net.sourceforge.jvlt.Entry;
-import net.sourceforge.jvlt.Example;
 import net.sourceforge.jvlt.JVLT;
-import net.sourceforge.jvlt.JVLTModel;
-import net.sourceforge.jvlt.MetaData;
-import net.sourceforge.jvlt.Sense;
+import net.sourceforge.jvlt.core.Dict;
+import net.sourceforge.jvlt.core.Entry;
+import net.sourceforge.jvlt.core.Example;
+import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.io.DictReaderException;
+import net.sourceforge.jvlt.metadata.MetaData;
+import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.ui.JVLTUI;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 public class JVLTUtils {
+
+	private static final Logger logger = Logger.getLogger(JVLTUtils.class);
+
 	private JVLTModel _model;
 	private String _current_file;
 	private Dict _dict;
-	
+
 	public JVLTUtils() {
 		JVLT jvlt = new JVLT();
 		jvlt.init();
@@ -28,51 +43,50 @@ public class JVLTUtils {
 	public void print(String file_name, String field) {
 		try {
 			open(file_name);
-			HashMap<String, TreeSet<Entry>> entry_map =
-				new HashMap<String, TreeSet<Entry>>();
+			HashMap<String, TreeSet<Entry>> entry_map = new HashMap<String, TreeSet<Entry>>();
 			TreeSet<String> value_set = new TreeSet<String>();
 			MetaData data = _model.getDictModel().getMetaData(Entry.class);
-			for (Iterator<Entry> it=_dict.getEntries().iterator();
-					it.hasNext(); ) {
+			for (Iterator<Entry> it = _dict.getEntries().iterator(); it
+					.hasNext();) {
 				Entry entry = it.next();
-				String value=data.getAttribute(field).getFormattedValue(entry);
+				String value = data.getAttribute(field)
+						.getFormattedValue(entry);
 				if (value_set.add(value))
 					entry_map.put(value, new TreeSet<Entry>());
-				
+
 				Set<Entry> set = entry_map.get(value);
 				set.add(entry);
 			}
 
-			Writer writer = new BufferedWriter(
-				new OutputStreamWriter(System.out, "UTF-8"));
+			Writer writer = new BufferedWriter(new OutputStreamWriter(
+					System.out, "UTF-8"));
 			writer.write("<html>\n");
 			Iterator<String> it = value_set.iterator();
-			int i=0;
+			int i = 0;
 			char last_first_char = 0;
 			while (it.hasNext()) {
-				String value = (String) it.next();
+				String value = it.next();
 				char first_char = value.length() == 0 ? 0 : value.charAt(0);
 				Set<Entry> set = entry_map.get(value);
 				Iterator<Entry> it2 = set.iterator();
 				while (it2.hasNext()) {
-					if (i>0)
+					if (i > 0)
 						writer.write(", ");
-					
+
 					if (first_char != 0 && first_char != last_first_char) {
 						writer.write("<b>" + Character.toUpperCase(first_char)
-							+ "</b> ");
+								+ "</b> ");
 						last_first_char = first_char;
 					}
-					
-					Entry entry = (Entry) it2.next();
+
+					Entry entry = it2.next();
 					writer.write(entry.getOrthography());
 					i++;
 				}
 			}
 			writer.write("</html>\n");
 			writer.flush();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -80,19 +94,18 @@ public class JVLTUtils {
 	public void findDuplicates(String file_name) {
 		try {
 			open(file_name);
-			Writer writer = new BufferedWriter(
-				new OutputStreamWriter(System.out, "UTF-8"));
+			Writer writer = new BufferedWriter(new OutputStreamWriter(
+					System.out, "UTF-8"));
 			Set<String> set = new TreeSet<String>();
-			for (Iterator<Entry> it=_dict.getEntries().iterator();
-					it.hasNext(); ) {
+			for (Iterator<Entry> it = _dict.getEntries().iterator(); it
+					.hasNext();) {
 				String orth = it.next().getOrthography();
-				if (! set.add(orth))
+				if (!set.add(orth))
 					writer.write("Duplicate: " + orth + "\n");
 			}
 
 			writer.flush();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -100,78 +113,78 @@ public class JVLTUtils {
 	public void exampleLinkCount(String file_name) {
 		try {
 			open(file_name);
-			Writer writer = new BufferedWriter(
-				new OutputStreamWriter(System.out, "UTF-8"));
-			for (Iterator<Example> it=_dict.getExamples().iterator();
-					it.hasNext(); ) {
+			Writer writer = new BufferedWriter(new OutputStreamWriter(
+					System.out, "UTF-8"));
+			for (Iterator<Example> it = _dict.getExamples().iterator(); it
+					.hasNext();) {
 				Example ex = it.next();
 				Sense[] senses = ex.getSenses();
 				writer.write(ex.getText() + ": " + senses.length + " link(s)");
 
 				Example.TextFragment[] fragments = ex.getTextFragments();
 				TreeSet<Sense> set = new TreeSet<Sense>();
-				for (int j=0; j<fragments.length; j++) {
-					Sense s = fragments[j].getSense(); 
+				for (int j = 0; j < fragments.length; j++) {
+					Sense s = fragments[j].getSense();
 					if (s != null)
-						if (! set.add(s))
+						if (!set.add(s))
 							writer.write(", duplicate link: " + s.getParent());
 				}
-				
+
 				writer.write("\n");
 			}
 
 			writer.flush();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void importStats(String target, String source) {
 		try {
 			open(target);
 			JVLTModel statsModel = new JVLTModel();
 			Dict statsDict = open(source, statsModel);
-			for (Entry e: _dict.getEntries()) {
+			for (Entry e : _dict.getEntries()) {
 				Entry statsEntry = statsDict.getEntry(e);
 				if (statsEntry != null)
 					e.setStats(statsEntry.getStats());
 			}
 			_model.save(_current_file);
 		} catch (DictReaderException e) {
-			System.err.println(e.getShortMessage()
-					+ "(" + e.getLongMessage() + ")");
+			logger.error(e.getShortMessage() + "(" + e.getLongMessage() + ")");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void open(String file_name)
-		throws DictReaderException, IOException {
+
+	private void open(String file_name) throws DictReaderException, IOException {
 		if (file_name.equals(_current_file))
 			return;
-		
+
 		_dict = open(file_name, _model);
 		_current_file = file_name;
 	}
-	
+
 	private Dict open(String file_name, JVLTModel model)
 			throws DictReaderException, IOException {
 		model.load(file_name);
 		return model.getDict();
 	}
 
-	public static void main (String[] args) {
+	public static void main(String[] args) {
+		PropertyConfigurator.configure(JVLTUI.class
+				.getResource("/log4j.properties"));
+		
 		if (args.length < 2) {
 			printHelp();
 			return;
 		}
 
-		String file = args[args.length-1];
+		String file = args[args.length - 1];
 		List<String> arg_set = new ArrayList<String>();
-		for (int i=0; i<args.length; i++)
+		for (int i = 0; i < args.length; i++)
 			arg_set.add(args[i]);
-		
+
 		JVLTUtils utils = new JVLTUtils();
 		if (arg_set.contains("--find-duplicates")) {
 			utils.findDuplicates(file);
@@ -181,7 +194,7 @@ public class JVLTUtils {
 			Iterator<String> it = arg_set.iterator();
 			String field = "Orthography";
 			while (it.hasNext()) {
-				String arg = (String) it.next();
+				String arg = it.next();
 				if (arg.startsWith("--sort-by="))
 					if (arg.endsWith("Pronunciations")) {
 						field = "Pronunciations";
@@ -197,16 +210,16 @@ public class JVLTUtils {
 			printHelp();
 		}
 	}
-	
+
 	private static void printHelp() {
-		System.out.println("Usage: JVLTUtils <options> <file>");
-		System.out.println("Possible options:");
-		System.out.println("--print-words");
-		System.out.println("--find-duplicates");
-		System.out.println("--example-link-count");
-		System.out.println("--sort-by=<field>"
-			+ "  Can be used together with --print-words. <field> is "
-			+ "  either \"Orthography\" or \"Pronunciations\"");
-		System.out.println("--import-stats <file>");
+		logger.info("Usage: JVLTUtils <options> <file>");
+		logger.info("Possible options:");
+		logger.info("--print-words");
+		logger.info("--find-duplicates");
+		logger.info("--example-link-count");
+		logger.info("--sort-by=<field>"
+				+ "  Can be used together with --print-words. <field> is "
+				+ "  either \"Orthography\" or \"Pronunciations\"");
+		logger.info("--import-stats <file>");
 	}
 }

@@ -16,6 +16,7 @@
 			<fileset dir="${data}" includes="${image_files}"/>
 			<fileset dir="." includes="doc/**/*"/>
 			<fileset dir="${data}" includes="${xml_files}"/>
+			<fileset dir="${data}" includes="log4j.properties"/>
 		</copy>
 	</target>
 
@@ -37,7 +38,7 @@
 	<target name="run" depends="compile,i18n"
 		description="execute the program">
 		<java
-			classname="net.sourceforge.jvlt.JVLTUI"
+			classname="net.sourceforge.jvlt.ui.JVLTUI"
 			classpathref="project.classpath"
 			classpath="${build}"
 			fork="true"/>
@@ -72,6 +73,7 @@
 				<include name="${data}/${xml}/*.xml"/>
 				<include name="${data}/${xml}/*.xsd"/>
 				<include name="${data}/${xml}/*.css"/>
+				<include name="${data}/*.properties"/>
 				<include name="${doc}/**/*"/>
 				<include name="build.xml"/>
 				<include name="build-mac.xml"/>
@@ -97,7 +99,7 @@
 			<zipgroupfileset dir="${lib}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Main-Class"
-					value="net.sourceforge.jvlt.JVLTUI"/>
+					value="net.sourceforge.jvlt.ui.JVLTUI"/>
 			</manifest>
 		</jar>
 	</target>
