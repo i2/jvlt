@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <info>
 	<name>jVLT - Vocabulary Learning Tool</name>
-	<version>1.3.0</version>
+	<version>1.3.1</version>
 	<data-version>1.3</data-version>
 	<developers>
 		<person>
 			<name>Henning Burchardt</name>
 			<e-mail>
 				<local-part>burchardt</local-part>
+				<domain>users.sourceforge.net</domain>
+			</e-mail>
+			<role>Developer</role>
+		</person>
+		<person>
+			<name>Christian Hennigfeld</name>
+			<e-mail>
+				<local-part>thrar</local-part>
 				<domain>users.sourceforge.net</domain>
 			</e-mail>
 			<role>Developer</role>
