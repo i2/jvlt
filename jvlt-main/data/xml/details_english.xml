@@ -12,5 +12,7 @@
 	<class name="adverb"/>
 	<attribute name="comparative" classes="adjective;adverb" group="comparison"/>
 	<attribute name="superlative" classes="adjective;adverb" group="comparison"/>
+
+	<class name="conjunction"/>
 </schema>
 

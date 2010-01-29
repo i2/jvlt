@@ -4,6 +4,7 @@
 	<class name="verb"/>
 	<class name="adjective"/>
 	<class name="adverb"/>
+	<class name="conjunction"/>
 	<attribute name="prest" classes="verb" group="conjugation"/>
 	<attribute name="pastt" classes="verb" group="conjugation"/>
 	<attribute name="supine" classes="verb" group="conjugation"/>

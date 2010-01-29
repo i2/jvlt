@@ -3,6 +3,7 @@
 	<class name="noun"/>
 	<class name="verb"/>
 	<class name="adjective"/>
+	<class name="conjunction"/>
 	<attribute name="condform" classes="adjective;verb"/>
 	<attribute name="desuform" classes="adjective"/>
 	<attribute name="dictform" classes="verb"/>
