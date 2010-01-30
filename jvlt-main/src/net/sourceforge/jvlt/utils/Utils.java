@@ -7,8 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+	private static Pattern WRAP_PATTERN = Pattern.compile(
+			"(.{0,80}\\b\\s*)|(.{80}\\B)"); 
+	
 	public static String removeSubstring(String s, int begin_index,
 			int end_index) {
 		StringBuffer buf = new StringBuffer();
@@ -176,5 +181,22 @@ public class Utils {
 			return "/u0" + hex;
 		else
 			return "/u" + hex;
+	}
+	
+	/**
+	 * Wraps a string into lines with at most 80 characters each.
+	 * @param s The string to be wrapped
+	 * @param delim The line delimiter
+	 * @return The wrapped string
+	 */
+	public static String wrapString(String s, String delim) {
+		StringBuilder builder = new StringBuilder();
+		Matcher m = WRAP_PATTERN.matcher(s);
+		while (m.find()) {
+			builder.append(s.substring(m.start(), m.end()));
+			builder.append(delim);
+		}
+		
+		return builder.toString();
 	}
 }
