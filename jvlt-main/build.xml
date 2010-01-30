@@ -77,6 +77,7 @@
 				<include name="${doc}/**/*"/>
 				<include name="build.xml"/>
 				<include name="build-mac.xml"/>
+				<include name="build.properties"/>
 				<include name="README"/>
 				<include name="COPYING"/>
 				<include name="AUTHORS"/>
