@@ -152,10 +152,11 @@ public class SortableTable<T extends Object> extends JTable implements
 				if (f != null)
 					return "<html><span style=\"font-family: " + f.getFamily()
 							+ "; font-size: " + f.getSize() + "\">"
-							+ o.toString() + "</span></html>";
+							+ Utils.wrapString(o.toString(), "<br>")
+							+ "</span></html>";
 			}
 
-			return o.toString();
+			return "<html>" +Utils.wrapString(o.toString(), "<br>") + "</html>";
 		}
 	}
 
@@ -231,7 +232,7 @@ public class SortableTable<T extends Object> extends JTable implements
 		else
 			return null;
 	}
-
+	
 	private class MouseHandler extends MouseAdapter {
 		private int _last_clicked_col;
 
