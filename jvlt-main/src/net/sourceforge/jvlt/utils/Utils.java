@@ -194,7 +194,8 @@ public class Utils {
 		Matcher m = WRAP_PATTERN.matcher(s);
 		while (m.find()) {
 			builder.append(s.substring(m.start(), m.end()));
-			builder.append(delim);
+			if (m.end() < s.length())
+				builder.append(delim);
 		}
 		
 		return builder.toString();
