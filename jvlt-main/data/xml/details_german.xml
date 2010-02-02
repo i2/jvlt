@@ -5,6 +5,7 @@
 	<class name="adjective"/>
 	<class name="adverb"/>
 	<class name="conjunction"/>
+	<class name="expression"/>
 	<attribute name="gender" classes="noun">
 		<choice name="feminine"/>
 		<choice name="masculine"/>
@@ -12,6 +13,7 @@
 	</attribute>
 	<attribute name="gensi" classes="noun" group="declension"/>
 	<attribute name="nompl" classes="noun" group="declension"/>
+	<attribute name="pres_sg_3rd" classes="verb" group="conjugation"/>
 	<attribute name="pret1" classes="verb" group="conjugation"/>
 	<attribute name="pastp" classes="verb" group="conjugation"/>
 </schema>
