@@ -107,6 +107,9 @@
 					value="net.sourceforge.jvlt.ui.JVLTUI"/>
 			</manifest>
 		</jar>
+
+		<copy file="${dist}/${jar-prefix}-${DSTAMP}.jar"
+			tofile="${dist}/${jar-prefix}.jar"/>
 	</target>
 
 	<target name="clean" description="clean up" >
