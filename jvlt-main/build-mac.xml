@@ -5,6 +5,7 @@
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
+		<fileset dir="${lib}"><include name="*.jar"/></fileset>
 		<fileset dir="${lib-mac}"><include name="*.jar"/></fileset>
 	</path>
 
