@@ -1153,7 +1153,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				@SuppressWarnings("unchecked")
 				Class ControllerClass = Class
-						.forName("net.sourceforge.jvlt.MacOSController");
+						.forName("net.sourceforge.jvlt.os.MacOSController");
 				controller = (OSController) ControllerClass.newInstance();
 
 				is_on_mac = true;
@@ -1164,7 +1164,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 						"jVLT");
 			} catch (Exception ex) {
 				logger.error("Could not load class \""
-						+ "net.sourceforge.jvlt.MacOSController\"");
+						+ "net.sourceforge.jvlt.os.MacOSController\"");
 			}
 		}
 
