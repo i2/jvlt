@@ -18,6 +18,10 @@
 			<fileset dir="${data}" includes="${xml_files}"/>
 			<fileset dir="${data}" includes="log4j.properties"/>
 		</copy>
+
+		<replace file="${build}/xml/info.xml"
+						 token="@VERSION@"
+ 						 value="${version}"/>
 	</target>
 
 	<target name="i18n" depends="init">

@@ -51,6 +51,10 @@
 			<fileset dir="${data}/mac" includes="PkgInfo,*.plist"/>
 		</copy>
 
+		<replace file="${dist}/jVLT.app/Contents/Info.plist"
+						 token="@VERSION@"
+ 						 value="${version}"/>
+
 		<copy todir="${dist}/jVLT.app/Contents/Resources">
 			<fileset dir="${data}/mac" includes="*.icns"/>
 		</copy>
