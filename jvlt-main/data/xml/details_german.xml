@@ -11,6 +11,12 @@
 		<choice name="masculine"/>
 		<choice name="neuter"/>
 	</attribute>
+	<attribute name="verb_type" classes="verb">
+		<choice name="trans"/>
+		<choice name="intrans"/>
+		<choice name="pronominal"/>
+		<choice name="impersonal"/>
+	</attribute>
 	<attribute name="gensi" classes="noun" group="declension"/>
 	<attribute name="nompl" classes="noun" group="declension"/>
 	<attribute name="pres_sg_3rd" classes="verb" group="conjugation"/>
