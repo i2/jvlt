@@ -5,7 +5,9 @@
 	<key>CFBundleName</key>
 	<string>jVLT</string>
 	<key>CFBundleVersion</key>
-	<string>100.0</string>
+	<string>@VERSION@</string>
+	<key>CFBundleShortVersionString</key>
+	<string>@VERSION@</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
@@ -48,7 +50,7 @@
 	<key>Java</key>
 	<dict>
 		<key>MainClass</key>
-		<string>net.sourceforge.jvlt.JVLTUI</string>
+		<string>net.sourceforge.jvlt.ui.JVLTUI</string>
 		<key>VMOptions</key>
 		<string>-Xms128m -Xmx1024m</string>
 		<key>JVMVersion</key>
