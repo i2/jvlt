@@ -14,5 +14,6 @@
 	<attribute name="superlative" classes="adjective;adverb" group="comparison"/>
 
 	<class name="conjunction"/>
+	<class name="expression"/>
 </schema>
 

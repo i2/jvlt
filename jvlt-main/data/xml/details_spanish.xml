@@ -5,6 +5,7 @@
 	<class name="adjective"/>
 	<class name="adverb"/>
 	<class name="conjunction"/>
+	<class name="expression"/>
 	<attribute name="gender" classes="noun">
 		<choice name="feminine"/>
 		<choice name="masculine"/>

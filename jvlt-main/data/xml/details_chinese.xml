@@ -15,5 +15,6 @@
 	<class name="conjunction"/>
 	<class name="numeral"/>
 	<class name="suffix"/>
+	<class name="expression"/>
 </schema>
 
