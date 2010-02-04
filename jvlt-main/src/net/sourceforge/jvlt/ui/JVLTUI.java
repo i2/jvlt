@@ -150,6 +150,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private Dict _dict;
+	private final JVLT jvlt;
 	private JVLTModel _model;
 	private Collection<Entry> _matched_entries;
 	private Collection<Example> _matched_examples;
@@ -170,10 +171,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private ErrorLogDialog _error_dialog;
 	private boolean _is_mac;
 
-	public JVLTUI(JVLTModel model, boolean is_on_mac) {
+	public JVLTUI(JVLT jvlt, boolean is_on_mac) {
+		this.jvlt = jvlt;
 		_is_mac = is_on_mac;
 
-		_model = model;
+		_model = jvlt.getModel();
 		_matched_entries = null;
 		_matched_examples = null;
 		_recent_files = new LinkedList<String>();
@@ -738,9 +740,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	/**
-	 * Tests whether the application can safely be terminated.
-	 * If there is modified data a dialog is shown. This method is public as
-	 * it can be called by {@link OSController}.
+	 * Tests whether the application can safely be terminated. If there is
+	 * modified data a dialog is shown. This method is public as it can be
+	 * called by {@link OSController}.
 	 * 
 	 * @return Whether it is safe to quit the application
 	 */
@@ -764,8 +766,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	/**
-	 * Shows the about dialog.
-	 * This method is public as it can be called by {@link OSController}.
+	 * Shows the about dialog. This method is public as it can be called by
+	 * {@link OSController}.
 	 */
 	public void showAbout() {
 		AboutDialog dlg = new AboutDialog(_main_frame);
@@ -773,8 +775,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	/**
-	 * Shows the settings dialog.
-	 * This method is public as it can be called by {@link OSController}.
+	 * Shows the settings dialog. This method is public as it can be called by
+	 * {@link OSController}.
 	 */
 	public void showSettings() {
 		SettingsDialogData ddata = new SettingsDialogData(_model);
@@ -836,7 +838,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		conf.setProperty("last_data_version", JVLT.getDataVersion());
 
 		try {
-			JVLT.saveConfig();
+			jvlt.saveConfig();
 		} catch (IOException ex) {
 			logger.error("Failed to save configuration", ex);
 		}
@@ -1007,7 +1009,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void loadRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = JVLT.CONFIG_DIR + File.separator;
+		String home = jvlt.getConfigDir() + File.separator;
 		XMLDecoder decoder;
 
 		try {
@@ -1067,7 +1069,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void saveRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = JVLT.CONFIG_DIR + File.separator;
+		String home = jvlt.getConfigDir() + File.separator;
 		XMLEncoder encoder;
 
 		try {
@@ -1190,7 +1192,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			e.printStackTrace();
 		}
 
-		final JVLTUI ui = new JVLTUI(jvlt.getModel(), is_on_mac);
+		final JVLTUI ui = new JVLTUI(jvlt, is_on_mac);
 		if (controller != null)
 			controller.setMainView(ui);
 
