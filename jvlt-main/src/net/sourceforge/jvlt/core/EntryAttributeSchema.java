@@ -42,14 +42,14 @@ public class EntryAttributeSchema {
 		StringBuffer buf = new StringBuffer();
 		buf.append("EntryAttributeSchema{lang=");
 		buf.append(_language);
-		buf.append(";");
+		buf.append(';');
 		Iterator<EntryClass> it = _classes.iterator();
 		for (int index = 0; it.hasNext(); index++) {
 			if (index > 0)
-				buf.append(";");
+				buf.append(';');
 			buf.append(it.next().toString());
 		}
-		buf.append("}");
+		buf.append('}');
 
 		return buf.toString();
 	}

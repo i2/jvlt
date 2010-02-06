@@ -3,12 +3,12 @@ package net.sourceforge.jvlt.event;
 import net.sourceforge.jvlt.model.AbstractModel;
 
 public interface ModelResetEventListener {
-	public static class ModelResetEvent {
+	class ModelResetEvent {
 		public static final int RESET_ALL = 0;
 		public static final int RESET_COUNTER = 1;
 
-		private AbstractModel _source;
-		private int _type;
+		private final AbstractModel _source;
+		private final int _type;
 
 		public ModelResetEvent(AbstractModel source, int type) {
 			_source = source;
@@ -28,5 +28,5 @@ public interface ModelResetEventListener {
 		}
 	}
 
-	public void modelResetted(ModelResetEvent event);
+	void modelResetted(ModelResetEvent event);
 }

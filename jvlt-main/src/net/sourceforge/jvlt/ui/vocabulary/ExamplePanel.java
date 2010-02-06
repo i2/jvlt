@@ -154,7 +154,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 	}
 
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
+		if (!e.getValueIsAdjusting()) {
 			List<Example> objs = _example_table.getSelectedObjects();
 			if (objs.size() == 0)
 				return;

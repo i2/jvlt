@@ -127,11 +127,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private class ChangeHandler implements ChangeListener {
 		public void stateChanged(ChangeEvent ev) {
 			Component tab = _tab_pane.getSelectedComponent();
-			if (tab == _quiz_tab.getWizard().getContent())
+			if (tab == _quiz_tab.getWizard().getContent()) {
 				JVLTUI.this._main_frame.getRootPane().setDefaultButton(
 						_quiz_tab.getWizard().getDefaultButton());
-			else
+			} else {
 				JVLTUI.this._main_frame.getRootPane().setDefaultButton(null);
+			}
 		}
 	}
 
@@ -151,10 +152,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private Dict _dict;
 	private final JVLT jvlt;
-	private JVLTModel _model;
+	private final JVLTModel _model;
 	private Collection<Entry> _matched_entries;
 	private Collection<Example> _matched_examples;
-	private LinkedList<String> _recent_files;
+	private final LinkedList<String> _recent_files;
 
 	private EntryPanel _entry_tab;
 	private ExamplePanel _example_tab;
@@ -169,7 +170,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private JMenu _recent_files_menu;
 	private CustomTabbedPane _tab_pane;
 	private ErrorLogDialog _error_dialog;
-	private boolean _is_mac;
+	private final boolean _is_mac;
 
 	public JVLTUI(JVLT jvlt, boolean is_on_mac) {
 		this.jvlt = jvlt;
@@ -181,8 +182,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		_recent_files = new LinkedList<String>();
 		String[] file_names = JVLT.getConfig().getStringListProperty(
 				"recent_files", new String[0]);
-		for (int i = 0; i < file_names.length; i++)
+		for (int i = 0; i < file_names.length; i++) {
 			_recent_files.add(file_names[i]);
+		}
 
 		// Create empty dictionary. Will be replaced in method dictUpdated().
 		_dict = new Dict();
@@ -193,8 +195,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Handle new data versions
 		String last_data_version = JVLT.getConfig().getProperty(
 				"last_data_version", JVLT.getDataVersion());
-		if (last_data_version.compareTo(JVLT.getDataVersion()) < 0)
+		if (last_data_version.compareTo(JVLT.getDataVersion()) < 0) {
 			handleNewDataVersion(last_data_version, JVLT.getDataVersion());
+		}
 
 		// Listen to model events
 		_model.getDictModel().addUndoableActionListener(this);
@@ -212,22 +215,25 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		Config conf = JVLT.getConfig();
 		if (conf.getBooleanProperty("restore_previously_open_file", false)) {
 			String dict_file_name = conf.getProperty("dict_file");
-			if (dict_file_name != null && !dict_file_name.equals(""))
+			if (dict_file_name != null && !dict_file_name.equals("")) {
 				load(dict_file_name);
+			}
 		}
 
 		// If no default dictionary was specified or if loading it failed,
 		// start with an empty one.
-		if (_model.getDict() == null)
+		if (_model.getDict() == null) {
 			_model.newDict();
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("new") || command.equals("open")
 				|| command.startsWith("open_")) {
-			if (!finishQuiz())
+			if (!finishQuiz()) {
 				return;
+			}
 
 			// ----------
 			// Ask whether changes should be saved.
@@ -236,17 +242,19 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame,
 						"save_changes");
 				if (result == JOptionPane.YES_OPTION) {
-					if (!save())
+					if (!save()) {
 						return;
-				} else if (result == JOptionPane.CANCEL_OPTION)
+					}
+				} else if (result == JOptionPane.CANCEL_OPTION) {
 					return;
+				}
 				// Proceed if result is JOptionPane.NO_OPTION.
 			}
 		}
 
-		if (command.equals("new")) {
+		if ("new".equals(command)) {
 			_model.newDict();
-		} else if (command.equals("open")) {
+		} else if ("open".equals(command)) {
 			JFileChooser chooser = new DictFileChooser(_model.getDictFileName());
 			int val = chooser.showOpenDialog(_main_frame);
 			if (val == JFileChooser.APPROVE_OPTION) {
@@ -257,17 +265,17 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			int index = Integer.parseInt(command
 					.substring(command.length() - 1));
 			load(_recent_files.get(index));
-		} else if (command.equals("clear_menu")) {
+		} else if ("clear_menu".equals(command)) {
 			_recent_files.clear();
 			updateRecentFilesMenu();
-		} else if (command.equals("save")) {
+		} else if ("save".equals(command)) {
 			save();
-		} else if (command.equals("save_as")) {
+		} else if ("save_as".equals(command)) {
 			saveAs();
-		} else if (command.equals("print_file")) {
+		} else if ("print_file".equals(command)) {
 			TablePrinter printer = getTablePrinter();
 			print(printer);
-		} else if (command.equals("print_preview")) {
+		} else if ("print_preview".equals(command)) {
 			TablePrinter printer = getTablePrinter();
 			try {
 				printer.renderPages((Graphics2D) _main_frame.getGraphics());
@@ -275,27 +283,29 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 						GUIUtils.getString("Labels", "print_preview"), printer);
 				dlg.pack();
 				dlg.setVisible(true);
-				if (dlg.getOption() == PrintPreviewDialog.PRINT_OPTION)
+				if (dlg.getOption() == PrintPreviewDialog.PRINT_OPTION) {
 					print(printer);
+				}
 			} catch (PrinterException ex) {
 				MessageDialog.showDialog(_main_frame,
 						MessageDialog.WARNING_MESSAGE, ex.getMessage());
 			}
-		} else if (command.equals("import")) {
+		} else if ("import".equals(command)) {
 			ImportDialog dialog = new ImportDialog(_main_frame, _model);
 			GUIUtils.showDialog(_main_frame, dialog);
-		} else if (command.equals("export")) {
+		} else if ("export".equals(command)) {
 			ExportDialog dialog = new ExportDialog(_main_frame, _model);
 			GUIUtils.showDialog(_main_frame, dialog);
-		} else if (command.equals("quit")) {
+		} else if ("quit".equals(command)) {
 			tryToQuit();
-		} else if (command.equals("undo")) {
+		} else if ("undo".equals(command)) {
 			_model.undo();
-		} else if (command.equals("redo")) {
+		} else if ("redo".equals(command)) {
 			_model.redo();
-		} else if (command.equals("dict_properties")) {
-			if (!finishQuiz())
+		} else if ("dict_properties".equals(command)) {
+			if (!finishQuiz()) {
 				return;
+			}
 
 			PropertiesDialogData ddata = new PropertiesDialogData(_dict
 					.getLanguage());
@@ -310,22 +320,23 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 								"change_language"));
 				_model.getDictModel().executeAction(lca);
 			}
-		} else if (command.equals("reset_stats")) {
+		} else if ("reset_stats".equals(command)) {
 			resetStats();
-		} else if (command.equals("error_log")) {
+		} else if ("error_log".equals(command)) {
 			GUIUtils.showDialog(_main_frame, _error_dialog);
-		} else if (command.equals("settings")) {
+		} else if ("settings".equals(command)) {
 			showSettings();
-		} else if (command.equals("help")) {
+		} else if ("help".equals(command)) {
 			Locale locale = Locale.getDefault();
 			URL url = JVLTUI.class.getResource("/doc/" + locale.toString()
 					+ "/doc.html");
-			if (url == null)
+			if (url == null) {
 				url = JVLTUI.class.getResource("/doc/default/doc.html");
+			}
 
 			BrowserDialog dlg = new BrowserDialog(_main_frame, url);
 			GUIUtils.showDialog(_main_frame, dlg);
-		} else if (command.equals("about")) {
+		} else if ("about".equals(command)) {
 			showAbout();
 		}
 	}
@@ -336,8 +347,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	public void modelResetted(ModelResetEvent event) {
-		if (event.getType() == ModelResetEvent.RESET_ALL)
+		if (event.getType() == ModelResetEvent.RESET_ALL) {
 			updateMenu();
+		}
 
 		updateTitle();
 	}
@@ -352,11 +364,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	public void objectSelected(SelectionEvent e) {
 		Object obj = e.getElement();
-		if (obj instanceof Example)
+		if (obj instanceof Example) {
 			_tab_pane.setSelectedComponent(_example_tab);
-		else if (obj instanceof Entry || obj instanceof Sense)
+		} else if (obj instanceof Entry || obj instanceof Sense) {
 			_tab_pane.setSelectedComponent(_entry_tab);
-		else if (obj instanceof AudioFile) {
+		} else if (obj instanceof AudioFile) {
 			AudioFile file = (AudioFile) obj;
 			try {
 				file.play();
@@ -500,8 +512,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		JMenu help_menu = GUIUtils.createMenu("menu_help");
 		menu_bar.add(help_menu);
 		help_menu.add(help_action);
-		if (!_is_mac)
+		if (!_is_mac) {
 			help_menu.add(about_action);
+		}
 
 		_main_frame.setJMenuBar(menu_bar);
 
@@ -558,10 +571,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Init data.
 		// ----------
 		updateStatusBar();
-		if (_recent_files.size() > 0)
+		if (_recent_files.size() > 0) {
 			setMostRecentFile(_recent_files.get(0));
-		else
+		} else {
 			updateRecentFilesMenu();
+		}
 
 		// ----------
 		// Dialogs
@@ -578,16 +592,18 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		String file_name = DictFileChooser.selectSaveFile(_model
 				.getDictFileName(), DictFileChooser.FileType.JVLT_FILES,
 				_main_frame);
-		if (file_name == null)
+		if (file_name == null) {
 			return false;
+		}
 
 		/* Show dialog if the file already exists */
 		boolean write_file = true;
 		if (new File(file_name).exists()) {
 			if (JOptionPane.showConfirmDialog(_main_frame, GUIUtils.getString(
 					"Messages", "overwrite"), GUIUtils.getString("Labels",
-					"confirm"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+					"confirm"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 				write_file = false;
+			}
 		}
 
 		if (write_file) {
@@ -607,8 +623,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private boolean save() {
-		if (_model.getDictFileName() == null)
+		if (_model.getDictFileName() == null) {
 			return saveAs();
+		}
 
 		try {
 			_model.save();
@@ -623,8 +640,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private void print(TablePrinter printer) {
 		final PrinterJob job = PrinterJob.getPrinterJob();
 		job.setPrintable(printer);
-		if (!job.printDialog())
+		if (!job.printDialog()) {
 			return;
+		}
 		final MessageDialog dlg = new MessageDialog(_main_frame,
 				MessageDialog.INFO_MESSAGE, GUIUtils.getString("Messages",
 						"printing"), null);
@@ -666,19 +684,21 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 					Exception ex = e.getException();
 					if (ex != null && ex instanceof VersionException) {
 						VersionException ve = (VersionException) ex;
-						if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0)
+						if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0) {
 							handleLoadException(ve, file_name);
-						else {
+						} else {
 							String text = GUIUtils.getString("Messages",
 									"convert_file");
 							int result = MessageDialog.showDialog(_main_frame,
 									MessageDialog.WARNING_MESSAGE,
 									MessageDialog.OK_CANCEL_OPTION, text);
-							if (result == MessageDialog.OK_OPTION)
+							if (result == MessageDialog.OK_OPTION) {
 								loadVersion(file_name, ve.getVersion());
+							}
 						}
-					} else
+					} else {
 						handleLoadException(e, file_name);
+					}
 				} catch (Exception ex) {
 					handleLoadException(ex, file_name);
 				}
@@ -734,8 +754,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private void tryToQuit() {
-		if (requestQuit())
+		if (requestQuit()) {
 			exit();
+		}
 		// Else cancel.
 	}
 
@@ -747,19 +768,21 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 * @return Whether it is safe to quit the application
 	 */
 	public boolean requestQuit() {
-		if (!finishQuiz())
+		if (!finishQuiz()) {
 			return false;
+		}
 
-		if (!_model.isDataModified())
+		if (!_model.isDataModified()) {
 			return true;
-		else {
-			int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame,
-					"save_changes");
-			if (result == JOptionPane.YES_OPTION) {
-				if (save())
-					return true;
-			} else if (result == JOptionPane.NO_OPTION)
+		}
+		int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame,
+				"save_changes");
+		if (result == JOptionPane.YES_OPTION) {
+			if (save()) {
 				return true;
+			}
+		} else if (result == JOptionPane.NO_OPTION) {
+			return true;
 		}
 
 		return false;
@@ -796,16 +819,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		if (model.existsUnfinishedQuiz()) {
 			int result = GUIUtils.showSaveDiscardCancelDialog(_main_frame,
 					"save_quiz");
-			if (result == JOptionPane.YES_OPTION)
+			if (result == JOptionPane.YES_OPTION) {
 				model.saveQuizResults();
+			}
 
-			if (result == JOptionPane.YES_OPTION
-					|| result == JOptionPane.NO_OPTION)
-				return true;
-			else
-				return false;
-		} else
-			return true;
+			return result == JOptionPane.YES_OPTION
+					|| result == JOptionPane.NO_OPTION;
+		}
+		return true;
 	}
 
 	private void exit() {
@@ -815,10 +836,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// Save dictionary file name
 		// -----
 		String dict_file_name = _model.getDictFileName();
-		if (dict_file_name == null)
+		if (dict_file_name == null) {
 			conf.setProperty("dict_file", "");
-		else
+		} else {
 			conf.setProperty("dict_file", dict_file_name);
+		}
 
 		// -----
 		// Save list of recent files
@@ -852,13 +874,15 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 				.getString("Labels", "reset_stats"));
 		if (result == AbstractDialog.OK_OPTION) {
 			Collection<Entry> entries;
-			if (data.resetAllEntries())
+			if (data.resetAllEntries()) {
 				entries = _dict.getEntries();
-			else
+			} else {
 				entries = _matched_entries;
+			}
 
-			if (entries.size() == 0)
+			if (entries.size() == 0) {
 				return;
+			}
 
 			ArrayList<EditEntryAction> actions = new ArrayList<EditEntryAction>();
 			for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
@@ -885,10 +909,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		double[] col_widths = conf.getNumberListProperty("column_widths",
 				new double[0]);
 		double total_width = 0.0;
-		for (int i = 0; i < col_widths.length; i++)
+		for (int i = 0; i < col_widths.length; i++) {
 			total_width += col_widths[i];
-		for (int i = 0; i < col_widths.length; i++)
+		}
+		for (int i = 0; i < col_widths.length; i++) {
 			printer.setColWidth(i, (int) (100 * col_widths[i] / total_width));
+		}
 
 		return printer;
 	}
@@ -897,14 +923,16 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		int total_entries = _dict.getEntryCount();
 		int total_examples = _dict.getExampleCount();
 		int shown_entries, shown_examples;
-		if (_matched_entries == null)
+		if (_matched_entries == null) {
 			shown_entries = total_entries;
-		else
+		} else {
 			shown_entries = _matched_entries.size();
-		if (_matched_examples == null)
+		}
+		if (_matched_examples == null) {
 			shown_examples = total_examples;
-		else
+		} else {
 			shown_examples = _matched_examples.size();
+		}
 
 		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
 				"Labels", "num_words"));
@@ -962,19 +990,21 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private void updateTitle() {
 		String title;
 		String file_name = _model.getDictFileName();
-		if (file_name == null)
+		if (file_name == null) {
 			title = GUIUtils.getString("Labels", "untitled");
-		else {
+		} else {
 			int index = file_name.lastIndexOf(File.separatorChar);
-			if (index > 0)
+			if (index > 0) {
 				title = file_name.substring(index + 1, file_name.length());
-			else
+			} else {
 				title = file_name;
+			}
 		}
 
 		if (_model.getDictModel().isDataModified()
-				|| _model.getQueryModel().isDataModified())
+				|| _model.getQueryModel().isDataModified()) {
 			title += " (" + GUIUtils.getString("Labels", "modified") + ")";
+		}
 
 		title += " - jVLT";
 		_main_frame.setTitle(title);
@@ -983,15 +1013,17 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private void setMostRecentFile(String file_name) {
 		_recent_files.remove(file_name);
 		_recent_files.addFirst(file_name);
-		while (_recent_files.size() > 5)
+		while (_recent_files.size() > 5) {
 			_recent_files.removeLast();
+		}
 
 		updateRecentFilesMenu();
 	}
 
 	private void updateRecentFilesMenu() {
-		while (_recent_files_menu.getItemCount() > 2)
+		while (_recent_files_menu.getItemCount() > 2) {
 			_recent_files_menu.remove(0);
+		}
 		Iterator<String> it = _recent_files.iterator();
 		int index = 0;
 		while (it.hasNext()) {
@@ -1004,7 +1036,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			index++;
 		}
 
-		_clear_recent_files_action.setEnabled(_recent_files.size() > 0);
+		_clear_recent_files_action.setEnabled(!_recent_files.isEmpty());
 	}
 
 	private void loadRuntimeProperties() {
@@ -1020,14 +1052,16 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 					new FileInputStream(home + "filters.xml")));
 			ObjectQuery[] oqs = (ObjectQuery[]) decoder.readObject();
 
-			if (oqs == null)
+			if (oqs == null) {
 				throw new IOException("Invalid filter list (null)");
+			}
 
 			for (int i = 0; i < oqs.length; i++) {
-				if (oqs[i] == null)
+				if (oqs[i] == null) {
 					throw new IOException("Invalid filter item (null)");
-				else if (!oqs[i].isValid())
+				} else if (!oqs[i].isValid()) {
 					throw new IOException("Invalid filter item (invalid data)");
+				}
 			}
 			JVLT.getRuntimeProperties().put("filters", oqs);
 		} catch (Exception e) {
@@ -1103,10 +1137,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			encoder.writeObject(qts);
 			encoder.close();
 			Object obj = JVLT.getRuntimeProperties().get("selected_quiz_type");
-			if (obj == null)
+			if (obj == null) {
 				conf.setProperty("selected_quiz_type", "");
-			else
+			} else {
 				conf.setProperty("selected_quiz_type", obj.toString());
+			}
 
 			// -----
 			// Save language-specific settings
@@ -1124,14 +1159,15 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void handleNewDataVersion(String last_version,
 			String current_version) {
-		if (last_version.compareTo(current_version) >= 0)
+		if (last_version.compareTo(current_version) >= 0) {
 			return;
+		}
 
 		if (current_version.equals("1.2.1")) {
 			// Add new attribute "CustomFields" to displayed_attributes_*
 			// settings
 			Config config = JVLT.getConfig();
-			for (String key : config.getKeys())
+			for (String key : config.getKeys()) {
 				if (key.startsWith("displayed_attributes")) {
 					Set<String> attrs = new HashSet<String>();
 					attrs.addAll(Arrays.asList(config
@@ -1139,6 +1175,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 					attrs.add("CustomFields");
 					config.setProperty(key, attrs.toArray());
 				}
+			}
 		}
 	}
 
@@ -1183,18 +1220,20 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		// Set look & feel.
 		try {
-			if (config.containsKey("look_and_feel"))
+			if (config.containsKey("look_and_feel")) {
 				UIManager.setLookAndFeel(config.getProperty("look_and_feel"));
-			else
+			} else {
 				UIManager.setLookAndFeel(UIManager
 						.getSystemLookAndFeelClassName());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		final JVLTUI ui = new JVLTUI(jvlt, is_on_mac);
-		if (controller != null)
+		if (controller != null) {
 			controller.setMainView(ui);
+		}
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1240,7 +1279,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 }
 
 class DictUpdater {
-	private String _original_version;
+	private final String _original_version;
 
 	public DictUpdater(String original_version) {
 		_original_version = original_version;
@@ -1261,14 +1300,13 @@ class DictUpdater {
 class AboutDialog extends JDialog {
 	class ActionEventHandler implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
-			if (ev.getActionCommand().equals("close"))
+			if (ev.getActionCommand().equals("close")) {
 				setVisible(false);
+			}
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
-
-	private JEditorPane _html_pane;
 
 	public AboutDialog(Frame parent) {
 		super(parent, GUIUtils.getString("Labels", "about"), true);
@@ -1279,7 +1317,7 @@ class AboutDialog extends JDialog {
 		Action close_action = GUIUtils.createTextAction(
 				new ActionEventHandler(), "close");
 
-		_html_pane = new JEditorPane();
+		JEditorPane _html_pane = new JEditorPane();
 		_html_pane.setEditable(false);
 		_html_pane.setContentType("text/html");
 		JScrollPane scrpane = new JScrollPane(_html_pane);

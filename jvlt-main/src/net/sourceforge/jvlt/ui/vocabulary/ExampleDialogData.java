@@ -138,7 +138,7 @@ public class ExampleDialogData extends CustomDialogData implements
 	}
 
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
+		if (!e.getValueIsAdjusting()) {
 			updateActions();
 			updatePreviewPane();
 			updateStatusLabels();

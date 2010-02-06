@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.EventObject;
 
 public interface FilterListener<T> {
-	public static class FilterEvent<T extends Object> extends EventObject {
+	class FilterEvent<T extends Object> extends EventObject {
 		private static final long serialVersionUID = 1L;
 
-		private Collection<T> _matched_items;
+		private final Collection<T> _matched_items;
 
 		public FilterEvent(Object src) {
 			this(src, null);
@@ -23,5 +23,5 @@ public interface FilterListener<T> {
 		}
 	}
 
-	public void filterApplied(FilterEvent<T> ev);
+	void filterApplied(FilterEvent<T> ev);
 }

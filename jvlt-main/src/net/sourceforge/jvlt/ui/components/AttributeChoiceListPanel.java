@@ -13,8 +13,9 @@ public class AttributeChoiceListPanel extends ChoiceListPanel {
 	public AttributeChoice[] getSelectedAttributeChoices() {
 		Object[] vals = super.getSelectedObjects();
 		AttributeChoice[] choices = new AttributeChoice[vals.length];
-		for (int i = 0; i < vals.length; i++)
+		for (int i = 0; i < vals.length; i++) {
 			choices[i] = (AttributeChoice) vals[i];
+		}
 
 		return choices;
 	}

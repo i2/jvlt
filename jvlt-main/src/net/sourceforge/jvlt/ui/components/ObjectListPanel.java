@@ -62,7 +62,7 @@ public class ObjectListPanel extends JPanel {
 
 	protected class ListSelectionHandler implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent ev) {
-			if (ev.getValueIsAdjusting() == false)
+			if (!ev.getValueIsAdjusting())
 				update();
 		}
 	}

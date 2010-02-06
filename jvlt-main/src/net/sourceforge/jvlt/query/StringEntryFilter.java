@@ -1,7 +1,7 @@
 package net.sourceforge.jvlt.query;
 
 public interface StringEntryFilter {
-	public String getFilterString();
+	String getFilterString();
 
-	public void setFilterString(String str);
+	void setFilterString(String str);
 }

@@ -4,13 +4,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public interface Attribute {
-	public String getName();
+	String getName();
 
-	public Class<? extends Object> getType();
+	Class<? extends Object> getType();
 
-	public Object getValue(Object o);
+	Object getValue(Object o);
 
-	public String getFormattedValue(Object o);
+	String getFormattedValue(Object o);
 
-	public Element getXMLElement(Document doc, Object o);
+	Element getXMLElement(Document doc, Object o);
 }

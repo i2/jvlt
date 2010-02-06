@@ -3,10 +3,10 @@ package net.sourceforge.jvlt.event;
 import java.util.EventObject;
 
 public interface DialogListener {
-	public static class DialogEvent extends EventObject {
+	class DialogEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 
-		private int _type;
+		private final int _type;
 
 		public DialogEvent(Object source, int type) {
 			super(source);
@@ -18,5 +18,5 @@ public interface DialogListener {
 		}
 	}
 
-	public void dialogStateChanged(DialogEvent ev);
+	void dialogStateChanged(DialogEvent ev);
 }

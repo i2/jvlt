@@ -1,10 +1,10 @@
 package net.sourceforge.jvlt.event;
 
 public interface SelectionListener {
-	public static class SelectionEvent {
-		private Object _element;
+	class SelectionEvent {
+		private final Object _element;
 		/** The component inside which '_element' was selected. */
-		private Object _source;
+		private final Object _source;
 
 		public SelectionEvent(Object element, Object source) {
 			_element = element;
@@ -24,5 +24,5 @@ public interface SelectionListener {
 		}
 	}
 
-	public void objectSelected(SelectionEvent ev);
+	void objectSelected(SelectionEvent ev);
 }

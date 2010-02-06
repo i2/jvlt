@@ -5,9 +5,9 @@ import java.util.EventListener;
 import javax.swing.JComponent;
 
 public interface ComponentReplacementListener extends EventListener {
-	public static class ComponentReplacementEvent {
-		private JComponent _old_component;
-		private JComponent _new_component;
+	class ComponentReplacementEvent {
+		private final JComponent _old_component;
+		private final JComponent _new_component;
 
 		public ComponentReplacementEvent(JComponent o, JComponent n) {
 			_old_component = o;
@@ -23,5 +23,5 @@ public interface ComponentReplacementListener extends EventListener {
 		}
 	}
 
-	public void componentReplaced(ComponentReplacementEvent e);
+	void componentReplaced(ComponentReplacementEvent e);
 }

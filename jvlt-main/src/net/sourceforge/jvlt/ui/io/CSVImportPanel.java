@@ -339,9 +339,9 @@ public class CSVImportPanel extends CSVPanel {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < attrs.length; i++) {
 			if (i > 0)
-				buf.append(";");
+				buf.append(';');
 			buf.append(attrs[i].getName());
-			buf.append(";");
+			buf.append(';');
 			buf.append(attr_columns[i]);
 		}
 		config.setProperty("CSVImport.Attributes", buf.toString());

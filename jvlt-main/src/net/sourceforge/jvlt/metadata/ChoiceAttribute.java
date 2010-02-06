@@ -2,9 +2,9 @@ package net.sourceforge.jvlt.metadata;
 
 
 public interface ChoiceAttribute extends Attribute {
-	public void addValues(Object[] values);
+	void addValues(Object[] values);
 
-	public void setValues(Object[] values);
+	void setValues(Object[] values);
 
-	public Object[] getValues();
+	Object[] getValues();
 }

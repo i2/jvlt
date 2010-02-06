@@ -38,8 +38,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.StatsUpdateAction;
 import net.sourceforge.jvlt.core.Dict;
@@ -79,9 +77,11 @@ import net.sourceforge.jvlt.utils.DefaultComparator;
 import net.sourceforge.jvlt.utils.MultimediaUtils;
 import net.sourceforge.jvlt.utils.Utils;
 
+import org.apache.log4j.Logger;
+
 public class QuizModel extends WizardModel {
 	private static final Logger logger = Logger.getLogger(WizardModel.class);
-	
+
 	private class DictUpdateHandler implements DictUpdateListener {
 		public void dictUpdated(DictUpdateEvent event) {
 			/*
@@ -112,19 +112,20 @@ public class QuizModel extends WizardModel {
 					_current_descriptor = getPanelDescriptor("entry_null");
 					_wizard.newPanelDescriptorSelected(old_descriptor,
 							_current_descriptor);
-				} else
+				} else {
 					/* Update buttons */
 					_wizard.panelDescriptorUpdated();
+				}
 			}
 		}
 	}
 
-	private JVLTModel _model;
+	private final JVLTModel _model;
 	private QuizDict _qdict;
 	private boolean _repeat_mode;
 	private Entry[] _known_entries;
 	private Entry[] _notknown_entries;
-	private HashMap<Entry, Integer> _flag_map;
+	private final Map<Entry, Integer> _flag_map;
 
 	public QuizModel(JVLTModel model, SelectionNotifier notifier) {
 		_model = model;
@@ -160,11 +161,13 @@ public class QuizModel extends WizardModel {
 	@Override
 	public String getButtonText(String button_command) {
 		if (_current_descriptor.getID().equals("stats")) {
-			if (button_command.equals(Wizard.NEXT_COMMAND))
+			if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				return GUIUtils.getString("Actions", "start");
+			}
 		} else {
-			if (button_command.equals(Wizard.CANCEL_COMMAND))
+			if (button_command.equals(Wizard.CANCEL_COMMAND)) {
 				return GUIUtils.getString("Actions", "finish");
+			}
 		}
 
 		return super.getButtonText(button_command);
@@ -174,56 +177,53 @@ public class QuizModel extends WizardModel {
 	public boolean isButtonEnabled(String button_command) {
 		if (_current_descriptor.getID().equals("stats")) {
 			StatsDescriptor sd = (StatsDescriptor) _current_descriptor;
-			if (button_command.equals(Wizard.NEXT_COMMAND)
-					&& sd.getSelectedEntries() > 0)
-				return true;
-			else
-				return false;
+			return button_command.equals(Wizard.NEXT_COMMAND)
+					&& sd.getSelectedEntries() > 0;
 		} else if (_current_descriptor.getID().equals("entry_question")) {
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return _qdict.hasPreviousEntry();
-			else
-				return true;
+			}
+			return true;
 		} else if (_current_descriptor.getID().equals("entry_input")) {
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return _qdict.hasPreviousEntry();
-			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
+			} else if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				EntryInputDescriptor eid = (EntryInputDescriptor) _current_descriptor;
-				if (!eid.isAnswerKnown())
+				if (!eid.isAnswerKnown()) {
 					return true;
-				else
-					return (eid.getAnswer().length == eid
-							.getNumberOfQuestions());
+				}
+				return (eid.getAnswer().length == eid.getNumberOfQuestions());
 			}
 		} else if (_current_descriptor.getID().equals("entry_answer")) {
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) _current_descriptor;
 
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return _qdict.hasPreviousEntry();
-			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				if (!_qdict.hasNextEntry())
+			} else if (button_command.equals(Wizard.NEXT_COMMAND)) {
+				if (!_qdict.hasNextEntry()) {
 					return false;
-				else
-					return (ead.getState() != YesNoPanel.UNKNOWN_OPTION);
+				}
+				return (ead.getState() != YesNoPanel.UNKNOWN_OPTION);
 			}
 		} else if (_current_descriptor.getID().equals("entry_input_answer")) {
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return _qdict.hasPreviousEntry();
-			else if (button_command.equals(Wizard.NEXT_COMMAND))
+			} else if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				return _qdict.hasNextEntry();
+			}
 		} else if (_current_descriptor.getID().equals("repeat")) {
-			if (button_command.equals(Wizard.CANCEL_COMMAND))
+			if (button_command.equals(Wizard.CANCEL_COMMAND)) {
 				return false;
-			else if (button_command.equals(Wizard.BACK_COMMAND))
+			} else if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return true;
-			else if (button_command.equals(Wizard.NEXT_COMMAND)) {
+			} else if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				RepeatDescriptor rd = (RepeatDescriptor) _current_descriptor;
 				return (rd.getState() != YesNoPanel.UNKNOWN_OPTION);
 			}
 		} else if (_current_descriptor.getID().equals("result")) {
-			if (button_command.equals(Wizard.NEXT_COMMAND))
+			if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				return false;
-			else if (button_command.equals(Wizard.CANCEL_COMMAND)) {
+			} else if (button_command.equals(Wizard.CANCEL_COMMAND)) {
 				ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 				return (rd.getState() != YesNoPanel.UNKNOWN_OPTION);
 			}
@@ -250,8 +250,8 @@ public class QuizModel extends WizardModel {
 
 			return GUIUtils.getString("Messages", "quizzed_words",
 					new Object[] { s, known, not_known });
-		} else
-			return super.getStatusString();
+		}
+		return super.getStatusString();
 	}
 
 	@Override
@@ -266,22 +266,25 @@ public class QuizModel extends WizardModel {
 			_known_entries = new Entry[0];
 			_notknown_entries = new Entry[0];
 
-			if (JVLT.getConfig().getBooleanProperty("input_answer", false))
+			if (JVLT.getConfig().getBooleanProperty("input_answer", false)) {
 				next = getPanelDescriptor("entry_input");
-			else
+			} else {
 				next = getPanelDescriptor("entry_question");
+			}
 		} else if (_current_descriptor instanceof EntryAnswerDescriptor
 				|| _current_descriptor instanceof EntryInputAnswerDescriptor) {
 			boolean input = true;
-			if (_current_descriptor instanceof EntryAnswerDescriptor)
+			if (_current_descriptor instanceof EntryAnswerDescriptor) {
 				input = false;
+			}
 
 			/* Save current entry's flags */
 			saveEntry((EntryDescriptor) _current_descriptor);
 
 			if (command.equals(Wizard.NEXT_COMMAND)) {
-				if (!input)
+				if (!input) {
 					saveResult(_current_descriptor);
+				}
 
 				/* Switch to next entry */
 				Entry entry = _qdict.nextEntry();
@@ -294,62 +297,70 @@ public class QuizModel extends WizardModel {
 							: "entry_answer");
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
-				if (input)
+				if (input) {
 					next = getPanelDescriptor("entry_input_answer");
-				else
+				} else {
 					next = getPanelDescriptor("entry_answer");
+				}
 
 				/* Switch to previous entry */
 				_qdict.previousEntry();
 			} else if (command.equals(Wizard.CANCEL_COMMAND)) {
-				if (!input)
+				if (!input) {
 					saveResult(_current_descriptor);
-				if (_qdict.getNotKnownEntries().length > 0)
+				}
+				if (_qdict.getNotKnownEntries().length > 0) {
 					next = getPanelDescriptor("repeat");
-				else if (!_repeat_mode && _qdict.getResultCount() == 0)
+				} else if (!_repeat_mode && _qdict.getResultCount() == 0) {
 					next = getPanelDescriptor("stats");
-				else
+				} else {
 					next = getPanelDescriptor("result");
+				}
 			}
 		} else if (_current_descriptor instanceof EntryQuestionDescriptor
 				|| _current_descriptor instanceof EntryInputDescriptor) {
 			boolean input = false;
-			if (_current_descriptor instanceof EntryInputDescriptor)
+			if (_current_descriptor instanceof EntryInputDescriptor) {
 				input = true;
+			}
 
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				if (input) {
 					saveResult(_current_descriptor);
 					next = getPanelDescriptor("entry_input_answer");
-				} else
+				} else {
 					next = getPanelDescriptor("entry_answer");
+				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
-				if (input)
+				if (input) {
 					next = getPanelDescriptor("entry_input_answer");
-				else
+				} else {
 					next = getPanelDescriptor("entry_answer");
+				}
 
 				/* Switch to previous entry */
 				_qdict.previousEntry();
 			} else if (command.equals(Wizard.CANCEL_COMMAND)) {
-				if (_qdict.getNotKnownEntries().length > 0)
+				if (_qdict.getNotKnownEntries().length > 0) {
 					next = getPanelDescriptor("repeat");
-				else if (!_repeat_mode && _qdict.getResultCount() == 0)
+				} else if (!_repeat_mode && _qdict.getResultCount() == 0) {
 					next = getPanelDescriptor("stats");
-				else
+				} else {
 					next = getPanelDescriptor("result");
+				}
 			}
 		} else if (_current_descriptor instanceof RepeatDescriptor) {
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				RepeatDescriptor rd = (RepeatDescriptor) _current_descriptor;
-				if (rd.getState() == YesNoPanel.NO_OPTION)
+				if (rd.getState() == YesNoPanel.NO_OPTION) {
 					next = getPanelDescriptor("result");
-				else {
+				} else {
 					if (JVLT.getConfig().getBooleanProperty("input_answer",
-							false))
+							false)) {
 						next = getPanelDescriptor("entry_input");
-					else
+					} else {
 						next = getPanelDescriptor("entry_question");
+					}
 
 					if (!_repeat_mode) {
 						_known_entries = _qdict.getKnownEntries();
@@ -359,10 +370,11 @@ public class QuizModel extends WizardModel {
 					_qdict.reset();
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
-				if (JVLT.getConfig().getBooleanProperty("input_answer", false))
+				if (JVLT.getConfig().getBooleanProperty("input_answer", false)) {
 					next = getPanelDescriptor("entry_input_answer");
-				else
+				} else {
 					next = getPanelDescriptor("entry_answer");
+				}
 			}
 		} else if (_current_descriptor instanceof ResultDescriptor) {
 			if (command.equals(Wizard.CANCEL_COMMAND)) {
@@ -375,14 +387,15 @@ public class QuizModel extends WizardModel {
 					_model.getQueryModel().executeAction(sua);
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
-				if (_qdict.getNotKnownEntries().length > 0)
+				if (_qdict.getNotKnownEntries().length > 0) {
 					next = getPanelDescriptor("repeat");
-				else {
+				} else {
 					if (JVLT.getConfig().getBooleanProperty("input_answer",
-							false))
+							false)) {
 						next = getPanelDescriptor("entry_input_answer");
-					else
+					} else {
 						next = getPanelDescriptor("entry_answer");
+					}
 				}
 			}
 			// NEXT_COMMAND is disabled.
@@ -392,19 +405,21 @@ public class QuizModel extends WizardModel {
 			Entry entry = _qdict.getCurrentEntry();
 
 			if (entry == null) { /* No entry left */
-				if (_qdict.getNotKnownEntries().length > 0)
+				if (_qdict.getNotKnownEntries().length > 0) {
 					next = getPanelDescriptor("repeat");
-				else if (!_repeat_mode && _qdict.getResultCount() == 0)
+				} else if (!_repeat_mode && _qdict.getResultCount() == 0) {
 					next = getPanelDescriptor("stats");
-				else
+				} else {
 					next = getPanelDescriptor("result");
+				}
 			} else {
-				if (_qdict.getResult(entry) != null)
+				if (_qdict.getResult(entry) != null) {
 					next = getPanelDescriptor(input ? "entry_input_answer"
 							: "entry_answer");
-				else
+				} else {
 					next = getPanelDescriptor(input ? "entry_input"
 							: "entry_question");
+				}
 			}
 		}
 
@@ -451,13 +466,15 @@ public class QuizModel extends WizardModel {
 
 		/* play audio */
 		if ((next instanceof EntryAnswerDescriptor)
-				|| (next instanceof EntryInputAnswerDescriptor))
-			if (JVLT.getConfig().getBooleanProperty("Quiz.PlayAudio", false))
+				|| (next instanceof EntryInputAnswerDescriptor)) {
+			if (JVLT.getConfig().getBooleanProperty("Quiz.PlayAudio", false)) {
 				try {
 					MultimediaUtils.playAudioFiles(_qdict.getCurrentEntry());
 				} catch (IOException e) {
 					logger.error("Playing audio failed", e);
 				}
+			}
+		}
 
 		_current_descriptor = next;
 		return _current_descriptor;
@@ -501,15 +518,17 @@ public class QuizModel extends WizardModel {
 		QueryResult result = null;
 		Entry entry = _qdict.getCurrentEntry();
 
-		if (entry == null)
+		if (entry == null) {
 			return;
+		}
 
 		if (d instanceof EntryAnswerDescriptor) {
 			EntryAnswerDescriptor ead = (EntryAnswerDescriptor) d;
-			if (ead.getState() == YesNoPanel.YES_OPTION)
+			if (ead.getState() == YesNoPanel.YES_OPTION) {
 				result = new QueryResult(entry, true);
-			else if (ead.getState() == YesNoPanel.NO_OPTION)
+			} else if (ead.getState() == YesNoPanel.NO_OPTION) {
 				result = new QueryResult(entry, false);
+			}
 		} else if (d instanceof EntryInputDescriptor) {
 			String attr_names[] = _qdict.getQuizInfo().getQuizzedAttributes();
 			Vector<String> solutions = new Vector<String>();
@@ -523,8 +542,9 @@ public class QuizModel extends WizardModel {
 				solution = solution.replaceAll("^\\s+", "");
 				solution = solution.replaceAll("\\s+$", "");
 
-				if (solution.equals(""))
+				if (solution.equals("")) {
 					continue;
+				}
 
 				solutions.add(solution);
 			}
@@ -534,11 +554,11 @@ public class QuizModel extends WizardModel {
 			boolean match_case = JVLT.getConfig().getBooleanProperty(
 					"match_case", true);
 
-			if (!eid.isAnswerKnown())
+			if (!eid.isAnswerKnown()) {
 				result = new QueryResult(entry, false);
-			else if (answers.length < solutions.size())
+			} else if (answers.length < solutions.size()) {
 				result = new QueryResult(entry, false);
-			else {
+			} else {
 				String bad_answers = "";
 				String good_answers = "";
 				String answers_delimiter = JVLT.getConfig().getProperty(
@@ -550,24 +570,28 @@ public class QuizModel extends WizardModel {
 									solutions.get(i).toLowerCase())));
 
 					if (!correct_answer) {
-						if (bad_answers != "")
+						if (!"".equals(bad_answers)) {
 							bad_answers += answers_delimiter;
+						}
 						bad_answers += answers[i];
 					} else {
-						if (good_answers != "")
+						if (!"".equals(good_answers)) {
 							good_answers += answers_delimiter;
+						}
 						good_answers += answers[i];
 					}
 				}
-				if (bad_answers != "")
+				if (!"".equals(bad_answers)) {
 					result = new QueryResult(entry, false, bad_answers);
-				else
+				} else {
 					result = new QueryResult(entry, true, good_answers);
+				}
 			}
 		}
 
-		if (result != null)
+		if (result != null) {
 			_qdict.setResult(entry, result);
+		}
 	}
 
 	/**
@@ -580,16 +604,18 @@ public class QuizModel extends WizardModel {
 			if (result == null) {
 				String default_answer = JVLT.getConfig().getProperty(
 						"default_answer", "");
-				if (default_answer.equals("yes"))
+				if ("yes".equals(default_answer)) {
 					ead.setState(YesNoPanel.YES_OPTION);
-				else if (default_answer.equals("no"))
+				} else if ("no".equals(default_answer)) {
 					ead.setState(YesNoPanel.NO_OPTION);
-				else
+				} else {
 					ead.setState(YesNoPanel.UNKNOWN_OPTION);
-			} else if (result.isKnown())
+				}
+			} else if (result.isKnown()) {
 				ead.setState(YesNoPanel.YES_OPTION);
-			else
+			} else {
 				ead.setState(YesNoPanel.NO_OPTION);
+			}
 		} else if (n instanceof EntryInputAnswerDescriptor) {
 			EntryInputAnswerDescriptor eiad = (EntryInputAnswerDescriptor) n;
 			eiad.setResult(result);
@@ -604,8 +630,9 @@ public class QuizModel extends WizardModel {
 	}
 
 	private void saveEntry(EntryDescriptor ed) {
-		if (ed.getEntry() != null)
+		if (ed.getEntry() != null) {
 			_flag_map.put(ed.getEntry(), ed.getUserFlags());
+		}
 	}
 
 	private StatsUpdateAction createStatsUpdateAction(Entry[] known,
@@ -618,8 +645,9 @@ public class QuizModel extends WizardModel {
 		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
 
 		/* Store flags */
-		for (Entry e : _flag_map.keySet())
+		for (Entry e : _flag_map.keySet()) {
 			sua.setUserFlag(e, _flag_map.get(e));
+		}
 
 		return sua;
 	}
@@ -750,11 +778,12 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		 * is displayed.
 		 */
 		for (Entry.Stats.UserFlag f : Entry.Stats.UserFlag.values()) {
-			if (f.getValue() != 0)
+			if (f.getValue() != 0) {
 				if ((flags & f.getValue()) != 0) {
 					flag = f;
 					break;
 				}
+			}
 		}
 
 		_flag_panel.setSelectedItem(flag);
@@ -772,12 +801,13 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		} else if (event instanceof EntryDictUpdateEvent) {
 			if (event.getType() == EntryDictUpdateEvent.ENTRIES_REMOVED) {
 				EntryDictUpdateEvent edue = (EntryDictUpdateEvent) event;
-				if (edue.getEntries().contains(getEntry()))
+				if (edue.getEntries().contains(getEntry())) {
 					/*
 					 * Set null entry so wizard knows that panels have to be
 					 * switched
 					 */
 					setEntry(null);
+				}
 			}
 		}
 		/*
@@ -790,9 +820,10 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 
 		Object[] displayedattrs = (Object[]) JVLT.getRuntimeProperties().get(
 				"displayed_attributes");
-		if (displayedattrs == null)
+		if (displayedattrs == null) {
 			displayedattrs = model.getJVLTModel().getDictModel().getMetaData(
 					Entry.class).getAttributeNames();
+		}
 		_info_panel.setDisplayedEntryAttributes(Utils
 				.objectArrayToStringArray(displayedattrs));
 
@@ -806,11 +837,12 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		String attr = "";
 		for (int i = 0; i < attributes.length; i++) {
 			attr += ar.getString(attributes[i]);
-			if (i < attributes.length - 2)
+			if (i < attributes.length - 2) {
 				attr += GUIUtils.getString("Labels", "enumeration_delimiter");
-			else if (i == attributes.length - 2)
+			} else if (i == attributes.length - 2) {
 				attr += GUIUtils.getString("Labels",
 						"enumeration_delimiter_last");
+			}
 		}
 
 		return attr;
@@ -856,9 +888,10 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 
 			String quizzed_attrs[] = _quiz_info.getQuizzedAttributes();
 			String attr = formatAttributeList(quizzed_attrs);
-			if (attr != null && !attr.equals(""))
+			if (attr != null && !attr.equals("")) {
 				_lbl.setText(GUIUtils.getString("Messages",
 						"entry_known_question", new Object[] { attr }));
+			}
 		}
 	}
 }
@@ -891,8 +924,9 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 		String answers_delimiter = JVLT.getConfig().getProperty(
 				"answers_delimiter", ",");
 		String text = _input_field.getText();
-		if (text.length() == 0)
+		if (text.length() == 0) {
 			return new String[0];
+		}
 
 		String answer[] = text.split(answers_delimiter);
 
@@ -993,17 +1027,17 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 }
 
 class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
-	private HashMap<String, QuizInfo> _quiz_info_map;
-	private HashMap<String, QuizInfo> _visible_quiz_info_map;
-	private HashMap<String, QuizInfo> _invisible_quiz_info_map;
+	private final Map<String, QuizInfo> _quiz_info_map;
+	private final Map<String, QuizInfo> _visible_quiz_info_map;
+	private final Map<String, QuizInfo> _invisible_quiz_info_map;
 	private Dict _dict;
-	private QuizDict _qdict;
+	private final QuizDict _qdict;
 
-	private EntrySelectionDialogData _entry_selection_data;
+	private final EntrySelectionDialogData _entry_selection_data;
 	private JEditorPane _html_panel;
 	private JLabel _select_words_label;
 	private LabeledComboBox _quiz_info_box;
-	private ActionHandler _quiz_info_box_listener = new ActionHandler();
+	private final ActionHandler _quiz_info_box_listener = new ActionHandler();
 
 	private class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
@@ -1048,9 +1082,11 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	public QuizInfo getQuizInfo() {
 		Object name = _quiz_info_box.getSelectedItem();
 		QuizInfo[] default_quiz_infos = QuizInfo.getDefaultQuizInfos();
-		for (int i = 0; i < default_quiz_infos.length; i++)
-			if (name.equals(default_quiz_infos[i].getName()))
+		for (int i = 0; i < default_quiz_infos.length; i++) {
+			if (name.equals(default_quiz_infos[i].getName())) {
 				return default_quiz_infos[i];
+			}
+		}
 
 		return _quiz_info_map.get(name);
 	}
@@ -1115,17 +1151,19 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				EntrySelectionDialogData.State[] states = (EntrySelectionDialogData.State[]) JVLT
 						.getRuntimeProperties().get("quiz_entry_filters");
 				ArrayList<EntrySelectionDialogData.State> statelist = new ArrayList<EntrySelectionDialogData.State>();
-				if (states != null)
+				if (states != null) {
 					statelist.addAll(Arrays.asList(states));
+				}
 
 				Iterator<EntrySelectionDialogData.State> it = statelist
 						.iterator();
-				while (it.hasNext())
+				while (it.hasNext()) {
 					if (DefaultComparator.getInstance().compare(
 							it.next().getLanguage(), state.getLanguage()) == 0) {
 						it.remove();
 						break;
 					}
+				}
 				statelist.add(state);
 				JVLT
 						.getRuntimeProperties()
@@ -1167,8 +1205,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 			_qdict.setIgnoreBatches(JVLT.getConfig().getBooleanProperty(
 					"ignore_batches", false));
 
-			if (old_ignore_batches != _qdict.isIgnoreBatches())
+			if (old_ignore_batches != _qdict.isIgnoreBatches()) {
 				update();
+			}
 		}
 	}
 
@@ -1241,16 +1280,18 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				.getRuntimeProperties().get("quiz_entry_filters");
 		if (states != null) {
 			int i;
-			for (i = 0; i < states.length; i++)
+			for (i = 0; i < states.length; i++) {
 				if (DefaultComparator.getInstance().compare(
 						states[i].getLanguage(), _dict.getLanguage()) == 0) {
 					_entry_selection_data.initFromState(states[i]);
 					break;
 				}
+			}
 
-			if (i == states.length)
+			if (i == states.length) {
 				_entry_selection_data
 						.initFromState(new EntrySelectionDialogData.State());
+			}
 		} else {
 			_entry_selection_data
 					.initFromState(new EntrySelectionDialogData.State());
@@ -1261,8 +1302,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		QuizInfo info = getQuizInfo();
 		ObjectQuery[] oqs = _entry_selection_data.getObjectQueries();
 		EntryFilter[] filters = new EntryFilter[oqs.length];
-		for (int i = 0; i < oqs.length; i++)
+		for (int i = 0; i < oqs.length; i++) {
 			filters[i] = new EntryFilter(oqs[i]);
+		}
 
 		_qdict.update(filters, info);
 		_model.panelDescriptorUpdated();
@@ -1285,11 +1327,13 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 			int batch = entry.getBatch();
 			int num;
 
-			if (batch > max_batch)
+			if (batch > max_batch) {
 				max_batch = batch;
+			}
 
-			if (entry.getNumQueried() == 0)
+			if (entry.getNumQueried() == 0) {
 				num_never_quizzed++;
+			}
 
 			total_num_quizzed += entry.getNumQueried();
 			total_num_mistakes += entry.getNumMistakes();
@@ -1310,21 +1354,22 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 
 		String num_entries_str = String.valueOf(num_entries);
 		String num_never_quizzed_str = String.valueOf(num_never_quizzed);
-		String num_expired_str = String.valueOf(num_expired) + "/"
-				+ String.valueOf(not_expired);
+		String num_expired_str = num_expired + "/" + not_expired;
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 		double avg_num_quizzed = 0.0;
-		if (num_entries > 0)
+		if (num_entries > 0) {
 			avg_num_quizzed = ((double) total_num_quizzed) / num_entries;
+		}
 		String avg_num_quizzed_str = df.format(avg_num_quizzed);
 		float mistake_ratio = 0.0f;
-		if (total_num_quizzed > 0)
+		if (total_num_quizzed > 0) {
 			mistake_ratio = total_num_mistakes * 100.0f / total_num_quizzed;
+		}
 		df.setMaximumFractionDigits(1);
 		String avg_mistake_ratio_str = df.format(mistake_ratio) + "%";
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuffer buffer = new StringBuffer(200);
 		String label;
 		buffer.append("<html>\n");
 		if (font == null) {
@@ -1345,8 +1390,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		label = GUIUtils.getString("Labels", "avg_mistake_ratio") + ":";
 		buffer.append(getRowString(label, avg_mistake_ratio_str));
 		for (int i = 0; i <= max_batch; i++) {
-			if (!batches.containsKey(i) || batches.get(i) == 0)
+			if (!batches.containsKey(i) || batches.get(i) == 0) {
 				continue;
+			}
 
 			label = GUIUtils.getString("Labels", "batch_no",
 					new Integer[] { i })
@@ -1355,15 +1401,14 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 					"Labels", "num_words"));
 			String value = formatter.format(batches.get(i));
 			int num_exp = expired.containsKey(i) ? expired.get(i) : 0;
-			if (i > 0)
+			if (i > 0) {
 				value = GUIUtils.getString("Labels", "words_expired",
 						new Object[] { value, num_exp });
+			}
 
 			buffer.append(getRowString(label, value));
 		}
-		buffer.append("</table>\n");
-		buffer.append("</body>\n");
-		buffer.append("</html>\n");
+		buffer.append("</table>\n</body>\n</html>\n");
 		_html_panel.setText(buffer.toString());
 
 		label = GUIUtils.getString("Messages", "selected_words",
@@ -1388,9 +1433,11 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		_quiz_info_map.clear();
 		QuizInfo[] qinfos = (QuizInfo[]) JVLT.getRuntimeProperties().get(
 				"quiz_types");
-		if (qinfos != null)
-			for (int i = 0; i < qinfos.length; i++)
+		if (qinfos != null) {
+			for (int i = 0; i < qinfos.length; i++) {
 				_quiz_info_map.put(qinfos[i].getName(), qinfos[i]);
+			}
+		}
 
 		updateQuizInfoList();
 	}
@@ -1406,8 +1453,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		_quiz_info_box.removeActionListener(_quiz_info_box_listener);
 		_quiz_info_box.removeAllItems();
 
-		for (int i = 0; i < default_quiz_infos.length; i++)
+		for (int i = 0; i < default_quiz_infos.length; i++) {
 			_quiz_info_box.addItem(default_quiz_infos[i].getName());
+		}
 
 		for (Iterator<QuizInfo> it = _quiz_info_map.values().iterator(); it
 				.hasNext();) {
@@ -1416,17 +1464,19 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 					|| info.getLanguage().equals(dict_lang)) {
 				_visible_quiz_info_map.put(info.getName(), info);
 				_quiz_info_box.addItem(info.getName());
-			} else
+			} else {
 				_invisible_quiz_info_map.put(info.getName(), info);
+			}
 		}
 
 		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
 				"selected_quiz_type");
 		if (selected_quiz_type == null
-				|| !_visible_quiz_info_map.containsKey(selected_quiz_type))
+				|| !_visible_quiz_info_map.containsKey(selected_quiz_type)) {
 			_quiz_info_box.setSelectedItem(default_quiz_infos[0].getName());
-		else
+		} else {
 			_quiz_info_box.setSelectedItem(selected_quiz_type);
+		}
 
 		_quiz_info_box.addActionListener(_quiz_info_box_listener);
 	}
@@ -1461,8 +1511,9 @@ abstract class YesNoDescriptor extends WizardPanelDescriptor implements
 	}
 
 	public void setContentPanel(JComponent content) {
-		if (_content_panel != null)
+		if (_content_panel != null) {
 			_panel.remove(_content_panel);
+		}
 
 		_content_panel = content;
 
@@ -1524,8 +1575,9 @@ class ResultDescriptor extends YesNoDescriptor implements
 
 	public void setKnownEntries(Entry[] entries) {
 		_known_entries_tree.setEntries(entries);
-		if (entries.length > 0)
+		if (entries.length > 0) {
 			_known_entries_tree.scrollRowToVisible(0);
+		}
 		updateLabels();
 	}
 
@@ -1535,8 +1587,9 @@ class ResultDescriptor extends YesNoDescriptor implements
 
 	public void setNotKnownEntries(Entry[] entries) {
 		_notknown_entries_tree.setEntries(entries);
-		if (entries.length > 0)
+		if (entries.length > 0) {
 			_notknown_entries_tree.scrollRowToVisible(0);
+		}
 		updateLabels();
 	}
 
@@ -1548,22 +1601,24 @@ class ResultDescriptor extends YesNoDescriptor implements
 		if (ev.getActionCommand().equals("up")) {
 			Entry entry = null;
 			Object obj = _notknown_entries_tree.getSelectedObject();
-			if (obj instanceof Entry)
+			if (obj instanceof Entry) {
 				entry = (Entry) obj;
-			else
+			} else {
 				// obj instanceof Sense
 				entry = ((Sense) obj).getParent();
+			}
 			_notknown_entries_tree.removeEntry(entry);
 			_known_entries_tree.addEntry(entry);
 			updateLabels();
 		} else if (ev.getActionCommand().equals("down")) {
 			Entry entry = null;
 			Object obj = _known_entries_tree.getSelectedObject();
-			if (obj instanceof Entry)
+			if (obj instanceof Entry) {
 				entry = (Entry) obj;
-			else
+			} else {
 				// obj instanceof Sense
 				entry = ((Sense) obj).getParent();
+			}
 			_known_entries_tree.removeEntry(entry);
 			_notknown_entries_tree.addEntry(entry);
 			updateLabels();
@@ -1658,7 +1713,7 @@ class EntryNullDescriptor extends WizardPanelDescriptor {
 class FlagPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private LabeledComboBox _flag_box;
+	private final LabeledComboBox _flag_box;
 
 	public FlagPanel() {
 		_flag_box = new LabeledComboBox();

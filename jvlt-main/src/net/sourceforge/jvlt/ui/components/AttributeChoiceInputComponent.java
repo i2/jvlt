@@ -25,18 +25,21 @@ public class AttributeChoiceInputComponent extends ChoiceInputComponent {
 			}
 		}
 
-		for (Iterator<AttributeChoice> it = roots.iterator(); it.hasNext();)
+		for (Iterator<AttributeChoice> it = roots.iterator(); it.hasNext();) {
 			insertChoice(it.next(), 0);
+		}
 
-		if (choices.length > 0)
+		if (choices.length > 0) {
 			_input_box.setSelectedIndex(0);
+		}
 	}
 
 	private void insertChoice(AttributeChoice choice, int indent_level) {
 		((IndentedComboBox) _input_box).addItem(_container
 				.getTranslation(choice), indent_level);
 		AttributeChoice[] children = choice.getChildren();
-		for (int i = 0; i < children.length; i++)
+		for (int i = 0; i < children.length; i++) {
 			insertChoice(children[i], indent_level + 1);
+		}
 	}
 }

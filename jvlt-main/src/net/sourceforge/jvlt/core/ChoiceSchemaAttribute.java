@@ -52,7 +52,7 @@ public class ChoiceSchemaAttribute extends SchemaAttribute {
 		for (Iterator<AttributeChoice> it = _choices.iterator(); it.hasNext(); i++)
 			choices[i] = it.next().getName();
 		buf.append(Utils.arrayToString(choices, ","));
-		buf.append("}");
+		buf.append('}');
 
 		return buf.toString();
 	}

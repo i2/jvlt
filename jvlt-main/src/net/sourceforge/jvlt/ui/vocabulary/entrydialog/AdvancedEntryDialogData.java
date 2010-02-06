@@ -52,9 +52,9 @@ import org.apache.log4j.Logger;
 public class AdvancedEntryDialogData extends CustomDialogData {
 	private static final Logger logger = Logger
 			.getLogger(AdvancedEntryDialogData.class);
-	
-	private JVLTModel _model;
-	private List<Entry> _entries;
+
+	private final JVLTModel _model;
+	private final List<Entry> _entries;
 
 	private EntryClass _orig_class;
 	private String[] _orig_categories;
@@ -84,17 +84,20 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 				if (ec == null) {
 					if (_orig_class != null) {
 						Iterator<Entry> it = _entries.iterator();
-						for (; it.hasNext();)
+						for (; it.hasNext();) {
 							it.next().setEntryClass(null);
+						}
 					}
-				} else if (!ec.equals(_orig_class))
+				} else if (!ec.equals(_orig_class)) {
 					/*
 					 * Currently, only when the new entry class has another name
 					 * as the old one, the entry class is updated. TODO: Update
 					 * also if only attributes have changed
 					 */
-					for (Iterator<Entry> it = _entries.iterator(); it.hasNext();)
+					for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
 						it.next().setEntryClass(ec);
+					}
+				}
 			}
 		}
 
@@ -102,33 +105,41 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		String[] categories = Utils
 				.objectArrayToStringArray(_category_selection_panel
 						.getSelectedObjects());
-		if (!Utils.arraysEqual(categories, _orig_categories))
-			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();)
+		if (!Utils.arraysEqual(categories, _orig_categories)) {
+			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
 				it.next().setCategories(categories);
+			}
+		}
 
 		/* Custom fields */
 		_custom_field_panel.updateData();
 		StringPair[] custom_fields = _custom_field_panel.getKeyValuePairs();
-		if (!Arrays.equals(custom_fields, _orig_custom_fields))
-			for (Entry e : _entries)
+		if (!Arrays.equals(custom_fields, _orig_custom_fields)) {
+			for (Entry e : _entries) {
 				e.setCustomFields(custom_fields);
+			}
+		}
 
 		/* Multimedia files */
 		String[] files = _file_selection_panel.getFiles();
-		if (!Utils.arraysEqual(files, _orig_mmfiles))
-			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();)
+		if (!Utils.arraysEqual(files, _orig_mmfiles)) {
+			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
 				it.next().setMultimediaFiles(files);
+			}
+		}
 
-		if (files.length > 0)
+		if (files.length > 0) {
 			try {
-				if (FileUtils.isPathRelative(files[files.length - 1]))
+				if (FileUtils.isPathRelative(files[files.length - 1])) {
 					JVLT.getConfig().setProperty("use_relative_path", true);
-				else
+				} else {
 					JVLT.getConfig().setProperty("use_relative_path", false);
+				}
 			} catch (IOException e) {
 				logger.error("Could not determine canonical path for '"
 						+ files[files.length - 1] + "'", e);
 			}
+		}
 
 		/* Set flags */
 		_flag_selection_panel.apply();
@@ -136,9 +147,10 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 
 	@Override
 	protected void loadState(Config config) {
-		if (config.containsKey("AdvancedEntryDialog.size"))
+		if (config.containsKey("AdvancedEntryDialog.size")) {
 			_content_pane.setPreferredSize(config.getDimensionProperty(
 					"AdvancedEntryDialog.size", new Dimension(300, 200)));
+		}
 	}
 
 	@Override
@@ -157,13 +169,14 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		if (dict_file_name != null && !dict_file_name.equals("")) {
 			File file = new File(dict_file_name);
 			File parent = file.getParentFile();
-			if (parent != null)
+			if (parent != null) {
 				try {
 					_file_selection_panel.setPath(parent.getCanonicalPath());
 				} catch (IOException e) {
 					logger.error("Could not determine canonical path for '"
 							+ parent + "'", e);
 				}
+			}
 		}
 		_file_selection_panel.setUseRelativePath(JVLT.getConfig()
 				.getBooleanProperty("use_relative_path", false));
@@ -178,16 +191,18 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 
 		EntryAttributeSchema schema = _model.getDict()
 				.getEntryAttributeSchema();
-		if (schema == null)
+		if (schema == null) {
 			_schema_panel = null;
-		else
+		} else {
 			_schema_panel = new EntryAttributeSchemaPanel(schema);
+		}
 
 		_flag_selection_panel = new FlagSelectionPanel(_entries);
 
 		CustomTabbedPane tpane = new CustomTabbedPane();
-		if (_schema_panel != null)
+		if (_schema_panel != null) {
 			tpane.addTab("details", _schema_panel);
+		}
 		tpane.addTab("categories", _category_selection_panel);
 		tpane.addTab("custom_fields", _custom_field_panel);
 		tpane.addTab("multimedia_files", _file_selection_panel);
@@ -216,31 +231,36 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		for (int i = 1; i < _entries.size(); i++) {
 			if (_orig_categories.length > 0
 					&& !Utils.arraysEqual(_orig_categories, _entries.get(i)
-							.getCategories()))
+							.getCategories())) {
 				_orig_categories = new String[0];
+			}
 			if (!Arrays.equals(_orig_custom_fields, _entries.get(i)
-					.getCustomFields()))
+					.getCustomFields())) {
 				_orig_custom_fields = null;
+			}
 			if (_orig_mmfiles.length > 0
 					&& !Utils.arraysEqual(_orig_mmfiles, _entries.get(i)
-							.getMultimediaFiles()))
+							.getMultimediaFiles())) {
 				_orig_mmfiles = new String[0];
+			}
 			if (_orig_class != null
-					&& !_orig_class.equals(_entries.get(i).getEntryClass()))
+					&& !_orig_class.equals(_entries.get(i).getEntryClass())) {
 				_orig_class = null;
+			}
 		}
 
 		_category_selection_panel.setSelectedObjects(_orig_categories);
 		_custom_field_panel.setKeyValuePairs(_orig_custom_fields);
 		_file_selection_panel.setFiles(_orig_mmfiles);
-		if (schema != null)
+		if (schema != null) {
 			_schema_panel.setValue(_orig_class);
+		}
 	}
 }
 
 class FileSelectionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final Logger logger = Logger
 			.getLogger(FileSelectionPanel.class);
 
@@ -252,8 +272,9 @@ class FileSelectionPanel extends JPanel {
 
 	private class ListSelectionHandler implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent ev) {
-			if (ev.getValueIsAdjusting() == false)
+			if (!ev.getValueIsAdjusting()) {
 				update();
+			}
 		}
 	}
 
@@ -261,7 +282,7 @@ class FileSelectionPanel extends JPanel {
 		public void actionPerformed(ActionEvent ev) {
 			if (ev.getActionCommand().equals("add")) {
 				String value = _field.getText();
-				if (!value.equals("") && !_list_model.contains(value)) {
+				if (!"".equals(value) && !_list_model.contains(value)) {
 					_list_model.addElement(value);
 					_list.setSelectedIndex(_list_model.size() - 1);
 				}
@@ -274,8 +295,9 @@ class FileSelectionPanel extends JPanel {
 			} else if (ev.getActionCommand().equals("browse")) {
 				JFileChooser chooser = new JFileChooser();
 				Iterator<SimpleFileFilter> it = _file_filters.iterator();
-				while (it.hasNext())
+				while (it.hasNext()) {
 					chooser.addChoosableFileFilter(it.next());
+				}
 
 				File file = new File(_path);
 				chooser.setCurrentDirectory(file);
@@ -283,35 +305,39 @@ class FileSelectionPanel extends JPanel {
 				int val = chooser.showOpenDialog(FileSelectionPanel.this);
 				if (val == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
-					if (_relative_path_box.isSelected())
+					if (_relative_path_box.isSelected()) {
 						_field.setText(FileUtils.getRelativePath(
 								new File(_path), f));
-					else
+					} else {
 						try {
 							_field.setText(f.getCanonicalPath());
 						} catch (IOException e) {
 							logger.error("Could not determine canonical path "
 									+ "for '" + f + "'", e);
 						}
+					}
 				}
 			} else if (ev.getActionCommand().equals("relative_path")) {
 				int index = _list.getSelectedIndex();
-				if (index < 0)
+				if (index < 0) {
 					return;
+				}
 
 				String path = _list_model.get(index).toString();
 				File f;
 				try {
-					if (FileUtils.isPathRelative(path))
+					if (FileUtils.isPathRelative(path)) {
 						f = new File(_path + File.separator + path);
-					else
+					} else {
 						f = new File(path);
+					}
 
-					if (_relative_path_box.isSelected())
+					if (_relative_path_box.isSelected()) {
 						_list_model.set(index, FileUtils.getRelativePath(
 								new File(_path), f));
-					else
+					} else {
 						_list_model.set(index, f.getCanonicalPath());
+					}
 				} catch (IOException e) {
 					logger.error("Could not determine canonical path for '"
 							+ path + "'", e);
@@ -328,7 +354,7 @@ class FileSelectionPanel extends JPanel {
 		}
 	}
 
-	private ArrayList<SimpleFileFilter> _file_filters;
+	private final List<SimpleFileFilter> _file_filters;
 	private String _path;
 	private boolean _use_relative_path;
 
@@ -368,8 +394,9 @@ class FileSelectionPanel extends JPanel {
 
 	public void setFiles(String[] files) {
 		_list_model.clear();
-		for (int i = 0; i < files.length; i++)
+		for (int i = 0; i < files.length; i++) {
 			_list_model.addElement(files[i]);
+		}
 	}
 
 	public void setUseRelativePath(boolean relative) {
@@ -422,7 +449,7 @@ class FileSelectionPanel extends JPanel {
 		add(Box.createVerticalGlue(), cc);
 		cc.update(0, 6, 1.0, 0.0, 2, 1);
 		add(_relative_path_box, cc);
-		
+
 		update();
 	}
 
@@ -432,14 +459,15 @@ class FileSelectionPanel extends JPanel {
 		_add_action.setEnabled(_field.getText().length() > 0);
 		_remove_action.setEnabled(path != null);
 		_relative_path_box.setEnabled(path != null);
-		if (path != null)
+		if (path != null) {
 			try {
 				_relative_path_box.setSelected(FileUtils.isPathRelative(path));
 			} catch (IOException e) {
-				logger.error("Could not determine canonical path for '"
-						+ path + "'", e);
-			}			
-		
+				logger.error("Could not determine canonical path for '" + path
+						+ "'", e);
+			}
+		}
+
 		_up_action.setEnabled(_list.getSelectedIndex() > 0);
 		_down_action.setEnabled(_list.getSelectedIndex() >= 0
 				&& _list.getSelectedIndex() < _list_model.getSize() - 1);
@@ -448,8 +476,9 @@ class FileSelectionPanel extends JPanel {
 	private String getCurrentPath() {
 		String path = null;
 		int index = _list.getSelectedIndex();
-		if (index >= 0)
+		if (index >= 0) {
 			path = _list_model.get(index).toString();
+		}
 
 		return path;
 	}

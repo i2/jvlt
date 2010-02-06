@@ -65,7 +65,7 @@ public class SchemaAttribute implements Comparable<SchemaAttribute>, Cloneable {
 			buf.append(";value=");
 			buf.append(_value.toString());
 		}
-		buf.append("}");
+		buf.append('}');
 
 		return buf.toString();
 	}

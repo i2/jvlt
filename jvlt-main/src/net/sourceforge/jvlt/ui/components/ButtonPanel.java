@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -18,7 +19,7 @@ public class ButtonPanel extends JPanel {
 
 	private int _alignment;
 	private int _orientation;
-	private ArrayList<JButton> _buttons;
+	private final List<JButton> _buttons;
 
 	/**
 	 * @param orientation SwingConstants.HORIZONTAL or SwingConstants.VERTICAL
@@ -54,36 +55,40 @@ public class ButtonPanel extends JPanel {
 
 	private void resetLayout() {
 		Component[] components = getComponents();
-		for (int i = 0; i < components.length; i++)
+		for (int i = 0; i < components.length; i++) {
 			remove(components[i]);
+		}
 
 		CustomConstraints cc = new CustomConstraints();
 		int i = 0;
 		if (_alignment == SwingConstants.RIGHT
 				|| _alignment == SwingConstants.BOTTOM) {
-			if (_orientation == SwingConstants.HORIZONTAL)
+			if (_orientation == SwingConstants.HORIZONTAL) {
 				cc.update(i++, 0, 1.0, 0.0);
-			else
+			} else {
 				cc.update(0, i++, 0.0, 1.0);
+			}
 			add(Box.createHorizontalGlue(), cc);
 		}
 
 		Iterator<JButton> it = _buttons.iterator();
 		while (it.hasNext()) {
 			JButton button = it.next();
-			if (_orientation == SwingConstants.HORIZONTAL)
+			if (_orientation == SwingConstants.HORIZONTAL) {
 				cc.update(i++, 0, 0.0, 0.0);
-			else
+			} else {
 				cc.update(0, i++, 0.0, 0.0);
+			}
 			add(button, cc);
 		}
 
 		if (_alignment == SwingConstants.LEFT
 				|| _alignment == SwingConstants.TOP) {
-			if (_orientation == SwingConstants.HORIZONTAL)
+			if (_orientation == SwingConstants.HORIZONTAL) {
 				cc.update(i, 0, 1.0, 0.0);
-			else
+			} else {
 				cc.update(0, i, 0.0, 1.0);
+			}
 			add(Box.createHorizontalGlue(), cc);
 		}
 	}

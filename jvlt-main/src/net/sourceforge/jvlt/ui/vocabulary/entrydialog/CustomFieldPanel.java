@@ -84,10 +84,7 @@ public class CustomFieldPanel extends JPanel {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex == 0 || columnIndex == 1)
-				return true;
-			else
-				return false;
+			return columnIndex == 0 || columnIndex == 1;
 		}
 
 		@Override

@@ -7,7 +7,7 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 
 public interface DictUpdateListener {
-	public static abstract class DictUpdateEvent {
+	abstract class DictUpdateEvent {
 		protected int _type;
 
 		public DictUpdateEvent(int type) {
@@ -19,12 +19,12 @@ public interface DictUpdateListener {
 		}
 	}
 
-	public static class EntryDictUpdateEvent extends DictUpdateEvent {
+	class EntryDictUpdateEvent extends DictUpdateEvent {
 		public static final int ENTRIES_ADDED = 1;
 		public static final int ENTRIES_CHANGED = 2;
 		public static final int ENTRIES_REMOVED = 3;
 
-		private Collection<Entry> _entries;
+		private final Collection<Entry> _entries;
 
 		public EntryDictUpdateEvent(int type, Collection<Entry> entries) {
 			super(type);
@@ -36,12 +36,12 @@ public interface DictUpdateListener {
 		}
 	}
 
-	public static class ExampleDictUpdateEvent extends DictUpdateEvent {
+	class ExampleDictUpdateEvent extends DictUpdateEvent {
 		public static final int EXAMPLES_ADDED = 1;
 		public static final int EXAMPLES_CHANGED = 2;
 		public static final int EXAMPLES_REMOVED = 3;
 
-		private Collection<Example> _examples;
+		private final Collection<Example> _examples;
 
 		public ExampleDictUpdateEvent(int type, Collection<Example> examples) {
 			super(type);
@@ -53,8 +53,8 @@ public interface DictUpdateListener {
 		}
 	}
 
-	public static class NewDictDictUpdateEvent extends DictUpdateEvent {
-		private Dict _dict;
+	class NewDictDictUpdateEvent extends DictUpdateEvent {
+		private final Dict _dict;
 
 		public NewDictDictUpdateEvent(Dict dict) {
 			super(0);
@@ -66,8 +66,8 @@ public interface DictUpdateListener {
 		}
 	}
 
-	public static class LanguageDictUpdateEvent extends DictUpdateEvent {
-		private String _new_language;
+	class LanguageDictUpdateEvent extends DictUpdateEvent {
+		private final String _new_language;
 
 		public LanguageDictUpdateEvent(String new_language) {
 			super(0);
@@ -79,5 +79,5 @@ public interface DictUpdateListener {
 		}
 	}
 
-	public void dictUpdated(DictUpdateEvent event);
+	void dictUpdated(DictUpdateEvent event);
 }

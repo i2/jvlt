@@ -3,10 +3,10 @@ package net.sourceforge.jvlt.event;
 import java.util.EventObject;
 
 public interface StateListener {
-	public static class StateEvent extends EventObject {
+	class StateEvent extends EventObject {
 		private static final long serialVersionUID = 1L;
 
-		private int _state;
+		private final int _state;
 
 		public StateEvent(Object src, int state) {
 			super(src);
@@ -18,5 +18,5 @@ public interface StateListener {
 		}
 	}
 
-	public void stateChanged(StateEvent ev);
+	void stateChanged(StateEvent ev);
 }
