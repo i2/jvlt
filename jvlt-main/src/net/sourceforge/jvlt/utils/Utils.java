@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
 	private static Pattern WRAP_PATTERN = Pattern
-			.compile("(.{0,80}\\b\\s*)|(.{80}\\B)");
+			.compile("(.{0,79}[^\\s]\\s+)|(.{0,79}[^\\s])");
 
 	public static String removeSubstring(String s, int begin_index,
 			int end_index) {
