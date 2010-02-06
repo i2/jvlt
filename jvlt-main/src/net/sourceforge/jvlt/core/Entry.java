@@ -1,5 +1,6 @@
 package net.sourceforge.jvlt.core;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -235,6 +236,16 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	public int getNumMistakes() {
 		return _stats._num_mistakes;
+	}
+
+	public String getRatioString() {
+		if (_stats._num_queried > 0) {
+			NumberFormat formatter = NumberFormat.getPercentInstance();
+			formatter.setMaximumFractionDigits(1);
+			return formatter.format((double) _stats._num_mistakes
+					/ _stats._num_queried);
+		}
+		return "";
 	}
 
 	public Calendar getLastQueried() {

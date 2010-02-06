@@ -121,6 +121,7 @@ public class EntryMetaData extends MetaData {
 
 		addAttribute(new SensesAttribute());
 		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
+		addAttribute(new DefaultChoiceAttribute("RatioString", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
 		addAttribute(new CustomFieldsAttribute());
 		addAttribute(new EntryClassAttribute());
