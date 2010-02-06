@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.ui.vocabulary;
+package net.sourceforge.jvlt.ui.vocabulary.entrydialog;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -27,8 +27,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.EntryAttributeSchema;
@@ -48,6 +46,8 @@ import net.sourceforge.jvlt.utils.FileUtils;
 import net.sourceforge.jvlt.utils.MultimediaUtils;
 import net.sourceforge.jvlt.utils.SimpleFileFilter;
 import net.sourceforge.jvlt.utils.Utils;
+
+import org.apache.log4j.Logger;
 
 public class AdvancedEntryDialogData extends CustomDialogData {
 	private static final Logger logger = Logger

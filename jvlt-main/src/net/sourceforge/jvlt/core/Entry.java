@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -276,9 +277,9 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		_orthography = o;
 	}
 
-	public void setPronunciations(String[] p) {
+	public void setPronunciations(List<String> p) {
 		_pronunciations.clear();
-		_pronunciations.addAll(Arrays.asList(p));
+		_pronunciations.addAll(p);
 	}
 
 	public void addPronunciation(String p) {

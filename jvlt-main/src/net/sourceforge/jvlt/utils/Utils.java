@@ -4,16 +4,18 @@ import java.awt.Font;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-	private static Pattern WRAP_PATTERN = Pattern.compile(
-			"(.{0,80}\\b\\s*)|(.{80}\\B)"); 
-	
+	private static Pattern WRAP_PATTERN = Pattern
+			.compile("(.{0,80}\\b\\s*)|(.{80}\\B)");
+
 	public static String removeSubstring(String s, int begin_index,
 			int end_index) {
 		StringBuffer buf = new StringBuffer();
@@ -154,6 +156,14 @@ public class Utils {
 		return array;
 	}
 
+	public static List<String> objectArrayToStringList(Object[] values) {
+		List<String> result = new ArrayList<String>(values.length);
+		for (Object value : values) {
+			result.add(value.toString());
+		}
+		return result;
+	}
+
 	public static boolean arraysEqual(Object[] array1, Object[] array2) {
 		if (array1 == null)
 			return array2 == null;
@@ -182,9 +192,10 @@ public class Utils {
 		else
 			return "/u" + hex;
 	}
-	
+
 	/**
 	 * Wraps a string into lines with at most 80 characters each.
+	 * 
 	 * @param s The string to be wrapped
 	 * @param delim The line delimiter
 	 * @return The wrapped string
@@ -197,7 +208,7 @@ public class Utils {
 			if (m.end() < s.length())
 				builder.append(delim);
 		}
-		
+
 		return builder.toString();
 	}
 }

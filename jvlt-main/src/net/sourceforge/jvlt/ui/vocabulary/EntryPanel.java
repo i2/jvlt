@@ -48,6 +48,8 @@ import net.sourceforge.jvlt.ui.table.SortableTableModel;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.ui.vocabulary.entrydialog.AddEntryDialog;
+import net.sourceforge.jvlt.ui.vocabulary.entrydialog.EditEntryDialog;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
 import net.sourceforge.jvlt.utils.Config;
 import net.sourceforge.jvlt.utils.MultimediaUtils;

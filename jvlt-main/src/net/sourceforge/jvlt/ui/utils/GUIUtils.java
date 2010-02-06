@@ -21,7 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-
 public class GUIUtils {
 	public static CustomAction createAnonymousAction(ActionListener listener,
 			String action_command) {
@@ -89,6 +88,14 @@ public class GUIUtils {
 					EtchedBorder.LOWERED), name));
 
 		return pane;
+	}
+
+	public static String getLabelString(String name) {
+		return getString("Labels", name);
+	}
+
+	public static String getMessageString(String name) {
+		return getString("Messages", name);
 	}
 
 	public static String getString(String resource_bundle, String name) {

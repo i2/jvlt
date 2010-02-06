@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.ui.vocabulary;
+package net.sourceforge.jvlt.ui.vocabulary.entrydialog;
 
 import java.awt.GridBagLayout;
 import java.util.HashMap;

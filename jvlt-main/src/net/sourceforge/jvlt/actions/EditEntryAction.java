@@ -1,7 +1,7 @@
 package net.sourceforge.jvlt.actions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.jvlt.core.DictException;
@@ -16,8 +16,8 @@ public class EditEntryAction extends EditDictObjectAction {
 		_sense_actions = new ArrayList<DictObjectAction>();
 	}
 
-	public void addSenseActions(DictObjectAction[] actions) {
-		_sense_actions.addAll(Arrays.asList(actions));
+	public void addSenseActions(List<DictObjectAction> actions) {
+		_sense_actions.addAll(actions);
 	}
 
 	@Override
