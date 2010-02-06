@@ -5,7 +5,7 @@
 
 	<path id="project.classpath">
 		<pathelement path="${classpath}"/>
-		<fileset dir="${lib}"><include name="*.jar"/></fileset>
+		<fileset dir="${lib}" includes="${lib_files}"/>
 	</path>
 
 	<target name="init">
@@ -101,7 +101,7 @@
 
 		<jar jarfile="${dist}/${jar-prefix}-${DSTAMP}.jar">
 			<fileset dir="${build}" includes="**/*"/>
-			<zipgroupfileset dir="${lib}" includes="*.jar"/>
+			<zipgroupfileset dir="${lib}" includes="${lib_files}"/>
 			<manifest>
 				<attribute name="Main-Class"
 					value="net.sourceforge.jvlt.ui.JVLTUI"/>
