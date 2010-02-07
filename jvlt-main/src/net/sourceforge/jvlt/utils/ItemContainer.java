@@ -2,16 +2,15 @@ package net.sourceforge.jvlt.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 
 public class ItemContainer {
 	private boolean _translate_items = false;
-	private AttributeResources _resources = new AttributeResources();
-	private ArrayList<Object> _values;
-	private TreeMap<Object, String> _value_translation_map;
-	private TreeMap<String, Object> _translation_value_map;
+	private final AttributeResources _resources = new AttributeResources();
+	private final ArrayList<Object> _values;
+	private final TreeMap<Object, String> _value_translation_map;
+	private final TreeMap<String, Object> _translation_value_map;
 
 	public ItemContainer() {
 		_values = new ArrayList<Object>();
@@ -20,12 +19,13 @@ public class ItemContainer {
 	}
 
 	public Object getItem(Object translation) {
-		if (translation == null)
+		if (translation == null) {
 			return null;
-		else if (_translation_value_map.containsKey(translation))
+		} else if (_translation_value_map.containsKey(translation)) {
 			return _translation_value_map.get(translation);
-		else
+		} else {
 			return translation;
+		}
 	}
 
 	public Object[] getItems() {
@@ -34,19 +34,21 @@ public class ItemContainer {
 
 	public Object[] getItems(Object[] translations) {
 		Object[] items = new Object[translations.length];
-		for (int i = 0; i < translations.length; i++)
+		for (int i = 0; i < translations.length; i++) {
 			items[i] = getItem(translations[i]);
+		}
 
 		return items;
 	}
 
 	public String getTranslation(Object item) {
-		if (item == null)
+		if (item == null) {
 			return null;
-		else if (_value_translation_map.containsKey(item))
+		} else if (_value_translation_map.containsKey(item)) {
 			return _value_translation_map.get(item);
-		else
+		} else {
 			return item.toString();
+		}
 	}
 
 	public String[] getTranslations() {
@@ -55,8 +57,9 @@ public class ItemContainer {
 
 	public String[] getTranslations(Object[] items) {
 		String[] translations = new String[items.length];
-		for (int i = 0; i < items.length; i++)
+		for (int i = 0; i < items.length; i++) {
 			translations[i] = getTranslation(items[i]);
+		}
 
 		return translations;
 	}
@@ -95,8 +98,7 @@ public class ItemContainer {
 		_value_translation_map.clear();
 		_translation_value_map.clear();
 		if (_translate_items) {
-			for (Iterator<Object> it = _values.iterator(); it.hasNext();) {
-				Object value = it.next();
+			for (Object value : _values) {
 				String translation = _resources.getString(value.toString());
 				_value_translation_map.put(value, translation);
 				_translation_value_map.put(translation, value);

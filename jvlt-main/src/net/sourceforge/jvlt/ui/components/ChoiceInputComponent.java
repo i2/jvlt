@@ -22,8 +22,9 @@ public class ChoiceInputComponent extends ListeningInputComponent {
 	}
 
 	public void reset() {
-		if (_input_box.getItemCount() > 0)
+		if (_input_box.getItemCount() > 0) {
 			_input_box.setSelectedIndex(0);
+		}
 	}
 
 	public Object getInput() {
@@ -33,12 +34,13 @@ public class ChoiceInputComponent extends ListeningInputComponent {
 		// has entered data.
 		Object obj = _input_box.isEditable() ? _input_box.getEditor().getItem()
 				: _input_box.getSelectedItem();
-		if (obj == null)
+		if (obj == null) {
 			return null;
-		else if (obj.toString().equals(""))
+		} else if (obj.toString().equals("")) {
 			return null;
-		else
+		} else {
 			return _container.getItem(obj);
+		}
 	}
 
 	public void setInput(Object input) {
@@ -80,7 +82,8 @@ public class ChoiceInputComponent extends ListeningInputComponent {
 	protected void updateInputComponent() {
 		Object[] items = _container.getItems();
 		_input_box.removeAllItems();
-		for (int i = 0; i < items.length; i++)
-			_input_box.addItem(_container.getTranslation(items[i]));
+		for (Object item : items) {
+			_input_box.addItem(_container.getTranslation(item));
+		}
 	}
 }

@@ -15,7 +15,8 @@ public class CustomTabbedPane extends JTabbedPane {
 		Integer mnemonic = GUIUtils.getMnemonicKey(str);
 		str = str.replaceAll("\\$", "");
 		super.addTab(str, comp);
-		if (mnemonic != null)
+		if (mnemonic != null) {
 			setMnemonicAt(getTabCount() - 1, mnemonic.intValue());
+		}
 	}
 }

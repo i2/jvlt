@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.io;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.TreeSet;
 
 import net.sourceforge.jvlt.actions.ImportAction;
@@ -10,12 +9,13 @@ import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.core.Example.TextFragment;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
 
 public class DictImporter {
-	private JVLTModel _model;
+	private final JVLTModel _model;
 	private boolean _clear_stats = false;
 
 	public DictImporter(JVLTModel model) {
@@ -29,16 +29,16 @@ public class DictImporter {
 	/**
 	 * Determine the entries that can be imported. Only entries that do not
 	 * already exist in the dictionary will be imported.
-	 * 
+	 *
 	 * @param dict The dictionary that will be imported.
 	 */
 	public Collection<Entry> getImportedEntries(Dict dict) {
 		TreeSet<Entry> new_entries = new TreeSet<Entry>(new Entry.Comparator());
 		Collection<Entry> entries = dict.getEntries();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
-			if (_model.getDict().getEntry(entry) == null)
+		for (Entry entry : entries) {
+			if (_model.getDict().getEntry(entry) == null) {
 				new_entries.add(entry);
+			}
 		}
 
 		return new_entries;
@@ -48,7 +48,7 @@ public class DictImporter {
 	 * Determine the examples that can be added to the dictionary. Examples that
 	 * already exist in the dictionary cannot be imported. The same is true for
 	 * examples whose linked entries cannot be imported.
-	 * 
+	 *
 	 * @param dict The dictionary that will be imported.
 	 * @param entries The entries that will be imported. They can be obtained by
 	 *            the method {@link #getImportedEntries(Dict)}.
@@ -60,9 +60,7 @@ public class DictImporter {
 		TreeSet<Example> new_examples = new TreeSet<Example>(
 				new Example.Comparator());
 		Collection<Example> examples = dict.getExamples();
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();) {
-			Example example = it.next();
-
+		for (Example example : examples) {
 			// Only import examples that do not already exist in the dictionary.
 			if (_model.getDict().getExample(example) == null) {
 				Sense[] senses = example.getSenses();
@@ -78,8 +76,9 @@ public class DictImporter {
 						}
 					}
 				}
-				if (add_example)
+				if (add_example) {
 					new_examples.add(example);
+				}
 			}
 		}
 
@@ -89,9 +88,9 @@ public class DictImporter {
 	public void importDict(Dict dict) throws DictException {
 		String old_lang = _model.getDict().getLanguage();
 		String new_lang = dict.getLanguage();
-		if (new_lang == null)
+		if (new_lang == null) {
 			new_lang = old_lang;
-		else if (old_lang != null && !new_lang.equals(old_lang)) {
+		} else if (old_lang != null && !new_lang.equals(old_lang)) {
 			AttributeResources resources = new AttributeResources();
 			throw new DictException("Invalid language: "
 					+ resources.getString(new_lang));
@@ -105,20 +104,22 @@ public class DictImporter {
 		// -----
 		// Prepare the entries
 		// -----
-		if (_clear_stats)
-			for (Iterator<Entry> it = entries.iterator(); it.hasNext();)
-				it.next().resetStats();
+		if (_clear_stats) {
+			for (Entry entry : entries) {
+				entry.resetStats();
+			}
+		}
 
 		// -----
 		// Prepare the examples
 		// -----
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();) {
-			Example example = it.next();
+		for (Example example : examples) {
 			Example.TextFragment[] fragments = example.getTextFragments();
-			for (int j = 0; j < fragments.length; j++) {
-				Example.TextFragment tf = fragments[j];
-				if (tf.getSense() == null)
+			for (TextFragment fragment : fragments) {
+				Example.TextFragment tf = fragment;
+				if (tf.getSense() == null) {
 					continue;
+				}
 
 				if (!entry_set.contains(tf.getSense().getParent())) {
 					// Replace links to senses in the imported dictionary with

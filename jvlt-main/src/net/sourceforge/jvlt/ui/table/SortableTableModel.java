@@ -25,13 +25,13 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	private List<Row> _view_to_model;
 	private int[] _model_to_view;
-	private AttributeResources _resources;
-	private ArrayList<TableModelListener> _listeners;
-	private ArrayList<String> _columns;
-	private ArrayList<T> _values;
+	private final AttributeResources _resources;
+	private final ArrayList<TableModelListener> _listeners;
+	private final ArrayList<String> _columns;
+	private final ArrayList<T> _values;
 	private Directive _directive;
-	private MetaData _data;
-	private Map<Class<? extends Attribute>, Boolean> _format_value;
+	private final MetaData _data;
+	private final Map<Class<? extends Attribute>, Boolean> _format_value;
 
 	public SortableTableModel(MetaData data) {
 		_resources = new AttributeResources();
@@ -53,10 +53,10 @@ public class SortableTableModel<T extends Object> implements TableModel {
 	/** Implementation of TableModel.getColumnClass(). */
 	public Class<? extends Object> getColumnClass(int col) {
 		Attribute attr = _data.getAttribute(_columns.get(col).toString());
-		if (_format_value.containsKey(attr.getClass()))
+		if (_format_value.containsKey(attr.getClass())) {
 			return String.class;
-		else
-			return _data.getAttribute(_columns.get(col).toString()).getType();
+		}
+		return _data.getAttribute(_columns.get(col).toString()).getType();
 	}
 
 	/** Implementation of TableModel.getColumnCount(). */
@@ -105,10 +105,11 @@ public class SortableTableModel<T extends Object> implements TableModel {
 	 */
 	public void setSortingDirective(Directive directive) {
 		if (directive.getColumn() >= getColumnCount()
-				|| directive.getColumn() < 0)
+				|| directive.getColumn() < 0) {
 			_directive = new Directive();
-		else
+		} else {
 			_directive = directive;
+		}
 
 		clearSortingState();
 		fireTableModelEvent(new TableModelEvent(this));
@@ -119,9 +120,11 @@ public class SortableTableModel<T extends Object> implements TableModel {
 	/** Set column names (not translated version). */
 	public void setColumnNames(String[] names) {
 		_columns.clear();
-		for (int i = 0; i < names.length; i++)
-			if (_data.getAttribute(names[i]) != null)
-				_columns.add(names[i]);
+		for (String name : names) {
+			if (_data.getAttribute(name) != null) {
+				_columns.add(name);
+			}
+		}
 
 		// Number of columns may change, so the current sorting directive
 		// is possibly invalid. Correct this by calling setSortingDirective().
@@ -132,10 +135,10 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	/** Returns the name of a column (either translated or not translated) */
 	public String getColumnName(int column, boolean translate) {
-		if (translate)
+		if (translate) {
 			return getColumnName(column);
-		else
-			return _columns.get(column).toString();
+		}
+		return _columns.get(column).toString();
 	}
 
 	/** Return the column names (not translated version). */
@@ -164,10 +167,10 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		Iterator<T> it = _values.iterator();
 		while (it.hasNext()) {
 			T o = it.next();
-			if (o.equals(obj))
+			if (o.equals(obj)) {
 				return getViewIndex(index);
-			else
-				index++;
+			}
+			index++;
 		}
 
 		return -1;
@@ -203,8 +206,9 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	public void removeObject(T obj) {
 		int row = getObjectIndex(obj);
-		if (row < 0)
+		if (row < 0) {
 			return;
+		}
 
 		_values.remove(obj);
 		clearSortingState();
@@ -215,14 +219,16 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	public void updateObjects(T[] objects) {
 		boolean exists_visible_object = false;
-		for (int i = 0; i < objects.length; i++)
-			if (getObjectIndex(objects[i]) >= 0) {
+		for (T object : objects) {
+			if (getObjectIndex(object) >= 0) {
 				exists_visible_object = true;
 				break;
 			}
+		}
 
-		if (!exists_visible_object)
+		if (!exists_visible_object) {
 			return;
+		}
 
 		clearSortingState();
 		fireTableModelEvent(new TableModelEvent(this));
@@ -242,16 +248,18 @@ public class SortableTableModel<T extends Object> implements TableModel {
 	private Object getValue(int row, int col) {
 		Object obj = _values.get(row);
 		Attribute attr = _data.getAttribute(_columns.get(col).toString());
-		if (_format_value.containsKey(attr.getClass()))
+		if (_format_value.containsKey(attr.getClass())) {
 			return attr.getFormattedValue(obj);
+		}
 
 		if (Number.class.isAssignableFrom(attr.getType())
-				|| Boolean.class.isAssignableFrom(attr.getType()))
+				|| Boolean.class.isAssignableFrom(attr.getType())) {
 			/*
 			 * For numbers and booleans use the native type, so the appropriate
 			 * cell renderers can be used
 			 */
 			return attr.getValue(obj);
+		}
 
 		return attr.getFormattedValue(obj);
 	}
@@ -264,11 +272,13 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		if (_view_to_model == null) {
 			int row_count = getRowCount();
 			_view_to_model = new ArrayList<Row>();
-			for (int row = 0; row < row_count; row++)
+			for (int row = 0; row < row_count; row++) {
 				_view_to_model.add(new Row(row));
+			}
 
-			if (_directive.getDirection() != NOT_SORTED)
+			if (_directive.getDirection() != NOT_SORTED) {
 				Collections.sort(_view_to_model);
+			}
 		}
 
 		return _view_to_model;
@@ -282,8 +292,9 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		if (_model_to_view == null) {
 			int n = getViewToModel().size();
 			_model_to_view = new int[n];
-			for (int i = 0; i < n; i++)
+			for (int i = 0; i < n; i++) {
 				_model_to_view[getModelIndex(i)] = i;
+			}
 		}
 
 		return _model_to_view;
@@ -291,8 +302,9 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	private void fireTableModelEvent(TableModelEvent ev) {
 		Iterator<TableModelListener> it = _listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().tableChanged(ev);
+		}
 	}
 
 	public static class Directive {
@@ -326,8 +338,8 @@ public class SortableTableModel<T extends Object> implements TableModel {
 	}
 
 	private class Row implements Comparable<Row> {
-		private int _index;
-		private Collator _collator;
+		private final int _index;
+		private final Collator _collator;
 
 		public Row(int index) {
 			_index = index;
@@ -343,34 +355,36 @@ public class SortableTableModel<T extends Object> implements TableModel {
 			int row1 = _index;
 			int row2 = r._index;
 			int col = _directive.getColumn();
-			if (col < 0)
+			if (col < 0) {
 				return 0;
+			}
 
 			int direction = _directive.getDirection();
 			Object val1 = getValue(row1, col);
 			Object val2 = getValue(row2, col);
 
 			int comparison = 0;
-			if (val1 == null && val2 == null)
+			if (val1 == null && val2 == null) {
 				comparison = 0;
-			else if (val1 == null)
+			} else if (val1 == null) {
 				comparison = -1;
-			else if (val2 == null)
+			} else if (val2 == null) {
 				comparison = 1;
-			else {
-				if (val1 instanceof String)
+			} else {
+				if (val1 instanceof String) {
 					comparison = _collator.compare(val1, val2);
-				else if (val1 instanceof Boolean)
+				} else if (val1 instanceof Boolean) {
 					comparison = ((Boolean) val1).compareTo((Boolean) val2);
-				else if (val1 instanceof Number)
+				} else if (val1 instanceof Number) {
 					comparison = ((Number) val1).intValue()
 							- ((Number) val2).intValue();
+				}
 			}
 
-			if (comparison != 0)
+			if (comparison != 0) {
 				return direction == DESCENDING ? -comparison : comparison;
-			else
-				return 0;
+			}
+			return 0;
 		}
 	}
 }

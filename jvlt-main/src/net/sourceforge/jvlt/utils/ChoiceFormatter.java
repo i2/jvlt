@@ -5,8 +5,8 @@ import java.text.MessageFormat;
 
 public class ChoiceFormatter {
 	private String _pattern;
-	private ChoiceFormat _choice_format;
-	private MessageFormat _message_format;
+	private final ChoiceFormat _choice_format;
+	private final MessageFormat _message_format;
 
 	public ChoiceFormatter(String pattern) {
 		_pattern = pattern;

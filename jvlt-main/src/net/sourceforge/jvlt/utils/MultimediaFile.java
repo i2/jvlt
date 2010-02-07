@@ -3,14 +3,14 @@ package net.sourceforge.jvlt.utils;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
+import org.apache.log4j.Logger;
+
 public abstract class MultimediaFile {
 	private static final Logger logger = Logger.getLogger(MultimediaFile.class);
-	
+
 	public static final int OTHER_FILE = 0;
 	public static final int AUDIO_FILE = 1;
 	public static final int IMAGE_FILE = 2;
@@ -44,27 +44,30 @@ public abstract class MultimediaFile {
 	}
 
 	public static String getTypeString(int type) {
-		if (type == AUDIO_FILE)
+		if (type == AUDIO_FILE) {
 			return GUIUtils.getString("Labels", "audio_file");
-		else if (type == IMAGE_FILE)
+		} else if (type == IMAGE_FILE) {
 			return GUIUtils.getString("Labels", "image_file");
-		else
+		} else {
 			// if (type == OTHER_FILE)
 			return GUIUtils.getString("Labels", "other_file");
+		}
 	}
 
 	protected File getFile() {
 		String path = System.getProperty("user.home");
 		String dict_file = JVLT.getInstance().getModel().getDictFileName();
-		if (dict_file != null && !dict_file.equals(""))
+		if (dict_file != null && !dict_file.equals("")) {
 			path = new File(dict_file).getParentFile().getAbsolutePath();
+		}
 
 		File f;
 		try {
-			if (FileUtils.isPathRelative(_file_name))
+			if (FileUtils.isPathRelative(_file_name)) {
 				f = new File(path + File.separator + _file_name);
-			else
+			} else {
 				f = new File(_file_name);
+			}
 		} catch (IOException e) {
 			logger.error("Could not determine canonical path for '"
 					+ _file_name + "'", e);

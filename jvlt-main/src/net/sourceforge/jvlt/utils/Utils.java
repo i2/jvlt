@@ -19,16 +19,18 @@ public class Utils {
 	public static String removeSubstring(String s, int begin_index,
 			int end_index) {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < s.length(); i++)
-			if (i < begin_index || i > end_index)
+		for (int i = 0; i < s.length(); i++) {
+			if (i < begin_index || i > end_index) {
 				buf.append(s.charAt(i));
+			}
+		}
 
 		return buf.toString();
 	}
 
 	/**
 	 * Insert a String into an other.
-	 * 
+	 *
 	 * @param s The string into which the other string is inserted. <i>s</i>
 	 *            will not be modified itself - instead, the result will be
 	 *            returned by the function.
@@ -39,15 +41,17 @@ public class Utils {
 	 */
 	public static String insertString(String s, int index, String t) {
 		String before;
-		if (index == 0)
+		if (index == 0) {
 			before = "";
-		else
+		} else {
 			before = s.substring(0, index);
+		}
 		String after;
-		if (index == s.length())
+		if (index == s.length()) {
 			after = "";
-		else
+		} else {
 			after = s.substring(index, s.length());
+		}
 
 		return before + t + after;
 	}
@@ -57,15 +61,18 @@ public class Utils {
 		Iterator<? extends Object> it = c.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
-			if (clazz.isInstance(obj))
+			if (clazz.isInstance(obj)) {
 				it.remove();
+			}
 		}
 	}
 
 	public static boolean arrayContainsItem(Object[] array, Object item) {
-		for (int i = 0; i < array.length; i++)
-			if (array[i].equals(item))
+		for (Object element : array) {
+			if (element.equals(item)) {
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -83,8 +90,9 @@ public class Utils {
 	}
 
 	public static String fontToString(Font font) {
-		if (font == null)
+		if (font == null) {
 			return "";
+		}
 
 		int style = font.getStyle();
 		String style_str;
@@ -111,8 +119,9 @@ public class Utils {
 	public static String arrayToString(Object[] values, String delim) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buf.append(delim);
+			}
 			buf.append(values[i].toString());
 		}
 
@@ -129,20 +138,21 @@ public class Utils {
 
 	/**
 	 * Split a single string into multiple strings.
-	 * 
+	 *
 	 * @return An empty array if argument str is the empty string, otherwise the
 	 *         same as {@link String#split(String)} yields.
 	 */
 	public static String[] split(String str, String delim) {
-		if (str == null || str.equals(""))
+		if (str == null || str.equals("")) {
 			return new String[0];
-		else
-			return str.split(delim);
+		}
+		return str.split(delim);
 	}
 
 	public static String calendarToString(Calendar date) {
-		if (date == null)
+		if (date == null) {
 			return "";
+		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		return sdf.format(date.getTime());
@@ -150,8 +160,9 @@ public class Utils {
 
 	public static String[] objectArrayToStringArray(Object[] values) {
 		String[] array = new String[values.length];
-		for (int i = 0; i < array.length; i++)
+		for (int i = 0; i < array.length; i++) {
 			array[i] = values[i].toString();
+		}
 
 		return array;
 	}
@@ -165,14 +176,18 @@ public class Utils {
 	}
 
 	public static boolean arraysEqual(Object[] array1, Object[] array2) {
-		if (array1 == null)
+		if (array1 == null) {
 			return array2 == null;
-		if (array1.length != array2.length)
+		}
+		if (array1.length != array2.length) {
 			return false;
+		}
 
-		for (int i = 0; i < array1.length; i++)
-			if (!array1[i].equals(array2[i]))
+		for (int i = 0; i < array1.length; i++) {
+			if (!array1[i].equals(array2[i])) {
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -183,19 +198,20 @@ public class Utils {
 	 */
 	public static String escapeChar(char ch) {
 		String hex = Integer.toHexString(ch);
-		if (hex.length() == 1)
+		if (hex.length() == 1) {
 			return "/u000" + hex;
-		else if (hex.length() == 2)
+		} else if (hex.length() == 2) {
 			return "/u00" + hex;
-		else if (hex.length() == 3)
+		} else if (hex.length() == 3) {
 			return "/u0" + hex;
-		else
+		} else {
 			return "/u" + hex;
+		}
 	}
 
 	/**
 	 * Wraps a string into lines with at most 80 characters each.
-	 * 
+	 *
 	 * @param s The string to be wrapped
 	 * @param delim The line delimiter
 	 * @return The wrapped string
@@ -205,8 +221,9 @@ public class Utils {
 		Matcher m = WRAP_PATTERN.matcher(s);
 		while (m.find()) {
 			builder.append(s.substring(m.start(), m.end()));
-			if (m.end() < s.length())
+			if (m.end() < s.length()) {
 				builder.append(delim);
+			}
 		}
 
 		return builder.toString();

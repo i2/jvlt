@@ -97,13 +97,14 @@ public class MessageDialog extends JDialog implements ActionListener {
 	public static int showDialog(Component parent, int type, int options,
 			String message, String details) {
 		Component comp = GUIUtils.getFrameOrDialogForComponent(parent);
-		if (comp instanceof Dialog)
+		if (comp instanceof Dialog) {
 			_dialog = new MessageDialog((Dialog) comp, type, options, message,
 					details);
-		else
+		} else {
 			// if (comp instanceof Frame)
 			_dialog = new MessageDialog((Frame) comp, type, options, message,
 					details);
+		}
 
 		GUIUtils.showDialog(comp, _dialog);
 		return _dialog._result;
@@ -212,10 +213,11 @@ public class MessageDialog extends JDialog implements ActionListener {
 
 	private void update() {
 		String text;
-		if (_show_details)
+		if (_show_details) {
 			text = GUIUtils.getString("Actions", "details_less");
-		else
+		} else {
 			text = GUIUtils.getString("Actions", "details_more");
+		}
 		Integer mnemonic = GUIUtils.getMnemonicKey(text);
 		if (mnemonic != null) {
 			_details_action.putValue(Action.MNEMONIC_KEY, mnemonic);

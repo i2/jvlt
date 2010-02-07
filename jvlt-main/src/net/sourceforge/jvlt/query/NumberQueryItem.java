@@ -17,13 +17,14 @@ public class NumberQueryItem extends ObjectQueryItem {
 	public boolean objectMatches(Object obj) {
 		double num1 = ((Number) obj).doubleValue();
 		double num2 = ((Number) _value).doubleValue();
-		if (_type == NumberQueryItem.EQUALS)
+		if (_type == NumberQueryItem.EQUALS) {
 			return num1 == num2;
-		else if (_type == NumberQueryItem.GREATER)
+		} else if (_type == NumberQueryItem.GREATER) {
 			return num1 > num2;
-		else if (_type == NumberQueryItem.LESS)
+		} else if (_type == NumberQueryItem.LESS) {
 			return num1 < num2;
-		else
+		} else {
 			return false;
+		}
 	}
 }

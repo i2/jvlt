@@ -24,8 +24,9 @@ public class CustomFontCellRenderer extends DefaultTableCellRenderer {
 			boolean is_selected, boolean has_focus, int row, int column) {
 		Component cell = super.getTableCellRendererComponent(table, value,
 				is_selected, has_focus, row, column);
-		if (_font != null)
+		if (_font != null) {
 			cell.setFont(_font);
+		}
 
 		return cell;
 	}

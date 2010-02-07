@@ -27,25 +27,30 @@ public class ObjectArrayQueryItem extends ObjectQueryItem {
 	public boolean objectMatches(Object obj) {
 		Object[] array = (obj == null) ? new Object[0] : (Object[]) obj;
 
-		if (_type == EMPTY)
+		if (_type == EMPTY) {
 			return array.length == 0;
-		else if (_type == CONTAINS_AT_LEAST_ONE_ITEM)
+		} else if (_type == CONTAINS_AT_LEAST_ONE_ITEM) {
 			return array.length > 0;
-		else if (_type == ITEM_CONTAINS) {
-			if (_value == null)
+		} else if (_type == ITEM_CONTAINS) {
+			if (_value == null) {
 				return true;
-			for (int i = 0; i < array.length; i++)
+			}
+			for (Object element : array) {
 				if (_match_case) {
-					if (array[i].toString().indexOf(_value.toString()) >= 0)
+					if (element.toString().indexOf(_value.toString()) >= 0) {
 						return true;
+					}
 				} else {
-					if (array[i].toString().toLowerCase().indexOf(
-							_value.toString().toLowerCase()) >= 0)
+					if (element.toString().toLowerCase().indexOf(
+							_value.toString().toLowerCase()) >= 0) {
 						return true;
+					}
 				}
+			}
 
 			return false;
-		} else
+		} else {
 			return false;
+		}
 	}
 }

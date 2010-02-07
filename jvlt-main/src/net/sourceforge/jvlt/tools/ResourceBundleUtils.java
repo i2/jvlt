@@ -1,8 +1,17 @@
 package net.sourceforge.jvlt.tools;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.jvlt.ui.JVLTUI;
 
@@ -16,8 +25,8 @@ class ResourceBundleUtils {
 	private static final String[] LANGUAGES = new String[] { "cs_CZ", "de_DE",
 			"fr_FR", "pl_PL" };
 
-	private String[] _files;
-	private String[] _languages;
+	private final String[] _files;
+	private final String[] _languages;
 
 	public ResourceBundleUtils(String[] files, String[] languages) {
 		_files = files;
@@ -25,10 +34,10 @@ class ResourceBundleUtils {
 	}
 
 	public void sync() {
-		for (int i = 0; i < _files.length; i++) {
-			PropertiesFile file = readFile(_files[i] + ".properties");
-			for (int j = 0; j < _languages.length; j++) {
-				String file_name = _files[i] + "_" + _languages[j]
+		for (String file2 : _files) {
+			PropertiesFile file = readFile(file2 + ".properties");
+			for (String language : _languages) {
+				String file_name = file2 + "_" + language
 						+ ".properties";
 				PropertiesFile tfile = readFile(file_name);
 				try {
@@ -48,12 +57,14 @@ class ResourceBundleUtils {
 							k = file_lines[file_lines.length - 1].index + 1;
 							if (tfile.containsKey(key)) {
 								Line[] tfile_lines = tfile.getLines(key);
-								for (int l = 0; l < tfile_lines.length; l++)
-									writer.write(tfile_lines[l].content + "\n");
+								for (Line tfileLine : tfile_lines) {
+									writer.write(tfileLine.content + "\n");
+								}
 							} else {
-								for (int l = 0; l < file_lines.length; l++)
-									writer.write("# " + file_lines[l].content
+								for (Line fileLine : file_lines) {
+									writer.write("# " + fileLine.content
 											+ "\n");
+								}
 							}
 						}
 					}
@@ -105,13 +116,14 @@ class ResourceBundleUtils {
 							if (empty_pattern.matcher(line).matches()) {
 								pf.addLine(new Line(i, line), null);
 								continue;
-							} else
-								throw new Exception("Invalid line: " + line);
+							}
+							throw new Exception("Invalid line: " + line);
 						}
 						current_key = matcher.group(1);
 						pf.addLine(new Line(i, line), current_key);
-						if (line.endsWith("\\"))
+						if (line.endsWith("\\")) {
 							new_key = false;
+						}
 					} else {
 						pf.addLine(new Line(i, line), current_key);
 						if (!line.endsWith("\\")) {
@@ -141,16 +153,16 @@ class Line implements Comparable<Line> {
 
 	public int compareTo(Line line) {
 		Line l = line;
-		if (index != l.index)
+		if (index != l.index) {
 			return index - l.index;
-		else
-			return content.compareTo(l.content);
+		}
+		return content.compareTo(l.content);
 	}
 }
 
 class PropertiesFile {
-	private TreeMap<Line, String> _line_map;
-	private TreeMap<String, Vector<Line>> _key_map;
+	private final TreeMap<Line, String> _line_map;
+	private final TreeMap<String, Vector<Line>> _key_map;
 
 	public PropertiesFile() {
 		_line_map = new TreeMap<Line, String>();
@@ -160,8 +172,9 @@ class PropertiesFile {
 	public void addLine(Line l, String k) {
 		_line_map.put(l, k);
 		if (k != null) {
-			if (!_key_map.containsKey(k))
+			if (!_key_map.containsKey(k)) {
 				_key_map.put(k, new Vector<Line>());
+			}
 
 			Vector<Line> v = _key_map.get(k);
 			v.add(l);

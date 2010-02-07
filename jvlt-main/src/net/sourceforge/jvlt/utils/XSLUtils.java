@@ -9,13 +9,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
+import org.apache.log4j.Logger;
+
 public class XSLUtils {
-	private static final Logger logger = Logger.getLogger(XSLUtils.class); 
+	private static final Logger logger = Logger.getLogger(XSLUtils.class);
 	private static GregorianCalendar _now = new GregorianCalendar();
 
 	public static String expired(String date_string) {
@@ -24,10 +24,10 @@ public class XSLUtils {
 			Date date = sdf.parse(date_string);
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(date);
-			if (cal.before(_now))
+			if (cal.before(_now)) {
 				return "true";
-			else
-				return "false";
+			}
+			return "false";
 		} catch (ParseException ex) {
 			return "false";
 		}
@@ -85,26 +85,26 @@ public class XSLUtils {
 	public static String mimeTypeImage(String file_name) {
 		MultimediaFile file = MultimediaUtils
 				.getMultimediaFileForName(file_name);
-		if (file.getType() == MultimediaFile.AUDIO_FILE)
+		if (file.getType() == MultimediaFile.AUDIO_FILE) {
 			return "/images/audio.png";
-		else if (file.getType() == MultimediaFile.IMAGE_FILE)
+		} else if (file.getType() == MultimediaFile.IMAGE_FILE) {
 			return "/images/image.png";
-		else
+		} else {
 			// if (file.getType() == MultimediaFile.OTHER_FILE)
 			return "/images/unknown.png";
+		}
 	}
 
 	public static String filePath(String file_name) {
 		try {
 			if (FileUtils.isPathRelative(file_name)) {
 				return file_name;
-			} else {
-				File f = new File(file_name);
-				return f.toURI().toString();
 			}
+			File f = new File(file_name);
+			return f.toURI().toString();
 		} catch (IOException e) {
-			logger.error("Could not determine canonical path for '"
-					+ file_name + "'", e);
+			logger.error("Could not determine canonical path for '" + file_name
+					+ "'", e);
 			return null;
 		}
 	}

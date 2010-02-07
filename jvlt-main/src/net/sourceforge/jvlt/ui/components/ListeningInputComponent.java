@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.ui.components;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -22,8 +21,9 @@ public abstract class ListeningInputComponent implements InputComponent {
 	}
 
 	protected void fireChangeEvent(ChangeEvent e) {
-		for (Iterator<ChangeListener> it = _listeners.iterator(); it.hasNext();)
-			it.next().stateChanged(e);
+		for (ChangeListener changeListener : _listeners) {
+			changeListener.stateChanged(e);
+		}
 	}
 
 	protected void fireChangeEvent() {

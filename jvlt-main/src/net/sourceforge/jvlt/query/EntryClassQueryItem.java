@@ -8,7 +8,7 @@ public class EntryClassQueryItem extends ObjectQueryItem {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param name The name
 	 * @param type The type
 	 * @param value The value (of type java.lang.String)
@@ -24,13 +24,14 @@ public class EntryClassQueryItem extends ObjectQueryItem {
 	@Override
 	public boolean objectMatches(Object obj) {
 		EntryClass ec = (EntryClass) obj;
-		if (_type == EntryClassQueryItem.EQUALS)
+		if (_type == EntryClassQueryItem.EQUALS) {
 			return _value == null ? obj == null : ec != null
 					&& _value.equals(ec.getName());
-		else if (_type == EntryClassQueryItem.NOT_EQUAL)
+		} else if (_type == EntryClassQueryItem.NOT_EQUAL) {
 			return !(_value == null ? obj == null : ec != null
 					&& _value.equals(ec.getName()));
-		else
+		} else {
 			return false;
+		}
 	}
 }

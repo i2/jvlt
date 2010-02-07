@@ -11,7 +11,7 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class PropertiesDialogData extends CustomDialogData {
 	private String _language;
-	private LanguageComboBox _language_box;
+	private final LanguageComboBox _language_box;
 
 	public PropertiesDialogData(String language) {
 		_language = language;
@@ -43,9 +43,11 @@ public class PropertiesDialogData extends CustomDialogData {
 					MessageDialog.WARNING_MESSAGE,
 					MessageDialog.OK_CANCEL_OPTION, GUIUtils.getString(
 							"Messages", "language_change"));
-			if (result == MessageDialog.OK_OPTION)
+			if (result == MessageDialog.OK_OPTION) {
 				_language = lang;
-		} else
+			}
+		} else {
 			_language = lang;
+		}
 	}
 }

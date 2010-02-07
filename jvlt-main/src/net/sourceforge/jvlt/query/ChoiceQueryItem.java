@@ -18,27 +18,30 @@ public class ChoiceQueryItem extends ObjectQueryItem {
 	@Override
 	public boolean objectMatches(Object obj) {
 		if (_type == StringQueryItem.EQUALS) {
-			if (obj == null)
+			if (obj == null) {
 				return _value == null;
-			else if (_value == null)
+			} else if (_value == null) {
 				return false;
-			else
+			} else {
 				return obj.toString().equals(_value.toString());
+			}
 		} else if (_type == NOT_EQUAL) {
-			if (obj == null)
+			if (obj == null) {
 				return _value != null;
-			else if (_value == null)
+			} else if (_value == null) {
 				return true;
-			else
+			} else {
 				return !obj.toString().equals(_value.toString());
+			}
 		} else if (_type == CONTAINS) {
-			if (_value == null)
+			if (_value == null) {
 				return true;
-			else if (obj == null)
+			} else if (obj == null) {
 				return false;
-			else
+			} else {
 				return obj.toString().toLowerCase().indexOf(
 						_value.toString().toLowerCase()) >= 0;
+			}
 		} else if (_type == EMPTY) {
 			return obj == null || obj.toString().length() == 0;
 		} else if (_type == NOT_EMPTY) {

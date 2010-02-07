@@ -109,8 +109,9 @@ public class EntryQueryDialog extends AbstractDialog {
 
 	private class PropertyChangeHandler implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent ev) {
-			if (ev.getPropertyName().equals("filters"))
+			if (ev.getPropertyName().equals("filters")) {
 				loadFilters();
+			}
 		}
 	}
 
@@ -132,8 +133,9 @@ public class EntryQueryDialog extends AbstractDialog {
 		@Override
 		protected void selectionChanged() {
 			Object item = getSelectedItem();
-			if (_item_map.containsKey(item))
+			if (_item_map.containsKey(item)) {
 				EntryQueryDialog.this.setObjectQuery(_item_map.get(item));
+			}
 		}
 	}
 
@@ -141,16 +143,17 @@ public class EntryQueryDialog extends AbstractDialog {
 		public void dictUpdated(DictUpdateEvent event) {
 			if (event instanceof NewDictDictUpdateEvent
 					|| event instanceof LanguageDictUpdateEvent) {
-				for (EntryQueryRow row : _query_rows)
+				for (EntryQueryRow row : _query_rows) {
 					row.reset();
+				}
 			}
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
 
-	private JVLTModel _model;
-	private LinkedList<EntryQueryRow> _query_rows;
+	private final JVLTModel _model;
+	private final LinkedList<EntryQueryRow> _query_rows;
 
 	private FilterMapEditorPanel _filter_map_panel;
 	private JPanel _query_panel;
@@ -174,25 +177,29 @@ public class EntryQueryDialog extends AbstractDialog {
 	public ObjectQuery getObjectQuery() {
 		ObjectQuery oq = new ObjectQuery(Entry.class);
 		Object selected = _filter_map_panel.getSelectedItem();
-		if (selected != null)
+		if (selected != null) {
 			oq.setName(selected.toString());
-		if (_match_all_button.isSelected())
+		}
+		if (_match_all_button.isSelected()) {
 			oq.setType(ObjectQuery.MATCH_ALL);
-		else if (_match_one_button.isSelected())
+		} else if (_match_one_button.isSelected()) {
 			oq.setType(ObjectQuery.MATCH_ONE);
+		}
 
 		Iterator<EntryQueryRow> it = _query_rows.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			oq.addItem(it.next().getQueryItem());
+		}
 
 		return oq;
 	}
 
 	public void setObjectQuery(ObjectQuery query) {
-		if (query.getType() == ObjectQuery.MATCH_ALL)
+		if (query.getType() == ObjectQuery.MATCH_ALL) {
 			_match_all_button.setSelected(true);
-		else
+		} else {
 			_match_one_button.setSelected(true);
+		}
 
 		Iterator<EntryQueryRow> it = _query_rows.iterator();
 		while (it.hasNext()) {
@@ -204,9 +211,9 @@ public class EntryQueryDialog extends AbstractDialog {
 		_query_rows.clear();
 
 		ObjectQueryItem[] items = query.getItems();
-		for (int i = 0; i < items.length; i++) {
+		for (ObjectQueryItem item : items) {
 			EntryQueryRow row = new EntryQueryRow(_model);
-			row.setQueryItem(items[i]);
+			row.setQueryItem(item);
 			addRow(row);
 		}
 		_query_panel.revalidate();
@@ -218,13 +225,13 @@ public class EntryQueryDialog extends AbstractDialog {
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		if (ev.getActionCommand().equals("more"))
+		if (ev.getActionCommand().equals("more")) {
 			addRow();
-		else if (ev.getActionCommand().equals("less"))
+		} else if (ev.getActionCommand().equals("less")) {
 			removeRow();
-		else if (ev.getActionCommand().equals("reset"))
+		} else if (ev.getActionCommand().equals("reset")) {
 			clear();
-		else { // Either "Close" or "Apply" button has been pressed
+		} else { // Either "Close" or "Apply" button has been pressed
 			saveFilters();
 			super.actionPerformed(ev);
 		}
@@ -305,9 +312,11 @@ public class EntryQueryDialog extends AbstractDialog {
 		ObjectQuery[] oqs = (ObjectQuery[]) JVLT.getRuntimeProperties().get(
 				"filters");
 		HashMap<Object, ObjectQuery> map = new HashMap<Object, ObjectQuery>();
-		if (oqs != null)
-			for (int i = 0; i < oqs.length; i++)
-				map.put(oqs[i].getName(), oqs[i]);
+		if (oqs != null) {
+			for (ObjectQuery oq : oqs) {
+				map.put(oq.getName(), oq);
+			}
+		}
 
 		_filter_map_panel.setItems(map);
 	}
@@ -341,8 +350,9 @@ public class EntryQueryDialog extends AbstractDialog {
 	}
 
 	private void removeRow() {
-		if (_query_rows.size() == 0)
+		if (_query_rows.size() == 0) {
 			return;
+		}
 
 		EntryQueryRow row = _query_rows.getLast();
 		_query_rows.removeLast();
@@ -355,13 +365,13 @@ public class EntryQueryDialog extends AbstractDialog {
 }
 
 class EntryQueryRow implements ActionListener {
-	private ItemContainer _container;
-	private JVLTModel _model;
-	private ArrayList<ComponentReplacementListener> _listeners;
-	private HashMap<Class<? extends Attribute>, ObjectQueryItem> _query_items;
-	private HashMap<String, Integer> _translation_type_map;
-	private HashMap<Integer, String> _type_translation_map;
-	private MetaData _data;
+	private final ItemContainer _container;
+	private final JVLTModel _model;
+	private final ArrayList<ComponentReplacementListener> _listeners;
+	private final HashMap<Class<? extends Attribute>, ObjectQueryItem> _query_items;
+	private final HashMap<String, Integer> _translation_type_map;
+	private final HashMap<Integer, String> _type_translation_map;
+	private final MetaData _data;
 	private InputComponent _input_component;
 	private JComboBox _name_box = null;
 	private JComboBox _type_box = null;
@@ -438,8 +448,9 @@ class EntryQueryRow implements ActionListener {
 		String name = item.getName();
 		setAttribute(_data.getAttribute(name));
 		Integer type = item.getType();
-		if (_type_translation_map.containsKey(type))
+		if (_type_translation_map.containsKey(type)) {
 			_type_box.setSelectedItem(_type_translation_map.get(type));
+		}
 
 		_input_component.setInput(item.getValue());
 	}
@@ -448,12 +459,14 @@ class EntryQueryRow implements ActionListener {
 		Object selected = _name_box.getSelectedItem();
 		Integer type = _translation_type_map.get(_type_box.getSelectedItem());
 		if (ev.getSource() == _name_box) {
-			if (selected != null)
+			if (selected != null) {
 				setAttribute((Attribute) _container.getItem(selected));
+			}
 		} else if (ev.getSource() == _type_box) {
-			if (selected != null && type != null)
+			if (selected != null && type != null) {
 				setType((Attribute) _container.getItem(selected), type
 						.intValue());
+			}
 		}
 	}
 
@@ -483,28 +496,32 @@ class EntryQueryRow implements ActionListener {
 			TreeSet<Object> set = new TreeSet<Object>(new AttributeComparator(
 					_container));
 			set.addAll(Arrays.asList(attrs));
-			for (Iterator<Object> it = set.iterator(); it.hasNext();)
-				_name_box.addItem(_container.getTranslation(it.next()));
+			for (Object object : set) {
+				_name_box.addItem(_container.getTranslation(object));
+			}
 
 			/*
 			 * If the name box does not contain the original name, use the
 			 * default name (the first one in the array). Otherwise, restore the
 			 * original name.
 			 */
-			if (attr != null)
-				for (int i = 0; i < attrs.length; i++)
-					if (attrs[i].getName().equals(attr.getName())) {
+			if (attr != null) {
+				for (Attribute attr2 : attrs) {
+					if (attr2.getName().equals(attr.getName())) {
 						found = true;
 						break;
 					}
+				}
+			}
 
-			if (found)
+			if (found) {
 				_name_box.setSelectedItem(_container.getTranslation(attr));
+			}
 		}
 
 		_name_box.addActionListener(this);
 
-		if (!found)
+		if (!found) {
 			/*
 			 * - Do not call _name_box.setSelectedItem() as the other values in
 			 * the row probably also have to be updated. - Call setAttribute()
@@ -512,6 +529,7 @@ class EntryQueryRow implements ActionListener {
 			 * will not be added twice
 			 */
 			setAttribute(attrs[0]);
+		}
 	}
 
 	private void setAttribute(Attribute attr) {
@@ -529,11 +547,11 @@ class EntryQueryRow implements ActionListener {
 		_type_box.removeAllItems();
 		_translation_type_map.clear();
 		_type_translation_map.clear();
-		for (int i = 0; i < types.length; i++) {
-			String translation = GUIUtils.getString("Labels", types[i]);
+		for (String type : types) {
+			String translation = GUIUtils.getString("Labels", type);
 			_type_box.addItem(translation);
 			try {
-				Field field = item.getClass().getField(types[i]);
+				Field field = item.getClass().getField(type);
 				int type_value = field.getInt(item);
 				_translation_type_map.put(translation, type_value);
 				_type_translation_map.put(type_value, translation);
@@ -559,8 +577,9 @@ class EntryQueryRow implements ActionListener {
 		_type_box.addActionListener(this);
 
 		JComponent old_component = null;
-		if (_input_component != null)
+		if (_input_component != null) {
 			old_component = _input_component.getComponent();
+		}
 
 		ObjectQueryItem item = _query_items.get(attr.getClass());
 		if (item instanceof ChoiceQueryItem) {
@@ -577,8 +596,9 @@ class EntryQueryRow implements ActionListener {
 
 					Object[] values = cca.getValues();
 					String[] strvals = new String[values.length];
-					for (int i = 0; i < values.length; i++)
+					for (int i = 0; i < values.length; i++) {
 						strvals[i] = values[i].toString();
+					}
 
 					cic.setChoices(strvals);
 				} else if (attr.getClass().equals(DefaultChoiceAttribute.class)) {
@@ -589,17 +609,19 @@ class EntryQueryRow implements ActionListener {
 			}
 		} else if (item instanceof ObjectArrayQueryItem) {
 			if (type == ObjectArrayQueryItem.EMPTY
-					|| type == ObjectArrayQueryItem.CONTAINS_AT_LEAST_ONE_ITEM)
+					|| type == ObjectArrayQueryItem.CONTAINS_AT_LEAST_ONE_ITEM) {
 				_input_component = new EmptyInputComponent();
-			else if (type == ObjectArrayQueryItem.ITEM_CONTAINS)
+			} else if (type == ObjectArrayQueryItem.ITEM_CONTAINS) {
 				_input_component = new StringInputComponent();
-			else { // item is a ChoiceObjectArrayQueryItem
+			} else { // item is a ChoiceObjectArrayQueryItem
 				ChoiceListInputComponent clic = new ChoiceListInputComponent();
 				_input_component = clic;
-				if (attr instanceof ChoiceAttribute)
+				if (attr instanceof ChoiceAttribute) {
 					clic.setChoices(((ChoiceAttribute) attr).getValues());
-				if (attr instanceof CustomArrayAttribute)
+				}
+				if (attr instanceof CustomArrayAttribute) {
 					clic.setTranslateItems(true);
+				}
 			}
 		} else if (item instanceof CalendarQueryItem) {
 			_input_component = new DateInputComponent();
@@ -613,8 +635,9 @@ class EntryQueryRow implements ActionListener {
 			_input_component = new StringInputComponent();
 		} else if (item instanceof EntryClassQueryItem) {
 			EntryClassInputComponent ecic = new EntryClassInputComponent();
-			if (_model.getDict() != null)
+			if (_model.getDict() != null) {
 				ecic.setSchema(_model.getDict().getEntryAttributeSchema());
+			}
 
 			_input_component = ecic;
 		} else if (item instanceof BitmaskQueryItem) {
@@ -624,16 +647,16 @@ class EntryQueryRow implements ActionListener {
 		}
 
 		// Notify listeners
-		for (Iterator<ComponentReplacementListener> it = _listeners.iterator(); it
-				.hasNext();)
-			it.next().componentReplaced(
-					new ComponentReplacementEvent(old_component,
-							_input_component.getComponent()));
+		for (ComponentReplacementListener componentReplacementListener : _listeners) {
+componentReplacementListener.componentReplaced(
+			new ComponentReplacementEvent(old_component,
+					_input_component.getComponent()));
+}
 	}
 }
 
 class EmptyInputComponent implements InputComponent {
-	private JPanel _input_panel = new JPanel();
+	private final JPanel _input_panel = new JPanel();
 
 	public JComponent getComponent() {
 		return _input_panel;
@@ -653,7 +676,7 @@ class EmptyInputComponent implements InputComponent {
 }
 
 class DateInputComponent implements InputComponent {
-	private DateChooserButton _input_panel = new DateChooserButton();
+	private final DateChooserButton _input_panel = new DateChooserButton();
 
 	public JComponent getComponent() {
 		return _input_panel;
@@ -673,7 +696,7 @@ class DateInputComponent implements InputComponent {
 }
 
 class NumberInputComponent implements InputComponent {
-	private CustomTextField _input_panel = new CustomTextField(10);
+	private final CustomTextField _input_panel = new CustomTextField(10);
 
 	public JComponent getComponent() {
 		return _input_panel;
@@ -688,8 +711,8 @@ class NumberInputComponent implements InputComponent {
 		if (text == null || "".equals(text)) {
 			_input_panel.setText("0");
 			return new Double(0.0);
-		} else
-			return new Double(_input_panel.getText());
+		}
+		return new Double(_input_panel.getText());
 	}
 
 	public void setInput(Object input) {
@@ -698,7 +721,7 @@ class NumberInputComponent implements InputComponent {
 }
 
 class ChoiceListInputComponent extends ChoiceInputComponent {
-	private StringListInput _input_component = new StringListInput();
+	private final StringListInput _input_component = new StringListInput();
 
 	@Override
 	public JComponent getComponent() {
@@ -734,13 +757,14 @@ class EntryClassInputComponent extends ChoiceInputComponent {
 	}
 
 	public void setSchema(EntryAttributeSchema s) {
-		if (s == null)
+		if (s == null) {
 			setChoices(new Object[0]);
-		else {
+		} else {
 			EntryClass[] entry_classes = s.getEntryClasses();
 			String[] choices = new String[entry_classes.length];
-			for (int i = 0; i < entry_classes.length; i++)
+			for (int i = 0; i < entry_classes.length; i++) {
 				choices[i] = entry_classes[i].getName();
+			}
 
 			setChoices(choices);
 		}
@@ -780,8 +804,8 @@ class StringListInput extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private JTextField _display;
-	private StringListDialog _dialog;
+	private final JTextField _display;
+	private final StringListDialog _dialog;
 
 	public StringListInput() {
 		_display = new JTextField(10);
@@ -835,8 +859,9 @@ class UserFlagsInputComponent extends ChoiceListInputComponent {
 	public Object getInput() {
 		int input = 0;
 		Object[] items = (Object[]) super.getInput();
-		for (Object item : items)
+		for (Object item : items) {
 			input |= ((Entry.Stats.UserFlag) item).getValue();
+		}
 
 		return input;
 	}
@@ -845,9 +870,11 @@ class UserFlagsInputComponent extends ChoiceListInputComponent {
 	public void setInput(Object input) {
 		Integer value = (Integer) input;
 		List<Entry.Stats.UserFlag> items = new ArrayList<Entry.Stats.UserFlag>();
-		for (Entry.Stats.UserFlag f : Entry.Stats.UserFlag.values())
-			if ((f.getValue() & value) != 0)
+		for (Entry.Stats.UserFlag f : Entry.Stats.UserFlag.values()) {
+			if ((f.getValue() & value) != 0) {
 				items.add(f);
+			}
+		}
 
 		super.setInput(items.toArray());
 	}

@@ -22,9 +22,9 @@ public class ResetStatsDialogData extends CustomDialogData {
 	private int _num_entries = 0;
 	private int _num_matched_entries = 0;
 
-	private JLabel _message_label;
-	private JRadioButton _all_entries_button;
-	private JRadioButton _displayed_entries_button;
+	private final JLabel _message_label;
+	private final JRadioButton _all_entries_button;
+	private final JRadioButton _displayed_entries_button;
 
 	public ResetStatsDialogData(int num_entries, int num_matched_entries) {
 		_num_entries = num_entries;
@@ -65,10 +65,11 @@ public class ResetStatsDialogData extends CustomDialogData {
 
 	private void updateLabelText() {
 		int num_cleaned_entries;
-		if (_all_entries_button.isSelected())
+		if (_all_entries_button.isSelected()) {
 			num_cleaned_entries = _num_entries;
-		else
+		} else {
 			num_cleaned_entries = _num_matched_entries;
+		}
 
 		_message_label
 				.setText(GUIUtils.getString("Messages",

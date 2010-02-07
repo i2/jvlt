@@ -1,9 +1,13 @@
 package net.sourceforge.jvlt.event;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
@@ -30,15 +34,16 @@ class PopupListener extends MouseAdapter {
 	}
 
 	protected void handlePopupEvent(MouseEvent e) {
-		if (e.isPopupTrigger() && _menu != null)
+		if (e.isPopupTrigger() && _menu != null) {
 			_menu.show((Component) e.getSource(), e.getX(), e.getY());
+		}
 	}
 }
 
 public class CopyPastePopupListener extends PopupListener {
-	private Action _copy_action;
-	private Action _paste_action;
-	private JTextComponent _component;
+	private final Action _copy_action;
+	private final Action _paste_action;
+	private final JTextComponent _component;
 
 	public CopyPastePopupListener(JTextComponent comp) {
 		_component = comp;
@@ -47,15 +52,17 @@ public class CopyPastePopupListener extends PopupListener {
 		String str = GUIUtils.getString("Actions", "copy");
 		Integer mnemonic = GUIUtils.getMnemonicKey(str);
 		_copy_action.putValue(Action.NAME, str.replaceAll("\\$", ""));
-		if (mnemonic != null)
+		if (mnemonic != null) {
 			_copy_action.putValue(Action.MNEMONIC_KEY, mnemonic);
+		}
 
 		_paste_action = new DefaultEditorKit.PasteAction();
 		str = GUIUtils.getString("Actions", "paste");
 		mnemonic = GUIUtils.getMnemonicKey(str);
 		_paste_action.putValue(Action.NAME, str.replaceAll("\\$", ""));
-		if (mnemonic != null)
+		if (mnemonic != null) {
 			_paste_action.putValue(Action.MNEMONIC_KEY, mnemonic);
+		}
 
 		_menu = new JPopupMenu();
 		_menu.add(_copy_action);
@@ -65,10 +72,11 @@ public class CopyPastePopupListener extends PopupListener {
 	protected void handlePopupEvent(MouseEvent e) {
 		String selected = _component.getSelectedText();
 		_copy_action.setEnabled(selected != null && !selected.equals(""));
-		if (_component.isEditable() && _menu.getSubElements().length < 2)
+		if (_component.isEditable() && _menu.getSubElements().length < 2) {
 			_menu.add(_paste_action);
-		else if (!_component.isEditable() && _menu.getSubElements().length > 1)
+		} else if (!_component.isEditable() && _menu.getSubElements().length > 1) {
 			_menu.remove(1);
+		}
 
 		super.handlePopupEvent(e);
 	}

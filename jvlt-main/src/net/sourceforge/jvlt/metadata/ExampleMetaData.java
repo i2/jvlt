@@ -3,6 +3,7 @@ package net.sourceforge.jvlt.metadata;
 import java.text.ParseException;
 
 import net.sourceforge.jvlt.core.Example;
+import net.sourceforge.jvlt.core.Example.TextFragment;
 import net.sourceforge.jvlt.utils.SimpleHTMLParser;
 import net.sourceforge.jvlt.utils.XMLUtils;
 
@@ -12,7 +13,7 @@ import org.w3c.dom.Node;
 
 public class ExampleMetaData extends MetaData {
 	private static class TextFragmentsAttribute extends ArrayAttribute {
-		private SimpleHTMLParser _parser = new SimpleHTMLParser();
+		private final SimpleHTMLParser _parser = new SimpleHTMLParser();
 
 		public TextFragmentsAttribute() {
 			super("TextFragments", Example.TextFragment[].class);
@@ -22,8 +23,7 @@ public class ExampleMetaData extends MetaData {
 		public Element getXMLElement(Document doc, Object o) {
 			Element elem = doc.createElement("TextFragments");
 			Example.TextFragment[] fragments = (Example.TextFragment[]) getValue(o);
-			for (int i = 0; i < fragments.length; i++) {
-				Example.TextFragment fragment = fragments[i];
+			for (TextFragment fragment : fragments) {
 				Element e = doc.createElement("Fragment");
 				elem.appendChild(e);
 				Element text_elem = doc.createElement("Text");
@@ -37,8 +37,9 @@ public class ExampleMetaData extends MetaData {
 						ex.printStackTrace();
 						nodes = new Node[0];
 					}
-					for (int j = 0; j < nodes.length; j++)
-						text_elem.appendChild(nodes[j]);
+					for (Node node : nodes) {
+						text_elem.appendChild(node);
+					}
 				} else {
 					text_elem.appendChild(doc
 							.createTextNode(fragment.getText()));
@@ -51,7 +52,7 @@ public class ExampleMetaData extends MetaData {
 	}
 
 	private static class TranslationAttribute extends DefaultAttribute {
-		private SimpleHTMLParser _parser = new SimpleHTMLParser();
+		private final SimpleHTMLParser _parser = new SimpleHTMLParser();
 
 		public TranslationAttribute() {
 			super("Translation", String.class);
@@ -64,8 +65,9 @@ public class ExampleMetaData extends MetaData {
 			try {
 				_parser.parse(val, doc);
 				Node[] nodes = _parser.getNodes();
-				for (int i = 0; i < nodes.length; i++)
-					elem.appendChild(nodes[i]);
+				for (Node node : nodes) {
+					elem.appendChild(node);
+				}
 			} catch (ParseException ex) {
 				ex.printStackTrace();
 			}

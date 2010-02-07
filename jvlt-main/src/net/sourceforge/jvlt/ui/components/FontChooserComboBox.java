@@ -59,8 +59,9 @@ public class FontChooserComboBox extends JComboBox {
 			} else if (getSelectedItem() == CHOOSE_STRING) {
 				fontChooser.setFontInfo(fontInfo);
 				int val = fontChooser.showDialog(FontChooserComboBox.this);
-				if (val == JOptionPane.OK_OPTION)
+				if (val == JOptionPane.OK_OPTION) {
 					setFontInfo(fontChooser.getFontInfo());
+				}
 			}
 		}
 	}
@@ -70,7 +71,7 @@ public class FontChooserComboBox extends JComboBox {
 	private static FontChooser fontChooser = new FontChooser();
 
 	private FontInfo fontInfo = null;
-	private Model model = new Model();
+	private final Model model = new Model();
 	private JLabel label = null;
 
 	public FontChooserComboBox() {
@@ -88,8 +89,9 @@ public class FontChooserComboBox extends JComboBox {
 		FontInfo oldInfo = this.fontInfo;
 		this.fontInfo = fontInfo;
 
-		if (oldInfo != fontInfo)
+		if (oldInfo != fontInfo) {
 			model.update();
+		}
 	}
 
 	public JLabel getJLabel() {

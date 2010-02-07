@@ -18,10 +18,12 @@ public class ArrayAttribute extends DefaultAttribute {
 		StringBuffer buffer = new StringBuffer();
 		Object[] val = (Object[]) getValue(o);
 		for (int i = 0; i < val.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append(_delimiter);
-			if (_enable_numbering && val.length > 1)
+			}
+			if (_enable_numbering && val.length > 1) {
 				buffer.append(String.valueOf(i + 1) + ". ");
+			}
 			buffer.append(val[i].toString());
 		}
 		return buffer.toString();
@@ -31,8 +33,8 @@ public class ArrayAttribute extends DefaultAttribute {
 	public Element getXMLElement(Document doc, Object o) {
 		Element elem = doc.createElement(_name);
 		Object[] objs = (Object[]) getValue(o);
-		for (int i = 0; i < objs.length; i++) {
-			Element e = XMLUtils.createTextElement(doc, "item", objs[i]
+		for (Object obj : objs) {
+			Element e = XMLUtils.createTextElement(doc, "item", obj
 					.toString());
 			elem.appendChild(e);
 		}

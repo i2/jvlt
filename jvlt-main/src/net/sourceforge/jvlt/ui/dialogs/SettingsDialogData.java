@@ -85,26 +85,26 @@ public class SettingsDialogData extends CustomDialogData implements
 		}
 	}
 
-	private Map<FontKey, Font> _old_fonts = new HashMap<FontKey, Font>();
+	private final Map<FontKey, Font> _old_fonts = new HashMap<FontKey, Font>();
 	private Locale _old_locale;
-	private boolean _old_restore_previously_open;
-	private boolean _old_play_immediately;
-	private LookAndFeel _old_laf;
-	private HashMap<String, Locale> _string_locale_map;
-	private HashMap<String, String> _string_laf_map;
-	private int _old_num_batches;
-	private float _old_expiration_factor;
-	private String _old_expiration_unit;
-	private Attribute[] _old_displayed_attrs;
+	private final boolean _old_restore_previously_open;
+	private final boolean _old_play_immediately;
+	private final LookAndFeel _old_laf;
+	private final HashMap<String, Locale> _string_locale_map;
+	private final HashMap<String, String> _string_laf_map;
+	private final int _old_num_batches;
+	private final float _old_expiration_factor;
+	private final String _old_expiration_unit;
+	private final Attribute[] _old_displayed_attrs;
 
-	private JVLTModel _model;
+	private final JVLTModel _model;
 
 	private JCheckBox _restore_chbox;
 	private JCheckBox _play_immediately_chbox;
 	private LabeledComboBox _locale_cobox;
 	private LabeledComboBox _laf_cobox;
 	private FileTypePanel _file_type_panel;
-	private Map<FontKey, FontChooserComboBox> _font_boxes = new HashMap<FontKey, FontChooserComboBox>();
+	private final Map<FontKey, FontChooserComboBox> _font_boxes = new HashMap<FontKey, FontChooserComboBox>();
 	private ExpirationTimePanel _expiration_panel;
 	private AttributeSelectionPanel _displayed_attrs_panel;
 
@@ -133,25 +133,29 @@ public class SettingsDialogData extends CustomDialogData implements
 		String[] attr_names;
 		Object[] attrs = (Object[]) JVLT.getRuntimeProperties().get(
 				"displayed_attributes");
-		if (attrs != null)
+		if (attrs != null) {
 			attr_names = Utils.objectArrayToStringArray(attrs);
-		else
+		} else {
 			attr_names = new String[0];
+		}
 		_old_displayed_attrs = new Attribute[attr_names.length];
-		for (int i = 0; i < attr_names.length; i++)
+		for (int i = 0; i < attr_names.length; i++) {
 			_old_displayed_attrs[i] = data.getAttribute(attr_names[i]);
+		}
 
 		_old_locale = null;
 		Locale locale = config.getLocaleProperty("locale", Locale.getDefault());
 		Locale[] locales = JVLT.getSupportedLocales();
 		_string_locale_map = new HashMap<String, Locale>();
-		for (int i = 0; i < locales.length; i++) {
-			_string_locale_map.put(locales[i].getDisplayLanguage(), locales[i]);
-			if (locales[i].equals(locale))
+		for (Locale locale2 : locales) {
+			_string_locale_map.put(locale2.getDisplayLanguage(), locale2);
+			if (locale2.equals(locale)) {
 				_old_locale = locale;
+			}
 		}
-		if (_old_locale == null)
+		if (_old_locale == null) {
 			_old_locale = Locale.US;
+		}
 
 		_old_laf = UIManager.getLookAndFeel();
 		_string_laf_map = new HashMap<String, String>();
@@ -186,8 +190,9 @@ public class SettingsDialogData extends CustomDialogData implements
 				.getSelectedItem());
 		Map<FontKey, FontInfo> new_font_infos = new HashMap<FontKey, FontInfo>();
 		Map<FontKey, Font> new_fonts = new HashMap<FontKey, Font>();
-		for (Map.Entry<FontKey, FontChooserComboBox> e : _font_boxes.entrySet())
+		for (Map.Entry<FontKey, FontChooserComboBox> e : _font_boxes.entrySet()) {
 			new_font_infos.put(e.getKey(), e.getValue().getFontInfo());
+		}
 		boolean new_restore_previously_open = _restore_chbox.isSelected();
 		boolean new_play_immediately = _play_immediately_chbox.isSelected();
 		int new_num_batches = _expiration_panel.getNumBatches();
@@ -196,12 +201,14 @@ public class SettingsDialogData extends CustomDialogData implements
 		Object[] new_displayed_attrs = _displayed_attrs_panel
 				.getSelectedObjects();
 
-		for (Map.Entry<FontKey, FontChooserComboBox> e : _font_boxes.entrySet())
+		for (Map.Entry<FontKey, FontChooserComboBox> e : _font_boxes.entrySet()) {
 			new_font_infos.put(e.getKey(), e.getValue().getFontInfo());
+		}
 
-		for (Map.Entry<FontKey, FontInfo> e : new_font_infos.entrySet())
+		for (Map.Entry<FontKey, FontInfo> e : new_font_infos.entrySet()) {
 			new_fonts.put(e.getKey(), e.getValue() == null ? null : e
 					.getValue().getFont());
+		}
 
 		Config config = JVLT.getConfig();
 		config.setProperty("print_font", new_fonts.get(FontKey.PRINT));
@@ -231,10 +238,11 @@ public class SettingsDialogData extends CustomDialogData implements
 				|| isFontUpdated(FontKey.UI_ORTH, new_fonts)
 				|| isFontUpdated(FontKey.UI_PRON, new_fonts)
 				|| !_old_locale.equals(new_locale)
-				|| !_old_laf.getClass().getName().equals(new_laf_string))
+				|| !_old_laf.getClass().getName().equals(new_laf_string)) {
 			MessageDialog.showDialog(_content_pane,
 					MessageDialog.WARNING_MESSAGE, GUIUtils.getString(
 							"Messages", "restart"));
+		}
 	}
 
 	public void actionPerformed(ActionEvent ev) {
@@ -261,16 +269,18 @@ public class SettingsDialogData extends CustomDialogData implements
 		_laf_cobox = new LabeledComboBox();
 		_laf_cobox.setLabel("look_and_feel");
 		Iterator<String> it = _string_laf_map.keySet().iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			_laf_cobox.addItem(it.next());
+		}
 		_laf_cobox.addActionListener(this);
 		_laf_cobox.setSelectedItem(_old_laf.getID());
 
 		_locale_cobox = new LabeledComboBox();
 		_locale_cobox.setLabel("locale");
 		Locale[] locales = JVLT.getSupportedLocales();
-		for (int i = 0; i < locales.length; i++)
-			_locale_cobox.addItem(locales[i].getDisplayLanguage());
+		for (Locale locale : locales) {
+			_locale_cobox.addItem(locale.getDisplayLanguage());
+		}
 		_locale_cobox.setSelectedItem(_old_locale.getDisplayLanguage());
 
 		_displayed_attrs_panel = new AttributeSelectionPanel();
@@ -384,10 +394,10 @@ public class SettingsDialogData extends CustomDialogData implements
 	}
 
 	private boolean isFontUpdated(FontKey key, Map<FontKey, Font> new_fonts) {
-		if (_old_fonts.get(key) == null)
+		if (_old_fonts.get(key) == null) {
 			return new_fonts.get(key) == null;
-		else
-			return _old_fonts.get(key).equals(new_fonts.get(key));
+		}
+		return _old_fonts.get(key).equals(new_fonts.get(key));
 	}
 }
 
@@ -395,8 +405,8 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 		ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private TreeMap<String, MultimediaFile> _extensions;
-	private TreeSet<String> _default_extensions;
+	private final TreeMap<String, MultimediaFile> _extensions;
+	private final TreeSet<String> _default_extensions;
 
 	private Action _add_action;
 	private Action _edit_action;
@@ -417,34 +427,36 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 		_extensions.clear();
 		_default_extensions.clear();
 		String[] exts = MultimediaUtils.AUDIO_FILE_EXTENSIONS;
-		for (int i = 0; i < exts.length; i++) {
-			_extensions.put(exts[i], new AudioFile("." + exts[i]));
-			_default_extensions.add(exts[i]);
+		for (String ext : exts) {
+			_extensions.put(ext, new AudioFile("." + ext));
+			_default_extensions.add(ext);
 		}
 
 		exts = MultimediaUtils.IMAGE_FILE_EXTENSIONS;
-		for (int i = 0; i < exts.length; i++) {
-			_extensions.put(exts[i], new ImageFile("." + exts[i]));
-			_default_extensions.add(exts[i]);
+		for (String ext : exts) {
+			_extensions.put(ext, new ImageFile("." + ext));
+			_default_extensions.add(ext);
 		}
 
 		exts = JVLT.getConfig().getStringListProperty("custom_extensions",
 				new String[0]);
-		for (int i = 0; i < exts.length; i++) {
+		for (String ext : exts) {
 			String[] ext_prop = JVLT.getConfig().getStringListProperty(
-					"extension_" + exts[i], new String[0]);
-			CustomMultimediaFile f = new CustomMultimediaFile("." + exts[i],
+					"extension_" + ext, new String[0]);
+			CustomMultimediaFile f = new CustomMultimediaFile("." + ext,
 					Integer.parseInt(ext_prop[0]));
 			f.setCommand(ext_prop[1]);
-			_extensions.put(exts[i], f);
+			_extensions.put(ext, f);
 		}
 	}
 
 	public void save() {
 		// Remove all extension_* keys from the config file
-		for (String s : JVLT.getConfig().getKeys())
-			if (s.startsWith("extension_"))
+		for (String s : JVLT.getConfig().getKeys()) {
+			if (s.startsWith("extension_")) {
 				JVLT.getConfig().remove(s);
+			}
+		}
 
 		// Insert all custom file types
 		Iterator<String> it2 = _extensions.keySet().iterator();
@@ -464,8 +476,9 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 	}
 
 	public void valueChanged(ListSelectionEvent e) {
-		if (!e.getValueIsAdjusting())
+		if (!e.getValueIsAdjusting()) {
 			update();
+		}
 	}
 
 	public void actionPerformed(ActionEvent ev) {
@@ -570,17 +583,17 @@ class MultimediaFileMetaData extends MetaData {
 		addAttribute(new DefaultAttribute("Command", String.class) {
 			@Override
 			public Object getValue(Object o) {
-				if (o instanceof CustomMultimediaFile)
+				if (o instanceof CustomMultimediaFile) {
 					return getValue(o, "Command");
-				else
-					return "-";
+				}
+				return "-";
 			}
 		});
 	}
 }
 
 class FileTypeDialogData extends CustomDialogData implements ActionListener {
-	private Set<String> _default_extensions;
+	private final Set<String> _default_extensions;
 	private MultimediaFile _file;
 
 	private Action _browse_action;
@@ -607,26 +620,29 @@ class FileTypeDialogData extends CustomDialogData implements ActionListener {
 		String extension = FileUtils.getFileExtension(_file.getFileName());
 		String new_ext = _extension_field.getText();
 		boolean default_type = _default_extensions.contains(extension);
-		if (!default_type && _default_extensions.contains(new_ext))
+		if (!default_type && _default_extensions.contains(new_ext)) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"overwrite_extension", new String[] { new_ext }));
+		}
 
 		int type;
 		if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "audio_file")))
+				GUIUtils.getString("Labels", "audio_file"))) {
 			type = MultimediaFile.AUDIO_FILE;
-		else if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "image_file")))
+		} else if (_type_box.getSelectedItem().toString().equals(
+				GUIUtils.getString("Labels", "image_file"))) {
 			type = MultimediaFile.IMAGE_FILE;
-		else
+		} else {
 			type = MultimediaFile.OTHER_FILE;
+		}
 
 		if (_jvlt_plays_box.isSelected()) {
-			if (type == MultimediaFile.AUDIO_FILE)
+			if (type == MultimediaFile.AUDIO_FILE) {
 				_file = new AudioFile("." + new_ext);
-			else
+			} else {
 				// if (type == MultimediaFile.IMAGE_FILE)
 				_file = new ImageFile("." + new_ext);
+			}
 		} else {
 			CustomMultimediaFile file = new CustomMultimediaFile("." + new_ext,
 					type);
@@ -636,9 +652,9 @@ class FileTypeDialogData extends CustomDialogData implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		if (ev.getActionCommand().equals("jvlt_plays"))
+		if (ev.getActionCommand().equals("jvlt_plays")) {
 			update();
-		else if (ev.getActionCommand().equals("browse")) {
+		} else if (ev.getActionCommand().equals("browse")) {
 			JFileChooser chooser = new JFileChooser();
 			int val = chooser.showOpenDialog(_content_pane);
 			if (val == JFileChooser.APPROVE_OPTION) {
@@ -729,10 +745,10 @@ class ExpirationTimePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private DefaultTableModel _table_model;
-	private SpinnerNumberModel _batches_spinner_model;
-	private SpinnerNumberModel _factor_spinner_model;
-	private LabeledComboBox _unit_box;
+	private final DefaultTableModel _table_model;
+	private final SpinnerNumberModel _batches_spinner_model;
+	private final SpinnerNumberModel _factor_spinner_model;
+	private final LabeledComboBox _unit_box;
 
 	public ExpirationTimePanel() {
 		// Create table
@@ -815,17 +831,18 @@ class ExpirationTimePanel extends JPanel {
 
 	public String getExpirationUnit() {
 		if (_unit_box.getSelectedItem().equals(
-				GUIUtils.getString("Labels", "hours")))
+				GUIUtils.getString("Labels", "hours"))) {
 			return Entry.UNIT_HOURS;
-		else
-			return Entry.UNIT_DAYS;
+		}
+		return Entry.UNIT_DAYS;
 	}
 
 	public void setExpirationUnit(String unit) {
-		if (unit.equals(Entry.UNIT_HOURS))
+		if (unit.equals(Entry.UNIT_HOURS)) {
 			_unit_box.setSelectedItem(GUIUtils.getString("Labels", "hours"));
-		else
+		} else {
 			_unit_box.setSelectedItem(GUIUtils.getString("Labels", "days"));
+		}
 	}
 
 	private void updateTable() {
@@ -835,10 +852,11 @@ class ExpirationTimePanel extends JPanel {
 		for (int i = 0; i < num_batches; i++) {
 			new_data[i][0] = String.valueOf(i + 1);
 			if (_unit_box.getSelectedItem().equals(
-					GUIUtils.getString("Labels", "hours")))
+					GUIUtils.getString("Labels", "hours"))) {
 				new_data[i][1] = getFormattedDuration(Math.pow(factor, i));
-			else
+			} else {
 				new_data[i][1] = getFormattedDuration(Math.pow(factor, i) * 24);
+			}
 		}
 
 		Object[] columns = { GUIUtils.getString("Labels", "batch"),
@@ -854,9 +872,9 @@ class ExpirationTimePanel extends JPanel {
 		String days_str = formatter.format(num_days);
 		formatter.applyPattern(GUIUtils.getString("Labels", "num_hours"));
 		int num_hours = (int) (hours - 24 * num_days);
-		if (num_hours > 0)
+		if (num_hours > 0) {
 			return days_str + " " + formatter.format(num_hours);
-		else
-			return days_str;
+		}
+		return days_str;
 	}
 }

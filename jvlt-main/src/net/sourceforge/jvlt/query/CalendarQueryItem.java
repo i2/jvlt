@@ -17,18 +17,20 @@ public class CalendarQueryItem extends ObjectQueryItem {
 
 	@Override
 	public boolean objectMatches(Object obj) {
-		if (_value == null || obj == null)
+		if (_value == null || obj == null) {
 			return _value == null && obj == null;
+		}
 
 		Calendar cal = (Calendar) obj;
-		if (_type == CalendarQueryItem.ON)
+		if (_type == CalendarQueryItem.ON) {
 			return compare(cal, (Calendar) _value) == 0;
-		else if (_type == CalendarQueryItem.BEFORE)
+		} else if (_type == CalendarQueryItem.BEFORE) {
 			return compare(cal, (Calendar) _value) < 0;
-		else if (_type == CalendarQueryItem.AFTER)
+		} else if (_type == CalendarQueryItem.AFTER) {
 			return compare(cal, (Calendar) _value) > 0;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	/**
@@ -40,13 +42,15 @@ public class CalendarQueryItem extends ObjectQueryItem {
 	private int compare(Calendar first, Calendar second) {
 		int year1 = first.get(Calendar.YEAR);
 		int year2 = second.get(Calendar.YEAR);
-		if (year1 != year2)
+		if (year1 != year2) {
 			return year1 - year2;
+		}
 
 		int month1 = first.get(Calendar.MONTH);
 		int month2 = second.get(Calendar.MONTH);
-		if (month1 != month2)
+		if (month1 != month2) {
 			return month1 - month2;
+		}
 
 		int day1 = first.get(Calendar.DAY_OF_MONTH);
 		int day2 = second.get(Calendar.DAY_OF_MONTH);

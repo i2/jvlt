@@ -6,7 +6,7 @@ import java.util.Iterator;
 import net.sourceforge.jvlt.event.SelectionListener.SelectionEvent;
 
 public class SelectionNotifier {
-	private ArrayList<SelectionListener> _listeners;
+	private final ArrayList<SelectionListener> _listeners;
 
 	public SelectionNotifier() {
 		_listeners = new ArrayList<SelectionListener>();
@@ -22,7 +22,8 @@ public class SelectionNotifier {
 
 	public void fireSelectionEvent(SelectionEvent e) {
 		Iterator<SelectionListener> it = _listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().objectSelected(e);
+		}
 	}
 }

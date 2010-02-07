@@ -210,8 +210,8 @@ public class CSVDictReader extends DictReader {
 			num_cols = class_index;
 		} else {
 			int num_attr_cols = 0;
-			for (int i = 0; i < _attribute_columns.length; i++) {
-				num_attr_cols += _attribute_columns[i];
+			for (int attributeColumn : _attribute_columns) {
+				num_attr_cols += attributeColumn;
 			}
 			num_cols = attr_index + num_attr_cols;
 		}

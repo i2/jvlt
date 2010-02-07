@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.ui.components;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -68,8 +67,9 @@ public class LabeledComboBox extends JComboBox {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		if (_label != null)
+		if (_label != null) {
 			_label.setEnabled(enabled);
+		}
 	}
 
 	public JLabel getLabel() {
@@ -84,7 +84,8 @@ public class LabeledComboBox extends JComboBox {
 	}
 
 	private void fireChangeEvent() {
-		for (Iterator<ChangeListener> it = _listeners.iterator(); it.hasNext();)
-			it.next().stateChanged(new ChangeEvent(this));
+		for (ChangeListener changeListener : _listeners) {
+			changeListener.stateChanged(new ChangeEvent(this));
+		}
 	}
 }

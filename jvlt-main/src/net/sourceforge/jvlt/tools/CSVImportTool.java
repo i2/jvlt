@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.io.CSVDictReader;
@@ -17,9 +14,12 @@ import net.sourceforge.jvlt.io.DictXMLWriter;
 import net.sourceforge.jvlt.ui.JVLTUI;
 import net.sourceforge.jvlt.utils.Utils;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 public class CSVImportTool {
 	private static final Logger logger = Logger.getLogger(CSVImportTool.class);
-	private CSVDictReader _reader;
+	private final CSVDictReader _reader;
 
 	public CSVImportTool(Properties props) {
 		String language = props.getProperty("language");
@@ -36,10 +36,11 @@ public class CSVImportTool {
 				"attribute_columns", ""), ",");
 		int[] columns = new int[attrs.length];
 		for (int i = 0; i < columns.length; i++) {
-			if (i >= attr_columns.length)
+			if (i >= attr_columns.length) {
 				columns[i] = 1;
-			else
+			} else {
 				columns[i] = Integer.parseInt(attr_columns[i]);
+			}
 		}
 
 		_reader = new CSVDictReader();
@@ -68,9 +69,10 @@ public class CSVImportTool {
 	public static void main(String[] args) {
 		PropertyConfigurator.configure(JVLTUI.class
 				.getResource("/log4j.properties"));
-		
-		if (args.length != 3)
+
+		if (args.length != 3) {
 			return;
+		}
 
 		JVLT jvlt = new JVLT();
 		jvlt.init();

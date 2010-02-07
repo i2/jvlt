@@ -53,8 +53,9 @@ public class InfoPanel extends JPanel implements DictUpdateListener,
 	}
 
 	public synchronized void dictUpdated(DictUpdateEvent ev) {
-		if (ev instanceof NewDictDictUpdateEvent)
+		if (ev instanceof NewDictDictUpdateEvent) {
 			_dict = ((NewDictDictUpdateEvent) ev).getDict();
+		}
 	}
 
 	public void hyperlinkUpdate(HyperlinkEvent ev) {

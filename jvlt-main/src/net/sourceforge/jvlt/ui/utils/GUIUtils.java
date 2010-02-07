@@ -33,10 +33,11 @@ public class GUIUtils {
 	public static CustomAction createTextAction(ActionListener listener,
 			String action_command) {
 		CustomAction action;
-		if (listener == null)
+		if (listener == null) {
 			action = new CustomAction(action_command);
-		else
+		} else {
 			action = createAnonymousAction(listener, action_command);
+		}
 
 		String action_string = getString("Actions", action_command);
 		Integer mnemonic = getMnemonicKey(action_string);
@@ -83,9 +84,10 @@ public class GUIUtils {
 	public static JScrollPane createScrollPane(JComponent comp, String name) {
 		JScrollPane pane = new JScrollPane();
 		pane.getViewport().setView(comp);
-		if (name != null)
+		if (name != null) {
 			pane.setBorder(new TitledBorder(new EtchedBorder(
 					EtchedBorder.LOWERED), name));
+		}
 
 		return pane;
 	}
@@ -108,14 +110,13 @@ public class GUIUtils {
 				+ resource_bundle, Locale.getDefault());
 		String str = messages.getString(name);
 
-		if (args == null)
+		if (args == null) {
 			return str;
-		else {
-			MessageFormat formatter = new MessageFormat("");
-			formatter.setLocale(Locale.getDefault());
-			formatter.applyPattern(str);
-			return formatter.format(args);
 		}
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(Locale.getDefault());
+		formatter.applyPattern(str);
+		return formatter.format(args);
 	}
 
 	/**
@@ -128,8 +129,8 @@ public class GUIUtils {
 			char mnemonic = Character.toUpperCase(str.charAt(index + 1));
 
 			return Integer.valueOf(mnemonic);
-		} else
-			return null;
+		}
+		return null;
 	}
 
 	public static JLabel getLabel(String lbl, Component comp) {
@@ -148,12 +149,13 @@ public class GUIUtils {
 
 	public static Component getFrameOrDialogForComponent(Component parent)
 			throws HeadlessException {
-		if (parent == null)
+		if (parent == null) {
 			return null;
-		else if ((parent instanceof Frame) || (parent instanceof Dialog))
+		} else if ((parent instanceof Frame) || (parent instanceof Dialog)) {
 			return parent;
-		else
+		} else {
 			return GUIUtils.getFrameOrDialogForComponent(parent.getParent());
+		}
 	}
 
 	/* Shows a dialog in the middle of a frame. */

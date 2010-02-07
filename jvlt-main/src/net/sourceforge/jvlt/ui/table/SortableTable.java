@@ -37,7 +37,7 @@ public class SortableTable<T extends Object> extends JTable implements
 	private static final long serialVersionUID = 1L;
 
 	private class HeaderRenderer implements TableCellRenderer {
-		private TableCellRenderer _renderer;
+		private final TableCellRenderer _renderer;
 
 		public HeaderRenderer(TableCellRenderer renderer) {
 			_renderer = renderer;
@@ -60,14 +60,14 @@ public class SortableTable<T extends Object> extends JTable implements
 	protected SortableTableModel<T> _model;
 
 	private JPopupMenu _menu;
-	private Map<String, CustomFontCellRenderer> _cell_renderers;
+	private final Map<String, CustomFontCellRenderer> _cell_renderers;
 	private JMenuItem _sort_descending_item;
 	private JMenuItem _no_sorting_item;
 	private JMenuItem _sort_ascending_item;
 	private JMenuItem _select_cols_item;
-	private MouseHandler _mouse_handler;
-	private ImageIcon _up_arrow;
-	private ImageIcon _down_arrow;
+	private final MouseHandler _mouse_handler;
+	private final ImageIcon _up_arrow;
+	private final ImageIcon _down_arrow;
 	private boolean _arrow_direction_reversed;
 
 	public SortableTable(SortableTableModel<T> model) {
@@ -98,8 +98,9 @@ public class SortableTable<T extends Object> extends JTable implements
 	public List<T> getSelectedObjects() {
 		int[] indices = getSelectedRows();
 		ArrayList<T> array = new ArrayList<T>();
-		for (int i = 0; i < indices.length; i++)
-			array.add(_model.getObjectAt(indices[i]));
+		for (int indice : indices) {
+			array.add(_model.getObjectAt(indice));
+		}
 
 		return array;
 	}
@@ -122,18 +123,19 @@ public class SortableTable<T extends Object> extends JTable implements
 		if (r.getCustomFont() != null) {
 			int old_height = getRowHeight();
 			int new_height = getFontMetrics(r.getCustomFont()).getHeight();
-			if (new_height > old_height)
+			if (new_height > old_height) {
 				setRowHeight(new_height);
+			}
 		}
 	}
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
 		String column_name = _model.getColumnName(column);
-		if (_cell_renderers.containsKey(column_name))
+		if (_cell_renderers.containsKey(column_name)) {
 			return _cell_renderers.get(column_name);
-		else
-			return super.getCellRenderer(row, column);
+		}
+		return super.getCellRenderer(row, column);
 	}
 
 	@Override
@@ -144,20 +146,20 @@ public class SortableTable<T extends Object> extends JTable implements
 
 		if (o == null) {
 			return super.getToolTipText(event);
-		} else {
-			TableCellRenderer renderer = getCellRenderer(row, col);
-			if (renderer instanceof CustomFontCellRenderer) {
-				CustomFontCellRenderer r = (CustomFontCellRenderer) renderer;
-				Font f = r.getCustomFont();
-				if (f != null)
-					return "<html><span style=\"font-family: " + f.getFamily()
-							+ "; font-size: " + f.getSize() + "\">"
-							+ Utils.wrapString(o.toString(), "<br>")
-							+ "</span></html>";
-			}
-
-			return "<html>" +Utils.wrapString(o.toString(), "<br>") + "</html>";
 		}
+		TableCellRenderer renderer = getCellRenderer(row, col);
+		if (renderer instanceof CustomFontCellRenderer) {
+			CustomFontCellRenderer r = (CustomFontCellRenderer) renderer;
+			Font f = r.getCustomFont();
+			if (f != null) {
+				return "<html><span style=\"font-family: " + f.getFamily()
+						+ "; font-size: " + f.getSize() + "\">"
+						+ Utils.wrapString(o.toString(), "<br>")
+						+ "</span></html>";
+			}
+		}
+
+		return "<html>" +Utils.wrapString(o.toString(), "<br>") + "</html>";
 	}
 
 	public boolean isArrowDirectionReversed() {
@@ -222,17 +224,19 @@ public class SortableTable<T extends Object> extends JTable implements
 
 	private ImageIcon getHeaderRendererIcon(int col) {
 		SortableTableModel.Directive dir = _model.getSortingDirective();
-		if (col != dir.getColumn())
+		if (col != dir.getColumn()) {
 			return null;
+		}
 
-		if (dir.getDirection() == SortableTableModel.DESCENDING)
+		if (dir.getDirection() == SortableTableModel.DESCENDING) {
 			return _arrow_direction_reversed ? _down_arrow : _up_arrow;
-		else if (dir.getDirection() == SortableTableModel.ASCENDING)
+		} else if (dir.getDirection() == SortableTableModel.ASCENDING) {
 			return _arrow_direction_reversed ? _up_arrow : _down_arrow;
-		else
+		} else {
 			return null;
+		}
 	}
-	
+
 	private class MouseHandler extends MouseAdapter {
 		private int _last_clicked_col;
 
@@ -242,26 +246,29 @@ public class SortableTable<T extends Object> extends JTable implements
 
 		@Override
 		public void mouseClicked(MouseEvent ev) {
-			if (ev.getButton() != MouseEvent.BUTTON1)
+			if (ev.getButton() != MouseEvent.BUTTON1) {
 				return;
+			}
 
 			int col = getColumn(ev);
-			if (col < 0)
+			if (col < 0) {
 				return;
+			}
 
 			SortableTableModel.Directive directive = _model
 					.getSortingDirective();
 			SortableTableModel.Directive new_directive;
-			if (directive.getColumn() != col)
+			if (directive.getColumn() != col) {
 				new_directive = new SortableTableModel.Directive(col,
 						SortableTableModel.ASCENDING);
-			else {
-				if (directive.getDirection() == SortableTableModel.ASCENDING)
+			} else {
+				if (directive.getDirection() == SortableTableModel.ASCENDING) {
 					new_directive = new SortableTableModel.Directive(col,
 							SortableTableModel.DESCENDING);
-				else
+				} else {
 					new_directive = new SortableTableModel.Directive(col,
 							SortableTableModel.ASCENDING);
+				}
 			}
 			_model.setSortingDirective(new_directive);
 		}
@@ -284,14 +291,15 @@ public class SortableTable<T extends Object> extends JTable implements
 			if (ev.isPopupTrigger()) {
 				_last_clicked_col = getColumn(ev);
 				SortableTableModel.Directive d = _model.getSortingDirective();
-				if (d.getColumn() != _last_clicked_col)
+				if (d.getColumn() != _last_clicked_col) {
 					_no_sorting_item.setSelected(true);
-				else if (d.getDirection() == SortableTableModel.ASCENDING)
+				} else if (d.getDirection() == SortableTableModel.ASCENDING) {
 					_sort_ascending_item.setSelected(true);
-				else if (d.getDirection() == SortableTableModel.DESCENDING)
+				} else if (d.getDirection() == SortableTableModel.DESCENDING) {
 					_sort_descending_item.setSelected(true);
-				else
+				} else {
 					_no_sorting_item.setSelected(true);
+				}
 
 				_menu.show(ev.getComponent(), ev.getX(), ev.getY());
 			}
@@ -299,8 +307,9 @@ public class SortableTable<T extends Object> extends JTable implements
 
 		private int getColumn(MouseEvent ev) {
 			Object src = ev.getSource();
-			if (!(src instanceof JTableHeader))
+			if (!(src instanceof JTableHeader)) {
 				return -1;
+			}
 
 			JTableHeader header = (JTableHeader) src;
 			TableColumnModel column_model = header.getColumnModel();
@@ -311,7 +320,7 @@ public class SortableTable<T extends Object> extends JTable implements
 }
 
 class ColumnSelectionDialogData extends CustomDialogData {
-	private AttributeSelectionPanel _selection_panel;
+	private final AttributeSelectionPanel _selection_panel;
 
 	public ColumnSelectionDialogData() {
 		_selection_panel = new AttributeSelectionPanel();

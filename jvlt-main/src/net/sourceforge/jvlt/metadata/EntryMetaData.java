@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.metadata;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -24,7 +23,7 @@ import org.w3c.dom.Element;
 
 public class EntryMetaData extends MetaData {
 	public static class SensesAttribute extends ArrayAttribute {
-		private MetaData _sense_data = new MetaData(Sense.class);
+		private final MetaData _sense_data = new MetaData(Sense.class);
 
 		public SensesAttribute() {
 			super("Senses", Sense[].class);
@@ -37,9 +36,10 @@ public class EntryMetaData extends MetaData {
 			DictObjectFormatter formatter = new DictObjectFormatter(doc);
 			Element elem = doc.createElement("Senses");
 			Sense[] senses = (Sense[]) getValue(o);
-			for (int i = 0; i < senses.length; i++)
-				elem.appendChild(formatter.getElementForObject(senses[i],
+			for (Sense sense : senses) {
+				elem.appendChild(formatter.getElementForObject(sense,
 						_sense_data.getAttributes()));
+			}
 
 			return elem;
 		}
@@ -53,12 +53,11 @@ public class EntryMetaData extends MetaData {
 		@Override
 		public String getFormattedValue(Object o) {
 			EntryClass cl = (EntryClass) getValue(o);
-			if (cl == null)
+			if (cl == null) {
 				return "";
-			else {
-				AttributeResources resources = new AttributeResources();
-				return resources.getString(cl.getName());
 			}
+			AttributeResources resources = new AttributeResources();
+			return resources.getString(cl.getName());
 		}
 	}
 
@@ -71,14 +70,17 @@ public class EntryMetaData extends MetaData {
 		public String getFormattedValue(Object o) {
 			Integer value = (Integer) getValue(o);
 			List<Entry.Stats.UserFlag> flags = new ArrayList<Entry.Stats.UserFlag>();
-			for (Entry.Stats.UserFlag f : Entry.Stats.UserFlag.values())
-				if ((value & f.getValue()) != 0)
+			for (Entry.Stats.UserFlag f : Entry.Stats.UserFlag.values()) {
+				if ((value & f.getValue()) != 0) {
 					flags.add(f);
+				}
+			}
 
 			String[] string_list = new String[flags.size()];
-			for (int i = 0; i < string_list.length; i++)
+			for (int i = 0; i < string_list.length; i++) {
 				string_list[i] = GUIUtils.getString("Labels", flags.get(i)
 						.getShortName());
+			}
 
 			return Utils.arrayToString(string_list, ", ");
 		}
@@ -108,7 +110,7 @@ public class EntryMetaData extends MetaData {
 	}
 
 	private EntryAttributeSchema _schema = null;
-	private Vector<CustomAttribute> _custom_attributes;
+	private final Vector<CustomAttribute> _custom_attributes;
 
 	public EntryMetaData() {
 		super(Entry.class);
@@ -134,31 +136,33 @@ public class EntryMetaData extends MetaData {
 
 	public void setAttributeSchema(EntryAttributeSchema schema) {
 		_schema = schema;
-		for (Iterator<CustomAttribute> it = _custom_attributes.iterator(); it
-				.hasNext();)
-			removeAttribute(it.next().getName());
+		for (CustomAttribute customAttribute : _custom_attributes) {
+removeAttribute(customAttribute.getName());
+}
 		_custom_attributes.clear();
 
-		if (schema == null)
+		if (schema == null) {
 			return;
+		}
 
 		EntryClass[] ecs = schema.getEntryClasses();
-		for (int i = 0; i < ecs.length; i++) {
-			SchemaAttribute[] attrs = ecs[i].getAttributes();
-			for (int j = 0; j < attrs.length; j++) {
+		for (EntryClass ec : ecs) {
+			SchemaAttribute[] attrs = ec.getAttributes();
+			for (SchemaAttribute attr : attrs) {
 				CustomAttribute ca;
-				if (attrs[j] instanceof ChoiceSchemaAttribute) {
-					ChoiceSchemaAttribute csa = (ChoiceSchemaAttribute) attrs[j];
+				if (attr instanceof ChoiceSchemaAttribute) {
+					ChoiceSchemaAttribute csa = (ChoiceSchemaAttribute) attr;
 					CustomChoiceAttribute cca;
-					if (attrs[j] instanceof ArraySchemaAttribute)
+					if (attr instanceof ArraySchemaAttribute) {
 						cca = new CustomArrayAttribute(csa.getName());
-					else
+					} else {
 						cca = new CustomChoiceAttribute(csa.getName());
+					}
 
 					cca.setValues(csa.getChoices());
 					ca = cca;
 				} else {
-					ca = new CustomAttribute(attrs[j].getName());
+					ca = new CustomAttribute(attr.getName());
 				}
 				_custom_attributes.add(ca);
 				addAttribute(ca);

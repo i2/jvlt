@@ -48,30 +48,33 @@ public class ObjectSelectionPanel extends JPanel {
 						.getItem(_choice_list.getSelectedValue());
 				_selected_objects.add(obj);
 				updateLists();
-				if (index < _choice_list_model.size())
+				if (index < _choice_list_model.size()) {
 					_choice_list.setSelectedIndex(index);
-				else if (index == _choice_list_model.size()
-						&& _choice_list_model.size() > 0)
+				} else if (index == _choice_list_model.size()
+						&& _choice_list_model.size() > 0) {
 					_choice_list.setSelectedIndex(index - 1);
+				}
 			} else if (ev.getActionCommand().equals("right")) {
 				int index = _selection_list.getSelectedIndex();
 				Object obj = _container.getItem(_selection_list
 						.getSelectedValue());
 				_selected_objects.remove(obj);
 				updateLists();
-				if (index < _selection_list_model.size())
+				if (index < _selection_list_model.size()) {
 					_selection_list.setSelectedIndex(index);
-				else if (index == _selection_list_model.size()
-						&& _selection_list_model.size() > 0)
+				} else if (index == _selection_list_model.size()
+						&& _selection_list_model.size() > 0) {
 					_selection_list.setSelectedIndex(index - 1);
+				}
 			}
 		}
 	}
 
 	protected class ListSelectionHandler implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent ev) {
-			if (!ev.getValueIsAdjusting())
+			if (!ev.getValueIsAdjusting()) {
 				update();
+			}
 		}
 	}
 
@@ -192,13 +195,14 @@ public class ObjectSelectionPanel extends JPanel {
 	}
 
 	protected void updateButtonPanel() {
-		if (_allow_reordering)
+		if (_allow_reordering) {
 			_button_panel.setButtons(new JButton[] { new JButton(_up_action),
 					new JButton(_down_action), new JButton(_left_action),
 					new JButton(_right_action) });
-		else
+		} else {
 			_button_panel.setButtons(new JButton[] { new JButton(_left_action),
 					new JButton(_right_action) });
+		}
 	}
 
 	protected void updateLists() {
@@ -214,9 +218,10 @@ public class ObjectSelectionPanel extends JPanel {
 			it = _selected_objects.iterator();
 		}
 		_selection_list_model.clear();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			_selection_list_model.addElement(_container.getTranslation(it
 					.next()));
+		}
 
 		// Update list of available items
 		if (_comparator != null) {
@@ -229,8 +234,9 @@ public class ObjectSelectionPanel extends JPanel {
 		_choice_list_model.clear();
 		while (it.hasNext()) {
 			Object o = it.next();
-			if (!_selected_objects.contains(o))
+			if (!_selected_objects.contains(o)) {
 				_choice_list_model.addElement(_container.getTranslation(o));
+			}
 		}
 	}
 

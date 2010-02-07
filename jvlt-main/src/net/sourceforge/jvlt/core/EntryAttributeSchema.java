@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 public class EntryAttributeSchema {
 	private String _language = null;
-	private HashMap<String, EntryClass> _class_map;
-	private ArrayList<EntryClass> _classes;
+	private final HashMap<String, EntryClass> _class_map;
+	private final ArrayList<EntryClass> _classes;
 
 	public EntryAttributeSchema(String lang) {
 		_language = lang;
@@ -45,8 +45,9 @@ public class EntryAttributeSchema {
 		buf.append(';');
 		Iterator<EntryClass> it = _classes.iterator();
 		for (int index = 0; it.hasNext(); index++) {
-			if (index > 0)
+			if (index > 0) {
 				buf.append(';');
+			}
 			buf.append(it.next().toString());
 		}
 		buf.append('}');

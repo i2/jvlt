@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,14 +19,14 @@ import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.query.EntryFilter;
 
 public class QuizDict {
-	private JVLTModel _model;
+	private final JVLTModel _model;
 	private QuizInfo _info = null;
 	private EntryFilter[] _filters = null;
 	private boolean _ignore_batches;
-	private ArrayList<Entry> _available_entries; // Entries available for quiz
-	private ArrayList<Entry> _current_entries; // Entries during the quiz
+	private final ArrayList<Entry> _available_entries; // Entries available for quiz
+	private final ArrayList<Entry> _current_entries; // Entries during the quiz
 	private int _current_index;
-	private Map<Entry, QueryResult> _results;
+	private final Map<Entry, QueryResult> _results;
 
 	public QuizDict(JVLTModel model) {
 		_current_index = 0;
@@ -72,10 +71,10 @@ public class QuizDict {
 	}
 
 	public Entry getCurrentEntry() {
-		if (_current_index < 0 || _current_index >= _current_entries.size())
+		if (_current_index < 0 || _current_index >= _current_entries.size()) {
 			return null;
-		else
-			return _current_entries.get(_current_index);
+		}
+		return _current_entries.get(_current_index);
 	}
 
 	public boolean hasNextEntry() {
@@ -103,18 +102,22 @@ public class QuizDict {
 
 	public Entry[] getKnownEntries() {
 		ArrayList<Entry> list = new ArrayList<Entry>();
-		for (Map.Entry<Entry, QueryResult> entry : _results.entrySet())
-			if (entry.getValue().isKnown())
+		for (Map.Entry<Entry, QueryResult> entry : _results.entrySet()) {
+			if (entry.getValue().isKnown()) {
 				list.add(entry.getKey());
+			}
+		}
 
 		return list.toArray(new Entry[0]);
 	}
 
 	public Entry[] getNotKnownEntries() {
 		ArrayList<Entry> list = new ArrayList<Entry>();
-		for (Map.Entry<Entry, QueryResult> entry : _results.entrySet())
-			if (!entry.getValue().isKnown())
+		for (Map.Entry<Entry, QueryResult> entry : _results.entrySet()) {
+			if (!entry.getValue().isKnown()) {
 				list.add(entry.getKey());
+			}
+		}
 
 		return list.toArray(new Entry[0]);
 	}
@@ -181,8 +184,9 @@ public class QuizDict {
 				int index = _current_entries.indexOf(e);
 
 				// Update current index
-				if (index >= 0 && index < _current_index)
+				if (index >= 0 && index < _current_index) {
 					_current_index--;
+				}
 
 				if (index >= 0) {
 					_current_entries.remove(index);
@@ -196,8 +200,9 @@ public class QuizDict {
 			EntryFilter[] filters) {
 		ArrayList<Entry> return_list = null;
 
-		if (_info == null)
+		if (_info == null) {
 			return Collections.emptyList();
+		}
 
 		// -----
 		// Only add the entries where the quizzed attribute is set and that
@@ -214,27 +219,30 @@ public class QuizDict {
 
 		GregorianCalendar now = new GregorianCalendar();
 		ArrayList<Entry> entry_array = new ArrayList<Entry>();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
+		for (Entry entry : entries) {
 			Calendar expiry_date = entry.getExpireDate();
 
 			/* Check whether at least one quizzed attribute is set */
 			boolean attribute_set = false;
-			for (int i = 0; i < attr.length; i++)
-				attribute_set |= (attr[i].getValue(entry) != null);
-			if (!attribute_set)
+			for (Attribute element : attr) {
+				attribute_set |= (element.getValue(entry) != null);
+			}
+			if (!attribute_set) {
 				continue;
+			}
 
 			/* Check for flags */
 			int flags = entry.getUserFlags();
 			if ((flags & Entry.Stats.UserFlag.INACTIVE.getValue()) != 0
-					|| (flags & Entry.Stats.UserFlag.KNOWN.getValue()) != 0)
+					|| (flags & Entry.Stats.UserFlag.KNOWN.getValue()) != 0) {
 				continue;
+			}
 
 			/* Check for batch and expiry date */
 			if (!_ignore_batches && entry.getBatch() != 0
-					&& expiry_date != null && !expiry_date.before(now))
+					&& expiry_date != null && !expiry_date.before(now)) {
 				continue;
+			}
 
 			entry_array.add(entry);
 		}
@@ -247,12 +255,11 @@ public class QuizDict {
 		if (filters.length > 0) {
 			TreeSet<Entry> entry_set = new TreeSet<Entry>();
 			ArrayList<Entry> entry_list = new ArrayList<Entry>();
-			for (int i = 0; i < filters.length; i++) {
+			for (EntryFilter filter : filters) {
 				entry_list.clear();
-				for (Iterator<Entry> it = entry_array.iterator(); it.hasNext();) {
-					Entry entry = it.next();
+				for (Entry entry : entry_array) {
 					if (!entry_set.contains(entry)
-							&& filters[i].entryMatches(entry)) {
+							&& filter.entryMatches(entry)) {
 						entry_set.add(entry);
 						entry_list.add(entry);
 					}

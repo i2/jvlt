@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.ui.wizard;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import net.sourceforge.jvlt.event.StateListener;
 import net.sourceforge.jvlt.event.StateListener.StateEvent;
@@ -32,7 +31,8 @@ public abstract class DialogWizardModel extends WizardModel {
 	}
 
 	protected void fireStateEvent(StateEvent ev) {
-		for (Iterator<StateListener> it = _listeners.iterator(); it.hasNext();)
-			it.next().stateChanged(ev);
+		for (StateListener stateListener : _listeners) {
+			stateListener.stateChanged(ev);
+		}
 	}
 }

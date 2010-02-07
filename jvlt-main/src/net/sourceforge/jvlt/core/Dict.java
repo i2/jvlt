@@ -17,10 +17,10 @@ public class Dict extends Object {
 	private static Entry.Comparator _entry_comparator = new Entry.Comparator();
 	private static Example.Comparator _example_comparator = new Example.Comparator();
 
-	private TreeSet<Entry> _entry_set;
-	private TreeSet<Example> _example_set;
-	private HashMap<String, Entry> _id_entry_map;
-	private HashMap<String, Example> _id_example_map;
+	private final TreeSet<Entry> _entry_set;
+	private final TreeSet<Example> _example_set;
+	private final HashMap<String, Entry> _id_entry_map;
+	private final HashMap<String, Example> _id_example_map;
 	private String _language;
 	private EntryAttributeSchema _schema;
 
@@ -37,11 +37,13 @@ public class Dict extends Object {
 	 *             argument entry already exists in the dictionary.
 	 */
 	public void addEntry(Entry entry) throws DictException {
-		if (_entry_set.contains(entry))
+		if (_entry_set.contains(entry)) {
 			throw new DictException("Entry \"" + entry + "\" already exists.");
+		}
 
-		if (_id_entry_map.containsKey(entry.getID()))
+		if (_id_entry_map.containsKey(entry.getID())) {
 			entry.setID(getNextUnusedEntryID());
+		}
 
 		_entry_set.add(entry);
 		_id_entry_map.put(entry.getID(), entry);
@@ -63,23 +65,22 @@ public class Dict extends Object {
 	}
 
 	public Entry getEntry(String id) {
-		if (_id_entry_map.containsKey(id))
+		if (_id_entry_map.containsKey(id)) {
 			return _id_entry_map.get(id);
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public Entry getEntry(Entry entry) {
 		SortedSet<Entry> tail = _entry_set.tailSet(entry);
-		if (tail.size() == 0)
+		if (tail.size() == 0) {
 			return null;
-		else {
-			Entry first = tail.iterator().next();
-			if (_entry_comparator.compare(first, entry) != 0)
-				return null;
-			else
-				return first;
 		}
+		Entry first = tail.iterator().next();
+		if (_entry_comparator.compare(first, entry) != 0) {
+			return null;
+		}
+		return first;
 	}
 
 	public Collection<Entry> getEntries() {
@@ -90,8 +91,9 @@ public class Dict extends Object {
 		Set<String> keys = _id_entry_map.keySet();
 		for (int i = 1;; i++) {
 			String id = "e" + i;
-			if (!keys.contains(id))
+			if (!keys.contains(id)) {
 				return id;
+			}
 		}
 	}
 
@@ -99,18 +101,21 @@ public class Dict extends Object {
 		Set<String> keys = _id_example_map.keySet();
 		for (int i = 1;; i++) {
 			String id = "x" + i;
-			if (!keys.contains(id))
+			if (!keys.contains(id)) {
 				return id;
+			}
 		}
 	}
 
 	public void addExample(Example example) throws DictException {
-		if (_example_set.contains(example))
+		if (_example_set.contains(example)) {
 			throw new DictException("Example \"" + example
 					+ "\" already exists.");
+		}
 
-		if (_id_example_map.containsKey(example.getID()))
+		if (_id_example_map.containsKey(example.getID())) {
 			example.setID(getNextUnusedExampleID());
+		}
 
 		_example_set.add(example);
 		_id_example_map.put(example.getID(), example);
@@ -126,23 +131,22 @@ public class Dict extends Object {
 	}
 
 	public Example getExample(String id) {
-		if (_id_example_map.containsKey(id))
+		if (_id_example_map.containsKey(id)) {
 			return _id_example_map.get(id);
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public Example getExample(Example example) {
 		SortedSet<Example> tail = _example_set.tailSet(example);
-		if (tail.size() == 0)
+		if (tail.size() == 0) {
 			return null;
-		else {
-			Example first = tail.iterator().next();
-			if (_example_comparator.compare(first, example) != 0)
-				return null;
-			else
-				return first;
 		}
+		Example first = tail.iterator().next();
+		if (_example_comparator.compare(first, example) != 0) {
+			return null;
+		}
+		return first;
 	}
 
 	public Collection<Example> getExamples(Sense sense) {
@@ -151,8 +155,9 @@ public class Dict extends Object {
 		while (it.hasNext()) {
 			Example example = it.next();
 			List<Sense> senses = Arrays.asList(example.getSenses());
-			if (senses.contains(sense))
+			if (senses.contains(sense)) {
 				example_set.add(example);
+			}
 		}
 
 		return example_set;
@@ -160,12 +165,12 @@ public class Dict extends Object {
 
 	public Collection<Example> getExamples(Entry entry) {
 		TreeSet<Example> example_set = new TreeSet<Example>();
-		if (entry == null)
+		if (entry == null) {
 			return example_set;
+		}
 
 		Sense[] senses = entry.getSenses();
-		for (int i = 0; i < senses.length; i++) {
-			Sense sense = senses[i];
+		for (Sense sense : senses) {
 			example_set.addAll(getExamples(sense));
 		}
 
@@ -181,14 +186,16 @@ public class Dict extends Object {
 	}
 
 	public void setLanguage(String lang) throws DictException {
-		if (lang == null || lang.equals(""))
+		if (lang == null || lang.equals("")) {
 			_language = null;
-		else
+		} else {
 			_language = lang;
+		}
 
 		_schema = null;
-		if (lang == null)
+		if (lang == null) {
 			return;
+		}
 
 		try {
 			EntryAttributeSchemaReader reader = new EntryAttributeSchemaReader();

@@ -3,13 +3,12 @@ package net.sourceforge.jvlt.actions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Entry;
 
 public class EditEntriesAction extends DictAction {
-	private ArrayList<EditEntryAction> _actions;
+	private final ArrayList<EditEntryAction> _actions;
 
 	public EditEntriesAction(EditEntryAction[] actions) {
 		_actions = new ArrayList<EditEntryAction>();
@@ -17,19 +16,21 @@ public class EditEntriesAction extends DictAction {
 	}
 
 	public void executeAction() throws DictException {
-		for (Iterator<EditEntryAction> it = _actions.iterator(); it.hasNext();)
-			it.next().executeAction();
+		for (EditEntryAction editEntryAction : _actions) {
+			editEntryAction.executeAction();
+		}
 	}
 
 	public void undoAction() throws DictException {
-		for (Iterator<EditEntryAction> it = _actions.iterator(); it.hasNext();)
-			it.next().undoAction();
+		for (EditEntryAction editEntryAction : _actions) {
+			editEntryAction.undoAction();
+		}
 	}
 
 	public Collection<Entry> getEntries() {
 		ArrayList<Entry> entries = new ArrayList<Entry>();
-		for (Iterator<EditEntryAction> it = _actions.iterator(); it.hasNext();) {
-			entries.add((Entry) it.next().getNewData());
+		for (EditEntryAction editEntryAction : _actions) {
+			entries.add((Entry) editEntryAction.getNewData());
 		}
 
 		return entries;

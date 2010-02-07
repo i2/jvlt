@@ -48,9 +48,10 @@ public class CustomFieldPanel extends JPanel {
 				int column) {
 			JLabel label = (JLabel) super.getTableCellRendererComponent(table,
 					value, isSelected, hasFocus, row, column);
-			if (value == null)
+			if (value == null) {
 				label.setText(GUIUtils.getString("Labels",
 						"double_click_to_edit"));
+			}
 
 			return label;
 		}
@@ -59,8 +60,8 @@ public class CustomFieldPanel extends JPanel {
 	private static class CustomFieldTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 
-		private List<String> keys = new ArrayList<String>();
-		private List<String> values = new ArrayList<String>();
+		private final List<String> keys = new ArrayList<String>();
+		private final List<String> values = new ArrayList<String>();
 
 		public int getColumnCount() {
 			return 2;
@@ -71,15 +72,17 @@ public class CustomFieldPanel extends JPanel {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			if (rowIndex < 0 || rowIndex >= keys.size())
+			if (rowIndex < 0 || rowIndex >= keys.size()) {
 				return null;
+			}
 
-			if (columnIndex == 0)
+			if (columnIndex == 0) {
 				return keys.get(rowIndex);
-			else if (columnIndex == 1)
+			} else if (columnIndex == 1) {
 				return values.get(rowIndex);
-			else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
@@ -117,15 +120,16 @@ public class CustomFieldPanel extends JPanel {
 
 		@Override
 		public String getColumnName(int columnIndex) {
-			if (columnIndex == 0)
+			if (columnIndex == 0) {
 				return GUIUtils.getString("Labels", "field_name");
-			else
-				return GUIUtils.getString("Labels", "field_value");
+			}
+			return GUIUtils.getString("Labels", "field_value");
 		}
 
 		public void removeRow(int row) {
-			if (row < 0 || row >= keys.size())
+			if (row < 0 || row >= keys.size()) {
 				return;
+			}
 
 			keys.remove(row);
 			values.remove(row);
@@ -133,8 +137,9 @@ public class CustomFieldPanel extends JPanel {
 		}
 
 		public void insertRow(int row, String key, String value) {
-			if (row < 0 || row > keys.size())
+			if (row < 0 || row > keys.size()) {
 				return;
+			}
 
 			keys.add(row, key);
 			values.add(row, value);
@@ -159,27 +164,28 @@ public class CustomFieldPanel extends JPanel {
 		}
 	}
 
-	private CustomFieldTableModel tableModel;
+	private final CustomFieldTableModel tableModel;
 	private int popupRow = -1; // Row on which popup menu was opened
 
-	private JTable table;
-	private JComboBox keyBox;
-	private JTextField valueField;
-	private CustomFieldCellEditor keyCellEditor;
-	private CustomFieldCellEditor valueCellEditor;
-	private JPopupMenu menu;
-	private Action upAction;
-	private Action downAction;
+	private final JTable table;
+	private final JComboBox keyBox;
+	private final JTextField valueField;
+	private final CustomFieldCellEditor keyCellEditor;
+	private final CustomFieldCellEditor valueCellEditor;
+	private final JPopupMenu menu;
+	private final Action upAction;
+	private final Action downAction;
 
 	public CustomFieldPanel() {
 		CustomConstraints cc = new CustomConstraints();
 
 		ActionListener upDownListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals("up"))
+				if (e.getActionCommand().equals("up")) {
 					moveElement(table.getSelectedRow(), true);
-				else if (e.getActionCommand().equals("down"))
+				} else if (e.getActionCommand().equals("down")) {
 					moveElement(table.getSelectedRow(), false);
+				}
 			}
 		};
 		upAction = GUIUtils.createIconAction(upDownListener, "up");
@@ -225,8 +231,9 @@ public class CustomFieldPanel extends JPanel {
 
 		ListSelectionListener selectionListener = new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting())
+				if (!e.getValueIsAdjusting()) {
 					updateActions();
+				}
 			}
 		};
 		table.getSelectionModel().addListSelectionListener(selectionListener);
@@ -254,8 +261,9 @@ public class CustomFieldPanel extends JPanel {
 
 	public void setChoices(Object[] choices) {
 		Arrays.sort(choices);
-		for (Object o : choices)
+		for (Object o : choices) {
 			keyBox.addItem(o.toString());
+		}
 	}
 
 	public StringPair[] getKeyValuePairs() {
@@ -263,17 +271,19 @@ public class CustomFieldPanel extends JPanel {
 		for (int i = 0; i < tableModel.keys.size(); i++) {
 			if (tableModel.keys.get(i) != null
 					&& !tableModel.keys.get(i).equals("")
-					&& tableModel.values.get(i) != null)
+					&& tableModel.values.get(i) != null) {
 				valueList.add(new StringPair(tableModel.keys.get(i),
 						tableModel.values.get(i)));
+			}
 		}
 
 		return valueList.toArray(new StringPair[0]);
 	}
 
 	public void setKeyValuePairs(StringPair[] pairs) {
-		if (pairs == null)
+		if (pairs == null) {
 			return;
+		}
 
 		for (StringPair p : pairs) {
 			tableModel.keys.add(p.getFirst());
@@ -290,8 +300,9 @@ public class CustomFieldPanel extends JPanel {
 	private void maybeShowPopup(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			popupRow = table.rowAtPoint(e.getPoint());
-			if (tableModel.getValueAt(popupRow, 0) != null)
+			if (tableModel.getValueAt(popupRow, 0) != null) {
 				menu.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
 

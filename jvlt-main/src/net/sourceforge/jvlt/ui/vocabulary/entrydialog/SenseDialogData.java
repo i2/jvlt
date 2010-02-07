@@ -13,8 +13,8 @@ import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class SenseDialogData extends CustomDialogData {
-	private Entry _entry;
-	private Sense _sense;
+	private final Entry _entry;
+	private final Sense _sense;
 
 	private CustomTextField _translation_field;
 	private CustomTextField _definition_field;
@@ -29,15 +29,17 @@ public class SenseDialogData extends CustomDialogData {
 	@Override
 	public void updateData() throws InvalidDataException {
 		if (_translation_field.getText().equals("")
-				&& _definition_field.getText().equals(""))
+				&& _definition_field.getText().equals("")) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"no_translation_definition"));
+		}
 
 		Sense sense = new Sense(_translation_field.getText(), _definition_field
 				.getText());
-		if (_entry.getSense(sense) != null)
+		if (_entry.getSense(sense) != null) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"duplicate_sense"));
+		}
 
 		_sense.setTranslation(_translation_field.getText());
 		_sense.setDefinition(_definition_field.getText());

@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -79,22 +78,22 @@ public abstract class ObjectListEditor {
 		_multi_input_field.setInput(items);
 		_single_input_field.setInput(items.length == 0 ? null : items[0]);
 
-		if (items.length < 2 && _input_field != _single_input_field)
+		if (items.length < 2 && _input_field != _single_input_field) {
 			replaceComponents(_multi_input_field, _single_input_field);
-		else if (items.length >= 2 && _input_field != _multi_input_field)
+		} else if (items.length >= 2 && _input_field != _multi_input_field) {
 			replaceComponents(_single_input_field, _multi_input_field);
+		}
 	}
 
 	public Object[] getSelectedItems() {
 		if (_input_field == _single_input_field) {
 			Object o = _input_field.getInput();
-			if (o == null)
+			if (o == null) {
 				return new Object[0];
-			else
-				return new Object[] { o };
-		} else {
-			return (Object[]) _input_field.getInput();
+			}
+			return new Object[] { o };
 		}
+		return (Object[]) _input_field.getInput();
 	}
 
 	public void addComponentReplacementListener(ComponentReplacementListener l) {
@@ -112,10 +111,12 @@ public abstract class ObjectListEditor {
 	}
 
 	public void setLabel(String label) {
-		if (_single_item_label != null)
+		if (_single_item_label != null) {
 			_single_item_panel.remove(_single_item_label);
-		if (_multi_item_label != null)
+		}
+		if (_multi_item_label != null) {
 			_multi_item_panel.remove(_multi_item_label);
+		}
 
 		_single_item_label = GUIUtils.getLabel(label, _single_input_field
 				.getComponent());
@@ -136,16 +137,14 @@ public abstract class ObjectListEditor {
 	protected void replaceComponents(InputComponent old_component,
 			InputComponent new_component) {
 		_input_field = new_component;
-		for (Iterator<ComponentReplacementListener> it = _listeners.iterator(); it
-				.hasNext();) {
-			ComponentReplacementListener l = it.next();
-			JPanel old_panel = old_component == _single_input_field ? _single_item_panel
-					: _multi_item_panel;
-			JPanel new_panel = new_component == _single_input_field ? _single_item_panel
-					: _multi_item_panel;
-			l.componentReplaced(new ComponentReplacementEvent(old_panel,
-					new_panel));
-		}
+		for (ComponentReplacementListener l : _listeners) {
+JPanel old_panel = old_component == _single_input_field ? _single_item_panel
+			: _multi_item_panel;
+JPanel new_panel = new_component == _single_input_field ? _single_item_panel
+			: _multi_item_panel;
+l.componentReplaced(new ComponentReplacementEvent(old_panel,
+			new_panel));
+}
 	}
 
 	protected abstract InputComponent createSingleInputComponent();

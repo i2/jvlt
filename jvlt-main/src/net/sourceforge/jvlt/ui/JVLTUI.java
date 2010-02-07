@@ -182,8 +182,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		_recent_files = new LinkedList<String>();
 		String[] file_names = JVLT.getConfig().getStringListProperty(
 				"recent_files", new String[0]);
-		for (int i = 0; i < file_names.length; i++) {
-			_recent_files.add(file_names[i]);
+		for (String fileName : file_names) {
+			_recent_files.add(fileName);
 		}
 
 		// Create empty dictionary. Will be replaced in method dictUpdated().
@@ -764,7 +764,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 * Tests whether the application can safely be terminated. If there is
 	 * modified data a dialog is shown. This method is public as it can be
 	 * called by {@link OSController}.
-	 * 
+	 *
 	 * @return Whether it is safe to quit the application
 	 */
 	public boolean requestQuit() {
@@ -811,7 +811,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	/**
 	 * Checks whether there is an unfinished quiz and - if yes - asks the user
 	 * whether to save or discard the quiz results, or to cancel.
-	 * 
+	 *
 	 * @return false if the user selects "Cancel", and true otherwise.
 	 */
 	private boolean finishQuiz() {
@@ -885,8 +885,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			}
 
 			ArrayList<EditEntryAction> actions = new ArrayList<EditEntryAction>();
-			for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-				Entry orig = it.next();
+			for (Entry orig : entries) {
 				Entry modified = (Entry) orig.clone();
 				modified.resetStats();
 				actions.add(new EditEntryAction(orig, modified));
@@ -909,8 +908,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		double[] col_widths = conf.getNumberListProperty("column_widths",
 				new double[0]);
 		double total_width = 0.0;
-		for (int i = 0; i < col_widths.length; i++) {
-			total_width += col_widths[i];
+		for (double colWidth : col_widths) {
+			total_width += colWidth;
 		}
 		for (int i = 0; i < col_widths.length; i++) {
 			printer.setColWidth(i, (int) (100 * col_widths[i] / total_width));
@@ -1255,7 +1254,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	/**
 	 * A stream that proxies the previous System.err and additionally logs any
 	 * printed Strings to a logger.
-	 * 
+	 *
 	 * @author thrar
 	 */
 	private static class AppendingErrorStream extends PrintStream {
@@ -1287,12 +1286,10 @@ class DictUpdater {
 
 	public void updateDict(Dict dict) {
 		if (_original_version.compareTo("1.0") < 0) {
-			for (Iterator<Example> it = dict.getExamples().iterator(); it
-					.hasNext();) {
-				Example ex = it.next();
-				String id = ex.getID().replace('e', 'x');
-				ex.setID(id);
-			}
+			for (Example ex : dict.getExamples()) {
+String id = ex.getID().replace('e', 'x');
+ex.setID(id);
+}
 		}
 	}
 }

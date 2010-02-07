@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 public class DefaultChoiceAttribute extends DefaultAttribute implements
 		ChoiceAttribute {
-	private HashSet<Object> _values = new HashSet<Object>();
+	private final HashSet<Object> _values = new HashSet<Object>();
 
 	public DefaultChoiceAttribute(String name, Class<? extends Object> type) {
 		super(name, type);

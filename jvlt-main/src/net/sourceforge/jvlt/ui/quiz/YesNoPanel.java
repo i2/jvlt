@@ -26,7 +26,7 @@ public class YesNoPanel extends JPanel implements ItemListener {
 	private JRadioButton _yes_button;
 	private JRadioButton _no_button;
 
-	private ArrayList<StateListener> _listeners;
+	private final ArrayList<StateListener> _listeners;
 
 	public YesNoPanel(String message) {
 		_listeners = new ArrayList<StateListener>();
@@ -56,22 +56,24 @@ public class YesNoPanel extends JPanel implements ItemListener {
 	}
 
 	public int getState() {
-		if (_yes_button.isSelected())
+		if (_yes_button.isSelected()) {
 			return YES_OPTION;
-		else if (_no_button.isSelected())
+		} else if (_no_button.isSelected()) {
 			return NO_OPTION;
-		else
+		} else {
 			return UNKNOWN_OPTION;
+		}
 	}
 
 	public void setState(int state) {
 		_yes_button.setSelected(false);
 		_no_button.setSelected(false);
 
-		if (state == YES_OPTION)
+		if (state == YES_OPTION) {
 			_yes_button.setSelected(true);
-		else if (state == NO_OPTION)
+		} else if (state == NO_OPTION) {
 			_no_button.setSelected(true);
+		}
 	}
 
 	public void setMessage(String msg) {

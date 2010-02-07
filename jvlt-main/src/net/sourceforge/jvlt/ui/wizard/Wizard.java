@@ -48,14 +48,15 @@ public class Wizard implements ActionListener {
 
 	public JButton getDefaultButton() {
 		String button_command = _model.getDefaultButton();
-		if (button_command.equals(CANCEL_COMMAND))
+		if (button_command.equals(CANCEL_COMMAND)) {
 			return _cancel_button;
-		else if (button_command.equals(NEXT_COMMAND))
+		} else if (button_command.equals(NEXT_COMMAND)) {
 			return _next_button;
-		else if (button_command.equals(BACK_COMMAND))
+		} else if (button_command.equals(BACK_COMMAND)) {
 			return _back_button;
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public void actionPerformed(ActionEvent ev) {

@@ -39,8 +39,9 @@ public class QuizDialogData extends CustomDialogData {
 		@Override
 		protected void selectionChanged() {
 			Object item = getSelectedItem();
-			if (_item_map.containsKey(item))
+			if (_item_map.containsKey(item)) {
 				QuizDialogData.this.setCurrentQuizInfo(_item_map.get(item));
+			}
 		}
 
 		@Override
@@ -70,9 +71,10 @@ public class QuizDialogData extends CustomDialogData {
 
 	@Override
 	public void updateData() throws InvalidDataException {
-		if (!_quiz_list_panel._quiz_info_list_modified)
+		if (!_quiz_list_panel._quiz_info_list_modified) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"quiz_info_list_unmodified"));
+		}
 	}
 
 	public QuizInfo[] getQuizInfoList() {
@@ -82,8 +84,9 @@ public class QuizDialogData extends CustomDialogData {
 
 	public void setQuizInfoList(QuizInfo[] info_list) {
 		HashMap<Object, QuizInfo> info_map = new HashMap<Object, QuizInfo>();
-		for (int i = 0; i < info_list.length; i++)
-			info_map.put(info_list[i].getName(), info_list[i]);
+		for (QuizInfo element : info_list) {
+			info_map.put(element.getName(), element);
+		}
 
 		_quiz_list_panel.setItems(info_map);
 	}
@@ -121,18 +124,21 @@ public class QuizDialogData extends CustomDialogData {
 
 	private QuizInfo getCurrentQuizInfo() {
 		String name = (String) _quiz_list_panel.getSelectedItem();
-		if (name == null || name.equals(""))
+		if (name == null || name.equals("")) {
 			return null;
+		}
 
 		Object[] shown_selected = _shown_attributes_panel.getSelectedObjects();
 		String[] shown_attr_list = new String[shown_selected.length];
-		for (int i = 0; i < shown_selected.length; i++)
+		for (int i = 0; i < shown_selected.length; i++) {
 			shown_attr_list[i] = ((Attribute) shown_selected[i]).getName();
+		}
 
 		Object[] quizzed_selected = _quizzed_attribute_box.getSelectedObjects();
 		String[] quizzed_attr_list = new String[quizzed_selected.length];
-		for (int i = 0; i < quizzed_selected.length; i++)
+		for (int i = 0; i < quizzed_selected.length; i++) {
 			quizzed_attr_list[i] = ((Attribute) quizzed_selected[i]).getName();
+		}
 
 		QuizInfo info = new QuizInfo();
 		info.setName(name);
@@ -151,14 +157,16 @@ public class QuizDialogData extends CustomDialogData {
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
 		String[] shown_names = info.getShownAttributes();
 		Attribute[] shown_attrs = new Attribute[shown_names.length];
-		for (int i = 0; i < shown_attrs.length; i++)
+		for (int i = 0; i < shown_attrs.length; i++) {
 			shown_attrs[i] = data.getAttribute(shown_names[i]);
+		}
 		_shown_attributes_panel.setSelectedObjects(shown_attrs);
 
 		String[] quizzed_names = info.getQuizzedAttributes();
 		Attribute[] quizzed_attrs = new Attribute[quizzed_names.length];
-		for (int i = 0; i < quizzed_attrs.length; i++)
+		for (int i = 0; i < quizzed_attrs.length; i++) {
 			quizzed_attrs[i] = data.getAttribute(quizzed_names[i]);
+		}
 		_quizzed_attribute_box.setSelectedObjects(quizzed_attrs);
 	}
 }

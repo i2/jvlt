@@ -15,11 +15,11 @@ public class MultimediaUtils {
 		Config conf = JVLT.getConfig();
 		String[] custom_extensions = conf.getStringListProperty(
 				"custom_extensions", new String[0]);
-		for (int i = 0; i < custom_extensions.length; i++)
-			if (name.toLowerCase().endsWith("." + custom_extensions[i])) {
+		for (String customExtension : custom_extensions) {
+			if (name.toLowerCase().endsWith("." + customExtension)) {
 				CustomMultimediaFile file = new CustomMultimediaFile(name);
 				String[] ext_props = conf.getStringListProperty("extension_"
-						+ custom_extensions[i], new String[0]);
+						+ customExtension, new String[0]);
 				if (ext_props.length < 2) {
 					file.setCommand("");
 					file.setType(MultimediaFile.OTHER_FILE);
@@ -30,25 +30,31 @@ public class MultimediaUtils {
 
 				return file;
 			}
+		}
 
-		for (int i = 0; i < AUDIO_FILE_EXTENSIONS.length; i++)
-			if (name.toLowerCase().endsWith("." + AUDIO_FILE_EXTENSIONS[i]))
+		for (String element : AUDIO_FILE_EXTENSIONS) {
+			if (name.toLowerCase().endsWith("." + element)) {
 				return new AudioFile(name);
+			}
+		}
 
-		for (int i = 0; i < IMAGE_FILE_EXTENSIONS.length; i++)
-			if (name.toLowerCase().endsWith("." + IMAGE_FILE_EXTENSIONS[i]))
+		for (String element : IMAGE_FILE_EXTENSIONS) {
+			if (name.toLowerCase().endsWith("." + element)) {
 				return new ImageFile(name);
+			}
+		}
 
 		return new CustomMultimediaFile(name, MultimediaFile.OTHER_FILE);
 	}
-	
+
 	public static void playAudioFiles(Entry entry) throws IOException {
 		String[] mm_files = entry.getMultimediaFiles();
-		for (int i = 0; i < mm_files.length; i++) {
+		for (String mmFile : mm_files) {
 			MultimediaFile mm_file = MultimediaUtils
-					.getMultimediaFileForName(mm_files[i]);
-			if (mm_file.getType() == MultimediaFile.AUDIO_FILE)
+					.getMultimediaFileForName(mmFile);
+			if (mm_file.getType() == MultimediaFile.AUDIO_FILE) {
 				((AudioFile) mm_file).play();
+			}
 		}
 	}
 }

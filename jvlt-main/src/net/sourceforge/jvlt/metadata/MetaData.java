@@ -9,9 +9,9 @@ import java.util.Vector;
 
 public class MetaData {
 	private Class<? extends Object> _type = null;
-	private Vector<Attribute> _attributes = new Vector<Attribute>();
-	private Vector<String> _names = new Vector<String>();
-	private HashMap<String, Attribute> _name_map;
+	private final Vector<Attribute> _attributes = new Vector<Attribute>();
+	private final Vector<String> _names = new Vector<String>();
+	private final HashMap<String, Attribute> _name_map;
 
 	public MetaData(Class<? extends Object> type) {
 		_type = type;
@@ -41,41 +41,42 @@ public class MetaData {
 
 	protected void init() {
 		Method[] methods = _type.getMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method m = methods[i];
+		for (Method m : methods) {
 			String name = m.getName().substring(3);
 			Class<? extends Object> cl = m.getReturnType();
 			if (m.getName().startsWith("get")
 					&& m.getDeclaringClass().equals(_type)
 					&& Modifier.isPublic(m.getModifiers())
 					&& m.getParameterTypes().length == 0) {
-				if (cl.equals(Byte.TYPE))
+				if (cl.equals(Byte.TYPE)) {
 					cl = Byte.class;
-				else if (cl.equals(Short.TYPE))
+				} else if (cl.equals(Short.TYPE)) {
 					cl = Short.class;
-				else if (cl.equals(Integer.TYPE))
+				} else if (cl.equals(Integer.TYPE)) {
 					cl = Integer.class;
-				else if (cl.equals(Long.TYPE))
+				} else if (cl.equals(Long.TYPE)) {
 					cl = Long.class;
-				else if (cl.equals(Float.TYPE))
+				} else if (cl.equals(Float.TYPE)) {
 					cl = Float.class;
-				else if (cl.equals(Double.TYPE))
+				} else if (cl.equals(Double.TYPE)) {
 					cl = Double.class;
-				else if (cl.equals(Boolean.TYPE))
+				} else if (cl.equals(Boolean.TYPE)) {
 					cl = Boolean.class;
-				else if (cl.equals(Character.TYPE))
+				} else if (cl.equals(Character.TYPE)) {
 					cl = Character.class;
+				}
 
-				if (Calendar.class.isAssignableFrom(cl))
+				if (Calendar.class.isAssignableFrom(cl)) {
 					addAttribute(new CalendarAttribute(name, cl));
-				else if (Number.class.isAssignableFrom(cl))
+				} else if (Number.class.isAssignableFrom(cl)) {
 					addAttribute(new NumberAttribute(name, cl));
-				else if (Boolean.class.isAssignableFrom(cl))
+				} else if (Boolean.class.isAssignableFrom(cl)) {
 					addAttribute(new BooleanAttribute(name, cl));
-				else if (Object[].class.isAssignableFrom(cl))
+				} else if (Object[].class.isAssignableFrom(cl)) {
 					addAttribute(new ArrayAttribute(name, cl));
-				else
+				} else {
 					addAttribute(new DefaultAttribute(name, cl));
+				}
 			} // end of if
 		} // end of for
 	}
@@ -85,8 +86,9 @@ public class MetaData {
 	 * overwritten.
 	 */
 	protected void addAttribute(Attribute attribute) {
-		if (_name_map.containsKey(attribute.getName()))
+		if (_name_map.containsKey(attribute.getName())) {
 			removeAttribute(attribute.getName());
+		}
 
 		_name_map.put(attribute.getName(), attribute);
 		_names.add(attribute.getName());

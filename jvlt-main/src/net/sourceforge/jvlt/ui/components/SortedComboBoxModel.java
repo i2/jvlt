@@ -10,8 +10,8 @@ import javax.swing.event.ListDataListener;
 
 public class SortedComboBoxModel implements MutableComboBoxModel {
 	private Object _selected_item = null;
-	private ArrayList<ListDataListener> _listeners = new ArrayList<ListDataListener>();
-	private TreeSet<Object> _items = new TreeSet<Object>();
+	private final ArrayList<ListDataListener> _listeners = new ArrayList<ListDataListener>();
+	private final TreeSet<Object> _items = new TreeSet<Object>();
 
 	public void addElement(Object obj) {
 		_items.add(obj);
@@ -19,7 +19,7 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 
 	/**
 	 * Inserts an object
-	 * 
+	 *
 	 * The obj argument is ignored.
 	 */
 	public void insertElementAt(Object obj, int index) {
@@ -51,9 +51,10 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 		synchronized (_listeners) {
 			ListDataListener[] listeners = _listeners
 					.toArray(new ListDataListener[0]);
-			for (int i = 0; i < listeners.length; i++)
-				listeners[i].contentsChanged(new ListDataEvent(this,
+			for (ListDataListener listener : listeners) {
+				listener.contentsChanged(new ListDataEvent(this,
 						ListDataEvent.CONTENTS_CHANGED, 0, 0));
+			}
 		}
 	}
 
@@ -67,8 +68,9 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 		Iterator<Object> it = _items.iterator();
 		for (int i = 0; it.hasNext(); i++) {
 			Object obj = it.next();
-			if (i == index)
+			if (i == index) {
 				return obj;
+			}
 		}
 
 		return null;

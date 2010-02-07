@@ -15,15 +15,14 @@ public class CustomAttribute extends DefaultAttribute {
 	@Override
 	public Object getValue(Object obj) {
 		EntryClass ec = ((Entry) obj).getEntryClass();
-		if (ec == null)
+		if (ec == null) {
 			return null;
-		else {
-			SchemaAttribute attr = ec.getAttribute(_name);
-			if (attr == null)
-				return null;
-			else
-				return attr.getValue();
 		}
+		SchemaAttribute attr = ec.getAttribute(_name);
+		if (attr == null) {
+			return null;
+		}
+		return attr.getValue();
 	}
 
 	@Override

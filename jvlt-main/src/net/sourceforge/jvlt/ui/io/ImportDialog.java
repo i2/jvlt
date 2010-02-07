@@ -74,7 +74,7 @@ public class ImportDialog extends JDialog {
 }
 
 class ImportWizardModel extends DialogWizardModel {
-	private DictImporter _importer;
+	private final DictImporter _importer;
 
 	public ImportWizardModel(JVLTModel model) {
 		super(model);
@@ -90,8 +90,9 @@ class ImportWizardModel extends DialogWizardModel {
 	@Override
 	public String getButtonText(String button_command) {
 		if (_current_descriptor instanceof ImportSuccessDescriptor) {
-			if (button_command.equals(Wizard.NEXT_COMMAND))
+			if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				return GUIUtils.getString("Actions", "finish");
+			}
 		}
 
 		return super.getButtonText(button_command);
@@ -100,12 +101,14 @@ class ImportWizardModel extends DialogWizardModel {
 	@Override
 	public boolean isButtonEnabled(String button_command) {
 		if (_current_descriptor instanceof StartImportDescriptor) {
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return false;
+			}
 		} else if (_current_descriptor instanceof ImportSuccessDescriptor) {
 			if (button_command.equals(Wizard.BACK_COMMAND)
-					|| button_command.equals(Wizard.CANCEL_COMMAND))
+					|| button_command.equals(Wizard.CANCEL_COMMAND)) {
 				return false;
+			}
 		}
 
 		return super.isButtonEnabled(button_command);
@@ -150,8 +153,9 @@ class ImportWizardModel extends DialogWizardModel {
 		}
 
 		_current_descriptor = next;
-		if (command.equals(Wizard.CANCEL_COMMAND))
+		if (command.equals(Wizard.CANCEL_COMMAND)) {
 			fireStateEvent(new StateEvent(this, CANCEL_STATE));
+		}
 
 		return next;
 	}
@@ -177,10 +181,11 @@ class ImportWizardModel extends DialogWizardModel {
 		// are not compatible
 		String newlang = dict.getLanguage();
 		String oldlang = getJVLTModel().getDict().getLanguage();
-		if (newlang != null && oldlang != null && !newlang.equals(oldlang))
+		if (newlang != null && oldlang != null && !newlang.equals(oldlang)) {
 			throw new InvalidInputException(GUIUtils.getString("Messages",
 					"invalid_language"), "Invalid language: " + oldlang + "!="
 					+ newlang);
+		}
 
 		Collection<Entry> entries = _importer.getImportedEntries(dict);
 		TreeSet<Entry> imported_entries = new TreeSet<Entry>();
@@ -207,16 +212,18 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 				DictFileChooser chooser;
 				ImportWizardModel iwm = (ImportWizardModel) _model;
 				String file = iwm.getJVLTModel().getDictFileName();
-				if (_type_box.getSelectedItem().equals(csv_file))
+				if (_type_box.getSelectedItem().equals(csv_file)) {
 					chooser = new DictFileChooser(file,
 							DictFileChooser.FileType.CSV_FILES);
-				else
+				} else {
 					chooser = new DictFileChooser(file,
 							DictFileChooser.FileType.JVLT_FILES);
+				}
 
 				int val = chooser.showOpenDialog(_panel);
-				if (val == JFileChooser.APPROVE_OPTION)
+				if (val == JFileChooser.APPROVE_OPTION) {
 					_file_field.setText(chooser.getSelectedFile().getPath());
+				}
 			} else if (e.getActionCommand().equals("file_type")) {
 				CustomConstraints cc = new CustomConstraints();
 				cc.update(0, 3, 1.0, 1.0, 3, 1);
@@ -260,8 +267,9 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		//
 		if (_type != null && _type.equals(_type_box.getSelectedItem())
 				&& _file != null && _file.equals(_file_field.getText())
-				&& _dict != null)
+				&& _dict != null) {
 			return _dict;
+		}
 
 		// Save file type and name
 		_type = _type_box.getSelectedItem().toString();
@@ -284,48 +292,50 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 			csv_reader.setLanguage(_csv_panel.getLanguage());
 			SchemaAttribute[] attrs = _csv_panel.getAttributes();
 			String[] attr_names = new String[attrs.length];
-			for (int i = 0; i < attrs.length; i++)
+			for (int i = 0; i < attrs.length; i++) {
 				attr_names[i] = attrs[i].getName();
+			}
 			csv_reader.setAttributes(attr_names);
 			csv_reader.setAttributeColumns(_csv_panel.getAttributeColumns());
 			reader = csv_reader;
-		} else
+		} else {
 			reader = new SAXDictReader();
+		}
 
 		try {
 			reader.read(f);
 			_dict = reader.getDict();
 			return _dict;
 		} catch (DictReaderException e) {
-			if (!(reader instanceof SAXDictReader))
+			if (!(reader instanceof SAXDictReader)) {
 				throw e;
+			}
 
 			/*
 			 * When reading a .jvlt file, a version exception may occur. Try to
 			 * handle this exception.
 			 */
 			Exception ex = e.getException();
-			if (ex == null || !(ex instanceof VersionException))
+			if (ex == null || !(ex instanceof VersionException)) {
 				throw e;
+			}
 
 			VersionException ve = (VersionException) ex;
-			if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0)
+			if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0) {
 				throw e;
-			else {
-				String text = GUIUtils.getString("Messages", "convert_file");
-				int result = MessageDialog.showDialog(JOptionPane
-						.getFrameForComponent(_panel),
-						MessageDialog.WARNING_MESSAGE,
-						MessageDialog.OK_CANCEL_OPTION, text);
-				if (result == MessageDialog.OK_OPTION) {
-					reader = new SAXDictReader(ve.getVersion());
-					reader.read(f);
-					_dict = reader.getDict();
-					return _dict;
-				} else {
-					throw e;
-				}
 			}
+			String text = GUIUtils.getString("Messages", "convert_file");
+			int result = MessageDialog.showDialog(JOptionPane
+					.getFrameForComponent(_panel),
+					MessageDialog.WARNING_MESSAGE,
+					MessageDialog.OK_CANCEL_OPTION, text);
+			if (result == MessageDialog.OK_OPTION) {
+				reader = new SAXDictReader(ve.getVersion());
+				reader.read(f);
+				_dict = reader.getDict();
+				return _dict;
+			}
+			throw e;
 		} // catch
 	}
 
@@ -333,11 +343,12 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		Config config = JVLT.getConfig();
 		_file_field.setText(config.getProperty("ImportDialog.File", ""));
 		String type = config.getProperty("ImportDialog.Type", "jvlt");
-		if (type.equals("jvlt"))
+		if (type.equals("jvlt")) {
 			_type_box
 					.setSelectedItem(GUIUtils.getString("Labels", "jvlt_file"));
-		else
+		} else {
 			_type_box.setSelectedItem(GUIUtils.getString("Labels", "csv_file"));
+		}
 
 		_csv_panel.loadState();
 	}
@@ -349,8 +360,9 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 				GUIUtils.getString("Labels", "csv_file"))) {
 			config.setProperty("ImportDialog.Type", "csv");
 			_csv_panel.saveState();
-		} else
+		} else {
 			config.setProperty("ImportDialog.Type", "jvlt");
+		}
 
 		_csv_panel.saveState();
 	}

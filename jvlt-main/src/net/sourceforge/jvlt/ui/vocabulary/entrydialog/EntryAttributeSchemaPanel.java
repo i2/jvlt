@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 import javax.swing.Box;
@@ -36,12 +35,12 @@ public class EntryAttributeSchemaPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private static final String NOT_SPECIFIED = "not_specified";
 
-	private TreeMap<String, EntryClass> _string_class_map;
-	private TreeMap<EntryClass, EntryClassPanel> _class_panel_map;
-	private IndentedComboBox _class_box;
+	private final TreeMap<String, EntryClass> _string_class_map;
+	private final TreeMap<EntryClass, EntryClassPanel> _class_panel_map;
+	private final IndentedComboBox _class_box;
 	private JPanel _current_panel;
-	private JScrollPane _scroll_pane;
-	private Component _empty_panel;
+	private final JScrollPane _scroll_pane;
+	private final Component _empty_panel;
 
 	public EntryAttributeSchemaPanel(EntryAttributeSchema schema) {
 		_string_class_map = new TreeMap<String, EntryClass>();
@@ -61,12 +60,15 @@ public class EntryAttributeSchemaPanel extends JPanel {
 		_class_box.addItem(NOT_SPECIFIED, 0);
 		EntryClass[] entry_classes = schema.getEntryClasses();
 		ArrayList<EntryClass> root_attrs = new ArrayList<EntryClass>();
-		for (int i = 0; i < entry_classes.length; i++)
+		for (int i = 0; i < entry_classes.length; i++) {
 			if (entry_classes[i].getParentClass() == null
-					&& !root_attrs.contains(entry_classes[i]))
+					&& !root_attrs.contains(entry_classes[i])) {
 				root_attrs.add(entry_classes[i]);
-		for (Iterator<EntryClass> it = root_attrs.iterator(); it.hasNext();)
-			insertEntryClass(it.next(), 0);
+			}
+		}
+		for (EntryClass entryClass : root_attrs) {
+			insertEntryClass(entryClass, 0);
+		}
 
 		setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
@@ -82,19 +84,18 @@ public class EntryAttributeSchemaPanel extends JPanel {
 
 	public EntryClass getValue() {
 		Object selected = _class_box.getSelectedItem();
-		if (selected.equals(NOT_SPECIFIED))
+		if (selected.equals(NOT_SPECIFIED)) {
 			return null;
-		else {
-			EntryClass cl = _string_class_map.get(selected);
-			EntryClassPanel p = _class_panel_map.get(cl);
-			return p.getValue();
 		}
+		EntryClass cl = _string_class_map.get(selected);
+		EntryClassPanel p = _class_panel_map.get(cl);
+		return p.getValue();
 	}
 
 	public void setValue(EntryClass cl) {
-		if (cl == null)
+		if (cl == null) {
 			_class_box.setSelectedItem(NOT_SPECIFIED);
-		else {
+		} else {
 			EntryClassPanel p = _class_panel_map.get(cl);
 			p.setValue(cl);
 			_class_box.setSelectedItem(cl.getName());
@@ -102,23 +103,26 @@ public class EntryAttributeSchemaPanel extends JPanel {
 	}
 
 	private void update() {
-		if (_current_panel != null)
+		if (_current_panel != null) {
 			remove(_scroll_pane);
-		else
+		} else {
 			remove(_empty_panel);
+		}
 
 		Object item = _class_box.getSelectedItem();
 		JPanel p = null;
-		if (item != null && !item.equals(NOT_SPECIFIED))
+		if (item != null && !item.equals(NOT_SPECIFIED)) {
 			p = _class_panel_map.get(_string_class_map.get(item));
+		}
 
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 1, 1.0, 1.0, 2, 1);
 		if (p != null) {
 			_scroll_pane.getViewport().setView(p);
 			add(_scroll_pane, cc);
-		} else
+		} else {
 			add(_empty_panel, cc);
+		}
 
 		revalidate();
 		repaint(getVisibleRect());
@@ -132,17 +136,18 @@ public class EntryAttributeSchemaPanel extends JPanel {
 		_string_class_map.put(cl.getName(), cl);
 
 		EntryClass[] children = cl.getChildClasses();
-		for (int i = 0; i < children.length; i++)
-			insertEntryClass(children[i], indent_level + 1);
+		for (EntryClass element : children) {
+			insertEntryClass(element, indent_level + 1);
+		}
 	}
 }
 
 class EntryClassPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private TreeMap<SchemaAttribute, SchemaAttributeInput> _input_panels;
-	private EntryClass _entry_class;
-	private AttributeResources _resources;
+	private final TreeMap<SchemaAttribute, SchemaAttributeInput> _input_panels;
+	private final EntryClass _entry_class;
+	private final AttributeResources _resources;
 
 	public EntryClassPanel(EntryClass cl) {
 		_entry_class = cl;
@@ -162,48 +167,51 @@ class EntryClassPanel extends JPanel {
 	public EntryClass getValue() {
 		EntryClass ec = new EntryClass(_entry_class.getName());
 		SchemaAttribute[] atts = _entry_class.getAttributes();
-		for (int i = 0; i < atts.length; i++) {
-			SchemaAttribute att = getAttributeValue(atts[i]);
-			if (att != null)
+		for (SchemaAttribute att2 : atts) {
+			SchemaAttribute att = getAttributeValue(att2);
+			if (att != null) {
 				ec.addAttribute(att);
+			}
 		}
 		return ec;
 	}
 
 	public void setValue(EntryClass cl) {
 		SchemaAttribute[] atts = cl.getAttributes();
-		for (int i = 0; i < atts.length; i++)
-			updateInputPanel(atts[i]);
+		for (SchemaAttribute att : atts) {
+			updateInputPanel(att);
+		}
 	}
 
 	private SchemaAttribute getAttributeValue(SchemaAttribute att) {
 		SchemaAttributeInput input = _input_panels.get(att);
 		Object value = input.getValue();
-		if (value == null)
+		if (value == null) {
 			return null;
-		else {
-			SchemaAttribute cloned = (SchemaAttribute) att.clone();
-			cloned.setValue(value);
-			return cloned;
 		}
+		SchemaAttribute cloned = (SchemaAttribute) att.clone();
+		cloned.setValue(value);
+		return cloned;
 	}
 
 	private void updateInputPanel(SchemaAttribute att) {
 		SchemaAttributeInput input = _input_panels.get(att);
-		if (input != null)
+		if (input != null) {
 			/*
 			 * The input panel may be null if the attribute cannot be found
 			 * because the dictionary changed.
 			 */
 			input.setValue(att.getValue());
+		}
 	}
 
 	private JPanel createPanel(String group) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		if (!group.equals(""))
+		if (!group.equals("")) {
 			panel.setBorder(new TitledBorder(new EtchedBorder(
 					EtchedBorder.LOWERED), _resources.getString(group)));
+		}
 
 		CustomConstraints cc = new CustomConstraints();
 		SchemaAttribute[] atts = _entry_class.getAttributes(group);
@@ -254,7 +262,7 @@ abstract class SchemaAttributeInput extends JPanel {
 class SimpleAttributeInput extends SchemaAttributeInput {
 	private static final long serialVersionUID = 1L;
 
-	private CustomTextField _input_field;
+	private final CustomTextField _input_field;
 
 	public SimpleAttributeInput(SchemaAttribute att) {
 		super(att);
@@ -272,18 +280,19 @@ class SimpleAttributeInput extends SchemaAttributeInput {
 	@Override
 	public Object getValue() {
 		String text = _input_field.getText();
-		if (text == null || text.length() == 0)
+		if (text == null || text.length() == 0) {
 			return null;
-		else
-			return text;
+		}
+		return text;
 	}
 
 	@Override
 	public void setValue(Object o) {
-		if (o == null)
+		if (o == null) {
 			_input_field.setText("");
-		else
+		} else {
 			_input_field.setText(o.toString());
+		}
 	}
 }
 
@@ -308,10 +317,11 @@ class ChoiceAttributeInput extends SchemaAttributeInput {
 
 	@Override
 	public void setValue(Object o) {
-		if (o == null)
+		if (o == null) {
 			_input_component.setInput(_not_specified);
-		else
+		} else {
 			_input_component.setInput(o);
+		}
 	}
 
 	protected void initUI() {

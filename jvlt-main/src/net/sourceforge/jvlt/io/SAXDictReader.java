@@ -89,17 +89,19 @@ public class SAXDictReader extends DictReader {
 	}
 
 	protected void readDict(InputStream stream) throws DictReaderException {
-		if (_version == null)
+		if (_version == null) {
 			readXML(stream, new DictHandler(_dict));
-		else
+		} else {
 			readXML(stream, new DictHandler(_dict, _version));
+		}
 	}
 
 	protected void readStats(InputStream stream) throws DictReaderException {
-		if (_version == null)
+		if (_version == null) {
 			readXML(stream, new StatsHandler(_dict));
-		else
+		} else {
 			readXML(stream, new StatsHandler(_dict, _version));
+		}
 	}
 
 	private void readXML(InputStream stream, DefaultHandler handler)
@@ -111,14 +113,16 @@ public class SAXDictReader extends DictReader {
 		} catch (SAXException ex) {
 			Exception e = ex.getException();
 			if (e != null) {
-				if (e instanceof DictReaderException)
+				if (e instanceof DictReaderException) {
 					throw (DictReaderException) e;
-				else if (e instanceof VersionException)
+				} else if (e instanceof VersionException) {
 					throw new DictReaderException(GUIUtils.getString(
 							"Messages", "invalid_xml"), e);
-			} else
+				}
+			} else {
 				throw new DictReaderException(GUIUtils.getString("Messages",
 						"invalid_xml"), ex.getMessage());
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new DictReaderException(GUIUtils.getString("Messages",
@@ -127,16 +131,15 @@ public class SAXDictReader extends DictReader {
 	}
 
 	private InputStream transform(InputStream ts, InputStream is) {
-		if (ts == null)
+		if (ts == null) {
 			return is;
-		else {
-			XSLTransformer transformer = new XSLTransformer(ts);
-			String result = transformer.transform(is);
-			try {
-				return new ByteArrayInputStream(result.getBytes("UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				return is;
-			}
+		}
+		XSLTransformer transformer = new XSLTransformer(ts);
+		String result = transformer.transform(is);
+		try {
+			return new ByteArrayInputStream(result.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			return is;
 		}
 	}
 }
@@ -159,8 +162,9 @@ abstract class AbstractHandler extends DefaultHandler {
 
 	@Override
 	public void characters(char[] ch, int start, int length) {
-		if (_current_chars == null)
+		if (_current_chars == null) {
 			_current_chars = new StringBuffer();
+		}
 
 		String s = new String(ch, start, length);
 		_current_chars.append(s);
@@ -181,13 +185,12 @@ abstract class AbstractHandler extends DefaultHandler {
 	}
 
 	protected String getChars() {
-		if (_current_chars == null)
+		if (_current_chars == null) {
 			return "";
-		else {
-			String str = XMLUtils.unescapeText(_current_chars.toString());
-			_current_chars = null;
-			return str;
 		}
+		String str = XMLUtils.unescapeText(_current_chars.toString());
+		_current_chars = null;
+		return str;
 	}
 }
 
@@ -195,8 +198,8 @@ class DictHandler extends AbstractHandler {
 	private Entry _current_entry = null;
 	private Example _current_example = null;
 	private Example.TextFragment _current_fragment = null;
-	private HashMap<String, Sense> _id_sense_map;
-	private HashMap<Example.TextFragment, String> _fragment_id_map;
+	private final HashMap<String, Sense> _id_sense_map;
+	private final HashMap<Example.TextFragment, String> _fragment_id_map;
 	private Sense _current_sense = null;
 	private String _current_trans = null;
 	private String _current_def = null;
@@ -204,8 +207,8 @@ class DictHandler extends AbstractHandler {
 	private EntryClass _current_class = null;
 	private SchemaAttribute _current_attr = null;
 	private ArrayList<AttributeChoice> _current_items = null;
-	private ArrayList<Entry> _duplicate_entries = new ArrayList<Entry>();
-	private ArrayList<Example> _duplicate_examples = new ArrayList<Example>();
+	private final ArrayList<Entry> _duplicate_entries = new ArrayList<Entry>();
+	private final ArrayList<Example> _duplicate_examples = new ArrayList<Example>();
 
 	public DictHandler(Dict dict, String version) {
 		super(dict, version);
@@ -225,12 +228,14 @@ class DictHandler extends AbstractHandler {
 			Entry[] entries = _duplicate_entries.toArray(new Entry[0]);
 			Example[] examples = _duplicate_examples.toArray(new Example[0]);
 			String long_msg = "";
-			if (entries.length > 0)
+			if (entries.length > 0) {
 				long_msg += GUIUtils.getString("Messages", "duplicate_entries",
 						new String[] { Utils.arrayToString(entries) });
+			}
 			if (examples.length > 0) {
-				if (entries.length > 0)
+				if (entries.length > 0) {
 					long_msg += "\n";
+				}
 				long_msg += GUIUtils.getString("Messages",
 						"duplicate_examples", new String[] { Utils
 								.arrayToString(examples) });
@@ -245,9 +250,10 @@ class DictHandler extends AbstractHandler {
 		while (it.hasNext()) {
 			Example.TextFragment fragment = it.next();
 			String id = _fragment_id_map.get(fragment);
-			if (!_id_sense_map.containsKey(id))
+			if (!_id_sense_map.containsKey(id)) {
 				throw getSAXException("invalid_xml",
 						"Invalid link from example to sense.");
+			}
 
 			Sense sense = _id_sense_map.get(id);
 			fragment.setSense(sense);
@@ -264,10 +270,12 @@ class DictHandler extends AbstractHandler {
 			if (_current_trans != null || _current_def != null) {
 				Sense sense = new Sense();
 				_id_sense_map.put(_current_entry.getID(), sense);
-				if (_current_trans != null)
+				if (_current_trans != null) {
 					sense.setTranslation(_current_trans);
-				if (_current_def != null)
+				}
+				if (_current_def != null) {
 					sense.setDefinition(_current_def);
+				}
 				try {
 					_current_entry.addSense(sense);
 				} catch (DictException ex) {
@@ -292,10 +300,12 @@ class DictHandler extends AbstractHandler {
 		} else if (qname.equals("pron")) {
 			_current_entry.addPronunciation(getChars());
 		} else if (qname.equals("sense")) {
-			if (_current_trans != null)
+			if (_current_trans != null) {
 				_current_sense.setTranslation(_current_trans);
-			if (_current_def != null)
+			}
+			if (_current_def != null) {
 				_current_sense.setDefinition(_current_def);
+			}
 			try {
 				_current_entry.addSense(_current_sense);
 			} catch (DictException ex) {
@@ -320,9 +330,10 @@ class DictHandler extends AbstractHandler {
 			_current_example = null;
 		} else if (qname.equals("ex")) {
 			String chars = getChars();
-			if (!chars.equals(""))
+			if (!chars.equals("")) {
 				_current_example
 						.addTextFragment(new Example.TextFragment(chars));
+			}
 		} else if (qname.equals("link")) {
 			_current_fragment.setText(getChars());
 			_current_example.addTextFragment(_current_fragment);
@@ -331,39 +342,46 @@ class DictHandler extends AbstractHandler {
 		} else if (qname.equals("tr")) {
 			_current_example.setTranslation(getChars());
 		} else if (qname.equals("category")) {
-			if (_current_entry != null)
+			if (_current_entry != null) {
 				_current_entry.addCategory(getChars());
+			}
 		} else if (qname.equals("custom-field")) {
 			if (_current_entry != null && _current_custom_field != null
 					&& _current_custom_field[0] != null
-					&& _current_custom_field[1] != null)
+					&& _current_custom_field[1] != null) {
 				_current_entry.addCustomField(_current_custom_field[0],
 						_current_custom_field[1]);
+			}
 
 			_current_custom_field = null;
 		} else if (qname.equals("key")) {
-			if (_current_custom_field != null) // "custom-field" is parent tag
+			if (_current_custom_field != null) {
 				_current_custom_field[0] = getChars();
+			}
 		} else if (qname.equals("value")) {
-			if (_current_custom_field != null) // "custom-field" is parent tag
+			if (_current_custom_field != null) {
 				_current_custom_field[1] = getChars();
+			}
 		} else if (qname.equals("lesson")) {
-			if (_current_entry != null)
+			if (_current_entry != null) {
 				_current_entry.setLesson(getChars());
+			}
 		} else if (qname.equals("multimedia")) {
-			if (_current_entry != null)
+			if (_current_entry != null) {
 				_current_entry.addMultimediaFile(getChars());
+			}
 		} else if (qname.equals("attr")) {
-			if (_current_attr instanceof ArraySchemaAttribute)
+			if (_current_attr instanceof ArraySchemaAttribute) {
 				_current_attr.setValue(_current_items
 						.toArray(new AttributeChoice[0]));
-			else if (_current_attr instanceof ChoiceSchemaAttribute)
+			} else if (_current_attr instanceof ChoiceSchemaAttribute) {
 				_current_attr.setValue(getAttributeChoice(
 						(ChoiceSchemaAttribute) _current_attr, getChars()));
-			else {
+			} else {
 				String val = getChars();
-				if (val.length() > 0)
+				if (val.length() > 0) {
 					_current_attr.setValue(val);
+				}
 			}
 
 			_current_attr = null;
@@ -387,24 +405,28 @@ class DictHandler extends AbstractHandler {
 				}
 			}
 			String version = attributes.getValue("version");
-			if (version != null && !version.equals(_version))
+			if (version != null && !version.equals(_version)) {
 				throw new SAXException(new VersionException(version));
+			}
 		} else if (qname.equals("entry")) {
 			String id = attributes.getValue("id");
-			if (id == null)
+			if (id == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"id\" is missing.");
+			}
 
 			String cl = attributes.getValue("class");
 			if (cl != null && !cl.equals("")) {
 				EntryAttributeSchema schema = _dict.getEntryAttributeSchema();
-				if (schema == null)
+				if (schema == null) {
 					throw getSAXException("invalid_xml", "No language set.");
+				}
 
 				EntryClass ec = schema.getEntryClass(cl);
-				if (ec == null)
+				if (ec == null) {
 					throw getSAXException("invalid_xml",
 							"Unknown word class: '" + cl + "'");
+				}
 				_current_class = (EntryClass) ec.clone();
 			}
 
@@ -412,25 +434,28 @@ class DictHandler extends AbstractHandler {
 			_current_entry.setEntryClass(_current_class);
 		} else if (qname.equals("sense")) {
 			String id = attributes.getValue("id");
-			if (id == null)
+			if (id == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"id\" is missing.");
+			}
 
 			_current_sense = new Sense();
 			_id_sense_map.put(id, _current_sense);
 		} else if (qname.equals("example")) {
 			String id = attributes.getValue("id");
-			if (id == null)
+			if (id == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"id\" is missing.");
+			}
 
 			_current_example = new Example(id);
 		} else if (qname.equals("link")) {
 			// Save text fragment before link.
 			String chars = getChars();
-			if (!chars.equals(""))
+			if (!chars.equals("")) {
 				_current_example
 						.addTextFragment(new Example.TextFragment(chars));
+			}
 
 			String id = attributes.getValue("sid");
 			_current_fragment = new Example.TextFragment();
@@ -448,27 +473,30 @@ class DictHandler extends AbstractHandler {
 			_current_custom_field = new String[2];
 		} else if (qname.equals("attr")) {
 			getChars();
-			if (_current_class == null)
+			if (_current_class == null) {
 				throw getSAXException("invalid_xml", "No word class set.");
+			}
 
 			String name = attributes.getValue("name");
 			_current_attr = _current_class.getAttribute(name);
-			if (_current_attr == null)
+			if (_current_attr == null) {
 				throw getSAXException("invalid_xml", "Unknown attribute: '"
 						+ name + "'");
+			}
 			_current_items = new ArrayList<AttributeChoice>();
-		} else if (qname.equals("item"))
+		} else if (qname.equals("item")) {
 			getChars();
+		}
 	}
 
 	private AttributeChoice getAttributeChoice(ChoiceSchemaAttribute attr,
 			String name) throws SAXException {
 		AttributeChoice ac = attr.getChoice(name);
-		if (ac == null)
+		if (ac == null) {
 			throw getSAXException("invalid_xml", "Invalid attribute value: '"
 					+ name + "'");
-		else
-			return ac;
+		}
+		return ac;
 	}
 }
 
@@ -488,13 +516,15 @@ class StatsHandler extends AbstractHandler {
 			Attributes attributes) throws SAXException {
 		if (qname.equals("stats")) {
 			String version = attributes.getValue("version");
-			if (!version.equals(_version))
+			if (!version.equals(_version)) {
 				throw new SAXException(new VersionException(version));
+			}
 		} else if (qname.equals("entry-info")) {
 			String batchstr = attributes.getValue("batch");
-			if (batchstr == null)
+			if (batchstr == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"batch\" is missing.");
+			}
 			int batch = Integer.decode(batchstr).intValue();
 			String entry_id = attributes.getValue("entry-id");
 			String queried = attributes.getValue("queried");
@@ -503,15 +533,16 @@ class StatsHandler extends AbstractHandler {
 			String date_added = attributes.getValue("date-added");
 			String last_result = attributes.getValue("last-quiz-result");
 			String flags = attributes.getValue("flags");
-			if (entry_id == null)
+			if (entry_id == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"entry-id\" is missing.");
-			else if (queried == null)
+			} else if (queried == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"queried\" is missing.");
-			else if (mistakes == null)
+			} else if (mistakes == null) {
 				throw getSAXException("invalid_xml",
 						"Attribute \"mistakes\" is missing.");
+			}
 
 			int num_queried = Integer.decode(queried).intValue();
 			int num_mistakes = Integer.decode(mistakes).intValue();
@@ -528,8 +559,9 @@ class StatsHandler extends AbstractHandler {
 				entry.setNumMistakes(num_mistakes);
 				entry.setBatch(batch);
 				entry.setUserFlags(user_flags);
-				if (last_quiz_result != null)
+				if (last_quiz_result != null) {
 					entry.setLastQuizResult(last_quiz_result);
+				}
 			} else {
 				logger.warn("No entry with id \"" + entry_id + "\"");
 				return;

@@ -4,7 +4,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Action;
@@ -23,12 +22,14 @@ public abstract class ObjectMapEditorPanel<T extends Object> extends JPanel {
 		public void actionPerformed(ActionEvent ev) {
 			if (ev.getActionCommand().equals("new_update")) {
 				Object item = _name_box.getSelectedItem();
-				if (item != null && !item.toString().equals(""))
+				if (item != null && !item.toString().equals("")) {
 					ObjectMapEditorPanel.this.createOrUpdateItem();
-			} else if (ev.getActionCommand().equals("remove"))
+				}
+			} else if (ev.getActionCommand().equals("remove")) {
 				ObjectMapEditorPanel.this.removeSelectedItem();
-			else if (ev.getSource() == _name_box)
+			} else if (ev.getSource() == _name_box) {
 				ObjectMapEditorPanel.this.selectionChanged();
+			}
 		}
 	}
 
@@ -67,16 +68,16 @@ public abstract class ObjectMapEditorPanel<T extends Object> extends JPanel {
 		_item_map.clear();
 		Object selected = _name_box.getSelectedItem();
 		_name_box.removeAllItems();
-		for (Iterator<Object> it = items.keySet().iterator(); it.hasNext();) {
-			Object key = it.next();
+		for (Object key : items.keySet()) {
 			T value = items.get(key);
 			_item_map.put(key, value);
 			_name_box.addItem(key);
 		}
 
 		if (selected == null || selected.equals("")
-				|| _item_map.containsKey(selected))
+				|| _item_map.containsKey(selected)) {
 			_name_box.setSelectedItem(selected);
+		}
 
 		_name_box.addActionListener(_handler);
 	}
@@ -122,8 +123,9 @@ public abstract class ObjectMapEditorPanel<T extends Object> extends JPanel {
 
 	protected void createOrUpdateItem() {
 		Object item = _name_box.getSelectedItem();
-		if (!_item_map.containsKey(item))
+		if (!_item_map.containsKey(item)) {
 			_name_box.addItem(item);
+		}
 
 		_item_map.put(item, getCurrentObject());
 		_name_box.getEditor().selectAll();

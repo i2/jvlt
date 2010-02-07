@@ -58,16 +58,17 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		Font font;
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		font = JVLT.getConfig().getFontProperty("ui_orth_font");
-		if (font != null)
+		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
+		}
 	}
 
-	private ArrayList<FilterListener<Example>> _filter_listeners;
-	private JVLTModel _model;
+	private final ArrayList<FilterListener<Example>> _filter_listeners;
+	private final JVLTModel _model;
 	private Dict _dict;
 	private List<Example> _current_examples;
-	private SelectionNotifier _notifier;
-	private ExampleFilter _filter;
+	private final SelectionNotifier _notifier;
+	private final ExampleFilter _filter;
 
 	private SortableTable<Example> _example_table;
 	private SortableTableModel<Example> _table_model;
@@ -98,8 +99,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 
 		Double[] col_widths = new Double[columns.length];
 		TableColumnModel col_model = _example_table.getColumnModel();
-		for (int i = 0; i < columns.length; i++)
+		for (int i = 0; i < columns.length; i++) {
 			col_widths[i] = new Double(col_model.getColumn(i).getWidth());
+		}
 
 		config.setProperty("example_table_column_widths", col_widths);
 
@@ -116,12 +118,14 @@ public class ExamplePanel extends JPanel implements ActionListener,
 
 		double[] col_widths = config.getNumberListProperty(
 				"example_table_column_widths", new double[] { 50 });
-		if (col_widths.length != _table_model.getColumnCount())
+		if (col_widths.length != _table_model.getColumnCount()) {
 			return;
+		}
 
 		TableColumnModel col_model = _example_table.getColumnModel();
-		for (int i = 0; i < col_widths.length; i++)
+		for (int i = 0; i < col_widths.length; i++) {
 			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
+		}
 
 		SortableTableModel.Directive dir = new SortableTableModel.Directive();
 		String[] dir_string = config.getStringListProperty(
@@ -140,8 +144,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		if (obj instanceof Example) {
 			Example example = (Example) obj;
 			if (e.getSource() == _example_table) {
-				if (_current_examples.size() > 0)
+				if (_current_examples.size() > 0) {
 					editExample(_current_examples.get(0));
+				}
 			} else {
 				if (!_table_model.containsObject(example)) {
 					_filter.setFilterString("");
@@ -156,8 +161,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
 			List<Example> objs = _example_table.getSelectedObjects();
-			if (objs.size() == 0)
+			if (objs.size() == 0) {
 				return;
+			}
 
 			setCurrentExamples(objs);
 			updateActions();
@@ -177,8 +183,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 				_model.getDictModel().executeAction(action);
 			}
 		} else if (e.getActionCommand().equals("edit")) {
-			if (_current_examples.size() > 0)
+			if (_current_examples.size() > 0) {
 				editExample(_current_examples.get(0));
+			}
 		} else if (e.getActionCommand().equals("remove")) {
 			if (_current_examples.size() > 0) {
 				int result = JOptionPane.showConfirmDialog(this, GUIUtils
@@ -213,25 +220,30 @@ public class ExamplePanel extends JPanel implements ActionListener,
 				Example example = null;
 				for (Iterator<Example> it = examples.iterator(); it.hasNext();) {
 					example = it.next();
-					if (_filter.isExampleMatching(example))
+					if (_filter.isExampleMatching(example)) {
 						_table_model.addObject(example);
+					}
 				}
-				if (example != null && _table_model.containsObject(example))
+				if (example != null && _table_model.containsObject(example)) {
 					_example_table.setSelectedObject(example);
+				}
 
 				fireFilterEvent(new FilterEvent<Example>(this, _table_model
 						.getObjects()));
 			} else if (eevent.getType() == ExampleDictUpdateEvent.EXAMPLES_CHANGED) {
-				if (examples.size() < 1)
+				if (examples.size() < 1) {
 					return;
+				}
 
 				List<Example> objs = _example_table.getSelectedObjects();
 				applyFilter();
-				if (objs.size() > 0 && _table_model.containsObject(objs.get(0)))
+				if (objs.size() > 0 && _table_model.containsObject(objs.get(0))) {
 					_example_table.setSelectedObject(objs.get(0));
+				}
 			} else if (eevent.getType() == ExampleDictUpdateEvent.EXAMPLES_REMOVED) {
-				for (Iterator<Example> it = examples.iterator(); it.hasNext();)
-					_table_model.removeObject(it.next());
+				for (Example example : examples) {
+					_table_model.removeObject(example);
+				}
 
 				fireFilterEvent(new FilterEvent<Example>(this, _table_model
 						.getObjects()));
@@ -253,8 +265,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 
 	private void fireFilterEvent(FilterEvent<Example> ev) {
 		Iterator<FilterListener<Example>> it = _filter_listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().filterApplied(ev);
+		}
 	}
 
 	private void init() {
@@ -287,12 +300,14 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		_example_table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() != 2)
+				if (e.getClickCount() != 2) {
 					return;
+				}
 
 				int index = _example_table.rowAtPoint(e.getPoint());
-				if (index < 0)
+				if (index < 0) {
 					return;
+				}
 
 				Example example = _table_model.getObjectAt(index);
 				editExample(example);
@@ -355,8 +370,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 
 	private void setCurrentExamples(List<Example> examples) {
 		_current_examples = examples;
-		if (examples.size() > 0)
+		if (examples.size() > 0) {
 			_info_panel.setExample(examples.get(0));
+		}
 	}
 
 	private void applyFilter() {
@@ -406,24 +422,26 @@ class ExampleFilter extends Filter {
 	}
 
 	public boolean isExampleMatching(Example example) {
-		if (_filter_string.equals(""))
+		if (_filter_string.equals("")) {
 			return true;
-		else if (_match_case)
+		} else if (_match_case) {
 			return (example.toString().indexOf(_filter_string) != -1);
-		else
+		} else {
 			return (example.toString().toLowerCase().indexOf(
 					_filter_string.toLowerCase()) != -1);
+		}
 	}
 
 	public Collection<Example> getMatchingExamples(Collection<Example> examples) {
-		if (_filter_string.equals(""))
+		if (_filter_string.equals("")) {
 			return examples;
+		}
 
 		Vector<Example> example_vec = new Vector<Example>();
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();) {
-			Example example = it.next();
-			if (isExampleMatching(example))
+		for (Example example : examples) {
+			if (isExampleMatching(example)) {
 				example_vec.add(example);
+			}
 		}
 
 		return example_vec;

@@ -26,17 +26,19 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 public class StringChooserPanel extends JPanel {
 	private class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
-			if (ev.getActionCommand().equals("up"))
+			if (ev.getActionCommand().equals("up")) {
 				swap(_table.getSelectedRow(), _table.getSelectedRow() - 1);
-			else if (ev.getActionCommand().equals("down"))
+			} else if (ev.getActionCommand().equals("down")) {
 				swap(_table.getSelectedRow(), _table.getSelectedRow() + 1);
+			}
 		}
 	}
 
 	private class ListSelectionHandler implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent ev) {
-			if (!ev.getValueIsAdjusting())
+			if (!ev.getValueIsAdjusting()) {
 				update();
+			}
 		}
 	}
 
@@ -48,10 +50,10 @@ public class StringChooserPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private Action _up_action;
-	private Action _down_action;
-	private StringChooserModel _table_model;
-	private JTable _table;
+	private final Action _up_action;
+	private final Action _down_action;
+	private final StringChooserModel _table_model;
+	private final JTable _table;
 
 	public StringChooserPanel() {
 		_table_model = new StringChooserModel();
@@ -106,9 +108,9 @@ public class StringChooserPanel extends JPanel {
 	public void setEnabled(boolean enable) {
 		super.setEnabled(enable);
 		_table.setEnabled(enable);
-		if (enable)
+		if (enable) {
 			update();
-		else {
+		} else {
 			_up_action.setEnabled(false);
 			_down_action.setEnabled(false);
 		}
@@ -141,7 +143,7 @@ class StringChooserModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 
 	private int _first_deselected_index = 0;
-	private LinkedList<Object> _string_list = new LinkedList<Object>();
+	private final LinkedList<Object> _string_list = new LinkedList<Object>();
 
 	public int getRowCount() {
 		return _string_list.size();
@@ -153,21 +155,23 @@ class StringChooserModel extends AbstractTableModel {
 
 	@Override
 	public Class<? extends Object> getColumnClass(int column) {
-		if (column == 0)
+		if (column == 0) {
 			return Boolean.class;
-		else if (column == 1)
+		} else if (column == 1) {
 			return String.class;
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public Object getValueAt(int row, int column) {
-		if (column == 0)
+		if (column == 0) {
 			return row < _first_deselected_index;
-		else if (column == 1)
+		} else if (column == 1) {
 			return _string_list.get(row);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	@Override
@@ -185,8 +189,9 @@ class StringChooserModel extends AbstractTableModel {
 	 */
 	@Override
 	public void setValueAt(Object value, int row, int column) {
-		if (column != 0 || row < 0 || row >= _string_list.size())
+		if (column != 0 || row < 0 || row >= _string_list.size()) {
 			return;
+		}
 
 		boolean selected = ((Boolean) value).booleanValue();
 		Object obj = _string_list.remove(row);
@@ -217,26 +222,30 @@ class StringChooserModel extends AbstractTableModel {
 		setSelectedStrings(selected);
 		int new_size = _string_list.size();
 		fireTableRowsUpdated(0, new_size);
-		if (old_size > new_size)
+		if (old_size > new_size) {
 			fireTableRowsDeleted(new_size, old_size - 1);
-		else if (old_size < new_size)
+		} else if (old_size < new_size) {
 			fireTableRowsInserted(old_size, new_size - 1);
+		}
 	}
 
 	public String[] getSelectedStrings() {
 		String[] strings = new String[_first_deselected_index];
 		Iterator<Object> it = _string_list.iterator();
-		for (int i = 0; i < _first_deselected_index && it.hasNext(); i++)
+		for (int i = 0; i < _first_deselected_index && it.hasNext(); i++) {
 			strings[i] = (String) it.next();
+		}
 
 		return strings;
 	}
 
 	public boolean isStringSelected(String str) {
 		Iterator<Object> it = _string_list.iterator();
-		for (int i = 0; i < _first_deselected_index && it.hasNext(); i++)
-			if (it.next().equals(str))
+		for (int i = 0; i < _first_deselected_index && it.hasNext(); i++) {
+			if (it.next().equals(str)) {
 				return true;
+			}
+		}
 
 		return false;
 	}

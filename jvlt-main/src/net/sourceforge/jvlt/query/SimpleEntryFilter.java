@@ -3,14 +3,14 @@ package net.sourceforge.jvlt.query;
 import net.sourceforge.jvlt.core.Entry;
 
 public class SimpleEntryFilter extends EntryFilter implements StringEntryFilter {
-	private StringQueryItem _orth_item;
-	private ObjectArrayQueryItem _pron_item;
-	private SenseArrayQueryItem _trans_item;
-	private SenseArrayQueryItem _def_item;
-	private ObjectArrayQueryItem _category_item;
-	private StringPairQueryItem _custom_field_key_item;
-	private StringPairQueryItem _custom_field_value_item;
-	private StringQueryItem _lesson_item;
+	private final StringQueryItem _orth_item;
+	private final ObjectArrayQueryItem _pron_item;
+	private final SenseArrayQueryItem _trans_item;
+	private final SenseArrayQueryItem _def_item;
+	private final ObjectArrayQueryItem _category_item;
+	private final StringPairQueryItem _custom_field_key_item;
+	private final StringPairQueryItem _custom_field_value_item;
+	private final StringQueryItem _lesson_item;
 
 	public SimpleEntryFilter() {
 		super();

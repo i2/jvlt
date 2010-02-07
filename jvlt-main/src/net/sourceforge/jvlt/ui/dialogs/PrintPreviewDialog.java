@@ -31,7 +31,7 @@ public class PrintPreviewDialog extends JDialog implements ActionListener,
 	public static final int CANCEL_OPTION = 1;
 
 	private int _option;
-	private TablePrinter _printer;
+	private final TablePrinter _printer;
 	private SpinnerNumberModel _spinner_model;
 	private TablePrinterPanel _printer_panel;
 
@@ -72,13 +72,15 @@ public class PrintPreviewDialog extends JDialog implements ActionListener,
 		spane.getViewport().setView(_printer_panel);
 
 		int max_page = _printer.getPageNumber();
-		if (max_page == 0)
+		if (max_page == 0) {
 			max_page = 1;
+		}
 		_spinner_model = new SpinnerNumberModel(1, 1, max_page, 1);
 		JSpinner spinner = new JSpinner(_spinner_model);
 		spinner.addChangeListener(this);
-		if (max_page == 0)
+		if (max_page == 0) {
 			spinner.setEnabled(false);
+		}
 
 		JPanel settings_panel = new JPanel();
 		settings_panel.setLayout(new GridBagLayout());

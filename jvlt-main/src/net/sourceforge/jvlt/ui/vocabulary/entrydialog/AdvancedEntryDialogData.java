@@ -94,8 +94,8 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 					 * as the old one, the entry class is updated. TODO: Update
 					 * also if only attributes have changed
 					 */
-					for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
-						it.next().setEntryClass(ec);
+					for (Entry entry : _entries) {
+						entry.setEntryClass(ec);
 					}
 				}
 			}
@@ -106,8 +106,8 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 				.objectArrayToStringArray(_category_selection_panel
 						.getSelectedObjects());
 		if (!Utils.arraysEqual(categories, _orig_categories)) {
-			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
-				it.next().setCategories(categories);
+			for (Entry entry : _entries) {
+				entry.setCategories(categories);
 			}
 		}
 
@@ -123,8 +123,8 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		/* Multimedia files */
 		String[] files = _file_selection_panel.getFiles();
 		if (!Utils.arraysEqual(files, _orig_mmfiles)) {
-			for (Iterator<Entry> it = _entries.iterator(); it.hasNext();) {
-				it.next().setMultimediaFiles(files);
+			for (Entry entry : _entries) {
+				entry.setMultimediaFiles(files);
 			}
 		}
 
@@ -394,8 +394,8 @@ class FileSelectionPanel extends JPanel {
 
 	public void setFiles(String[] files) {
 		_list_model.clear();
-		for (int i = 0; i < files.length; i++) {
-			_list_model.addElement(files[i]);
+		for (String file : files) {
+			_list_model.addElement(file);
 		}
 	}
 

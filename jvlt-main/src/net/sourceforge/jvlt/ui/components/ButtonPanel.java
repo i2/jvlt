@@ -17,8 +17,8 @@ import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 public class ButtonPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private int _alignment;
-	private int _orientation;
+	private final int _alignment;
+	private final int _orientation;
 	private final List<JButton> _buttons;
 
 	/**
@@ -55,8 +55,8 @@ public class ButtonPanel extends JPanel {
 
 	private void resetLayout() {
 		Component[] components = getComponents();
-		for (int i = 0; i < components.length; i++) {
-			remove(components[i]);
+		for (Component component2 : components) {
+			remove(component2);
 		}
 
 		CustomConstraints cc = new CustomConstraints();

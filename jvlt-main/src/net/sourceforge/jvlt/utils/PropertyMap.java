@@ -3,12 +3,11 @@ package net.sourceforge.jvlt.utils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 public class PropertyMap {
-	private Vector<PropertyChangeListener> _listeners;
-	private HashMap<String, Object> _value_map;
+	private final Vector<PropertyChangeListener> _listeners;
+	private final HashMap<String, Object> _value_map;
 
 	public PropertyMap() {
 		_listeners = new Vector<PropertyChangeListener>();
@@ -21,7 +20,7 @@ public class PropertyMap {
 
 	/**
 	 * Returns a property given by a certain key
-	 * 
+	 *
 	 * @param key The key
 	 * @return The value that is mapped to the key or null if there is no value
 	 *         for the key
@@ -32,19 +31,21 @@ public class PropertyMap {
 
 	public void put(String key, Object value) {
 		boolean fire;
-		if (!_value_map.containsKey(key))
+		if (!_value_map.containsKey(key)) {
 			fire = true;
-		else {
+		} else {
 			Object obj = _value_map.get(key);
-			if (obj == null)
+			if (obj == null) {
 				fire = (value != null);
-			else
+			} else {
 				fire = (!obj.equals(value));
+			}
 		}
 
 		_value_map.put(key, value);
-		if (fire)
+		if (fire) {
 			firePropertyChangeEvent(key, _value_map.get(key), value);
+		}
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l) {
@@ -57,9 +58,9 @@ public class PropertyMap {
 
 	private void firePropertyChangeEvent(String key, Object old_value,
 			Object new_value) {
-		for (Iterator<PropertyChangeListener> it = _listeners.iterator(); it
-				.hasNext();)
-			it.next().propertyChange(
-					new PropertyChangeEvent(this, key, old_value, new_value));
+		for (PropertyChangeListener propertyChangeListener : _listeners) {
+propertyChangeListener.propertyChange(
+			new PropertyChangeEvent(this, key, old_value, new_value));
+}
 	}
 }

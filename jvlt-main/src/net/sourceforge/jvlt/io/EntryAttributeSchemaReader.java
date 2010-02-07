@@ -69,19 +69,21 @@ public class EntryAttributeSchemaReader {
 			// Create schema element
 			NodeList nl = (NodeList) path.evaluate("choice", elem,
 					XPathConstants.NODESET);
-			if (nl.getLength() > 0)
+			if (nl.getLength() > 0) {
 				attribute = readChoiceAttribute(path, elem, group);
-			else
+			} else {
 				attribute = new SchemaAttribute(name, group);
+			}
 
 			// Assign attributes to entry classes
 			if (classes.length == 0) {
 				Iterator<EntryClass> it = entry_classes.values().iterator();
-				while (it.hasNext())
+				while (it.hasNext()) {
 					it.next().addAttribute(attribute);
+				}
 			} else {
-				for (int j = 0; j < classes.length; j++) {
-					EntryClass ec = entry_classes.get(classes[j]);
+				for (String classe : classes) {
+					EntryClass ec = entry_classes.get(classe);
 					ec.addAttribute(attribute);
 				}
 			}
@@ -95,8 +97,9 @@ public class EntryAttributeSchemaReader {
 			Element elem = (Element) node_list.item(i);
 			String name = elem.getAttribute("name");
 			String parent_name = elem.getAttribute("extends");
-			if (parent_name == null || parent_name.equals(""))
+			if (parent_name == null || parent_name.equals("")) {
 				continue;
+			}
 
 			EntryClass child = entry_classes.get(name);
 			EntryClass parent = entry_classes.get(parent_name);
@@ -104,30 +107,34 @@ public class EntryAttributeSchemaReader {
 			root_nodes.remove(child);
 			root_nodes.add(parent);
 		}
-		for (Iterator<EntryClass> it = root_nodes.iterator(); it.hasNext();)
-			copyAttributes(it.next());
+		for (EntryClass entryClass : root_nodes) {
+			copyAttributes(entryClass);
+		}
 
 		return eas;
 	}
 
 	private void copyAttributes(EntryClass cl) {
 		EntryClass parent = cl.getParentClass();
-		if (parent != null)
+		if (parent != null) {
 			cl.addAttributes(parent.getAttributes());
+		}
 
 		EntryClass[] children = cl.getChildClasses();
-		for (int i = 0; i < children.length; i++)
-			copyAttributes(children[i]);
+		for (EntryClass element : children) {
+			copyAttributes(element);
+		}
 	}
 
 	private ChoiceSchemaAttribute readChoiceAttribute(XPath path, Element elem,
 			String group) throws XPathExpressionException {
 		ChoiceSchemaAttribute csa;
 		String name = elem.getAttribute("name");
-		if (elem.getAttribute("occurrence").equals("multiple"))
+		if (elem.getAttribute("occurrence").equals("multiple")) {
 			csa = new ArraySchemaAttribute(name, group);
-		else
+		} else {
 			csa = new ChoiceSchemaAttribute(name, group);
+		}
 
 		TreeMap<String, AttributeChoice> choice_map = new TreeMap<String, AttributeChoice>();
 		NodeList nl = (NodeList) path.evaluate("choice", elem,
@@ -148,10 +155,11 @@ public class EntryAttributeSchemaReader {
 			String parent_name = e.getAttribute("extends");
 			if (parent_name != null && !parent_name.equals("")) {
 				AttributeChoice ac = choice_map.get(parent_name);
-				if (ac == null)
+				if (ac == null) {
 					logger.warn("Choice '" + parent_name + "' does not exist.");
-				else
+				} else {
 					(choice_map.get(child_name)).setParent(ac);
+				}
 			}
 		}
 

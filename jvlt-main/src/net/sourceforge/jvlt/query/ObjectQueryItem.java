@@ -60,8 +60,9 @@ public abstract class ObjectQueryItem {
 	public String[] getTypeNames() {
 		Field[] fields = getTypeFields();
 		String[] names = new String[fields.length];
-		for (int i = 0; i < fields.length; i++)
+		for (int i = 0; i < fields.length; i++) {
 			names[i] = fields[i].getName();
+		}
 
 		return names;
 	}
@@ -71,13 +72,13 @@ public abstract class ObjectQueryItem {
 	protected Field[] getTypeFields() {
 		Field[] fields = this.getClass().getFields();
 		Vector<Field> field_vector = new Vector<Field>();
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
+		for (Field field : fields) {
 			int modifiers = field.getModifiers();
 			if (Modifier.isFinal(modifiers) && Modifier.isPublic(modifiers)
 					&& Modifier.isStatic(modifiers)
-					&& field.getType().getName().equals("int"))
+					&& field.getType().getName().equals("int")) {
 				field_vector.add(field);
+			}
 		}
 
 		return field_vector.toArray(new Field[0]);

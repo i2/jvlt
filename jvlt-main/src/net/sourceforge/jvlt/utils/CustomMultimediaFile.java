@@ -32,8 +32,9 @@ public class CustomMultimediaFile extends MultimediaFile {
 	}
 
 	public void play() throws IOException {
-		if (_command == null || _command.equals(""))
+		if (_command == null || _command.equals("")) {
 			return;
+		}
 
 		File f = getFile();
 		if (!f.exists() || !f.isFile()) {

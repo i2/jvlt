@@ -40,17 +40,19 @@ public class DictFileChooser extends JFileChooser {
 
 	public DictFileChooser(String file_name, FileType type) {
 		File dir = null;
-		if (file_name != null && !file_name.equals(""))
+		if (file_name != null && !file_name.equals("")) {
 			dir = new File(file_name).getParentFile();
-		else
+		} else {
 			dir = new File(".");
+		}
 
-		if (dir != null)
+		if (dir != null) {
 			try {
 				setCurrentDirectory(dir.getCanonicalFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
 
 		SimpleFileFilter filter = new SimpleFileFilter(GUIUtils.getString(
 				"Labels", type.getDescription()));
@@ -61,8 +63,9 @@ public class DictFileChooser extends JFileChooser {
 	public static String selectSaveFile(String file_name, FileType type,
 			Component parent) {
 		DictFileChooser chooser = new DictFileChooser(file_name, type);
-		if (chooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION)
+		if (chooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION) {
 			return null;
+		}
 
 		String selected_file = chooser.getSelectedFile().getPath();
 
@@ -74,8 +77,9 @@ public class DictFileChooser extends JFileChooser {
 				break;
 			}
 		}
-		if (!has_extension)
+		if (!has_extension) {
 			selected_file += "." + type.getExtensions()[0];
+		}
 
 		return selected_file;
 	}

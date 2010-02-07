@@ -6,10 +6,10 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 
 public class ImportAction extends DictAction {
-	private Collection<Entry> _entries;
-	private Collection<Example> _examples;
-	private String _old_language;
-	private String _new_language;
+	private final Collection<Entry> _entries;
+	private final Collection<Example> _examples;
+	private final String _old_language;
+	private final String _new_language;
 
 	public ImportAction(String old_lang, String new_lang,
 			Collection<Entry> entries, Collection<Example> examples) {

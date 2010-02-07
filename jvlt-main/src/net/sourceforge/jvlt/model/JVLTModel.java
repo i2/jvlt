@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.DictAction;
 import net.sourceforge.jvlt.actions.QueryAction;
@@ -23,6 +21,8 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.DetailedException;
 import net.sourceforge.jvlt.utils.Utils;
 
+import org.apache.log4j.Logger;
+
 public class JVLTModel implements UndoableActionListener,
 		ModelResetEventListener {
 
@@ -30,10 +30,10 @@ public class JVLTModel implements UndoableActionListener,
 
 	private Dict _dict;
 	private String _dict_file_name;
-	private DictModel _dict_model;
-	private QueryModel _query_model;
-	private LinkedList<UndoableAction> _redoable_actions;
-	private LinkedList<UndoableAction> _undoable_actions;
+	private final DictModel _dict_model;
+	private final QueryModel _query_model;
+	private final LinkedList<UndoableAction> _redoable_actions;
+	private final LinkedList<UndoableAction> _undoable_actions;
 
 	public JVLTModel() {
 		_dict = null;
@@ -67,9 +67,10 @@ public class JVLTModel implements UndoableActionListener,
 	 * done if no changes have been made.
 	 */
 	public void save(String dict_file_name) throws DetailedException {
-		if (dict_file_name == null)
+		if (dict_file_name == null) {
 			throw new DetailedException(GUIUtils.getString("Messages",
 					"no_file"));
+		}
 
 		String exception_text = GUIUtils.getString("Messages", "saving_failed");
 
@@ -87,22 +88,28 @@ public class JVLTModel implements UndoableActionListener,
 		// The temporary file allows to restore the backup file if the
 		// dictionary cannot be saved.
 		File temp_file = new File(temp_file_name);
-		if (temp_file.exists())
-			if (!temp_file.delete())
+		if (temp_file.exists()) {
+			if (!temp_file.delete()) {
 				throw new DetailedException(exception_text,
 						"Could not delete temporary file" + temp_file_name
 								+ ".");
+			}
+		}
 
 		File backup_file = new File(backup_file_name);
-		if (backup_file.exists())
-			if (!backup_file.renameTo(temp_file))
+		if (backup_file.exists()) {
+			if (!backup_file.renameTo(temp_file)) {
 				throw new DetailedException(exception_text, "Could not rename "
 						+ backup_file_name + " to " + temp_file_name + ".");
+			}
+		}
 
-		if (file.exists())
-			if (!file.renameTo(backup_file))
+		if (file.exists()) {
+			if (!file.renameTo(backup_file)) {
 				throw new DetailedException(exception_text, "Could not rename "
 						+ dict_file_name + " to " + backup_file_name + ".");
+			}
+		}
 
 		try {
 			file = new File(dict_file_name);
@@ -125,28 +132,31 @@ public class JVLTModel implements UndoableActionListener,
 	/**
 	 * Try to save the dictionary and the statistics file using the current file
 	 * name. If no changes have been made then nothing is saved.
-	 * 
+	 *
 	 * @see #getDictFileName()
 	 */
 	public void save() throws DetailedException {
-		if (_dict_model.isDataModified() || _query_model.isDataModified())
+		if (_dict_model.isDataModified() || _query_model.isDataModified()) {
 			save(_dict_file_name);
+		}
 	}
 
 	/**
 	 * Load a dictionary from a file. If no error occurs then the file name is
 	 * saved. Otherwise, the old file name is kept.
-	 * 
+	 *
 	 * @see #getDictFileName()
 	 */
 	public void load(String dict_file_name, String version)
 			throws DictReaderException, IOException {
-		if (dict_file_name == null)
+		if (dict_file_name == null) {
 			throw new IOException("No file specified.");
+		}
 
 		File file = new File(dict_file_name);
-		if (!file.exists())
+		if (!file.exists()) {
 			throw new IOException("File " + dict_file_name + " does not exist.");
+		}
 
 		DictReader reader = new SAXDictReader(version);
 		reader.read(file);
@@ -230,17 +240,19 @@ public class JVLTModel implements UndoableActionListener,
 
 	public void undo() throws ModelException {
 		UndoableAction action = _undoable_actions.getFirst();
-		if (action instanceof DictAction)
+		if (action instanceof DictAction) {
 			_dict_model.undo();
-		else if (action instanceof QueryAction)
+		} else if (action instanceof QueryAction) {
 			_query_model.undo();
+		}
 	}
 
 	public void redo() throws ModelException {
 		UndoableAction action = _redoable_actions.getFirst();
-		if (action instanceof DictAction)
+		if (action instanceof DictAction) {
 			_dict_model.redo();
-		else if (action instanceof QueryAction)
+		} else if (action instanceof QueryAction) {
 			_query_model.redo();
+		}
 	}
 }

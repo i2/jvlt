@@ -26,11 +26,12 @@ public final class CustomCollator extends RuleBasedCollator {
 				c.setStrength(Collator.PRIMARY);
 				Pattern p = Pattern.compile("(.)\\s*<\\s*a");
 				Matcher m = p.matcher(c.getRules());
-				if (m.find())
+				if (m.find()) {
 					_instance = new CustomCollator(c.getRules() + "&"
 							+ m.group(1) + "<' '");
-				else
+				} else {
 					_instance = new CustomCollator(c.getRules());
+				}
 			}
 
 			return _instance;

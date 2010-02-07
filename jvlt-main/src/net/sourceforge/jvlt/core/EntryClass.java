@@ -8,13 +8,13 @@ import java.util.Vector;
 public class EntryClass implements Comparable<EntryClass> {
 	private String _name = null;
 	private EntryClass _parent_class = null;
-	private Vector<SchemaAttribute> _attributes = new Vector<SchemaAttribute>();
-	private Vector<String> _groups = new Vector<String>();
+	private final Vector<SchemaAttribute> _attributes = new Vector<SchemaAttribute>();
+	private final Vector<String> _groups = new Vector<String>();
 	// Maps groups to vectors of attributes
-	private TreeMap<String, Vector<SchemaAttribute>> _group_map;
+	private final TreeMap<String, Vector<SchemaAttribute>> _group_map;
 	// Maps names to attributes
-	private TreeMap<String, SchemaAttribute> _name_map;
-	private TreeSet<EntryClass> _children = new TreeSet<EntryClass>();
+	private final TreeMap<String, SchemaAttribute> _name_map;
+	private final TreeSet<EntryClass> _children = new TreeSet<EntryClass>();
 
 	public EntryClass(String name) {
 		_name = name;
@@ -41,10 +41,10 @@ public class EntryClass implements Comparable<EntryClass> {
 	 */
 	public SchemaAttribute[] getAttributes(String group) {
 		Vector<SchemaAttribute> atts = _group_map.get(group);
-		if (atts == null)
+		if (atts == null) {
 			return new SchemaAttribute[0];
-		else
-			return atts.toArray(new SchemaAttribute[0]);
+		}
+		return atts.toArray(new SchemaAttribute[0]);
 	}
 
 	public SchemaAttribute getAttribute(String name) {
@@ -56,8 +56,9 @@ public class EntryClass implements Comparable<EntryClass> {
 	 * exist an attribute with the same name and the same group.
 	 */
 	public void addAttribute(SchemaAttribute attr) {
-		if (_name_map.containsKey(attr.getName()))
+		if (_name_map.containsKey(attr.getName())) {
 			return;
+		}
 
 		String group = attr.getGroup();
 		if (_group_map.containsKey(group)) {
@@ -74,8 +75,9 @@ public class EntryClass implements Comparable<EntryClass> {
 	}
 
 	public void addAttributes(SchemaAttribute[] atts) {
-		for (int i = 0; i < atts.length; i++)
-			addAttribute(atts[i]);
+		for (SchemaAttribute att : atts) {
+			addAttribute(att);
+		}
 	}
 
 	public EntryClass[] getChildClasses() {
@@ -88,16 +90,18 @@ public class EntryClass implements Comparable<EntryClass> {
 
 	public void setParentClass(EntryClass cl) {
 		_parent_class = cl;
-		if (cl != null)
+		if (cl != null) {
 			_parent_class._children.add(this);
+		}
 	}
 
 	@Override
 	public Object clone() {
 		EntryClass cl = new EntryClass(_name);
 		Iterator<SchemaAttribute> it = _attributes.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			cl.addAttribute((SchemaAttribute) it.next().clone());
+		}
 		return cl;
 	}
 
@@ -107,10 +111,10 @@ public class EntryClass implements Comparable<EntryClass> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null)
+		if (o == null) {
 			return false;
-		else
-			return ((EntryClass) o)._name.equals(_name);
+		}
+		return ((EntryClass) o)._name.equals(_name);
 	}
 
 	@Override

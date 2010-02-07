@@ -4,11 +4,14 @@ import java.lang.reflect.Method;
 
 import net.sourceforge.jvlt.utils.XMLUtils;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DefaultAttribute implements Attribute,
 		Comparable<DefaultAttribute> {
+	private static final Logger logger = Logger
+			.getLogger(DefaultAttribute.class);
 	protected String _name;
 	protected Class<? extends Object> _type;
 
@@ -31,10 +34,10 @@ public class DefaultAttribute implements Attribute,
 
 	public String getFormattedValue(Object o) {
 		Object val = getValue(o);
-		if (val == null)
+		if (val == null) {
 			return "";
-		else
-			return val.toString();
+		}
+		return val.toString();
 	}
 
 	public Element getXMLElement(Document doc, Object o) {
@@ -60,7 +63,7 @@ public class DefaultAttribute implements Attribute,
 			Method method = o.getClass().getMethod("get" + name, new Class[0]);
 			return method.invoke(o, new Object[0]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex);
 			return null;
 		}
 	}

@@ -54,9 +54,7 @@ public class DictCSVWriter extends DictWriter {
 		Collection<Entry> entries = _dict.getEntries();
 		DictInfo info = new DictInfo();
 
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
-
+		for (Entry entry : entries) {
 			info.num_senses = Math.max(entry.getSenses().length,
 					info.num_senses);
 			info.num_categories = Math.max(entry.getCategories().length,
@@ -71,13 +69,14 @@ public class DictCSVWriter extends DictWriter {
 					if (attrs[i] instanceof ArraySchemaAttribute) {
 						ArraySchemaAttribute asa = (ArraySchemaAttribute) attrs[i];
 						Object[] values = (Object[]) asa.getValue();
-						if (!info.num_attr_columns.containsKey(attrs[i]))
+						if (!info.num_attr_columns.containsKey(attrs[i])) {
 							info.num_attr_columns.put(attrs[i],
 									values == null ? 1 : values.length);
-						else
+						} else {
 							info.num_attr_columns.put(attrs[i], Math.max(
 									values == null ? 1 : values.length,
 									info.num_attr_columns.get(attrs[i])));
+						}
 					} else {
 						info.num_attr_columns.put(attrs[i], 1);
 					}
@@ -113,25 +112,24 @@ public class DictCSVWriter extends DictWriter {
 		writer.write(getField(GUIUtils.getString("Labels", "class")));
 		writer.write(_field_delimiter);
 		AttributeResources resources = new AttributeResources();
-		for (Iterator<SchemaAttribute> it = info.num_attr_columns.keySet()
-				.iterator(); it.hasNext();) {
-			SchemaAttribute attr = it.next();
-			if (attr instanceof ArraySchemaAttribute) {
-				int num_cols = info.num_attr_columns.get(attr);
-				for (int i = 0; i < num_cols; i++) {
-					writer.write(getField(resources.getString(attr.getName()))
-							+ " #" + (i + 1));
-					writer.write(_field_delimiter);
-				}
-			} else {
-				writer.write(getField(resources.getString(attr.getName())));
-				writer.write(_field_delimiter);
-			}
+		for (SchemaAttribute attr : info.num_attr_columns.keySet()) {
+if (attr instanceof ArraySchemaAttribute) {
+		int num_cols = info.num_attr_columns.get(attr);
+		for (int i = 0; i < num_cols; i++) {
+			writer.write(getField(resources.getString(attr.getName()))
+					+ " #" + (i + 1));
+			writer.write(_field_delimiter);
 		}
+} else {
+		writer.write(getField(resources.getString(attr.getName())));
+		writer.write(_field_delimiter);
+}
+}
 		writer.write(System.getProperty("line.separator"));
 
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();)
-			writeEntry(writer, info, it.next());
+		for (Entry entry : entries) {
+			writeEntry(writer, info, entry);
+		}
 
 		writer.close();
 	}
@@ -144,10 +142,11 @@ public class DictCSVWriter extends DictWriter {
 
 		// Write first pronunciation
 		String[] pronunciations = entry.getPronunciations();
-		if (pronunciations.length > 0)
+		if (pronunciations.length > 0) {
 			writer.write(getField(pronunciations[0]));
-		else
+		} else {
 			writer.write(getField(""));
+		}
 		writer.write(_field_delimiter);
 
 		// Write senses
@@ -195,8 +194,9 @@ public class DictCSVWriter extends DictWriter {
 					.iterator();
 			while (it.hasNext()) {
 				SchemaAttribute attr = ec.getAttribute(it.next().getName());
-				if (attr == null)
+				if (attr == null) {
 					continue;
+				}
 
 				if (attr instanceof ArraySchemaAttribute) {
 					ArraySchemaAttribute asa = (ArraySchemaAttribute) attr;

@@ -2,7 +2,6 @@ package net.sourceforge.jvlt.ui.vocabulary;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,10 +29,10 @@ public class EntryInfoPanel extends InfoPanel {
 	private static final Logger logger = Logger.getLogger(EntryInfoPanel.class);
 	private static final long serialVersionUID = 1L;
 
-	private XSLTransformer _entry_transformer;
+	private final XSLTransformer _entry_transformer;
 	private Entry _current_entry = null;
-	private Vector<Attribute> _entry_attributes = new Vector<Attribute>();
-	private Vector<Attribute> _example_attributes = new Vector<Attribute>();
+	private final Vector<Attribute> _entry_attributes = new Vector<Attribute>();
+	private final Vector<Attribute> _example_attributes = new Vector<Attribute>();
 
 	public EntryInfoPanel(JVLTModel model, SelectionNotifier notifier) {
 		super(model, notifier);
@@ -57,13 +56,14 @@ public class EntryInfoPanel extends InfoPanel {
 	public void setDisplayedEntryAttributes(String[] attr_names) {
 		MetaData entry_data = _model.getDictModel().getMetaData(Entry.class);
 		_entry_attributes.clear();
-		for (int i = 0; i < attr_names.length; i++) {
-			Attribute attr = entry_data.getAttribute(attr_names[i]);
-			if (attr == null)
-				logger.warn("Attribute \"" + attr_names[i]
+		for (String attrName : attr_names) {
+			Attribute attr = entry_data.getAttribute(attrName);
+			if (attr == null) {
+				logger.warn("Attribute \"" + attrName
 						+ "\" does not exist.");
-			else
-				_entry_attributes.add(entry_data.getAttribute(attr_names[i]));
+			} else {
+				_entry_attributes.add(entry_data.getAttribute(attrName));
+			}
 		}
 		updateView();
 	}
@@ -72,13 +72,14 @@ public class EntryInfoPanel extends InfoPanel {
 		MetaData example_data = _model.getDictModel()
 				.getMetaData(Example.class);
 		_example_attributes.clear();
-		for (int i = 0; i < attr_names.length; i++) {
-			Attribute attr = example_data.getAttribute(attr_names[i]);
-			if (attr == null)
-				logger.warn("Warning: Attribute \"" + attr_names[i]
+		for (String attrName : attr_names) {
+			Attribute attr = example_data.getAttribute(attrName);
+			if (attr == null) {
+				logger.warn("Warning: Attribute \"" + attrName
 						+ "\" does not exist.");
-			else
+			} else {
 				_example_attributes.add(attr);
+			}
 		}
 		updateView();
 	}
@@ -90,11 +91,12 @@ public class EntryInfoPanel extends InfoPanel {
 			if (eevent.getType() == EntryDictUpdateEvent.ENTRIES_CHANGED) {
 				updateView();
 			} else if (event.getType() == EntryDictUpdateEvent.ENTRIES_REMOVED) {
-				if (_current_entry != null)
+				if (_current_entry != null) {
 					if (eevent.getEntries().contains(_current_entry)) {
 						_current_entry = null;
 						updateView();
 					}
+				}
 			}
 		} else if (event instanceof ExampleDictUpdateEvent) {
 			updateView();
@@ -112,27 +114,31 @@ public class EntryInfoPanel extends InfoPanel {
 	public void hyperlinkUpdate(HyperlinkEvent ev) {
 		if (ev.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 			String descr = ev.getDescription();
-			if (descr.length() < 1)
+			if (descr.length() < 1) {
 				return;
+			}
 
 			if (descr.startsWith("e")) {
 				String id = descr.substring(0, descr.indexOf('-'));
 				Entry entry = _dict.getEntry(id);
-				if (entry != null)
+				if (entry != null) {
 					_notifier
 							.fireSelectionEvent(new SelectionEvent(entry, this));
+				}
 			} else if (descr.startsWith("x")) {
 				Example example = _dict.getExample(descr);
-				if (example != null)
+				if (example != null) {
 					_notifier.fireSelectionEvent(new SelectionEvent(example,
 							this));
+				}
 			} else if (descr.startsWith("mm:")) {
 				String file_name = descr.substring(3, descr.length());
 				MultimediaFile file = MultimediaUtils
 						.getMultimediaFileForName(file_name);
-				if (file != null)
+				if (file != null) {
 					_notifier
 							.fireSelectionEvent(new SelectionEvent(file, this));
+				}
 			}
 		}
 	}
@@ -150,12 +156,13 @@ public class EntryInfoPanel extends InfoPanel {
 		root.appendChild(dof.getElementForObject(_current_entry,
 				_entry_attributes.toArray(new Attribute[0])));
 		Collection<Example> examples = _dict.getExamples(_current_entry);
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();)
-			root.appendChild(dof.getElementForObject(it.next(),
+		for (Example example : examples) {
+			root.appendChild(dof.getElementForObject(example,
 					_example_attributes.toArray(new Attribute[0])));
 		// XMLWriter writer = new XMLWriter(System.out);
 		// try { writer.write(doc); }
 		// catch (java.io.IOException e) { e.printStackTrace(); }
+		}
 
 		String html = _entry_transformer.transform(doc);
 		// Because of a bug in JEditorPane, the content-type meta tag causes

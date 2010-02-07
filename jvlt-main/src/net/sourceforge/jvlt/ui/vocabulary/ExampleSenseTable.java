@@ -71,11 +71,13 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
 		font = JVLT.getConfig().getFontProperty("ui_orth_font");
-		if (font != null)
+		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
+		}
 		font = JVLT.getConfig().getFontProperty("ui_pron_font");
-		if (font != null)
+		if (font != null) {
 			PRONUNCIATION_RENDERER.setCustomFont(font);
+		}
 	}
 
 	private Example example = null;
@@ -93,12 +95,15 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 
 	public Example.TextFragment getSelectedTextFragment() {
 		List<Sense> senses = getSelectedObjects();
-		if (senses.size() == 0)
+		if (senses.size() == 0) {
 			return null;
+		}
 
-		for (Example.TextFragment f : example.getTextFragments())
-			if (f.getSense() == senses.get(0))
+		for (Example.TextFragment f : example.getTextFragments()) {
+			if (f.getSense() == senses.get(0)) {
 				return f;
+			}
+		}
 
 		return null;
 	}
@@ -106,8 +111,10 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 	public void update() {
 		_model.clear();
 
-		for (Example.TextFragment f : example.getTextFragments())
-			if (f.getSense() != null)
+		for (Example.TextFragment f : example.getTextFragments()) {
+			if (f.getSense() != null) {
 				_model.addObject(f.getSense());
+			}
+		}
 	}
 }

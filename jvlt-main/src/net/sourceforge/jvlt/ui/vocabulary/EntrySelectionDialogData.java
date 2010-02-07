@@ -135,8 +135,9 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 
 	private class PropertyChangeHandler implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent ev) {
-			if (ev.getPropertyName().equals("filters"))
+			if (ev.getPropertyName().equals("filters")) {
 				setFilters((ObjectQuery[]) ev.getNewValue());
+			}
 		}
 	}
 
@@ -153,7 +154,7 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 	private SimpleEntryQueryDialog _query_dlg;
 	private StringChooserPanel _filter_chooser_panel;
 
-	private JVLTModel _model;
+	private final JVLTModel _model;
 
 	public EntrySelectionDialogData(JVLTModel model) {
 		_model = model;
@@ -175,32 +176,36 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 		} else if (_some_categories_button.isSelected()) {
 			Object[] categories = _contained_categories_panel
 					.getSelectedObjects();
-			if (categories.length > 0)
+			if (categories.length > 0) {
 				query.addItem(new ChoiceObjectArrayQueryItem("Categories",
 						ChoiceObjectArrayQueryItem.CONTAINS_ONE_ITEM, Utils
 								.objectArrayToStringArray(categories)));
+			}
 			categories = _not_contained_categories_panel.getSelectedObjects();
-			if (categories.length > 0)
+			if (categories.length > 0) {
 				query.addItem(new ChoiceObjectArrayQueryItem("Categories",
 						ChoiceObjectArrayQueryItem.DOES_NOT_CONTAIN_ANY_ITEM,
 						Utils.objectArrayToStringArray(categories)));
+			}
 
 			Object[] lessons = _contained_lessons_panel.getSelectedObjects();
 			if (lessons.length > 0) {
 				ContainerQueryItem cqi = new ContainerQueryItem("Lesson",
 						ContainerQueryItem.MATCH_ONE);
-				for (int i = 0; i < lessons.length; i++)
+				for (Object lesson : lessons) {
 					cqi.addItem(new ChoiceQueryItem("Lesson",
-							ChoiceQueryItem.EQUALS, lessons[i]));
+							ChoiceQueryItem.EQUALS, lesson));
+				}
 				query.addItem(cqi);
 			}
 			lessons = _not_contained_lessons_panel.getSelectedObjects();
 			if (lessons.length > 0) {
 				ContainerQueryItem cqi = new ContainerQueryItem("Lesson",
 						ContainerQueryItem.MATCH_ALL);
-				for (int i = 0; i < lessons.length; i++)
+				for (Object lesson : lessons) {
 					cqi.addItem(new ChoiceQueryItem("Lesson",
-							ChoiceQueryItem.NOT_EQUAL, lessons[i]));
+							ChoiceQueryItem.NOT_EQUAL, lesson));
+				}
 				query.addItem(cqi);
 			}
 
@@ -210,13 +215,16 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 		} else { // if (_multiple_filters_button.isSelected())
 			ObjectQuery[] oqs = (ObjectQuery[]) JVLT.getRuntimeProperties()
 					.get("filters");
-			if (oqs == null)
+			if (oqs == null) {
 				return new ObjectQuery[0];
+			}
 
 			ArrayList<ObjectQuery> filters = new ArrayList<ObjectQuery>();
-			for (int i = 0; i < oqs.length; i++)
-				if (_filter_chooser_panel.isStringSelected(oqs[i].getName()))
-					filters.add(oqs[i]);
+			for (ObjectQuery oq : oqs) {
+				if (_filter_chooser_panel.isStringSelected(oq.getName())) {
+					filters.add(oq);
+				}
+			}
 
 			return filters.toArray(new ObjectQuery[0]);
 		}
@@ -224,12 +232,13 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 
 	public State getState() {
 		int type = State.ALL_ENTRIES;
-		if (_some_categories_button.isSelected())
+		if (_some_categories_button.isSelected()) {
 			type = State.SOME_CATEGORIES;
-		else if (_some_entries_button.isSelected())
+		} else if (_some_entries_button.isSelected()) {
 			type = State.SOME_ENTRIES;
-		else if (_multiple_filters_button.isSelected())
+		} else if (_multiple_filters_button.isSelected()) {
 			type = State.MULTIPLE_FILTERS;
+		}
 
 		State state = new State(type);
 		state.setLanguage(_model.getDict().getLanguage());
@@ -251,19 +260,21 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 	}
 
 	public void initFromState(State state) {
-		if (state == null)
+		if (state == null) {
 			return;
+		}
 
 		int type = state.getType();
-		if (type == State.ALL_ENTRIES)
+		if (type == State.ALL_ENTRIES) {
 			_all_entries_button.setSelected(true);
-		else if (type == State.SOME_CATEGORIES)
+		} else if (type == State.SOME_CATEGORIES) {
 			_some_categories_button.setSelected(true);
-		else if (type == State.SOME_ENTRIES)
+		} else if (type == State.SOME_ENTRIES) {
 			_some_entries_button.setSelected(true);
-		else
+		} else {
 			// if (type == State.MULTIPLE_FILTERS)
 			_multiple_filters_button.setSelected(true);
+		}
 
 		_contained_lessons_panel.setSelectedObjects(state.getAllowedLessons());
 		_contained_categories_panel.setSelectedObjects(state
@@ -275,8 +286,9 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 		_query_dlg.setObjectQuery(state.getQuery());
 		ObjectQuery[] oqs = state.getMultiQuery();
 		String[] filter_names = new String[oqs.length];
-		for (int i = 0; i < oqs.length; i++)
+		for (int i = 0; i < oqs.length; i++) {
 			filter_names[i] = oqs[i].getName();
+		}
 		_filter_chooser_panel.setSelectedStrings(filter_names);
 
 		updateComponents();
@@ -288,15 +300,17 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("filter")
-				|| ev.getActionCommand().equals("manage_filters"))
+				|| ev.getActionCommand().equals("manage_filters")) {
 			GUIUtils.showDialog(_content_pane, _query_dlg);
-		else
+		} else {
 			updateComponents();
+		}
 	}
 
 	public void dialogStateChanged(DialogEvent ev) {
-		if (ev.getSource() == _query_dlg)
+		if (ev.getSource() == _query_dlg) {
 			_query_dlg.setVisible(false);
+		}
 	}
 
 	private void init() {
@@ -411,12 +425,13 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 
 	private void setFilters(ObjectQuery[] oqs) {
 		String[] names;
-		if (oqs == null)
+		if (oqs == null) {
 			names = new String[0];
-		else {
+		} else {
 			names = new String[oqs.length];
-			for (int i = 0; i < oqs.length; i++)
+			for (int i = 0; i < oqs.length; i++) {
 				names[i] = oqs[i].getName();
+			}
 		}
 
 		_filter_chooser_panel.setStrings(names);

@@ -33,13 +33,13 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class FontChooser implements ActionListener, ListSelectionListener {
 	private int _option;
-	private InputList _font_list;
-	private InputList _size_list;
-	private JCheckBox _bold_box;
-	private JCheckBox _italic_box;
+	private final InputList _font_list;
+	private final InputList _size_list;
+	private final JCheckBox _bold_box;
+	private final JCheckBox _italic_box;
 	private JDialog _dlg;
-	private JPanel _content_pane;
-	private CustomTextField _preview_field;
+	private final JPanel _content_pane;
+	private final CustomTextField _preview_field;
 
 	public FontChooser() {
 		GraphicsEnvironment ge = GraphicsEnvironment
@@ -114,14 +114,16 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 
 	public FontInfo getFontInfo() {
 		int style;
-		if (!_bold_box.isSelected() && !_italic_box.isSelected())
+		if (!_bold_box.isSelected() && !_italic_box.isSelected()) {
 			style = Font.PLAIN;
-		else {
+		} else {
 			style = 0;
-			if (_bold_box.isSelected())
+			if (_bold_box.isSelected()) {
 				style += Font.BOLD;
-			if (_italic_box.isSelected())
+			}
+			if (_italic_box.isSelected()) {
 				style += Font.ITALIC;
+			}
 		}
 
 		int size;
@@ -158,13 +160,15 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 			_option = JOptionPane.CANCEL_OPTION;
 			_dlg.setVisible(false);
 		} else if (ev.getActionCommand().equals("bold")
-				|| ev.getActionCommand().equals("italic"))
+				|| ev.getActionCommand().equals("italic")) {
 			updatePreview();
+		}
 	}
 
 	public void valueChanged(ListSelectionEvent ev) {
-		if (!ev.getValueIsAdjusting())
+		if (!ev.getValueIsAdjusting()) {
 			updatePreview();
+		}
 	}
 
 	public int showDialog(Component parent) {
@@ -188,9 +192,9 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 class InputList extends JPanel implements ListSelectionListener {
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<ListSelectionListener> _listeners;
-	private CustomTextField _field;
-	private JList _list;
+	private final ArrayList<ListSelectionListener> _listeners;
+	private final CustomTextField _field;
+	private final JList _list;
 
 	public InputList(String[] data, String name) {
 		_listeners = new ArrayList<ListSelectionListener>();
@@ -224,13 +228,15 @@ class InputList extends JPanel implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
 			Object obj = _list.getSelectedValue();
-			if (obj != null)
+			if (obj != null) {
 				_field.setText(obj.toString());
+			}
 		}
 
 		Iterator<ListSelectionListener> it = _listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().valueChanged(e);
+		}
 	}
 
 	public void addListSelectionListener(ListSelectionListener listener) {

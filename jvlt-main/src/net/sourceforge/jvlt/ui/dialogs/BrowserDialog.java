@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -24,10 +25,12 @@ import net.sourceforge.jvlt.ui.components.ButtonPanel;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
+import org.apache.log4j.Logger;
+
 public class BrowserDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
-	private Browser _browser;
+	private final Browser _browser;
 
 	public BrowserDialog(Frame owner, URL page) {
 		super(owner, GUIUtils.getString("Labels", "help"), false);
@@ -40,6 +43,8 @@ public class BrowserDialog extends JDialog {
 }
 
 class Browser extends JPanel {
+	private static final Logger logger = Logger.getLogger(Browser.class);
+
 	class LinkFollower implements HyperlinkListener {
 		public void hyperlinkUpdate(HyperlinkEvent ev) {
 			if (ev.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -64,7 +69,7 @@ class Browser extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<URL> _history;
+	private final List<URL> _history;
 	private int _history_index;
 
 	private Action _back_action;
@@ -117,7 +122,7 @@ class Browser extends JPanel {
 			URL url = _history.get(_history_index);
 			_html_pane.setPage(url);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex);
 		}
 	}
 }

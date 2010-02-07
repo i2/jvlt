@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,12 +61,13 @@ public class EntryFilterPanel extends JPanel {
 
 		public BasicEntryFilter(ObjectQueryItem item) {
 			_item = item;
-			if (item instanceof StringQueryItem)
+			if (item instanceof StringQueryItem) {
 				((StringQueryItem) item).setMatchCase(false);
-			else if (item instanceof ObjectArrayQueryItem)
+			} else if (item instanceof ObjectArrayQueryItem) {
 				((ObjectArrayQueryItem) item).setMatchCase(false);
-			else if (item instanceof SenseArrayQueryItem)
+			} else if (item instanceof SenseArrayQueryItem) {
 				((SenseArrayQueryItem) item).setMatchCase(false);
+			}
 
 			_query = new ObjectQuery(Entry.class);
 			_query.setType(ObjectQuery.MATCH_ONE);
@@ -85,8 +85,8 @@ public class EntryFilterPanel extends JPanel {
 
 	private static class CustomFieldFilter extends EntryFilter implements
 			StringEntryFilter {
-		private StringPairQueryItem _key_item;
-		private StringPairQueryItem _value_item;
+		private final StringPairQueryItem _key_item;
+		private final StringPairQueryItem _value_item;
 
 		public CustomFieldFilter() {
 			_key_item = new StringPairQueryItem("CustomFields",
@@ -130,14 +130,16 @@ public class EntryFilterPanel extends JPanel {
 			} else if (e.getSource() == _mode_box) {
 				setMode((FilterMode) _mode_box.getSelectedItem());
 
-				if (_mode != FilterMode.MODE_ADVANCED)
+				if (_mode != FilterMode.MODE_ADVANCED) {
 					setFilterString(_filter_field.getText());
+				}
 
 				fireActionEvent(new ActionEvent(EntryFilterPanel.this, e
 						.getID(), null));
 			} else if (e.getActionCommand().equals("ok")) {
-				if (_mode != FilterMode.MODE_ADVANCED)
+				if (_mode != FilterMode.MODE_ADVANCED) {
 					setFilterString(_filter_field.getText());
+				}
 
 				fireActionEvent(new ActionEvent(EntryFilterPanel.this, e
 						.getID(), null));
@@ -175,17 +177,17 @@ public class EntryFilterPanel extends JPanel {
 	}
 
 	private FilterMode _mode;
-	private JVLTModel _model;
-	private Map<FilterMode, EntryFilter> _filters;
-	private Set<ActionListener> _listeners;
-	private ActionHandler _action_handler;
+	private final JVLTModel _model;
+	private final Map<FilterMode, EntryFilter> _filters;
+	private final Set<ActionListener> _listeners;
+	private final ActionHandler _action_handler;
 
-	private CustomTextField _filter_field;
-	private EntryQueryDialog _query_dialog;
-	private JButton _advanced_button;
-	private JButton _ok_button;
-	private JButton _cancel_button;
-	private JComboBox _mode_box;
+	private final CustomTextField _filter_field;
+	private final EntryQueryDialog _query_dialog;
+	private final JButton _advanced_button;
+	private final JButton _ok_button;
+	private final JButton _cancel_button;
+	private final JComboBox _mode_box;
 
 	public EntryFilterPanel(JVLTModel model) {
 		_mode = FilterMode.MODE_MULTI;
@@ -265,8 +267,9 @@ public class EntryFilterPanel extends JPanel {
 	}
 
 	public void setMode(FilterMode mode) {
-		if (mode == _mode)
+		if (mode == _mode) {
 			return;
+		}
 
 		FilterMode oldmode = _mode;
 		_mode = mode;
@@ -284,8 +287,9 @@ public class EntryFilterPanel extends JPanel {
 		} else {
 			// Update filter field text
 			_filter_field.setEnabled(true);
-			if (oldmode == FilterMode.MODE_ADVANCED)
+			if (oldmode == FilterMode.MODE_ADVANCED) {
 				_filter_field.setText("");
+			}
 
 			// Remove button for advanced dialog, add ok button
 			remove(_advanced_button);
@@ -295,8 +299,9 @@ public class EntryFilterPanel extends JPanel {
 
 		// Update mode box
 		FilterMode current_mode = (FilterMode) _mode_box.getSelectedItem();
-		if (!current_mode.equals(mode))
+		if (!current_mode.equals(mode)) {
 			_mode_box.setSelectedItem(mode);
+		}
 	}
 
 	public EntryFilter getFilter() {
@@ -307,15 +312,15 @@ public class EntryFilterPanel extends JPanel {
 		EntryFilter filter = _filters.get(_mode);
 		if (filter instanceof StringEntryFilter) {
 			return ((StringEntryFilter) filter).getFilterString();
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public void setFilterString(String str) {
 		EntryFilter filter = _filters.get(_mode);
-		if (filter instanceof StringEntryFilter)
+		if (filter instanceof StringEntryFilter) {
 			((StringEntryFilter) filter).setFilterString(str);
+		}
 
 		_filter_field.setText(str);
 	}
@@ -341,18 +346,20 @@ public class EntryFilterPanel extends JPanel {
 	}
 
 	private void fireActionEvent(ActionEvent e) {
-		for (Iterator<ActionListener> i = _listeners.iterator(); i.hasNext();)
-			i.next().actionPerformed(
+		for (ActionListener actionListener : _listeners) {
+			actionListener.actionPerformed(
 					new ActionEvent(this, e.getID(), e.getActionCommand()));
+		}
 	}
 
 	private void updateAdvancedFilterField() {
 		_filter_field.setEnabled(false);
 		ObjectQuery oq = _filters.get(_mode).getQuery();
-		if (oq.getName() == null || oq.getName().equals(""))
+		if (oq.getName() == null || oq.getName().equals("")) {
 			_filter_field.setText(GUIUtils
 					.getString("Labels", "filter_unnamed"));
-		else
+		} else {
 			_filter_field.setText(oq.getName());
+		}
 	}
 }

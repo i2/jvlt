@@ -8,8 +8,8 @@ import java.util.Iterator;
 import javax.swing.filechooser.FileFilter;
 
 public class SimpleFileFilter extends FileFilter {
-	private ArrayList<String> _extensions;
-	private String _description;
+	private final ArrayList<String> _extensions;
+	private final String _description;
 
 	public SimpleFileFilter(String description) {
 		_extensions = new ArrayList<String>();
@@ -18,14 +18,17 @@ public class SimpleFileFilter extends FileFilter {
 
 	@Override
 	public boolean accept(File f) {
-		if (f.isDirectory())
+		if (f.isDirectory()) {
 			return true;
+		}
 
 		String name = f.getName();
 		Iterator<String> it = _extensions.iterator();
-		while (it.hasNext())
-			if (name.endsWith(it.next()))
+		while (it.hasNext()) {
+			if (name.endsWith(it.next())) {
 				return true;
+			}
+		}
 
 		return false;
 	}

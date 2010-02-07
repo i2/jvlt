@@ -18,7 +18,7 @@ import org.xml.sax.InputSource;
 public class LanguageComboBox extends LabeledComboBox {
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<String, String> _language_map;
+	private final HashMap<String, String> _language_map;
 
 	public LanguageComboBox() {
 		super();
@@ -54,9 +54,9 @@ public class LanguageComboBox extends LabeledComboBox {
 	}
 
 	public void setSelectedLanguage(String language) {
-		if (language == null || language.equals(""))
+		if (language == null || language.equals("")) {
 			setSelectedIndex(0);
-		else {
+		} else {
 			AttributeResources resources = new AttributeResources();
 			setSelectedItem(resources.getString(language));
 		}

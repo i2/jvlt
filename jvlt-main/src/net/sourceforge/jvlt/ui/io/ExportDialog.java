@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -24,8 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-
-import org.apache.log4j.Logger;
 
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Dict;
@@ -54,6 +51,8 @@ import net.sourceforge.jvlt.ui.wizard.DialogWizardModel;
 import net.sourceforge.jvlt.ui.wizard.Wizard;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
+
+import org.apache.log4j.Logger;
 
 public class ExportDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -90,8 +89,9 @@ class ExportWizardModel extends DialogWizardModel {
 	@Override
 	public String getButtonText(String button_command) {
 		if (_current_descriptor instanceof ExportSuccessDescriptor) {
-			if (button_command.equals(Wizard.NEXT_COMMAND))
+			if (button_command.equals(Wizard.NEXT_COMMAND)) {
 				return GUIUtils.getString("Actions", "finish");
+			}
 		}
 		return super.getButtonText(button_command);
 	}
@@ -99,12 +99,14 @@ class ExportWizardModel extends DialogWizardModel {
 	@Override
 	public boolean isButtonEnabled(String button_command) {
 		if (_current_descriptor instanceof StartExportDescriptor) {
-			if (button_command.equals(Wizard.BACK_COMMAND))
+			if (button_command.equals(Wizard.BACK_COMMAND)) {
 				return false;
+			}
 		} else if (_current_descriptor instanceof ExportSuccessDescriptor) {
 			if (button_command.equals(Wizard.BACK_COMMAND)
-					|| button_command.equals(Wizard.CANCEL_COMMAND))
+					|| button_command.equals(Wizard.CANCEL_COMMAND)) {
 				return false;
+			}
 		}
 
 		return super.isButtonEnabled(button_command);
@@ -115,8 +117,9 @@ class ExportWizardModel extends DialogWizardModel {
 			throws InvalidInputException {
 		WizardPanelDescriptor next = _current_descriptor;
 		if (_current_descriptor instanceof StartExportDescriptor) {
-			if (command.equals(Wizard.NEXT_COMMAND))
+			if (command.equals(Wizard.NEXT_COMMAND)) {
 				next = getPanelDescriptor("finish");
+			}
 		} else if (_current_descriptor instanceof FinishExportDescriptor) {
 			StartExportDescriptor sed = (StartExportDescriptor) getPanelDescriptor("start");
 			ExportSuccessDescriptor esd = (ExportSuccessDescriptor) getPanelDescriptor("success");
@@ -130,8 +133,9 @@ class ExportWizardModel extends DialogWizardModel {
 					if (JOptionPane.showConfirmDialog(fed.getPanelComponent(),
 							GUIUtils.getString("Messages", "overwrite"),
 							GUIUtils.getString("Labels", "confirm"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 						write_file = false;
+					}
 				}
 
 				if (write_file) {
@@ -145,15 +149,17 @@ class ExportWizardModel extends DialogWizardModel {
 								"Messages", "exporting_failed"), e.getMessage());
 					}
 				}
-			} else if (command.equals(Wizard.BACK_COMMAND))
+			} else if (command.equals(Wizard.BACK_COMMAND)) {
 				next = sed;
+			}
 		} else if (_current_descriptor instanceof ExportSuccessDescriptor) {
 			fireStateEvent(new StateEvent(this, FINISH_STATE));
 		}
 
 		_current_descriptor = next;
-		if (command.equals(Wizard.CANCEL_COMMAND))
+		if (command.equals(Wizard.CANCEL_COMMAND)) {
 			fireStateEvent(new StateEvent(this, CANCEL_STATE));
+		}
 
 		return next;
 	}
@@ -175,9 +181,10 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 
 	private class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals("select_words"))
+			if (e.getActionCommand().equals("select_words")) {
 				GUIUtils.showDialog(JOptionPane.getFrameForComponent(_panel),
 						_query_dialog);
+			}
 		}
 	}
 
@@ -187,8 +194,9 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 				if (ev.getType() == AbstractDialog.APPLY_OPTION) {
 					_query_modified = true;
 					updateUI();
-				} else
+				} else {
 					_query_dialog.setVisible(false);
+				}
 			}
 		}
 	}
@@ -218,12 +226,12 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 		Dict dict = new Dict();
 		try {
 			dict.setLanguage(model.getJVLTModel().getDict().getLanguage());
-			for (Iterator<Entry> it = _entry_list.getEntries().iterator(); it
-					.hasNext();)
-				dict.addEntry(it.next());
-			for (Iterator<Example> it = _example_list.getExamples().iterator(); it
-					.hasNext();)
-				dict.addExample(it.next());
+			for (Entry entry : _entry_list.getEntries()) {
+dict.addEntry(entry);
+}
+			for (Example example : _example_list.getExamples()) {
+dict.addExample(example);
+}
 		} catch (DictException e) {
 			logger.error("Failed to set dictionary data", e);
 		}
@@ -314,16 +322,17 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 		ExportWizardModel model = (ExportWizardModel) _model;
 		Dict dict = model.getJVLTModel().getDict();
 		ObjectQuery query;
-		if (_query_modified)
+		if (_query_modified) {
 			query = _query_dialog.getObjectQuery();
-		else
+		} else {
 			query = new ObjectQuery(Entry.class);
+		}
 		EntryFilter filter = new EntryFilter(query);
 		Collection<Entry> entries = filter
 				.getMatchingEntries(dict.getEntries());
 		TreeSet<Example> examples = new TreeSet<Example>();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			examples.addAll(dict.getExamples(it.next()));
+		for (Entry entry : entries) {
+			examples.addAll(dict.getExamples(entry));
 		}
 		setEntries(entries);
 		setExamples(examples);
@@ -335,12 +344,13 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("select_file")) {
 				DictFileChooser.FileType type;
-				if (_type_box.getSelectedIndex() == FILE_TYPE_CSV)
+				if (_type_box.getSelectedIndex() == FILE_TYPE_CSV) {
 					type = DictFileChooser.FileType.CSV_FILES;
-				else if (_type_box.getSelectedIndex() == FILE_TYPE_HTML)
+				} else if (_type_box.getSelectedIndex() == FILE_TYPE_HTML) {
 					type = DictFileChooser.FileType.HTML_FILES;
-				else
+				} else {
 					type = DictFileChooser.FileType.JVLT_FILES;
+				}
 
 				ExportWizardModel ewm = (ExportWizardModel) _model;
 				String file = ewm.getJVLTModel().getDictFileName();
@@ -378,7 +388,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 	private CSVExportPanel _csv_panel;
 	private HTMLExportPanel _html_panel;
 	private Dict _dict;
-	private Map<Integer, String> _file_names = new HashMap<Integer, String>();
+	private final Map<Integer, String> _file_names = new HashMap<Integer, String>();
 	private boolean _clear_stats = false;
 
 	public FinishExportDescriptor(ExportWizardModel model) {
@@ -530,7 +540,7 @@ class ExportSuccessDescriptor extends WizardPanelDescriptor {
 class HTMLExportPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private JCheckBox _bidirectional_box;
+	private final JCheckBox _bidirectional_box;
 
 	public HTMLExportPanel() {
 		_bidirectional_box = new JCheckBox();

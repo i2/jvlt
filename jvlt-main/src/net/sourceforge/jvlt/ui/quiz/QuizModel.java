@@ -532,9 +532,9 @@ public class QuizModel extends WizardModel {
 		} else if (d instanceof EntryInputDescriptor) {
 			String attr_names[] = _qdict.getQuizInfo().getQuizzedAttributes();
 			Vector<String> solutions = new Vector<String>();
-			for (int i = 0; i < attr_names.length; i++) {
+			for (String attrName : attr_names) {
 				Attribute attr = _model.getDictModel().getMetaData(Entry.class)
-						.getAttribute(attr_names[i]);
+						.getAttribute(attrName);
 
 				String solution = attr.getFormattedValue(entry);
 
@@ -998,12 +998,12 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 			// Only attributes with value will be included.
 			Vector<String> quizzed_present_attrs = new Vector<String>();
 			QuizModel model = (QuizModel) _model;
-			for (int i = 0; i < quizzed_attrs.length; i++) {
+			for (String quizzedAttr : quizzed_attrs) {
 				Attribute attr = model.getJVLTModel().getDictModel()
 						.getMetaData(Entry.class)
-						.getAttribute(quizzed_attrs[i]);
+						.getAttribute(quizzedAttr);
 				if (attr.getValue(entry) != null) {
-					quizzed_present_attrs.add(quizzed_attrs[i]);
+					quizzed_present_attrs.add(quizzedAttr);
 				}
 			}
 			_questions = quizzed_present_attrs.size();
@@ -1082,9 +1082,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	public QuizInfo getQuizInfo() {
 		Object name = _quiz_info_box.getSelectedItem();
 		QuizInfo[] default_quiz_infos = QuizInfo.getDefaultQuizInfos();
-		for (int i = 0; i < default_quiz_infos.length; i++) {
-			if (name.equals(default_quiz_infos[i].getName())) {
-				return default_quiz_infos[i];
+		for (QuizInfo defaultQuizInfo : default_quiz_infos) {
+			if (name.equals(defaultQuizInfo.getName())) {
+				return defaultQuizInfo;
 			}
 		}
 
@@ -1188,9 +1188,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				QuizInfo[] quiz_info_list = data.getQuizInfoList();
 				_quiz_info_map.clear();
 				_quiz_info_map.putAll(_invisible_quiz_info_map);
-				for (int i = 0; i < quiz_info_list.length; i++) {
-					String name = quiz_info_list[i].getName();
-					_quiz_info_map.put(name, quiz_info_list[i]);
+				for (QuizInfo element : quiz_info_list) {
+					String name = element.getName();
+					_quiz_info_map.put(name, element);
 				}
 
 				updateQuizInfoList();
@@ -1322,8 +1322,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		int max_batch = 0;
 		Map<Integer, Integer> batches = new HashMap<Integer, Integer>();
 		Map<Integer, Integer> expired = new HashMap<Integer, Integer>();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
+		for (Entry entry : entries) {
 			int batch = entry.getBatch();
 			int num;
 
@@ -1434,8 +1433,8 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		QuizInfo[] qinfos = (QuizInfo[]) JVLT.getRuntimeProperties().get(
 				"quiz_types");
 		if (qinfos != null) {
-			for (int i = 0; i < qinfos.length; i++) {
-				_quiz_info_map.put(qinfos[i].getName(), qinfos[i]);
+			for (QuizInfo qinfo : qinfos) {
+				_quiz_info_map.put(qinfo.getName(), qinfo);
 			}
 		}
 
@@ -1453,21 +1452,19 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		_quiz_info_box.removeActionListener(_quiz_info_box_listener);
 		_quiz_info_box.removeAllItems();
 
-		for (int i = 0; i < default_quiz_infos.length; i++) {
-			_quiz_info_box.addItem(default_quiz_infos[i].getName());
+		for (QuizInfo defaultQuizInfo : default_quiz_infos) {
+			_quiz_info_box.addItem(defaultQuizInfo.getName());
 		}
 
-		for (Iterator<QuizInfo> it = _quiz_info_map.values().iterator(); it
-				.hasNext();) {
-			QuizInfo info = it.next();
-			if (info.getLanguage() == null
-					|| info.getLanguage().equals(dict_lang)) {
-				_visible_quiz_info_map.put(info.getName(), info);
-				_quiz_info_box.addItem(info.getName());
-			} else {
-				_invisible_quiz_info_map.put(info.getName(), info);
-			}
-		}
+		for (QuizInfo info : _quiz_info_map.values()) {
+if (info.getLanguage() == null
+			|| info.getLanguage().equals(dict_lang)) {
+		_visible_quiz_info_map.put(info.getName(), info);
+		_quiz_info_box.addItem(info.getName());
+} else {
+		_invisible_quiz_info_map.put(info.getName(), info);
+}
+}
 
 		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
 				"selected_quiz_type");

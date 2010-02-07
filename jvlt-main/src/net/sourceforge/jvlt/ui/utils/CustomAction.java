@@ -10,7 +10,7 @@ import javax.swing.AbstractAction;
 public class CustomAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<ActionListener> _listeners;
+	private final ArrayList<ActionListener> _listeners;
 	private String _action_command;
 
 	public CustomAction(String action_command) {

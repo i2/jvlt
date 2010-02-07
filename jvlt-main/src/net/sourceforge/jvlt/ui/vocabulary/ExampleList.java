@@ -2,7 +2,6 @@ package net.sourceforge.jvlt.ui.vocabulary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -27,7 +26,8 @@ public class ExampleList extends JList {
 		_examples = examples;
 		DefaultListModel model = (DefaultListModel) getModel();
 		model.clear();
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();)
-			model.addElement(it.next().toString());
+		for (Example example : examples) {
+			model.addElement(example.toString());
+		}
 	}
 }

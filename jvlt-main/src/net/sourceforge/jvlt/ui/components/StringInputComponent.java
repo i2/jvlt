@@ -5,7 +5,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class StringInputComponent extends ListeningInputComponent {
-	private CustomTextField _input_panel = new CustomTextField(10);
+	private final CustomTextField _input_panel = new CustomTextField(10);
 
 	public StringInputComponent() {
 		_input_panel.addChangeListener(new ChangeListener() {
@@ -29,9 +29,10 @@ public class StringInputComponent extends ListeningInputComponent {
 	}
 
 	public void setInput(Object input) {
-		if (input == null)
+		if (input == null) {
 			_input_panel.setText("");
-		else
+		} else {
 			_input_panel.setText(input.toString());
+		}
 	}
 }

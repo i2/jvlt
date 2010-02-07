@@ -19,7 +19,7 @@ public class StringListEditor extends ObjectListEditor {
 }
 
 class StringListInputComponent implements InputComponent {
-	private ObjectListPanel _input_component = new ObjectListPanel();
+	private final ObjectListPanel _input_component = new ObjectListPanel();
 
 	public JComponent getComponent() {
 		return _input_component;

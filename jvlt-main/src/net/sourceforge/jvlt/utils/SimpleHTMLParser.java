@@ -16,8 +16,8 @@ public class SimpleHTMLParser {
 	public static final String[] SUPPORTED_TAGS = { "b", "br", "i", "p" };
 	public static final String[] SOLO_TAGS = { "br" };
 
-	private HashSet<String> _supported_tags = new HashSet<String>();
-	private HashSet<String> _solo_tags = new HashSet<String>();
+	private final HashSet<String> _supported_tags = new HashSet<String>();
+	private final HashSet<String> _solo_tags = new HashSet<String>();
 	private Node[] _nodes = new Node[0];
 
 	public SimpleHTMLParser() {
@@ -46,59 +46,68 @@ public class SimpleHTMLParser {
 			if (match.charAt(0) == '/') {
 				match = match.substring(1);
 				Object o = tags.pop();
-				if (!o.equals(match))
+				if (!o.equals(match)) {
 					throw new ParseException(
 							"Unexpected closing tag: " + match, matcher.start());
+				}
 
 				if (doc != null) {
 					int start = matcher.start();
-					if (start > pos)
+					if (start > pos) {
 						current_elem.appendChild(doc.createTextNode(input
 								.substring(pos, start)));
+					}
 
 					current_elem = (Element) current_elem.getParentNode();
 					pos = matcher.end();
 				}
 			} else {
-				if (!_supported_tags.contains(match))
+				if (!_supported_tags.contains(match)) {
 					throw new ParseException("Invalid tag: \"" + match + "\"",
 							matcher.start());
+				}
 
-				if (!_solo_tags.contains(match))
+				if (!_solo_tags.contains(match)) {
 					tags.push(match);
+				}
 				if (doc != null) {
 					int start = matcher.start();
 					// If text was read, add a text node
 					if (start > pos) {
 						Node node = doc.createTextNode(input.substring(pos,
 								start));
-						if (current_elem != null)
+						if (current_elem != null) {
 							current_elem.appendChild(node);
-						else
+						} else {
 							list.add(node);
+						}
 					}
 
 					Element elem = doc.createElement(match);
-					if (current_elem != null)
+					if (current_elem != null) {
 						current_elem.appendChild(elem);
-					else
+					} else {
 						list.add(elem);
+					}
 
 					current_elem = elem;
 					pos = matcher.end();
 				}
 			} // else
 		} // while
-		if (tags.size() > 0)
+		if (tags.size() > 0) {
 			throw new ParseException("Tag \"" + tags.peek()
 					+ "\" was not closed", input.length());
-		if (doc != null && pos < input.length())
+		}
+		if (doc != null && pos < input.length()) {
 			list.add(doc.createTextNode(input.substring(pos, input.length())));
+		}
 
-		if (doc != null)
+		if (doc != null) {
 			_nodes = list.toArray(new Node[0]);
-		else
+		} else {
 			_nodes = new Node[0];
+		}
 	}
 
 	public Node[] getNodes() {

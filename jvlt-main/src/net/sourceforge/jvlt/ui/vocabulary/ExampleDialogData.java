@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Box;
@@ -39,6 +38,7 @@ import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.core.Example.TextFragment;
 import net.sourceforge.jvlt.query.SimpleEntryFilter;
 import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
@@ -55,9 +55,9 @@ import net.sourceforge.jvlt.utils.Utils;
 public class ExampleDialogData extends CustomDialogData implements
 		ActionListener, CaretListener, ListSelectionListener,
 		TreeSelectionListener {
-	private Example _example;
-	private Dict _dict;
-	private SimpleEntryFilter _entry_filter;
+	private final Example _example;
+	private final Dict _dict;
+	private final SimpleEntryFilter _entry_filter;
 	/**
 	 * Index of the first character in the current selection (-1 if there is no
 	 * selection).
@@ -98,16 +98,18 @@ public class ExampleDialogData extends CustomDialogData implements
 
 	@Override
 	public void updateData() throws InvalidDataException {
-		if (_example.getSenses().length == 0)
+		if (_example.getSenses().length == 0) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"no_links"));
+		}
 
 		SimpleHTMLParser parser = new SimpleHTMLParser();
 		try {
 			parser.parse(_translation_field.getText());
 			Example.TextFragment[] fragments = _example.getTextFragments();
-			for (int i = 0; i < fragments.length; i++)
-				parser.parse(fragments[i].getText());
+			for (TextFragment fragment : fragments) {
+				parser.parse(fragment.getText());
+			}
 		} catch (ParseException e) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"invalid_html", new Object[] { e.getMessage() }));
@@ -115,9 +117,10 @@ public class ExampleDialogData extends CustomDialogData implements
 
 		_example.setTranslation(_translation_field.getText());
 		Example e = _dict.getExample(_example);
-		if (e != null && !e.getID().equals(_example.getID()))
+		if (e != null && !e.getID().equals(_example.getID())) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"duplicate_example"));
+		}
 	}
 
 	public void caretUpdate(CaretEvent e) {
@@ -157,24 +160,25 @@ public class ExampleDialogData extends CustomDialogData implements
 			int from = _current_selection_start;
 			int to = _current_selection_end - 1;
 			try {
-				if (obj instanceof Sense)
+				if (obj instanceof Sense) {
 					builder.addSense((Sense) obj, from, to);
-				else if (obj instanceof Entry) {
+				} else if (obj instanceof Entry) {
 					// If the word only has one meaning, add the meaning.
 					// Otherwise show an error dialog.
 					Entry entry = (Entry) obj;
-					if (entry.getSenses().length > 1)
+					if (entry.getSenses().length > 1) {
 						MessageDialog
 								.showDialog(_content_pane,
 										MessageDialog.WARNING_MESSAGE, GUIUtils
 												.getString("Messages",
 														"select_meaning"));
-					else if (entry.getSenses().length == 0)
+					} else if (entry.getSenses().length == 0) {
 						MessageDialog.showDialog(_content_pane,
 								MessageDialog.WARNING_MESSAGE, GUIUtils
 										.getString("Messages", "no_meaning"));
-					else
+					} else {
 						builder.addSense(entry.getSenses()[0], from, to);
+					}
 				}
 			} catch (DictException ex) {
 				MessageDialog.showDialog(_content_pane,
@@ -182,11 +186,12 @@ public class ExampleDialogData extends CustomDialogData implements
 			}
 
 			_current_senses_table.update();
-			if (_example_field.getCaret().getDot() == 0)
+			if (_example_field.getCaret().getDot() == 0) {
 				_example_field.getCaret().setDot(_current_selection_end);
-			else
+			} else {
 				_example_field.getCaret().setDot(0);
 			// updatePreviewPane() is called automatically.
+			}
 		} else if (e.getActionCommand().equals("remove")) {
 			ExampleBuilder builder = new ExampleBuilder(_example);
 			builder.removeTextFragment(_current_senses_table
@@ -194,8 +199,9 @@ public class ExampleDialogData extends CustomDialogData implements
 
 			_current_senses_table.update();
 			updatePreviewPane();
-		} else if (e.getActionCommand().equals("filter"))
+		} else if (e.getActionCommand().equals("filter")) {
 			updateSelectedSensesTree();
+		}
 	}
 
 	@Override
@@ -269,8 +275,9 @@ public class ExampleDialogData extends CustomDialogData implements
 		_filter_field = new CustomTextField();
 		_filter_field.setActionCommand("filter");
 		_filter_field.addActionListener(this);
-		if (orth_font != null)
+		if (orth_font != null) {
 			_filter_field.setFont(orth_font);
+		}
 		JPanel filter_panel = new JPanel();
 		filter_panel.setLayout(new BorderLayout(5, 0));
 		filter_panel.add(_filter_field.getLabel(), BorderLayout.WEST);
@@ -362,26 +369,27 @@ public class ExampleDialogData extends CustomDialogData implements
 		//
 		// Example text
 		//
-		if (orth_font == null)
+		if (orth_font == null) {
 			buffer.append("<td>");
-		else
+		} else {
 			buffer.append("<td style=\"font-family: " + orth_font.getFamily()
 					+ "\">");
+		}
 
 		if (_current_selection_start < 0 || _current_selection_end < 0) {
 			Example.TextFragment selected_fragment = _current_senses_table
 					.getSelectedTextFragment();
 			Example.TextFragment[] fragments = _example.getTextFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				Example.TextFragment fragment = fragments[i];
-				if (fragment.getSense() == null)
+			for (TextFragment fragment : fragments) {
+				if (fragment.getSense() == null) {
 					buffer.append(fragment.getText());
-				else {
+				} else {
 					buffer.append("<font color=\"");
-					if (selected_fragment == fragment)
+					if (selected_fragment == fragment) {
 						buffer.append("#0000ff");
-					else
+					} else {
 						buffer.append("#00ff00");
+					}
 					buffer.append("\">" + fragment.getText() + "</font>");
 				}
 			}
@@ -435,20 +443,20 @@ public class ExampleDialogData extends CustomDialogData implements
 	private void updateSelectedSensesTree() {
 		String text = _filter_field.getText();
 		_entry_filter.setFilterString(text);
-		if (text == null || text.equals(""))
+		if (text == null || text.equals("")) {
 			_selected_senses_tree.clear();
-		else {
+		} else {
 			List<Entry> entries = _entry_filter.getMatchingEntries(_dict
 					.getEntries());
 
 			ArrayList<Entry> entry_list = new ArrayList<Entry>();
-			for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-				Entry entry = it.next();
-				if (entry.getOrthography().equals(text))
+			for (Entry entry : entries) {
+				if (entry.getOrthography().equals(text)) {
 					// Put exact matches to the beginning of the list
 					entry_list.add(0, entry);
-				else
+				} else {
 					entry_list.add(entry);
+				}
 			}
 			_selected_senses_tree.setEntries(entry_list.toArray(new Entry[0]));
 		}
@@ -467,20 +475,21 @@ public class ExampleDialogData extends CustomDialogData implements
 		// Update _current_senses_label
 		Example.TextFragment tf = _current_senses_table
 				.getSelectedTextFragment();
-		if (tf == null)
+		if (tf == null) {
 			_current_senses_label.setText(" ");
-		else {
+		} else {
 			Collection<Example> examples = _dict.getExamples(tf.getSense());
 			int num = examples.size();
 			// "example" is the original example, or "null", if a new example
 			// is created in this dialog. "_example" is the cloned
 			// or the new example.
 			Example example = _dict.getExample(_example.getID());
-			if (example == null)
+			if (example == null) {
 				num++;
-			else if (!Utils.arrayContainsItem(example.getSenses(), tf
-					.getSense()))
+			} else if (!Utils.arrayContainsItem(example.getSenses(), tf
+					.getSense())) {
 				num++;
+			}
 
 			_current_senses_label.setText(GUIUtils.getString("Labels",
 					"num_linked_examples", new Object[] { num }));
@@ -489,21 +498,23 @@ public class ExampleDialogData extends CustomDialogData implements
 		// -----
 		// Update _available_senses_label
 		Sense sense = _selected_senses_tree.getSelectedSense();
-		if (sense == null)
+		if (sense == null) {
 			_available_senses_label.setText(" ");
-		else {
+		} else {
 			Collection<Example> examples = _dict.getExamples(sense);
 			int num = examples.size();
 			Example example = _dict.getExample(_example.getID());
 			if (example == null) {
-				if (Utils.arrayContainsItem(_example.getSenses(), sense))
+				if (Utils.arrayContainsItem(_example.getSenses(), sense)) {
 					num++;
+				}
 			} else if (Utils.arrayContainsItem(_example.getSenses(), sense)
-					&& !Utils.arrayContainsItem(example.getSenses(), sense))
+					&& !Utils.arrayContainsItem(example.getSenses(), sense)) {
 				num++;
-			else if (Utils.arrayContainsItem(example.getSenses(), sense)
-					&& !Utils.arrayContainsItem(_example.getSenses(), sense))
+			} else if (Utils.arrayContainsItem(example.getSenses(), sense)
+					&& !Utils.arrayContainsItem(_example.getSenses(), sense)) {
 				num--;
+			}
 
 			_available_senses_label.setText(GUIUtils.getString("Labels",
 					"num_linked_examples", new Object[] { num }));
@@ -521,8 +532,9 @@ class ExampleTextField extends JTextArea {
 		_example = null;
 
 		Font f = JVLT.getConfig().getFontProperty("ui_orth_font");
-		if (f != null)
+		if (f != null) {
 			setFont(f);
+		}
 	}
 
 	@Override
@@ -577,13 +589,12 @@ class ExampleDocument extends PlainDocument {
 				if (tf_offset < offs && offs < tf_offset + len) {
 					// Index is located in the middle of a text fragment
 					// with a sense - no change possible.
-					if (tf.getSense() != null)
+					if (tf.getSense() != null) {
 						return;
-					else {
-						fragment = tf;
-						insert_offset = offs - tf_offset;
-						break;
 					}
+					fragment = tf;
+					insert_offset = offs - tf_offset;
+					break;
 				} else if (tf_offset == offs) {
 					// Index is located at the beginning of a text fragment.
 					// If this text fragment is not associated with a sense
@@ -643,22 +654,22 @@ class ExampleDocument extends PlainDocument {
 			int first_index = offs;
 			int last_index = offs + len - 1;
 			int tf_first = 0;
-			for (int i = 0; i < fragments.length; i++) {
-				Example.TextFragment tf = fragments[i];
+			for (TextFragment tf : fragments) {
 				String tf_str = tf.getText();
 				int tf_last = tf_first + tf_str.length() - 1;
 				if ((tf_first <= first_index && first_index <= tf_last)
-						|| (tf_first >= first_index && last_index >= tf_first))
-					if (tf.getSense() != null)
+						|| (tf_first >= first_index && last_index >= tf_first)) {
+					if (tf.getSense() != null) {
 						// Fragment cannot be removed because there is a link.
 						return;
+					}
+				}
 
 				tf_first += tf_str.length();
 			}
 
 			tf_first = 0;
-			for (int i = 0; i < fragments.length; i++) {
-				Example.TextFragment tf = fragments[i];
+			for (TextFragment tf : fragments) {
 				String tf_str = tf.getText();
 				int tf_last = tf_first + tf_str.length() - 1;
 				int delete_first = -1;
@@ -674,11 +685,12 @@ class ExampleDocument extends PlainDocument {
 				}
 
 				if (delete_first >= 0) {
-					if (delete_first == tf_first && delete_last == tf_last)
+					if (delete_first == tf_first && delete_last == tf_last) {
 						_example.removeTextFragment(tf);
-					else
+					} else {
 						tf.setText(Utils.removeSubstring(tf_str, delete_first,
 								delete_last));
+					}
 				}
 
 				tf_first += tf_str.length();

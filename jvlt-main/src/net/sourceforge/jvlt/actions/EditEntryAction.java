@@ -9,7 +9,7 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Sense;
 
 public class EditEntryAction extends EditDictObjectAction {
-	private ArrayList<DictObjectAction> _sense_actions;
+	private final ArrayList<DictObjectAction> _sense_actions;
 
 	public EditEntryAction(Entry old_entry, Entry new_entry) {
 		super(old_entry, new_entry);
@@ -29,16 +29,17 @@ public class EditEntryAction extends EditDictObjectAction {
 		while (it.hasNext()) {
 			DictObjectAction a = it.next();
 			Sense sense = (Sense) a.getObject();
-			if (a instanceof AddDictObjectAction)
+			if (a instanceof AddDictObjectAction) {
 				entry.addSense(sense);
-			else if (a instanceof EditDictObjectAction)
+			} else if (a instanceof EditDictObjectAction) {
 				((EditDictObjectAction) a).executeAction();
-			else if (a instanceof MoveSenseAction) {
+			} else if (a instanceof MoveSenseAction) {
 				int index = ((MoveSenseAction) a).getNewIndex();
 				entry.removeSense(sense);
 				entry.addSense(index, sense);
-			} else if (a instanceof RemoveSenseAction)
+			} else if (a instanceof RemoveSenseAction) {
 				entry.removeSense(sense);
+			}
 		}
 	}
 
@@ -52,16 +53,17 @@ public class EditEntryAction extends EditDictObjectAction {
 		while (it.hasPrevious()) {
 			DictObjectAction a = it.previous();
 			Sense sense = (Sense) a.getObject();
-			if (a instanceof AddDictObjectAction)
+			if (a instanceof AddDictObjectAction) {
 				entry.removeSense(sense);
-			else if (a instanceof EditDictObjectAction)
+			} else if (a instanceof EditDictObjectAction) {
 				((EditDictObjectAction) a).undoAction();
-			else if (a instanceof MoveSenseAction) {
+			} else if (a instanceof MoveSenseAction) {
 				int index = ((MoveSenseAction) a).getOldIndex();
 				entry.removeSense(sense);
 				entry.addSense(index, sense);
-			} else if (a instanceof RemoveSenseAction)
+			} else if (a instanceof RemoveSenseAction) {
 				entry.addSense(((RemoveSenseAction) a).getOldPosition(), sense);
+			}
 		}
 	}
 }

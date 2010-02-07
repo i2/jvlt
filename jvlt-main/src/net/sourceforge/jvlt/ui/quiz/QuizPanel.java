@@ -11,8 +11,8 @@ import net.sourceforge.jvlt.ui.wizard.Wizard;
 public class QuizPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private JVLTModel _model;
-	private Wizard _wizard;
+	private final JVLTModel _model;
+	private final Wizard _wizard;
 
 	public QuizPanel(JVLTModel model, SelectionNotifier notifier) {
 		_model = model;

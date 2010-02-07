@@ -20,12 +20,15 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.event.DialogListener.DialogEvent;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public abstract class AbstractDialog extends JDialog implements ActionListener {
+	private static final Logger logger = Logger.getLogger(AbstractDialog.class);
 	public static final int OK_OPTION = 1;
 	public static final int APPLY_OPTION = 2;
 	public static final int CANCEL_OPTION = 3;
@@ -98,8 +101,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		}
 
 		Field[] fields = AbstractDialog.class.getFields();
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
+		for (Field field : fields) {
 			if (field.getType().getName().equals("int")) {
 				try {
 					int val = field.getInt(null);
@@ -107,7 +109,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 						return field.getName();
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logger.error(ex);
 				}
 			}
 		}
@@ -130,15 +132,15 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 	protected int getValueForFieldName(String name) {
 		try {
 			Field[] fields = AbstractDialog.class.getFields();
-			for (int i = 0; i < fields.length; i++) {
-				if (fields[i].getName().equals(name)) {
-					return fields[i].getInt(null);
+			for (Field field : fields) {
+				if (field.getName().equals(name)) {
+					return field.getInt(null);
 				}
 			}
 
 			return getValueForCustomFieldName(name);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex);
 		}
 
 		return -1;
@@ -157,12 +159,12 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 
 	private Component getComponent(String name) {
 		Component[] comps = _button_panel.getComponents();
-		for (int i = 0; i < comps.length; i++) {
-			String comp_name = comps[i].getName();
+		for (Component comp : comps) {
+			String comp_name = comp.getName();
 			if (comp_name == null) {
 				continue;
 			} else if (comp_name.equals(name)) {
-				return comps[i];
+				return comp;
 			}
 		}
 

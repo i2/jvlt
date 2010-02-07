@@ -41,10 +41,11 @@ public class ObjectListPanel extends JPanel {
 				if (index >= 0) {
 					_list_model.remove(index);
 
-					if (index < _list_model.getSize())
+					if (index < _list_model.getSize()) {
 						_list.setSelectedIndex(index);
-					else if (index - 1 >= 0)
+					} else if (index - 1 >= 0) {
 						_list.setSelectedIndex(index - 1);
+					}
 				}
 			} else if (ev.getActionCommand().equals("up")) {
 				int index = _list.getSelectedIndex();
@@ -62,8 +63,9 @@ public class ObjectListPanel extends JPanel {
 
 	protected class ListSelectionHandler implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent ev) {
-			if (!ev.getValueIsAdjusting())
+			if (!ev.getValueIsAdjusting()) {
 				update();
+			}
 		}
 	}
 
@@ -94,11 +96,13 @@ public class ObjectListPanel extends JPanel {
 	public void setFont(Font font) {
 		super.setFont(font);
 
-		if (_list != null)
+		if (_list != null) {
 			_list.setFont(font);
+		}
 
-		if (_input_component != null)
+		if (_input_component != null) {
 			_input_component.getComponent().setFont(font);
+		}
 	}
 
 	public Object[] getSelectedObjects() {
@@ -109,10 +113,11 @@ public class ObjectListPanel extends JPanel {
 		Object[] vals = objects == null ? new Object[0] : objects;
 
 		_list_model.clear();
-		for (int i = 0; i < vals.length; i++) {
-			String s = toString(vals[i]);
-			if (s != null)
+		for (Object val : vals) {
+			String s = toString(val);
+			if (s != null) {
 				_list_model.addElement(s);
+			}
 		}
 
 		update();
@@ -125,8 +130,9 @@ public class ObjectListPanel extends JPanel {
 		_remove_action.setEnabled(enabled);
 		_input_component.getComponent().setEnabled(enabled);
 		_list.setEnabled(enabled);
-		if (enabled)
+		if (enabled) {
 			update();
+		}
 	}
 
 	protected ObjectListPanel(ListeningInputComponent c) {

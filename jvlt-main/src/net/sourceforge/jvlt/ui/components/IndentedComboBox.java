@@ -14,8 +14,8 @@ public class IndentedComboBox extends LabeledComboBox {
 	private class IndentedComboBoxModel extends DefaultComboBoxModel {
 		private static final long serialVersionUID = 1L;
 
-		private TreeMap<Object, Integer> _indentation_levels;
-		private ItemContainer _container = new ItemContainer();
+		private final TreeMap<Object, Integer> _indentation_levels;
+		private final ItemContainer _container = new ItemContainer();
 
 		public IndentedComboBoxModel() {
 			_indentation_levels = new TreeMap<Object, Integer>();
@@ -92,8 +92,9 @@ public class IndentedComboBox extends LabeledComboBox {
 			IndentedComboBoxModel model = IndentedComboBox.this._model;
 			int indent = model.getIndentationLevel(value);
 			StringBuffer buf = new StringBuffer();
-			for (int i = 0; i < indent; i++)
+			for (int i = 0; i < indent; i++) {
 				buf.append("  ");
+			}
 
 			JLabel lbl = (JLabel) super.getListCellRendererComponent(list,
 					value, index, is_selected, cell_has_focus);
@@ -105,8 +106,8 @@ public class IndentedComboBox extends LabeledComboBox {
 
 	private static final long serialVersionUID = 1L;
 
-	private IndentedComboBoxModel _model = new IndentedComboBoxModel();
-	private IndentedComboBoxRenderer _renderer = new IndentedComboBoxRenderer();
+	private final IndentedComboBoxModel _model = new IndentedComboBoxModel();
+	private final IndentedComboBoxRenderer _renderer = new IndentedComboBoxRenderer();
 
 	public IndentedComboBox() {
 		setModel(_model);

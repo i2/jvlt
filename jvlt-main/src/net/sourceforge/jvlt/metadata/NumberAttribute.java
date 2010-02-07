@@ -3,7 +3,7 @@ package net.sourceforge.jvlt.metadata;
 import java.text.NumberFormat;
 
 public class NumberAttribute extends DefaultAttribute {
-	private NumberFormat _format = NumberFormat.getInstance();
+	private final NumberFormat _format = NumberFormat.getInstance();
 
 	public NumberAttribute(String name, Class<? extends Object> type) {
 		super(name, type);

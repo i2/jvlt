@@ -23,6 +23,7 @@ import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.SchemaAttribute;
 import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.core.StringPair;
+import net.sourceforge.jvlt.core.Example.TextFragment;
 import net.sourceforge.jvlt.utils.CollatingEntryComparator;
 import net.sourceforge.jvlt.utils.CustomCollator;
 import net.sourceforge.jvlt.utils.Utils;
@@ -37,7 +38,7 @@ public class DictXMLWriter extends DictWriter {
 	public static final int FORMAT_XML = 1;
 
 	private static final Comparator<Sense> SENSE_COMPARATOR = new Comparator<Sense>() {
-		private Collator _collator = CustomCollator.getInstance();
+		private final Collator _collator = CustomCollator.getInstance();
 
 		public int compare(Sense s1, Sense s2) {
 			return _collator.compare(s1.getTranslation(), s2.getTranslation());
@@ -45,10 +46,10 @@ public class DictXMLWriter extends DictWriter {
 	};
 
 	private DocumentBuilder _builder;
-	private XMLFormatter _formatter;
+	private final XMLFormatter _formatter;
 	private boolean _clear_stats = false;
 	private boolean _add_reverse = false;
-	private int _format;
+	private final int _format;
 
 	public DictXMLWriter(Dict dict, OutputStream stream, int format) {
 		super(dict, stream);
@@ -120,36 +121,42 @@ public class DictXMLWriter extends DictWriter {
 
 		Element root = doc.createElement("dictionary");
 		root.setAttribute("version", JVLT.getDataVersion());
-		if (_dict.getLanguage() != null)
+		if (_dict.getLanguage() != null) {
 			root.setAttribute("language", _dict.getLanguage());
+		}
 		doc.appendChild(root);
 
 		// Sort and write entries
 		ArrayList<Entry> entries = new ArrayList<Entry>(_dict.getEntries());
 		Collections.sort(entries, new CollatingEntryComparator());
 		Iterator<Entry> it = entries.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			root.appendChild(_formatter.getXMLForEntry(doc, it.next()));
+		}
 
 		// Write reverse entries
 		if (_add_reverse) {
 			Node reverse = root.appendChild(doc.createElement("reverse"));
 			ArrayList<Sense> senses = new ArrayList<Sense>();
-			for (Entry e : entries)
-				for (Sense s : e.getSenses())
+			for (Entry e : entries) {
+				for (Sense s : e.getSenses()) {
 					senses.add(s);
+				}
+			}
 
 			Collections.sort(senses, SENSE_COMPARATOR);
 
-			for (Sense s : senses)
+			for (Sense s : senses) {
 				reverse.appendChild(_formatter.getXMLForSenseReverse(doc, s));
+			}
 		}
 
 		// Write examples
 		Iterator<Example> example_it = _dict.getExamples().iterator();
-		while (example_it.hasNext())
+		while (example_it.hasNext()) {
 			root.appendChild(_formatter
 					.getXMLForExample(doc, example_it.next()));
+		}
 
 		_formatter.printXML(doc, stream);
 	}
@@ -174,29 +181,31 @@ class XMLFormatter {
 				.getOrthography()));
 
 		String[] pronunciations = entry.getPronunciations();
-		for (int i = 0; i < pronunciations.length; i++)
+		for (String pronunciation : pronunciations) {
 			entry_elem.appendChild(XMLUtils.createTextElement(doc, "pron",
-					pronunciations[i]));
+					pronunciation));
+		}
 
 		EntryClass ec = entry.getEntryClass();
 		if (ec != null) {
 			entry_elem.setAttribute("class", ec.getName());
 			SchemaAttribute[] attrs = ec.getAttributes();
-			for (int i = 0; i < attrs.length; i++) {
-				Object value = attrs[i].getValue();
-				if (value == null)
+			for (SchemaAttribute attr : attrs) {
+				Object value = attr.getValue();
+				if (value == null) {
 					continue;
+				}
 
 				Element attr_elem = doc.createElement("attr");
 				entry_elem.appendChild(attr_elem);
-				attr_elem.setAttribute("name", attrs[i].getName());
-				if (attrs[i] instanceof ArraySchemaAttribute) {
+				attr_elem.setAttribute("name", attr.getName());
+				if (attr instanceof ArraySchemaAttribute) {
 					Object[] vals = (Object[]) value;
-					for (int j = 0; j < vals.length; j++) {
+					for (Object val : vals) {
 						Element item_elem = doc.createElement("item");
 						attr_elem.appendChild(item_elem);
 						item_elem.appendChild(doc
-								.createTextNode(vals[j] == null ? "" : vals[j]
+								.createTextNode(val == null ? "" : val
 										.toString()));
 					}
 				} else {
@@ -206,28 +215,30 @@ class XMLFormatter {
 		}
 
 		Sense[] senses = entry.getSenses();
-		for (int j = 0; j < senses.length; j++) {
-			Sense sense = senses[j];
+		for (Sense sense : senses) {
 			Element sense_elem = doc.createElement("sense");
 			sense_elem.setAttribute("id", sense.getID());
 
 			String trans = sense.getTranslation();
-			if (trans != null && !trans.equals(""))
+			if (trans != null && !trans.equals("")) {
 				sense_elem.appendChild(XMLUtils.createTextElement(doc, "trans",
 						trans));
+			}
 
 			String def = sense.getDefinition();
-			if (def != null && !def.equals(""))
+			if (def != null && !def.equals("")) {
 				sense_elem.appendChild(XMLUtils.createTextElement(doc, "def",
 						def));
+			}
 
 			entry_elem.appendChild(sense_elem);
 		}
 
 		String[] categories = entry.getCategories();
-		for (int i = 0; i < categories.length; i++)
+		for (String categorie : categories) {
 			entry_elem.appendChild(XMLUtils.createTextElement(doc, "category",
-					categories[i]));
+					categorie));
+		}
 
 		for (StringPair p : entry.getCustomFields()) {
 			Element field_elem = doc.createElement("custom-field");
@@ -242,9 +253,10 @@ class XMLFormatter {
 				.getLesson()));
 
 		String[] mm_files = entry.getMultimediaFiles();
-		for (int i = 0; i < mm_files.length; i++)
+		for (String mmFile : mm_files) {
 			entry_elem.appendChild(XMLUtils.createTextElement(doc,
-					"multimedia", mm_files[i]));
+					"multimedia", mmFile));
+		}
 
 		return entry_elem;
 	}
@@ -256,17 +268,20 @@ class XMLFormatter {
 				.valueOf(entry.getNumQueried()));
 		entry_elem.setAttribute("mistakes", String.valueOf(entry
 				.getNumMistakes()));
-		if (entry.getLastQueried() != null)
+		if (entry.getLastQueried() != null) {
 			entry_elem.setAttribute("last-queried", Utils
 					.calendarToString(entry.getLastQueried()));
-		if (entry.getDateAdded() != null)
+		}
+		if (entry.getDateAdded() != null) {
 			entry_elem.setAttribute("date-added", Utils.calendarToString(entry
 					.getDateAdded()));
+		}
 		entry_elem.setAttribute("batch", String.valueOf(entry.getBatch()));
 		entry_elem.setAttribute("flags", String.valueOf(entry.getUserFlags()));
-		if (entry.getLastQuizResult() != null)
+		if (entry.getLastQuizResult() != null) {
 			entry_elem.setAttribute("last-result", String.valueOf(entry
 					.getLastQuizResult()));
+		}
 
 		return entry_elem;
 	}
@@ -279,12 +294,11 @@ class XMLFormatter {
 		example_elem.appendChild(ex_elem);
 
 		Example.TextFragment[] fragments = example.getTextFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			Example.TextFragment tf = fragments[i];
-			if (tf.getSense() == null)
+		for (TextFragment tf : fragments) {
+			if (tf.getSense() == null) {
 				ex_elem.appendChild(doc.createTextNode(XMLUtils.escapeText(tf
 						.getText())));
-			else {
+			} else {
 				Sense sense = tf.getSense();
 				Element link_elem = doc.createElement("link");
 				link_elem.setAttribute("sid", sense.getID());
@@ -295,9 +309,10 @@ class XMLFormatter {
 		}
 
 		String translation = example.getTranslation();
-		if (translation != null && !translation.equals(""))
+		if (translation != null && !translation.equals("")) {
 			example_elem.appendChild(XMLUtils.createTextElement(doc, "tr",
 					translation));
+		}
 
 		return example_elem;
 	}

@@ -7,8 +7,8 @@ import java.util.Iterator;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class ChoiceSchemaAttribute extends SchemaAttribute {
-	private ArrayList<AttributeChoice> _choices;
-	private HashMap<String, AttributeChoice> _choice_map;
+	private final ArrayList<AttributeChoice> _choices;
+	private final HashMap<String, AttributeChoice> _choice_map;
 
 	public ChoiceSchemaAttribute(String name, String group) {
 		super(name, group);
@@ -37,8 +37,9 @@ public class ChoiceSchemaAttribute extends SchemaAttribute {
 	public void setChoices(AttributeChoice[] vals) {
 		_choices.clear();
 		_choice_map.clear();
-		for (int i = 0; i < vals.length; i++)
-			addChoice(vals[i]);
+		for (AttributeChoice val : vals) {
+			addChoice(val);
+		}
 	}
 
 	@Override
@@ -49,8 +50,9 @@ public class ChoiceSchemaAttribute extends SchemaAttribute {
 		buf.append(";choices=");
 		String[] choices = new String[_choices.size()];
 		int i = 0;
-		for (Iterator<AttributeChoice> it = _choices.iterator(); it.hasNext(); i++)
+		for (Iterator<AttributeChoice> it = _choices.iterator(); it.hasNext(); i++) {
 			choices[i] = it.next().getName();
+		}
 		buf.append(Utils.arrayToString(choices, ","));
 		buf.append('}');
 

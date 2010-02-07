@@ -31,27 +31,33 @@ public class StringPairQueryItem extends ObjectQueryItem {
 
 		switch (_type) {
 		case KEY_CONTAINS:
-			for (StringPair p : pairs)
+			for (StringPair p : pairs) {
 				if (_match_case) {
-					if (p.getFirst().indexOf(text) >= 0)
+					if (p.getFirst().indexOf(text) >= 0) {
 						return true;
+					}
 				} else {
-					if (p.getFirst().toLowerCase().indexOf(text.toLowerCase()) >= 0)
+					if (p.getFirst().toLowerCase().indexOf(text.toLowerCase()) >= 0) {
 						return true;
+					}
 
 				}
+			}
 
 			return text.length() == 0;
 		case VALUE_CONTAINS:
-			for (StringPair p : pairs)
+			for (StringPair p : pairs) {
 				if (_match_case) {
-					if (p.getSecond().indexOf(text) >= 0)
+					if (p.getSecond().indexOf(text) >= 0) {
 						return true;
+					}
 				} else {
-					if (p.getSecond().toLowerCase().indexOf(text.toLowerCase()) >= 0)
+					if (p.getSecond().toLowerCase().indexOf(text.toLowerCase()) >= 0) {
 						return true;
+					}
 
 				}
+			}
 
 			return text.length() == 0;
 		default:

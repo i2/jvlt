@@ -1,7 +1,6 @@
 package net.sourceforge.jvlt.ui.dialogs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -42,7 +41,7 @@ public abstract class CustomDialogData {
 
 	/**
 	 * This method is called right before the dialog is shown.
-	 * 
+	 *
 	 * @see CustomDialog#setVisible(boolean)
 	 */
 	public void prepareToShow() {
@@ -53,9 +52,9 @@ public abstract class CustomDialogData {
 			JComponent new_comp) {
 		ComponentReplacementEvent ev = new ComponentReplacementEvent(old_comp,
 				new_comp);
-		for (Iterator<ComponentReplacementListener> it = _listeners.iterator(); it
-				.hasNext();)
-			it.next().componentReplaced(ev);
+		for (ComponentReplacementListener componentReplacementListener : _listeners) {
+componentReplacementListener.componentReplaced(ev);
+}
 	}
 
 	protected void loadState(Config config) {

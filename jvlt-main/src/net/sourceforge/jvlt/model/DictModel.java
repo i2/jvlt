@@ -6,8 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.AddDictObjectAction;
 import net.sourceforge.jvlt.actions.EditDictObjectAction;
@@ -33,12 +31,14 @@ import net.sourceforge.jvlt.metadata.EntryMetaData;
 import net.sourceforge.jvlt.metadata.ExampleMetaData;
 import net.sourceforge.jvlt.metadata.MetaData;
 
+import org.apache.log4j.Logger;
+
 public class DictModel extends AbstractModel {
 
 	private static final Logger logger = Logger.getLogger(DictModel.class);
-	private EntryMetaData _entry_data;
-	private ExampleMetaData _example_data;
-	private LinkedList<DictUpdateListener> _dict_update_listeners;
+	private final EntryMetaData _entry_data;
+	private final ExampleMetaData _example_data;
+	private final LinkedList<DictUpdateListener> _dict_update_listeners;
 
 	public DictModel() {
 		_entry_data = new EntryMetaData();
@@ -79,12 +79,13 @@ public class DictModel extends AbstractModel {
 	}
 
 	public MetaData getMetaData(Class<? extends Object> cl) {
-		if (cl.equals(Entry.class))
+		if (cl.equals(Entry.class)) {
 			return _entry_data;
-		else if (cl.equals(Example.class))
+		} else if (cl.equals(Example.class)) {
 			return _example_data;
-		else
+		} else {
 			return new MetaData(cl);
+		}
 	}
 
 	@Override
@@ -270,11 +271,11 @@ public class DictModel extends AbstractModel {
 	}
 
 	private void addEntries(Collection<Entry> entries) throws DictException {
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
+		for (Entry entry : entries) {
 			// Set the DateAdded attribute if it has not been set yet.
-			if (entry.getDateAdded() == null)
+			if (entry.getDateAdded() == null) {
 				entry.setDateAdded(new GregorianCalendar());
+			}
 			_dict.addEntry(entry);
 		}
 
@@ -283,24 +284,27 @@ public class DictModel extends AbstractModel {
 	}
 
 	private void removeEntries(Collection<Entry> entries) throws DictException {
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();)
-			_dict.removeEntry(it.next());
+		for (Entry entry : entries) {
+			_dict.removeEntry(entry);
+		}
 
 		fireDictUpdateEvent(new EntryDictUpdateEvent(
 				EntryDictUpdateEvent.ENTRIES_REMOVED, entries));
 	}
 
 	private void addExamples(Collection<Example> examples) throws DictException {
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();)
-			_dict.addExample(it.next());
+		for (Example example : examples) {
+			_dict.addExample(example);
+		}
 
 		fireDictUpdateEvent(new ExampleDictUpdateEvent(
 				ExampleDictUpdateEvent.EXAMPLES_ADDED, examples));
 	}
 
 	private void removeExamples(Collection<Example> examples) {
-		for (Iterator<Example> it = examples.iterator(); it.hasNext();)
-			_dict.removeExample(it.next());
+		for (Example example : examples) {
+			_dict.removeExample(example);
+		}
 
 		fireDictUpdateEvent(new ExampleDictUpdateEvent(
 				ExampleDictUpdateEvent.EXAMPLES_REMOVED, examples));
@@ -324,12 +328,14 @@ public class DictModel extends AbstractModel {
 		String[] displayed_attr_names = JVLT.getConfig().getStringListProperty(
 				key, _entry_data.getAttributeNames());
 		ArrayList<String> attrs = new ArrayList<String>();
-		for (int i = 0; i < displayed_attr_names.length; i++)
-			if (_entry_data.getAttribute(displayed_attr_names[i]) == null)
+		for (String displayedAttrName : displayed_attr_names) {
+			if (_entry_data.getAttribute(displayedAttrName) == null) {
 				logger.warn("Attribute \""
-						+ displayed_attr_names[i] + "\" does not exist.");
-			else
-				attrs.add(displayed_attr_names[i]);
+						+ displayedAttrName + "\" does not exist.");
+			} else {
+				attrs.add(displayedAttrName);
+			}
+		}
 		JVLT.getRuntimeProperties().put("displayed_attributes",
 				attrs.toArray(new String[0]));
 	}
@@ -353,8 +359,9 @@ public class DictModel extends AbstractModel {
 
 		synchronized (_dict_update_listeners) {
 			Iterator<DictUpdateListener> it = _dict_update_listeners.iterator();
-			while (it.hasNext())
+			while (it.hasNext()) {
 				it.next().dictUpdated(event);
+			}
 		}
 	}
 
@@ -377,8 +384,9 @@ public class DictModel extends AbstractModel {
 		for (Entry e : new_entries) {
 			categories_attr.addValues(e.getCategories());
 			lesson_attr.addValues(new String[] { e.getLesson() });
-			for (StringPair p : e.getCustomFields())
+			for (StringPair p : e.getCustomFields()) {
 				custom_fields_attr.addValues(new String[] { p.getFirst() });
+			}
 		}
 	}
 }

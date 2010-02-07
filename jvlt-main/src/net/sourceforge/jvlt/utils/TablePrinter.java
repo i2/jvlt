@@ -23,7 +23,7 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class TablePrinter implements Printable {
 	private int _page_number = 0;
-	private double _vertical_spacing = 5.0;
+	private final double _vertical_spacing = 5.0;
 	private Font _font = null;
 	private HashMap<Integer, Double> _colwidth_map = null;
 	// Contains the pages
@@ -71,19 +71,22 @@ public class TablePrinter implements Printable {
 	}
 
 	public void paintPage(Graphics2D g2d, int page) throws PrinterException {
-		if (_font != null)
+		if (_font != null) {
 			g2d.setFont(_font);
+		}
 
 		g2d.setColor(Color.white);
 		g2d.fill(new Rectangle2D.Double(0, 0, _format.getWidth(), _format
 				.getHeight()));
 		g2d.setColor(Color.black);
 
-		if (!_pages_map.containsKey(g2d.getClass().getName()))
+		if (!_pages_map.containsKey(g2d.getClass().getName())) {
 			renderPages(g2d);
+		}
 		Vector<Integer> pages = _pages_map.get(g2d.getClass().getName());
-		if (page >= pages.size())
+		if (page >= pages.size()) {
 			return;
+		}
 
 		int first_row = getFirstRowOnPage(pages, page);
 		int last_row = getLastRowOnPage(pages, page);
@@ -101,8 +104,9 @@ public class TablePrinter implements Printable {
 						info.colWidths[col], r2d.getHeight());
 				double height = renderCell(g2d, r2d, _model
 						.getValueAt(row, col).toString(), true);
-				if (height > max_height)
+				if (height > max_height) {
 					max_height = height;
+				}
 			}
 			r2d.setRect(r2d.getX(), r2d.getY() + max_height, r2d.getWidth(),
 					r2d.getHeight() - max_height);
@@ -113,14 +117,17 @@ public class TablePrinter implements Printable {
 			throws PrinterException {
 		setPageFormat(format);
 		Graphics2D g2d = (Graphics2D) graphics;
-		if (_font != null)
+		if (_font != null) {
 			g2d.setFont(_font);
+		}
 
-		if (!_pages_map.containsKey(g2d.getClass().getName()))
+		if (!_pages_map.containsKey(g2d.getClass().getName())) {
 			renderPages(g2d);
+		}
 		Vector<Integer> pages = _pages_map.get(g2d.getClass().getName());
-		if (page_index > pages.size())
+		if (page_index > pages.size()) {
 			return Printable.NO_SUCH_PAGE;
+		}
 
 		paintPage(g2d, page_index);
 
@@ -133,15 +140,17 @@ public class TablePrinter implements Printable {
 
 	/**
 	 * Render pages using the current page format.
-	 * 
+	 *
 	 * @return Number of pages.
 	 */
 	public int renderPages(Graphics2D g2d) throws PrinterException {
-		if (_model == null || _model.getRowCount() == 0)
+		if (_model == null || _model.getRowCount() == 0) {
 			return 0;
+		}
 
-		if (_font != null)
+		if (_font != null) {
 			g2d.setFont(_font);
+		}
 
 		Vector<Integer> pages;
 		if (_pages_map.containsKey(g2d.getClass().getName())) {
@@ -172,19 +181,21 @@ public class TablePrinter implements Printable {
 					pages.add(row - 1);
 					row_fits_on_page = false;
 					break;
-				} else if (height > max_height)
+				} else if (height > max_height) {
 					max_height = height;
+				}
 			}
-			if (row_fits_on_page)
+			if (row_fits_on_page) {
 				r2d.setRect(r2d.getX(), r2d.getY() + max_height,
 						r2d.getWidth(), r2d.getHeight() - max_height);
-			else {
+			} else {
 				// Process row again on the next page.
 				row--;
 				if (getLastRowOnPage(pages, pages.size() - 1)
-						- getFirstRowOnPage(pages, pages.size() - 1) < 0)
+						- getFirstRowOnPage(pages, pages.size() - 1) < 0) {
 					throw new PrinterException(GUIUtils.getString("Messages",
 							"page_full"));
+				}
 			}
 		}
 		pages.add(num_rows - 1);
@@ -195,7 +206,7 @@ public class TablePrinter implements Printable {
 
 	/**
 	 * Renders a cell of the table.
-	 * 
+	 *
 	 * @param rect The maximum size of the cell.
 	 * @param str The string contained in the cell.
 	 * @param paint Specifies whether the cell is painted or only its size is
@@ -207,16 +218,18 @@ public class TablePrinter implements Printable {
 			String str, boolean paint) {
 		LineBreaker breaker = new LineBreaker(rect.getWidth(), rect.getHeight());
 		LineBreaker.Result result = breaker.breakLines(graphics, str);
-		if (result == null)
+		if (result == null) {
 			return -1.0;
+		}
 
 		if (paint) {
 			double[] positions = result.getPositions();
 			String[] rows = result.getRows();
 			double y = rect.getY();
-			for (int i = 0; i < rows.length; i++)
+			for (int i = 0; i < rows.length; i++) {
 				graphics.drawString(rows[i], (float) rect.getMinX(),
 						(float) (y + positions[i]));
+			}
 		}
 
 		return result.getHeight();
@@ -246,27 +259,29 @@ public class TablePrinter implements Printable {
 		double total_width = format.getImageableWidth() - (num_cols - 1)
 				* vertical_spacing;
 		for (int col = 0; col < num_cols; col++) {
-			if (col_percents[col] < 0)
+			if (col_percents[col] < 0) {
 				info.colWidths[col] = remaining_ratio / num_novalue
 						* total_width;
-			else
+			} else {
 				info.colWidths[col] = col_percents[col] * total_width;
+			}
 		}
 
 		info.xOffsets = new double[num_cols];
 		info.xOffsets[0] = format.getImageableX();
-		for (int col = 1; col < num_cols; col++)
+		for (int col = 1; col < num_cols; col++) {
 			info.xOffsets[col] = info.xOffsets[col - 1]
 					+ info.colWidths[col - 1] + vertical_spacing;
+		}
 
 		return info;
 	}
 
 	private int getFirstRowOnPage(Vector<Integer> pages, int page) {
-		if (page == 0)
+		if (page == 0) {
 			return 0;
-		else
-			return pages.elementAt(page - 1).intValue() + 1;
+		}
+		return pages.elementAt(page - 1).intValue() + 1;
 	}
 
 	private int getLastRowOnPage(Vector<Integer> pages, int page) {
@@ -277,8 +292,8 @@ public class TablePrinter implements Printable {
 class LineBreaker {
 	public static class Result {
 		private double _height;
-		private ArrayList<String> _rows;
-		private ArrayList<Double> _positions;
+		private final ArrayList<String> _rows;
+		private final ArrayList<Double> _positions;
 
 		public Result() {
 			_rows = new ArrayList<String>();
@@ -293,8 +308,9 @@ class LineBreaker {
 			double[] positions = new double[_positions.size()];
 			Iterator<Double> it = _positions.iterator();
 			int i = 0;
-			while (it.hasNext())
+			while (it.hasNext()) {
 				positions[i++] = it.next().doubleValue();
+			}
 
 			return positions;
 		}
@@ -313,8 +329,8 @@ class LineBreaker {
 		}
 	}
 
-	private double _width;
-	private double _max_height;
+	private final double _width;
+	private final double _max_height;
 
 	public LineBreaker(double width, double max_height) {
 		_width = width;
@@ -331,69 +347,73 @@ class LineBreaker {
 
 			height += r2d.getHeight();
 			// There is not enough space to paint the string.
-			if (height > _max_height)
+			if (height > _max_height) {
 				return null;
+			}
 
 			if (r2d.getWidth() <= _width) {
 				LineMetrics lm = metrics.getLineMetrics(remaining, graphics);
 				result.addRow(remaining, height - lm.getDescent());
 				break;
-			} else {
-				int last_pos = -1;
-				while (true) {
-					int pos = findBreak(remaining, last_pos + 1);
-					if (pos < 0)
-						break;
-
-					Rectangle2D rec = metrics.getStringBounds(remaining, 0,
-							pos, graphics);
-					if (rec.getWidth() > _width)
-						break;
-
-					last_pos = pos;
+			}
+			int last_pos = -1;
+			while (true) {
+				int pos = findBreak(remaining, last_pos + 1);
+				if (pos < 0) {
+					break;
 				}
-				if (last_pos >= 0) {
-					String str = remaining.substring(0, last_pos);
-					LineMetrics lm = metrics.getLineMetrics(str, graphics);
-					result.addRow(str, height - lm.getDescent());
-					int pos = findNonWhitespace(remaining, last_pos);
-					if (pos < 0)
-						remaining = "";
-					else
-						remaining = remaining
-								.substring(pos, remaining.length());
-				} else {
-					int len = (int) (_width / r2d.getWidth() * remaining
-							.length());
-					Rectangle2D rec = metrics.getStringBounds(remaining, 0,
-							len, graphics);
-					if (rec.getWidth() < _width) {
-						int new_len = len + 1;
-						while (new_len < remaining.length()) {
-							rec = metrics.getStringBounds(remaining, 0,
-									new_len, graphics);
-							if (rec.getWidth() >= _width) {
-								len = new_len - 1;
-								break;
-							}
 
-							new_len++;
+				Rectangle2D rec = metrics.getStringBounds(remaining, 0,
+						pos, graphics);
+				if (rec.getWidth() > _width) {
+					break;
+				}
+
+				last_pos = pos;
+			}
+			if (last_pos >= 0) {
+				String str = remaining.substring(0, last_pos);
+				LineMetrics lm = metrics.getLineMetrics(str, graphics);
+				result.addRow(str, height - lm.getDescent());
+				int pos = findNonWhitespace(remaining, last_pos);
+				if (pos < 0) {
+					remaining = "";
+				} else {
+					remaining = remaining
+							.substring(pos, remaining.length());
+				}
+			} else {
+				int len = (int) (_width / r2d.getWidth() * remaining
+						.length());
+				Rectangle2D rec = metrics.getStringBounds(remaining, 0,
+						len, graphics);
+				if (rec.getWidth() < _width) {
+					int new_len = len + 1;
+					while (new_len < remaining.length()) {
+						rec = metrics.getStringBounds(remaining, 0,
+								new_len, graphics);
+						if (rec.getWidth() >= _width) {
+							len = new_len - 1;
+							break;
 						}
-					} else {
-						while (len > 0) {
-							len--;
-							rec = metrics.getStringBounds(remaining, 0, len,
-									graphics);
-							if (rec.getWidth() < _width)
-								break;
+
+						new_len++;
+					}
+				} else {
+					while (len > 0) {
+						len--;
+						rec = metrics.getStringBounds(remaining, 0, len,
+								graphics);
+						if (rec.getWidth() < _width) {
+							break;
 						}
 					}
-
-					String str = remaining.substring(0, len);
-					LineMetrics lm = metrics.getLineMetrics(str, graphics);
-					result.addRow(str, height - lm.getDescent());
-					remaining = remaining.substring(len, remaining.length());
 				}
+
+				String str = remaining.substring(0, len);
+				LineMetrics lm = metrics.getLineMetrics(str, graphics);
+				result.addRow(str, height - lm.getDescent());
+				remaining = remaining.substring(len, remaining.length());
 			}
 		}
 
@@ -402,17 +422,21 @@ class LineBreaker {
 	}
 
 	private int findBreak(String str, int start) {
-		for (int i = start; i < str.length(); i++)
-			if (Character.isWhitespace(str.charAt(i)))
+		for (int i = start; i < str.length(); i++) {
+			if (Character.isWhitespace(str.charAt(i))) {
 				return i;
+			}
+		}
 
 		return -1;
 	}
 
 	private int findNonWhitespace(String str, int start) {
-		for (int i = start; i < str.length(); i++)
-			if (!Character.isWhitespace(str.charAt(i)))
+		for (int i = start; i < str.length(); i++) {
+			if (!Character.isWhitespace(str.charAt(i))) {
 				return i;
+			}
+		}
 
 		return -1;
 	}

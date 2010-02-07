@@ -44,8 +44,9 @@ public abstract class AbstractModel {
 	}
 
 	public void undo() throws ModelException {
-		if (_undoable_actions.size() == 0)
+		if (_undoable_actions.size() == 0) {
 			return;
+		}
 		UndoableAction a = _undoable_actions.getFirst();
 		undo(a);
 		_redoable_actions.addFirst(a);
@@ -55,8 +56,9 @@ public abstract class AbstractModel {
 	}
 
 	public void redo() throws ModelException {
-		if (_redoable_actions.size() == 0)
+		if (_redoable_actions.size() == 0) {
 			return;
+		}
 		UndoableAction a = _redoable_actions.getFirst();
 		execute(a);
 		_undoable_actions.addFirst(a);
@@ -125,14 +127,16 @@ public abstract class AbstractModel {
 			UndoableActionEvent event = (UndoableActionEvent) obj;
 			Iterator<UndoableActionListener> it = _undoable_action_listeners
 					.iterator();
-			while (it.hasNext())
+			while (it.hasNext()) {
 				it.next().actionPerformed(event);
+			}
 		} else if (obj instanceof ModelResetEvent) {
 			ModelResetEvent event = (ModelResetEvent) obj;
 			Iterator<ModelResetEventListener> it = _reset_event_listeners
 					.iterator();
-			while (it.hasNext())
+			while (it.hasNext()) {
 				it.next().modelResetted(event);
+			}
 		}
 	}
 }

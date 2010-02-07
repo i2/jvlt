@@ -11,7 +11,7 @@ import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
 import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
 
 public class QueryModel extends AbstractModel {
-	private LinkedList<DictUpdateListener> _dict_update_listeners;
+	private final LinkedList<DictUpdateListener> _dict_update_listeners;
 
 	public QueryModel() {
 		_dict_update_listeners = new LinkedList<DictUpdateListener>();
@@ -27,39 +27,45 @@ public class QueryModel extends AbstractModel {
 
 	@Override
 	protected void execute(UndoableAction a) {
-		if (a instanceof StatsUpdateAction)
+		if (a instanceof StatsUpdateAction) {
 			performStatsUpdateAction((StatsUpdateAction) a, false);
+		}
 
 		_executed_actions++;
 	}
 
 	@Override
 	protected void undo(UndoableAction a) {
-		if (a instanceof StatsUpdateAction)
+		if (a instanceof StatsUpdateAction) {
 			performStatsUpdateAction((StatsUpdateAction) a, true);
+		}
 
 		_executed_actions--;
 	}
 
 	private void fireDictUpdateEvent(DictUpdateEvent event) {
 		Iterator<DictUpdateListener> it = _dict_update_listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().dictUpdated(event);
+		}
 	}
 
 	private void performStatsUpdateAction(StatsUpdateAction sua, boolean undo) {
-		if (undo)
+		if (undo) {
 			sua.undoAction();
-		else
+		} else {
 			sua.executeAction();
+		}
 
 		LinkedList<Entry> entry_list = new LinkedList<Entry>();
 		Entry[] entries = sua.getKnownEntries();
-		for (int i = 0; i < entries.length; i++)
-			entry_list.add(entries[i]);
+		for (Entry entrie : entries) {
+			entry_list.add(entrie);
+		}
 		entries = sua.getUnknownEntries();
-		for (int i = 0; i < entries.length; i++)
-			entry_list.add(entries[i]);
+		for (Entry entrie : entries) {
+			entry_list.add(entrie);
+		}
 		fireDictUpdateEvent(new EntryDictUpdateEvent(
 				EntryDictUpdateEvent.ENTRIES_CHANGED, entry_list));
 	}

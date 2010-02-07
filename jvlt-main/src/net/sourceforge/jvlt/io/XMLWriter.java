@@ -16,8 +16,8 @@ import org.w3c.dom.NodeList;
 
 public class XMLWriter {
 	private boolean _do_indent;
-	private HashSet<String> _no_indent_tags;
-	private OutputStream _stream;
+	private final HashSet<String> _no_indent_tags;
+	private final OutputStream _stream;
 	private String _indent;
 	private Writer _writer;
 
@@ -48,8 +48,9 @@ public class XMLWriter {
 		boolean indent_child_nodes = indent_this_node
 				&& !_no_indent_tags.contains(elem.getTagName());
 
-		if (indent_this_node)
+		if (indent_this_node) {
 			_writer.write(_indent);
+		}
 
 		// Write tag name and attributes.
 		_writer.write("<" + elem.getTagName());
@@ -64,15 +65,18 @@ public class XMLWriter {
 		// Check whether there is a child text node. If there is one, then
 		// do not indent.
 		NodeList childnodes = elem.getChildNodes();
-		if (indent_child_nodes)
-			for (int i = 0; i < childnodes.getLength(); i++)
+		if (indent_child_nodes) {
+			for (int i = 0; i < childnodes.getLength(); i++) {
 				if (childnodes.item(i).getNodeType() == Node.TEXT_NODE) {
 					indent_child_nodes = false;
 					break;
 				}
+			}
+		}
 
-		if (indent_child_nodes)
+		if (indent_child_nodes) {
 			_writer.write("\n");
+		}
 
 		for (int i = 0; i < childnodes.getLength(); i++) {
 			Node node = childnodes.item(i);
@@ -83,18 +87,21 @@ public class XMLWriter {
 					_indent += "\t";
 					write(element);
 					_indent = _indent.substring(0, _indent.length() - 1);
-				} else
+				} else {
 					write(element);
+				}
 				_do_indent = indent_this_node;
 			} else if (node.getNodeType() == Node.TEXT_NODE) {
 				_writer.write(node.getNodeValue());
 			}
 		}
 
-		if (indent_child_nodes)
+		if (indent_child_nodes) {
 			_writer.write(_indent);
+		}
 		_writer.write("</" + elem.getTagName() + ">");
-		if (indent_this_node)
+		if (indent_this_node) {
 			_writer.write("\n");
+		}
 	}
 }

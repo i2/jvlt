@@ -23,10 +23,10 @@ public class FileUtils {
 
 	public static String getFileExtension(String file_name) {
 		int index = file_name.lastIndexOf('.');
-		if (index < 0 || index == file_name.length() - 1)
+		if (index < 0 || index == file_name.length() - 1) {
 			return "";
-		else
-			return file_name.substring(index + 1);
+		}
+		return file_name.substring(index + 1);
 	}
 
 	private static List<String> getPathList(File f) {
@@ -56,10 +56,12 @@ public class FileUtils {
 			j--;
 		}
 
-		for (; i >= 0; i--)
+		for (; i >= 0; i--) {
 			s += ".." + File.separator;
-		for (; j >= 1; j--)
+		}
+		for (; j >= 1; j--) {
 			s += f.get(j) + File.separator;
+		}
 
 		s += f.get(j);
 

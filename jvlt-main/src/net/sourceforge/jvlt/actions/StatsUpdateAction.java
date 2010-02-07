@@ -16,12 +16,12 @@ public class StatsUpdateAction extends QueryAction {
 	private static final Logger logger = Logger
 			.getLogger(StatsUpdateAction.class);
 
-	private Entry[] _known_entries;
-	private Entry[] _unknown_entries;
-	private GregorianCalendar _now;
-	private ArrayList<EditDictObjectAction> _entry_actions;
+	private final Entry[] _known_entries;
+	private final Entry[] _unknown_entries;
+	private final GregorianCalendar _now;
+	private final ArrayList<EditDictObjectAction> _entry_actions;
 	private boolean _update_batches = true;
-	private Map<Entry, Integer> _user_flag_map;
+	private final Map<Entry, Integer> _user_flag_map;
 
 	public StatsUpdateAction(Entry[] known_entries, Entry[] unknown_entries) {
 		super();
@@ -55,8 +55,9 @@ public class StatsUpdateAction extends QueryAction {
 	}
 
 	public void executeAction() {
-		if (_entry_actions.size() == 0)
+		if (_entry_actions.size() == 0) {
 			prepare();
+		}
 
 		Iterator<EditDictObjectAction> it = _entry_actions.iterator();
 		while (it.hasNext()) {
@@ -80,27 +81,32 @@ public class StatsUpdateAction extends QueryAction {
 	}
 
 	private void prepare() {
-		for (int i = 0; i < _known_entries.length; i++)
-			_entry_actions.add(new EditDictObjectAction(_known_entries[i],
-					getUpdatedEntry(_known_entries[i], true)));
-		for (int i = 0; i < _unknown_entries.length; i++)
-			_entry_actions.add(new EditDictObjectAction(_unknown_entries[i],
-					getUpdatedEntry(_unknown_entries[i], false)));
+		for (Entry knownEntrie : _known_entries) {
+			_entry_actions.add(new EditDictObjectAction(knownEntrie,
+					getUpdatedEntry(knownEntrie, true)));
+		}
+		for (Entry unknownEntrie : _unknown_entries) {
+			_entry_actions.add(new EditDictObjectAction(unknownEntrie,
+					getUpdatedEntry(unknownEntrie, false)));
+		}
 	}
 
 	private Entry getUpdatedEntry(Entry entry, boolean known) {
 		Entry new_entry = (Entry) entry.clone();
 		new_entry.setNumQueried(new_entry.getNumQueried() + 1);
 		new_entry.setLastQueried(_now);
-		if (!known)
+		if (!known) {
 			new_entry.setNumMistakes(new_entry.getNumMistakes() + 1);
+		}
 		new_entry.setLastQuizResult(known);
-		if (_update_batches)
+		if (_update_batches) {
 			new_entry.updateBatch();
+		}
 
 		/* Update flags */
-		if (_user_flag_map.containsKey(entry))
+		if (_user_flag_map.containsKey(entry)) {
 			new_entry.setUserFlags(_user_flag_map.get(entry));
+		}
 
 		return new_entry;
 	}

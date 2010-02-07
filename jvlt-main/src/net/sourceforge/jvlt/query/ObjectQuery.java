@@ -19,7 +19,7 @@ public class ObjectQuery {
 	Class<? extends Object> _object_class;
 	private int _type;
 	private String _name;
-	private ArrayList<ObjectQueryItem> _items;
+	private final ArrayList<ObjectQueryItem> _items;
 
 	/* Not serialized attributes */
 	private MetaData _metadata = null;
@@ -48,8 +48,9 @@ public class ObjectQuery {
 		_object_class = cl;
 
 		DictModel model = JVLT.getInstance().getModel().getDictModel();
-		if (cl != null)
+		if (cl != null) {
 			_metadata = model.getMetaData(cl);
+		}
 	}
 
 	public int getType() {
@@ -82,26 +83,30 @@ public class ObjectQuery {
 	}
 
 	public boolean objectMatches(Object obj) {
-		if (_items.size() == 0)
+		if (_items.size() == 0) {
 			return true;
+		}
 
 		Iterator<ObjectQueryItem> it = _items.iterator();
 		while (it.hasNext()) {
 			ObjectQueryItem item = it.next();
 			Attribute attr = _metadata.getAttribute(item.getName());
 			Object value = attr.getValue(obj);
-			if (item.objectMatches(value) && _type == MATCH_ONE)
+			if (item.objectMatches(value) && _type == MATCH_ONE) {
 				return true;
-			else if (!item.objectMatches(value) && _type == MATCH_ALL)
+			} else if (!item.objectMatches(value) && _type == MATCH_ALL) {
 				return false;
+			}
 		}
 		return _type == MATCH_ALL;
 	}
 
 	public boolean isValid() {
-		for (ObjectQueryItem item : _items)
-			if (item == null)
+		for (ObjectQueryItem item : _items) {
+			if (item == null) {
 				return false;
+			}
+		}
 
 		return true;
 	}

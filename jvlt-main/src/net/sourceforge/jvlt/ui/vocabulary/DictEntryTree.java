@@ -56,18 +56,19 @@ public class DictEntryTree extends JTree {
 							+ pron_font.getFamily() + "; font-size: "
 							+ pron_font.getSize() + "\">");
 				}
-				if (entry.getPronunciations().length > 0)
+				if (entry.getPronunciations().length > 0) {
 					html_buffer.append("("
 							+ Utils.arrayToString(entry.getPronunciations())
 							+ ")");
+				}
 				html_buffer.append("</span>");
 				html_buffer.append("</html>");
 
 				return super.getTreeCellRendererComponent(tree, html_buffer
 						.toString(), selectedNow, expanded, leaf, row, hasFocusNow);
-			} else
-				return super.getTreeCellRendererComponent(tree, value,
-						selectedNow, expanded, leaf, row, hasFocusNow);
+			}
+			return super.getTreeCellRendererComponent(tree, value, selectedNow,
+					expanded, leaf, row, hasFocusNow);
 		}
 	}
 
@@ -105,47 +106,53 @@ public class DictEntryTree extends JTree {
 
 	public Entry getSelectedEntry() {
 		Object obj = getSelectedObject();
-		if (obj == null)
+		if (obj == null) {
 			return null;
+		}
 
-		if (obj instanceof Entry)
+		if (obj instanceof Entry) {
 			return (Entry) obj;
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public Sense getSelectedSense() {
 		Object obj = getSelectedObject();
-		if (obj == null)
+		if (obj == null) {
 			return null;
+		}
 
-		if (obj instanceof Sense)
+		if (obj instanceof Sense) {
 			return (Sense) obj;
-		else
-			return null;
+		}
+		return null;
 	}
 
 	public void setSelectedSense(Sense sense) {
 		DefaultMutableTreeNode node = getSenseNode(sense);
-		if (node != null)
+		if (node != null) {
 			setSelectedNode(node);
+		}
 	}
 
 	public void setSelectedEntry(Entry entry) {
 		DefaultMutableTreeNode node = getEntryNode(entry);
-		if (node != null)
+		if (node != null) {
 			setSelectedNode(node);
+		}
 	}
 
 	public void setSenses(Sense[] senses) {
-		if (senses.length == 0)
+		if (senses.length == 0) {
 			return;
+		}
 
 		clear();
 
 		TreeSet<Entry> entryset = new TreeSet<Entry>();
-		for (int i = 0; i < senses.length; i++)
-			entryset.add(senses[i].getParent());
+		for (Sense sense : senses) {
+			entryset.add(sense.getParent());
+		}
 
 		ArrayList<DefaultMutableTreeNode> entry_nodes = new ArrayList<DefaultMutableTreeNode>();
 		Iterator<Entry> eit = entryset.iterator();
@@ -156,10 +163,13 @@ public class DictEntryTree extends JTree {
 			entry_nodes.add(entrynode);
 
 			Sense[] esenses = entry.getSenses();
-			for (int i = 0; i < esenses.length; i++)
-				for (int j = 0; j < senses.length; j++)
-					if (senses[j] == esenses[i]) // "pointer" equality.
-						addObject(esenses[i], entrynode);
+			for (Sense esense : esenses) {
+				for (Sense sense : senses) {
+					if (sense == esense) {
+						addObject(esense, entrynode);
+					}
+				}
+			}
 		}
 
 		expandAll(true);
@@ -167,23 +177,26 @@ public class DictEntryTree extends JTree {
 
 	public void removeSense(Sense sense) {
 		DefaultMutableTreeNode node = getSenseNode(sense);
-		if (node == null)
+		if (node == null) {
 			return;
+		}
 
 		DefaultTreeModel model = (DefaultTreeModel) getModel();
 		DefaultMutableTreeNode entry_node = (DefaultMutableTreeNode) node
 				.getParent();
 		model.removeNodeFromParent(node);
-		if (model.getChildCount(entry_node) == 0)
+		if (model.getChildCount(entry_node) == 0) {
 			model.removeNodeFromParent(entry_node);
+		}
 		updateUI();
 	}
 
 	public void setEntries(Entry[] entries) {
 		clear();
 
-		for (int i = 0; i < entries.length; i++)
-			addEntry(entries[i]);
+		for (Entry entrie : entries) {
+			addEntry(entrie);
+		}
 	}
 
 	public void addEntry(Entry entry) {
@@ -191,16 +204,18 @@ public class DictEntryTree extends JTree {
 				(DefaultMutableTreeNode) getModel().getRoot());
 
 		Sense[] senses = entry.getSenses();
-		for (int j = 0; j < senses.length; j++)
-			addObject(senses[j], entrynode);
+		for (Sense sense : senses) {
+			addObject(sense, entrynode);
+		}
 
 		expandPath(new TreePath(entrynode.getPath()));
 	}
 
 	public void removeEntry(Entry entry) {
 		DefaultMutableTreeNode node = getEntryNode(entry);
-		if (node == null)
+		if (node == null) {
 			return;
+		}
 
 		DefaultTreeModel model = (DefaultTreeModel) getModel();
 		model.removeNodeFromParent(node);
@@ -217,8 +232,9 @@ public class DictEntryTree extends JTree {
 
 	public Object getSelectedObject() {
 		TreePath path = getSelectionPath();
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
 				.getLastPathComponent();
@@ -236,8 +252,9 @@ public class DictEntryTree extends JTree {
 			for (int j = 0; j < sense_count; j++) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) model
 						.getChild(child, j);
-				if (node.getUserObject() == sense)
+				if (node.getUserObject() == sense) {
 					return node;
+				}
 			}
 		}
 
@@ -251,8 +268,9 @@ public class DictEntryTree extends JTree {
 		for (int i = 0; i < child_count; i++) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) model
 					.getChild(root, i);
-			if (node.getUserObject() == entry)
+			if (node.getUserObject() == entry) {
 				return node;
+			}
 		}
 
 		return null;
@@ -297,9 +315,10 @@ public class DictEntryTree extends JTree {
 		}
 
 		// Expansion or collapse must be done bottom-up
-		if (expand)
+		if (expand) {
 			expandPath(parent);
-		else
+		} else {
 			collapsePath(parent);
+		}
 	}
 }

@@ -5,7 +5,7 @@ import java.util.Comparator;
 import net.sourceforge.jvlt.utils.ItemContainer;
 
 public class AttributeComparator implements Comparator<Object> {
-	private ItemContainer _container;
+	private final ItemContainer _container;
 
 	public AttributeComparator(ItemContainer container) {
 		_container = container;

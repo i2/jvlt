@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -44,11 +45,16 @@ import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.Config;
 import net.sourceforge.jvlt.utils.Utils;
 
+import org.apache.log4j.Logger;
+
 public class CSVImportPanel extends CSVPanel {
+	private static final Logger logger = Logger.getLogger(CSVImportPanel.class);
+
 	private class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
-			if (ev.getSource() == _language_box)
+			if (ev.getSource() == _language_box) {
 				updateAttributePanel();
+			}
 
 			_preview_model.update();
 		}
@@ -69,7 +75,7 @@ public class CSVImportPanel extends CSVPanel {
 	private class PreviewTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 
-		private AttributeResources _resources = new AttributeResources();
+		private final AttributeResources _resources = new AttributeResources();
 		private String[] _column_names = new String[0];
 
 		public int getRowCount() {
@@ -81,18 +87,18 @@ public class CSVImportPanel extends CSVPanel {
 		}
 
 		public Object getValueAt(int row, int column) {
-			if (column == 0)
+			if (column == 0) {
 				return "" + (row + 1) + ".";
-			else
-				return _column_names[row];
+			}
+			return _column_names[row];
 		}
 
 		@Override
 		public String getColumnName(int column) {
-			if (column == 0)
+			if (column == 0) {
 				return "";
-			else
-				return GUIUtils.getString("Labels", "column_name");
+			}
+			return GUIUtils.getString("Labels", "column_name");
 		}
 
 		public void update() {
@@ -120,28 +126,31 @@ public class CSVImportPanel extends CSVPanel {
 				names.add(getTranslation("nth_definition", i + 1));
 			}
 			names.add(_resources.getString("Lesson"));
-			for (int i = 0; i < num_categories; i++)
+			for (int i = 0; i < num_categories; i++) {
 				names.add(getTranslation("nth_category", i + 1));
-			for (int i = 0; i < num_mmfiles; i++)
+			}
+			for (int i = 0; i < num_mmfiles; i++) {
 				names.add(getTranslation("nth_mmfile", i + 1));
+			}
 			for (int i = 0; i < num_examples; i++) {
 				names.add(getTranslation("nth_example", i + 1));
 				names.add(getTranslation("nth_example_link", i + 1));
 				names.add(getTranslation("nth_example_translation", i + 1));
 			}
-			if (CSVImportPanel.this._language_box.getSelectedLanguage() != null)
+			if (CSVImportPanel.this._language_box.getSelectedLanguage() != null) {
 				names.add(_resources.getString("EntryClass"));
-			for (int i = 0; i < attributes.length; i++) {
-				SchemaAttribute attr = attributes[i];
+			}
+			for (SchemaAttribute attr : attributes) {
 				String translation = _resources.getString(attr.getName());
 				int columns = tablemodel.getNumColumns(attr);
-				if (columns == 1)
+				if (columns == 1) {
 					names.add(translation);
-				else {
-					for (int j = 0; j < columns; j++)
+				} else {
+					for (int j = 0; j < columns; j++) {
 						names.add(GUIUtils.getString("Labels",
 								"nth_attribute_column", new Object[] {
 										translation, j + 1 }));
+					}
 				}
 			}
 
@@ -263,8 +272,9 @@ public class CSVImportPanel extends CSVPanel {
 				.getModel();
 		SchemaAttribute[] attrs = getAttributes();
 		int[] columns = new int[attrs.length];
-		for (int i = 0; i < attrs.length; i++)
+		for (int i = 0; i < attrs.length; i++) {
 			columns[i] = model.getNumColumns(attrs[i]);
+		}
 
 		return columns;
 	}
@@ -294,31 +304,34 @@ public class CSVImportPanel extends CSVPanel {
 		ArrayList<SchemaAttribute> attrs = new ArrayList<SchemaAttribute>();
 		ArrayList<Integer> columns = new ArrayList<Integer>();
 		SchemaAttribute[] available_attrs = new SchemaAttribute[0];
-		if (!language.equals(""))
+		if (!language.equals("")) {
 			available_attrs = getSchemaAttributes(language);
+		}
 
 		try {
 			for (int i = 0; i < attr_strings.length / 2; i++) {
-				for (int j = 0; j < available_attrs.length; j++)
-					if (available_attrs[j].getName()
-							.equals(attr_strings[2 * i])) {
-						attrs.add(available_attrs[j]);
+				for (SchemaAttribute availableAttr : available_attrs) {
+					if (availableAttr.getName().equals(attr_strings[2 * i])) {
+						attrs.add(availableAttr);
 						break;
 					}
+				}
 				columns.add(Integer.parseInt(attr_strings[2 * i + 1]));
 			}
 
-			if (attrs.size() == columns.size())
+			if (attrs.size() == columns.size()) {
 				_attribute_table.setSelectedAttributes(attrs, columns);
+			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
 	public void saveState() {
 		Config config = JVLT.getConfig();
-		if (getLanguage() != null)
+		if (getLanguage() != null) {
 			config.setProperty("CSVImport.Language", getLanguage());
+		}
 		config.setProperty("CSVImport.TextDelimiter", String
 				.valueOf(getTextDelimiter()));
 		config.setProperty("CSVImport.FieldDelimiter", String
@@ -338,8 +351,9 @@ public class CSVImportPanel extends CSVPanel {
 		int[] attr_columns = getAttributeColumns();
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < attrs.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buf.append(';');
+			}
 			buf.append(attrs[i].getName());
 			buf.append(';');
 			buf.append(attr_columns[i]);
@@ -402,9 +416,10 @@ public class CSVImportPanel extends CSVPanel {
 
 	private void updateAttributePanel() {
 		String language = _language_box.getSelectedLanguage();
-		if (language != null)
+		if (language != null) {
 			_attribute_table
 					.setAvailableAttributes(getSchemaAttributes(language));
+		}
 	}
 
 	private SchemaAttribute[] getSchemaAttributes(String language) {
@@ -413,8 +428,9 @@ public class CSVImportPanel extends CSVPanel {
 			EntryAttributeSchema schema = reader.readSchema(language);
 			EntryClass[] classes = schema.getEntryClasses();
 			TreeSet<SchemaAttribute> attrs = new TreeSet<SchemaAttribute>();
-			for (int i = 0; i < classes.length; i++)
-				attrs.addAll(Arrays.asList(classes[i].getAttributes()));
+			for (EntryClass classe : classes) {
+				attrs.addAll(Arrays.asList(classe.getAttributes()));
+			}
 
 			return attrs.toArray(new SchemaAttribute[0]);
 		} catch (XPathExpressionException ex) {
@@ -427,10 +443,10 @@ class AttributeTable extends JTable {
 	public static class AttributeTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 
-		private AttributeResources _resources = new AttributeResources();
-		private HashMap<String, SchemaAttribute> _translation_attr_map;
-		private Vector<Object> _attributes;
-		private Vector<Object> _num_columns;
+		private final AttributeResources _resources = new AttributeResources();
+		private final Map<String, SchemaAttribute> _translation_attr_map;
+		private final Vector<Object> _attributes;
+		private final Vector<Object> _num_columns;
 
 		public AttributeTableModel() {
 			_translation_attr_map = new HashMap<String, SchemaAttribute>();
@@ -447,32 +463,30 @@ class AttributeTable extends JTable {
 		}
 
 		public Object getValueAt(int row, int column) {
-			if (row == _attributes.size())
+			if (row == _attributes.size()) {
 				return null;
-			else {
-				if (column == 0)
-					return _attributes.get(row);
-				else {
-					Object val = _num_columns.get(row);
-					return val == null ? 1 : val;
-				}
 			}
+			if (column == 0) {
+				return _attributes.get(row);
+			}
+			Object val = _num_columns.get(row);
+			return val == null ? 1 : val;
 		}
 
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			if (column == 0)
+			if (column == 0) {
 				return true;
-			else
-				return (getAttributeAt(row) instanceof ArraySchemaAttribute);
+			}
+			return (getAttributeAt(row) instanceof ArraySchemaAttribute);
 		}
 
 		@Override
 		public Class<? extends Object> getColumnClass(int column) {
-			if (column == 0)
+			if (column == 0) {
 				return String.class;
-			else
-				return Integer.class;
+			}
+			return Integer.class;
 		}
 
 		@Override
@@ -481,10 +495,11 @@ class AttributeTable extends JTable {
 				if (value != null && !value.equals("")) {
 					_attributes.setSize(row + 1);
 					_num_columns.setSize(row + 1);
-					if (column == 0)
+					if (column == 0) {
 						_attributes.set(row, value);
-					else
+					} else {
 						_num_columns.set(row, value);
+					}
 					fireTableRowsUpdated(row, row);
 					fireTableRowsInserted(row + 1, row + 1);
 				}
@@ -492,8 +507,9 @@ class AttributeTable extends JTable {
 				if (column == 0) {
 					SchemaAttribute attr = _translation_attr_map.get(value);
 					if (attr == null) {
-						for (int i = row; i < _attributes.size() - 1; i++)
+						for (int i = row; i < _attributes.size() - 1; i++) {
 							_attributes.set(i, _attributes.get(i + 1));
+						}
 						_attributes.setSize(_attributes.size() - 1);
 						fireTableRowsDeleted(row, row);
 					} else {
@@ -509,10 +525,10 @@ class AttributeTable extends JTable {
 
 		@Override
 		public String getColumnName(int column) {
-			if (column == 0)
+			if (column == 0) {
 				return GUIUtils.getString("Labels", "attribute");
-			else
-				return GUIUtils.getString("Labels", "num_columns");
+			}
+			return GUIUtils.getString("Labels", "num_columns");
 		}
 
 		public void clear() {
@@ -524,26 +540,29 @@ class AttributeTable extends JTable {
 
 		public void setAvailableAttributes(SchemaAttribute[] attrs) {
 			_translation_attr_map.clear();
-			for (int i = 0; i < attrs.length; i++)
-				_translation_attr_map.put(_resources.getString(attrs[i]
-						.getName()), attrs[i]);
+			for (SchemaAttribute attr : attrs) {
+				_translation_attr_map.put(_resources.getString(attr.getName()),
+						attr);
+			}
 		}
 
 		public SchemaAttribute[] getSelectedAttributes() {
 			ArrayList<SchemaAttribute> list = new ArrayList<SchemaAttribute>();
-			for (int i = 0; i < _attributes.size(); i++)
+			for (int i = 0; i < _attributes.size(); i++) {
 				list.add(_translation_attr_map.get(_attributes.get(i)));
+			}
 
 			return list.toArray(new SchemaAttribute[0]);
 		}
 
 		public int getNumColumns(SchemaAttribute attr) {
 			String trans = _resources.getString(attr.getName());
-			for (int i = 0; i < _attributes.size(); i++)
+			for (int i = 0; i < _attributes.size(); i++) {
 				if (_attributes.get(i).equals(trans)) {
 					Object val = _num_columns.get(i);
 					return val == null ? 1 : ((Integer) val).intValue();
 				}
+			}
 
 			return 0;
 		}
@@ -563,19 +582,20 @@ class AttributeTable extends JTable {
 
 		private SchemaAttribute getAttributeAt(int row) {
 			String val = null;
-			if (row < _attributes.size())
+			if (row < _attributes.size()) {
 				val = (String) _attributes.get(row);
+			}
 
-			if (val == null || val.equals(""))
+			if (val == null || val.equals("")) {
 				return null;
-			else
-				return _translation_attr_map.get(val);
+			}
+			return _translation_attr_map.get(val);
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
 
-	private JComboBox _attribute_box;
+	private final JComboBox _attribute_box;
 
 	public AttributeTable() {
 		super(new AttributeTableModel());
@@ -595,8 +615,9 @@ class AttributeTable extends JTable {
 		model.setAvailableAttributes(attrs);
 		_attribute_box.removeAllItems();
 		_attribute_box.addItem("");
-		for (int i = 0; i < attrs.length; i++)
-			_attribute_box.addItem(resources.getString(attrs[i].getName()));
+		for (SchemaAttribute attr : attrs) {
+			_attribute_box.addItem(resources.getString(attr.getName()));
+		}
 	}
 
 	public void setSelectedAttributes(Collection<SchemaAttribute> attrs,
@@ -609,7 +630,7 @@ class AttributeTable extends JTable {
 class SpinnerEditor extends AbstractCellEditor implements TableCellEditor {
 	private static final long serialVersionUID = 1L;
 
-	private JSpinner _spinner = new JSpinner();
+	private final JSpinner _spinner = new JSpinner();
 
 	public SpinnerEditor() {
 		SpinnerNumberModel model = new SpinnerNumberModel();

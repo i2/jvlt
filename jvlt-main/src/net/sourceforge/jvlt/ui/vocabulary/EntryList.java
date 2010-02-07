@@ -2,7 +2,6 @@ package net.sourceforge.jvlt.ui.vocabulary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -28,8 +27,9 @@ public class EntryList extends JList {
 		_entries = entries;
 		DefaultListModel model = (DefaultListModel) getModel();
 		model.clear();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();)
-			model.addElement(getEntryString(it.next()));
+		for (Entry entry : entries) {
+			model.addElement(getEntryString(entry));
+		}
 	}
 
 	private String getEntryString(Entry entry) {
@@ -37,16 +37,18 @@ public class EntryList extends JList {
 		buf.append(entry.toString());
 		buf.append(" - ");
 		Sense[] senses = entry.getSenses();
-		if (senses.length == 1)
+		if (senses.length == 1) {
 			buf.append(senses[0].toString());
-		else
+		} else {
 			for (int j = 0; j < senses.length; j++) {
-				if (j > 0)
+				if (j > 0) {
 					buf.append("; ");
+				}
 
 				buf.append(String.valueOf(j + 1) + ". ");
 				buf.append(senses[j].toString());
 			}
+		}
 
 		return buf.toString();
 	}

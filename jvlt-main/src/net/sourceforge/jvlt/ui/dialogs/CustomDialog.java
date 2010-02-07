@@ -25,8 +25,8 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 	private static final long serialVersionUID = 1L;
 
 	private int _value;
-	private CustomDialogData _data;
-	private ComponentReplacementHandler _handler = new ComponentReplacementHandler();
+	private final CustomDialogData _data;
+	private final ComponentReplacementHandler _handler = new ComponentReplacementHandler();
 
 	private static CustomDialog _dialog = null;
 
@@ -36,8 +36,9 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 
 	public static int showDialog(CustomDialogData data, Component parent,
 			String title) {
-		if (_dialog != null)
+		if (_dialog != null) {
 			throw new TooManyInstancesException();
+		}
 
 		Frame frame = JOptionPane.getFrameForComponent(parent);
 		_dialog = new CustomDialog(data, frame, title);
@@ -95,8 +96,9 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 	 */
 	@Override
 	public void setVisible(boolean visible) {
-		if (_data != null && visible)
+		if (_data != null && visible) {
 			_data.prepareToShow();
+		}
 
 		super.setVisible(visible);
 	}

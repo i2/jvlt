@@ -14,9 +14,9 @@ public class CalendarAttribute extends DefaultAttribute {
 	@Override
 	public String getFormattedValue(Object o) {
 		Calendar val = (Calendar) getValue(o);
-		if (val == null)
+		if (val == null) {
 			return "";
-		else
-			return _format.format(val.getTime());
+		}
+		return _format.format(val.getTime());
 	}
 }

@@ -17,7 +17,7 @@ import java.util.TreeMap;
 
 
 public class Config {
-	private TreeMap<String, String> properties = new TreeMap<String, String>();
+	private final TreeMap<String, String> properties = new TreeMap<String, String>();
 
 	public String[] getKeys() {
 		return properties.keySet().toArray(new String[0]);
@@ -32,10 +32,10 @@ public class Config {
 	}
 
 	public String getProperty(String key, String default_value) {
-		if (properties.containsKey(key))
+		if (properties.containsKey(key)) {
 			return properties.get(key);
-		else
-			return default_value;
+		}
+		return default_value;
 	}
 
 	public float getFloatProperty(String key, float default_val) {
@@ -63,23 +63,24 @@ public class Config {
 
 	public boolean getBooleanProperty(String key, boolean default_val) {
 		String str = getProperty(key);
-		if (str == null)
+		if (str == null) {
 			return default_val;
-		else if (str.equals("true"))
+		} else if (str.equals("true")) {
 			return true;
-		else if (str.equals("false"))
+		} else if (str.equals("false")) {
 			return false;
-		else
+		} else {
 			return default_val;
+		}
 	}
 
 	public Font getFontProperty(String key) {
 		String str = getProperty(key);
 
-		if (str == null || str.equals(""))
+		if (str == null || str.equals("")) {
 			return null;
-		else
-			return Font.decode(str);
+		}
+		return Font.decode(str);
 	}
 
 	public String[] getStringListProperty(String key, String[] def) {
@@ -93,13 +94,15 @@ public class Config {
 
 	public double[] getNumberListProperty(String key, double[] def) {
 		String[] defstr = new String[def.length];
-		for (int i = 0; i < def.length; i++)
+		for (int i = 0; i < def.length; i++) {
 			defstr[i] = String.valueOf(def[i]);
+		}
 
 		String[] strings = getStringListProperty(key, defstr);
 		double[] values = new double[strings.length];
-		for (int i = 0; i < strings.length; i++)
+		for (int i = 0; i < strings.length; i++) {
 			values[i] = Double.parseDouble(strings[i]);
+		}
 
 		return values;
 	}
@@ -108,9 +111,9 @@ public class Config {
 		Locale loc = def;
 		String str = getProperty(key, def.toString());
 		int indexof = str.indexOf("_");
-		if (indexof < 0)
+		if (indexof < 0) {
 			loc = new Locale(str);
-		else {
+		} else {
 			String lang = str.substring(0, indexof);
 			String country = str.substring(indexof + 1, str.length());
 			loc = new Locale(lang, country);
@@ -121,16 +124,18 @@ public class Config {
 
 	public Dimension getDimensionProperty(String key, Dimension default_dim) {
 		String val;
-		if (default_dim != null)
+		if (default_dim != null) {
 			val = getProperty(key, String.valueOf(default_dim.width) + ";"
 					+ String.valueOf(default_dim.height));
-		else
+		} else {
 			val = getProperty(key);
+		}
 
 		try {
 			String[] size = val.split(";");
-			if (size.length != 2)
+			if (size.length != 2) {
 				return null;
+			}
 
 			return new Dimension(Integer.parseInt(size[0]), Integer
 					.parseInt(size[1]));
@@ -183,12 +188,14 @@ public class Config {
 		try {
 			while (reader.ready()) {
 				String line = reader.readLine();
-				if (line.startsWith("#"))
+				if (line.startsWith("#")) {
 					continue;
+				}
 
 				int pos = line.indexOf('=');
-				if (pos < 0)
+				if (pos < 0) {
 					continue;
+				}
 
 				String key = line.substring(0, pos);
 				String value = line.substring(pos + 1, line.length());

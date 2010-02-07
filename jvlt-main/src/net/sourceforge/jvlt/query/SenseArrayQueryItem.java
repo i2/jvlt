@@ -30,30 +30,35 @@ public class SenseArrayQueryItem extends ObjectQueryItem {
 	public boolean objectMatches(Object obj) {
 		Sense[] senses = (Sense[]) obj;
 		String val = "";
-		if (_value != null)
-			if (_match_case)
+		if (_value != null) {
+			if (_match_case) {
 				val = _value.toString();
-			else
+			} else {
 				val = _value.toString().toLowerCase();
+			}
+		}
 
-		for (int i = 0; i < senses.length; i++) {
+		for (Sense sense : senses) {
 			String str;
 			if (_type == SenseArrayQueryItem.TRANSLATION_CONTAINS
-					|| _type == SenseArrayQueryItem.TRANSLATION_EQUALS)
-				str = _match_case ? senses[i].getTranslation() : senses[i]
+					|| _type == SenseArrayQueryItem.TRANSLATION_EQUALS) {
+				str = _match_case ? sense.getTranslation() : sense
 						.getTranslation().toLowerCase();
-			else
-				str = _match_case ? senses[i].getTranslation() : senses[i]
+			} else {
+				str = _match_case ? sense.getTranslation() : sense
 						.getDefinition().toLowerCase();
+			}
 
 			if (_type == SenseArrayQueryItem.TRANSLATION_CONTAINS
 					|| _type == SenseArrayQueryItem.DEFINITION_CONTAINS) {
-				if (str.indexOf(val) >= 0)
+				if (str.indexOf(val) >= 0) {
 					return true;
+				}
 			} else if (_type == SenseArrayQueryItem.TRANSLATION_EQUALS
 					|| _type == SenseArrayQueryItem.DEFINITION_EQUALS) {
-				if (str.equals(val))
+				if (str.equals(val)) {
 					return true;
+				}
 			}
 		}
 		return false;

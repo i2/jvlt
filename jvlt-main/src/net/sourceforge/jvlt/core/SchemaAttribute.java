@@ -46,10 +46,10 @@ public class SchemaAttribute implements Comparable<SchemaAttribute>, Cloneable {
 	}
 
 	public int compareTo(SchemaAttribute attr) {
-		if (!_name.equals(attr._name))
+		if (!_name.equals(attr._name)) {
 			return _name.compareTo(attr._name);
-		else
-			return _group.compareTo(attr._group);
+		}
+		return _group.compareTo(attr._group);
 	}
 
 	@Override

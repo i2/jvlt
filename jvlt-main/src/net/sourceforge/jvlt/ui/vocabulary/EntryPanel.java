@@ -67,17 +67,19 @@ public class EntryPanel extends JPanel implements ActionListener,
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
 		font = JVLT.getConfig().getFontProperty("ui_orth_font");
-		if (font != null)
+		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
+		}
 		font = JVLT.getConfig().getFontProperty("ui_pron_font");
-		if (font != null)
+		if (font != null) {
 			PRONUNCIATION_RENDERER.setCustomFont(font);
+		}
 	}
 
-	private ArrayList<FilterListener<Entry>> _filter_listeners;
-	private JVLTModel _model;
+	private final ArrayList<FilterListener<Entry>> _filter_listeners;
+	private final JVLTModel _model;
 	private Dict _dict;
-	private SelectionNotifier _notifier;
+	private final SelectionNotifier _notifier;
 
 	private CustomAction _add_action;
 	private CustomAction _edit_action;
@@ -113,8 +115,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 		Double[] col_widths = new Double[columns.length];
 		TableColumnModel col_model = _entry_table.getColumnModel();
-		for (int i = 0; i < columns.length; i++)
+		for (int i = 0; i < columns.length; i++) {
 			col_widths[i] = new Double(col_model.getColumn(i).getWidth());
+		}
 
 		config.setProperty("entry_table_column_widths", col_widths);
 
@@ -139,12 +142,14 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 		double[] col_widths = config.getNumberListProperty(
 				"entry_table_column_widths", new double[] { 50, 50, 50 });
-		if (col_widths.length != _entry_table_model.getColumnCount())
+		if (col_widths.length != _entry_table_model.getColumnCount()) {
 			return;
+		}
 
 		TableColumnModel col_model = _entry_table.getColumnModel();
-		for (int i = 0; i < col_widths.length; i++)
+		for (int i = 0; i < col_widths.length; i++) {
 			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
+		}
 
 		SortableTableModel.Directive dir = new SortableTableModel.Directive();
 		String[] dir_string = config.getStringListProperty(
@@ -170,10 +175,11 @@ public class EntryPanel extends JPanel implements ActionListener,
 		if (obj instanceof Sense) {
 			Sense sense = (Sense) obj;
 			entry = sense.getParent();
-		} else if (obj instanceof Entry)
+		} else if (obj instanceof Entry) {
 			entry = (Entry) obj;
-		else
+		} else {
 			return;
+		}
 
 		if (!_entry_table_model.containsObject(entry)) {
 			String filter = entry.getOrthography();
@@ -191,8 +197,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			addEntry(null);
 		} else if (e.getActionCommand().equals("edit")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
-			if (entries.size() > 0)
+			if (entries.size() > 0) {
 				editEntries(entries);
+			}
 		} else if (e.getActionCommand().equals("edit_as_new")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
 			if (entries.size() == 1) {
@@ -203,8 +210,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			}
 		} else if (e.getActionCommand().equals("remove")) {
 			List<Entry> entries = _entry_table.getSelectedObjects();
-			if (entries.size() > 0)
+			if (entries.size() > 0) {
 				removeEntries(entries);
+			}
 		}
 	}
 
@@ -216,29 +224,34 @@ public class EntryPanel extends JPanel implements ActionListener,
 				Entry entry = null;
 				for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
 					entry = it.next();
-					if (_filter_panel.getFilter().entryMatches(entry))
+					if (_filter_panel.getFilter().entryMatches(entry)) {
 						_entry_table_model.addObject(entry);
+					}
 				}
 				// Select the last added entry.
-				if (entry != null && _entry_table_model.containsObject(entry))
+				if (entry != null && _entry_table_model.containsObject(entry)) {
 					_entry_table.setSelectedObject(entry);
+				}
 
 				fireFilterEvent(new FilterEvent<Entry>(this, _entry_table_model
 						.getObjects()));
 			} else if (eevent.getType() == EntryDictUpdateEvent.ENTRIES_CHANGED) {
 				Collection<Entry> entries = eevent.getEntries();
-				if (entries.size() < 1)
+				if (entries.size() < 1) {
 					return;
+				}
 
 				List<Entry> objs = _entry_table.getSelectedObjects();
 				applyFilter();
 				if (objs.size() > 0
-						&& _entry_table_model.containsObject(objs.get(0)))
+						&& _entry_table_model.containsObject(objs.get(0))) {
 					_entry_table.setSelectedObject(objs.get(0));
+				}
 			} else if (eevent.getType() == EntryDictUpdateEvent.ENTRIES_REMOVED) {
 				Collection<Entry> entries = eevent.getEntries();
-				for (Iterator<Entry> it = entries.iterator(); it.hasNext();)
-					_entry_table_model.removeObject(it.next());
+				for (Entry entry : entries) {
+					_entry_table_model.removeObject(entry);
+				}
 
 				fireFilterEvent(new FilterEvent<Entry>(this, _entry_table_model
 						.getObjects()));
@@ -247,8 +260,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 			updateEntryInfoPanel();
 		} else if (event instanceof NewDictDictUpdateEvent
 				|| event instanceof LanguageDictUpdateEvent) {
-			if (event instanceof NewDictDictUpdateEvent)
+			if (event instanceof NewDictDictUpdateEvent) {
 				_dict = ((NewDictDictUpdateEvent) event).getDict();
+			}
 
 			applyFilter();
 			updateEntryInfoPanel();
@@ -272,8 +286,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 	private void fireFilterEvent(FilterEvent<Entry> ev) {
 		Iterator<FilterListener<Entry>> it = _filter_listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().filterApplied(ev);
+		}
 	}
 
 	private void init() {
@@ -369,9 +384,10 @@ public class EntryPanel extends JPanel implements ActionListener,
 		// Change displayed attributes
 		Object[] displayedattrs = (Object[]) JVLT.getRuntimeProperties().get(
 				"displayed_attributes");
-		if (displayedattrs == null)
+		if (displayedattrs == null) {
 			displayedattrs = _model.getDictModel().getMetaData(Entry.class)
 					.getAttributeNames();
+		}
 		_entry_info_panel.setDisplayedEntryAttributes(Utils
 				.objectArrayToStringArray(displayedattrs));
 		MetaData example_data = _model.getDictModel()
@@ -380,8 +396,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 				.getAttributeNames());
 
 		List<Entry> objs = _entry_table.getSelectedObjects();
-		if (objs.size() == 0)
+		if (objs.size() == 0) {
 			return;
+		}
 
 		Entry entry = objs.get(0);
 		_entry_info_panel.setEntry(entry);
@@ -426,13 +443,15 @@ public class EntryPanel extends JPanel implements ActionListener,
 			result = MessageDialog.showDialog(this,
 					MessageDialog.WARNING_MESSAGE,
 					MessageDialog.OK_CANCEL_OPTION, msg);
-			if (result != MessageDialog.OK_OPTION)
+			if (result != MessageDialog.OK_OPTION) {
 				return;
-		} else
+			}
+		} else {
 			result = MessageDialog.showDialog(this,
 					MessageDialog.WARNING_MESSAGE,
 					MessageDialog.OK_CANCEL_OPTION, GUIUtils.getString(
 							"Messages", "remove_entry"));
+		}
 
 		if (result == MessageDialog.OK_OPTION) {
 			action.setMessage(GUIUtils.getString("Actions", "remove_entries"));
@@ -442,12 +461,14 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 	private void handleTableMouseEvent(MouseEvent e) {
 		int index = _entry_table.rowAtPoint(e.getPoint());
-		if (index < 0)
+		if (index < 0) {
 			return;
+		}
 
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (e.getClickCount() != 2)
+			if (e.getClickCount() != 2) {
 				return;
+			}
 
 			Entry entry = _entry_table_model.getObjectAt(index);
 			ArrayList<Entry> list = new ArrayList<Entry>();
@@ -461,10 +482,11 @@ public class EntryPanel extends JPanel implements ActionListener,
 	private void addEntry(Entry template) {
 		_add_entry_dialog.loadState(JVLT.getConfig());
 
-		if (template != null)
+		if (template != null) {
 			_add_entry_dialog.init(template);
-		else
+		} else {
 			_add_entry_dialog.init();
+		}
 
 		GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 				_add_entry_dialog);

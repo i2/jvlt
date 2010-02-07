@@ -30,7 +30,7 @@ public class CustomTextField extends JTextField {
 
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<ChangeListener> _change_listeners;
+	private final ArrayList<ChangeListener> _change_listeners;
 	private JLabel _label;
 
 	public CustomTextField(int columns) {
@@ -65,7 +65,8 @@ public class CustomTextField extends JTextField {
 
 	private void fireChangeEvent() {
 		Iterator<ChangeListener> it = _change_listeners.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			it.next().stateChanged(new ChangeEvent(this));
+		}
 	}
 }

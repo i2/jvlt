@@ -5,7 +5,7 @@ import net.sourceforge.jvlt.utils.DetailedException;
 public class DictReaderException extends DetailedException {
 	private static final long serialVersionUID = 1L;
 
-	private Exception _exception;
+	private final Exception _exception;
 
 	public DictReaderException(String short_message, String long_message,
 			Exception exception) {

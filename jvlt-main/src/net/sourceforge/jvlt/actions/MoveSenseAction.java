@@ -3,8 +3,8 @@ package net.sourceforge.jvlt.actions;
 import net.sourceforge.jvlt.core.Sense;
 
 public class MoveSenseAction extends DictObjectAction {
-	private int _old_index;
-	private int _new_index;
+	private final int _old_index;
+	private final int _new_index;
 
 	public MoveSenseAction(Sense sense, int old_index, int new_index) {
 		super(sense);

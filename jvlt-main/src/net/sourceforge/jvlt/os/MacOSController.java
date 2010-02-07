@@ -2,9 +2,9 @@ package net.sourceforge.jvlt.os;
 
 import net.sourceforge.jvlt.ui.JVLTUI;
 
+import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
-import com.apple.eawt.Application;
 
 public class MacOSController extends Application implements OSController {
 	public MacOSController() {
@@ -19,23 +19,27 @@ public class MacOSController extends Application implements OSController {
 	}
 
 	public class MacAdapter extends ApplicationAdapter {
+		@Override
 		public void handleAbout(ApplicationEvent e) {
 			_mainUI.showAbout();
 			e.setHandled(true);
 		}
 
+		@Override
 		public void handleQuit(ApplicationEvent e) {
 			// Check to see if user has unsaved changes, if not set
 			// e.setHandled(true)
 			// If user has unsaved changes set e.setHandled(false) and move into
 			// code
 			// that handles saving files.
-			if (_mainUI.requestQuit())
+			if (_mainUI.requestQuit()) {
 				e.setHandled(true);
-			else
+			} else {
 				e.setHandled(false);
+			}
 		}
 
+		@Override
 		public void handlePreferences(ApplicationEvent e) {
 			_mainUI.showSettings();
 			e.setHandled(true);

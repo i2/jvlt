@@ -2,7 +2,6 @@ package net.sourceforge.jvlt.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.jvlt.core.Entry;
@@ -28,10 +27,10 @@ public class EntryFilter {
 
 	public List<Entry> getMatchingEntries(Collection<Entry> entries) {
 		ArrayList<Entry> entry_list = new ArrayList<Entry>();
-		for (Iterator<Entry> it = entries.iterator(); it.hasNext();) {
-			Entry entry = it.next();
-			if (entryMatches(entry))
+		for (Entry entry : entries) {
+			if (entryMatches(entry)) {
 				entry_list.add(entry);
+			}
 		}
 
 		return entry_list;

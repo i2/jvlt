@@ -48,8 +48,9 @@ public class DateChooserButton extends JButton implements ActionListener {
 		chooser.setDate(_date);
 		int result = CustomDialog.showDialog(chooser, this, GUIUtils.getString(
 				"Labels", "select_date"));
-		if (result == AbstractDialog.OK_OPTION)
+		if (result == AbstractDialog.OK_OPTION) {
 			setDate(chooser.getDate());
+		}
 	}
 }
 
@@ -72,11 +73,13 @@ class DateChooser extends CustomDialogData implements ActionListener {
 		Calendar today = new GregorianCalendar();
 		int year = today.get(Calendar.YEAR);
 		String[] years = new String[20];
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 20; i++) {
 			years[i] = String.valueOf(year - 15 + i);
+		}
 		String[] months = new String[12];
-		for (int i = 1; i <= 12; i++)
+		for (int i = 1; i <= 12; i++) {
 			months[i - 1] = String.valueOf(i);
+		}
 
 		_day_box = new LabeledComboBox();
 		_day_box.setLabel("day");
@@ -109,8 +112,9 @@ class DateChooser extends CustomDialogData implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		if (_adjusting)
+		if (_adjusting) {
 			return;
+		}
 
 		int year = Integer.parseInt(_year_box.getSelectedItem().toString());
 		int month = Integer.parseInt(_month_box.getSelectedItem().toString());
@@ -139,8 +143,9 @@ class DateChooser extends CustomDialogData implements ActionListener {
 		_year_box.setSelectedItem(String.valueOf(year));
 		_month_box.setSelectedItem(String.valueOf(month));
 		_day_box.removeAllItems();
-		for (int i = min_day; i <= max_day; i++)
+		for (int i = min_day; i <= max_day; i++) {
 			_day_box.addItem(String.valueOf(i));
+		}
 		_day_box.setSelectedItem(String.valueOf(day));
 
 		_adjusting = false;

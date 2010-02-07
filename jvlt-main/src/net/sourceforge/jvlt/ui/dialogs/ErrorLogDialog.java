@@ -59,7 +59,7 @@ public class ErrorLogDialog extends JDialog {
 
 	/**
 	 * An appender writing to this dialog's text area.
-	 * 
+	 *
 	 * @author thrar
 	 */
 	private class TextAreaAppender extends WriterAppender {

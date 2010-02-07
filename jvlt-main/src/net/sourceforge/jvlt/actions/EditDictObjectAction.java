@@ -4,7 +4,7 @@ import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Reinitializable;
 
 public class EditDictObjectAction extends DictObjectAction {
-	private Reinitializable _old_data;
+	private final Reinitializable _old_data;
 	private Reinitializable _new_data;
 
 	public EditDictObjectAction(Reinitializable obj, Reinitializable new_info) {

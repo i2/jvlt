@@ -24,18 +24,20 @@ public class StringQueryItem extends ObjectQueryItem {
 
 	@Override
 	public boolean objectMatches(Object obj) {
-		if (obj == null || _value == null)
+		if (obj == null || _value == null) {
 			return obj == null && _value == null;
+		}
 
 		String str = _match_case ? obj.toString() : obj.toString()
 				.toLowerCase();
 		String val = _match_case ? _value.toString() : _value.toString()
 				.toLowerCase();
-		if (_type == StringQueryItem.EQUALS)
+		if (_type == StringQueryItem.EQUALS) {
 			return str.equals(val);
-		else if (_type == StringQueryItem.CONTAINS)
+		} else if (_type == StringQueryItem.CONTAINS) {
 			return str.indexOf(val) >= 0;
-		else
+		} else {
 			return false;
+		}
 	}
 }

@@ -60,7 +60,7 @@ public class Example implements Reinitializable, Comparable<Example> {
 		}
 	}
 
-	private LinkedList<TextFragment> _fragments;
+	private final LinkedList<TextFragment> _fragments;
 	private String _id;
 	private String _translation;
 
@@ -124,8 +124,9 @@ public class Example implements Reinitializable, Comparable<Example> {
 		Iterator<TextFragment> it = _fragments.iterator();
 		while (it.hasNext()) {
 			TextFragment tf = it.next();
-			if (tf.getSense() != null)
+			if (tf.getSense() != null) {
 				senses.add(tf.getSense());
+			}
 		}
 
 		return senses.toArray(new Sense[0]);
@@ -184,8 +185,9 @@ public class Example implements Reinitializable, Comparable<Example> {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof Example))
+		if (!(o instanceof Example)) {
 			return false;
+		}
 
 		return (compareTo((Example) o) == 0);
 	}

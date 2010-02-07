@@ -5,6 +5,7 @@ import java.util.Vector;
 import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.core.Example.TextFragment;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class ExampleBuilder {
@@ -21,14 +22,16 @@ public class ExampleBuilder {
 	public void addSense(Sense sense, int start_index, int end_index)
 			throws DictException {
 		Example.TextFragment[] tfs = getTextFragments(start_index, end_index);
-		if (tfs.length != 1)
+		if (tfs.length != 1) {
 			throw new DictException(GUIUtils.getString("Messages",
 					"selection_too_large"));
+		}
 
 		Example.TextFragment tf = tfs[0];
-		if (tf.getSense() != null)
+		if (tf.getSense() != null) {
 			throw new DictException(GUIUtils.getString("Messages",
 					"selection_already_linked"));
+		}
 
 		String text = tf.getText();
 		// Offset is the position of the marked text relative to the
@@ -56,7 +59,7 @@ public class ExampleBuilder {
 	public void removeTextFragment(Example.TextFragment tf) {
 		Example.TextFragment[] fragments = _example.getTextFragments();
 		tf.setSense(null);
-		for (int i = 0; i < fragments.length; i++)
+		for (int i = 0; i < fragments.length; i++) {
 			if (fragments[i] == tf) {
 				if (i > 0) {
 					Example.TextFragment tf_before = fragments[i - 1];
@@ -75,6 +78,7 @@ public class ExampleBuilder {
 
 				break;
 			}
+		}
 	}
 
 	private Example.TextFragment[] getTextFragments(int start_index,
@@ -82,13 +86,13 @@ public class ExampleBuilder {
 		Vector<Example.TextFragment> tfs = new Vector<Example.TextFragment>();
 		Example.TextFragment[] fragments = _example.getTextFragments();
 		int tf_start = 0;
-		for (int i = 0; i < fragments.length; i++) {
-			Example.TextFragment tf = fragments[i];
+		for (TextFragment tf : fragments) {
 			int tf_end = tf_start + tf.getText().length() - 1;
-			if (start_index < tf_start && end_index >= tf_start)
+			if (start_index < tf_start && end_index >= tf_start) {
 				tfs.add(tf);
-			else if (start_index >= tf_start && start_index <= tf_end)
+			} else if (start_index >= tf_start && start_index <= tf_end) {
 				tfs.add(tf);
+			}
 
 			tf_start += tf.getText().length();
 		}
@@ -99,10 +103,10 @@ public class ExampleBuilder {
 	private int getTextFragmentOffset(Example.TextFragment fragment) {
 		Example.TextFragment[] fragments = _example.getTextFragments();
 		int offset = 0;
-		for (int i = 0; i < fragments.length; i++) {
-			Example.TextFragment tf = fragments[i];
-			if (tf.equals(fragment))
+		for (TextFragment tf : fragments) {
+			if (tf.equals(fragment)) {
 				return offset;
+			}
 
 			offset += tf.getText().length();
 		}

@@ -1,11 +1,12 @@
 package net.sourceforge.jvlt.core;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AttributeChoice implements Comparable<AttributeChoice> {
-	private String _name;
+	private final String _name;
 	private AttributeChoice _parent = null;
-	private ArrayList<AttributeChoice> _children = null;
+	private List<AttributeChoice> _children = null;
 
 	public AttributeChoice(String name) {
 		_name = name;
@@ -30,10 +31,10 @@ public class AttributeChoice implements Comparable<AttributeChoice> {
 	}
 
 	public int compareTo(AttributeChoice o) {
-		if (o == null)
+		if (o == null) {
 			return -1;
-		else
-			return _name.compareTo(o._name);
+		}
+		return _name.compareTo(o._name);
 	}
 
 	@Override

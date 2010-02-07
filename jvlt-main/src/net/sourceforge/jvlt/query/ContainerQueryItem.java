@@ -12,7 +12,7 @@ public class ContainerQueryItem extends ObjectQueryItem {
 	public static final int MATCH_ONE = 0;
 	public static final int MATCH_ALL = 1;
 
-	private ArrayList<ObjectQueryItem> _items = new ArrayList<ObjectQueryItem>();
+	private final ArrayList<ObjectQueryItem> _items = new ArrayList<ObjectQueryItem>();
 
 	public ContainerQueryItem(String name, int type) {
 		super(name, type, null);
@@ -31,10 +31,11 @@ public class ContainerQueryItem extends ObjectQueryItem {
 		Iterator<ObjectQueryItem> it = _items.iterator();
 		while (it.hasNext()) {
 			ObjectQueryItem item = it.next();
-			if (_type == MATCH_ONE && item.objectMatches(o))
+			if (_type == MATCH_ONE && item.objectMatches(o)) {
 				return true;
-			else if (_type == MATCH_ALL && !item.objectMatches(o))
+			} else if (_type == MATCH_ALL && !item.objectMatches(o)) {
 				return false;
+			}
 		}
 
 		return _type == MATCH_ALL;

@@ -22,32 +22,35 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	public static class Comparator implements java.util.Comparator<Entry> {
 		public int compare(Entry e1, Entry e2) {
-			if (!e1._orthography.equals(e2._orthography))
+			if (!e1._orthography.equals(e2._orthography)) {
 				return e1._orthography.compareTo(e2._orthography);
-			else if (!e1._pronunciations.equals(e2._pronunciations)) {
-				if (e1._pronunciations.size() != e2._pronunciations.size())
+			} else if (!e1._pronunciations.equals(e2._pronunciations)) {
+				if (e1._pronunciations.size() != e2._pronunciations.size()) {
 					return e1._pronunciations.size()
 							- e2._pronunciations.size();
+				}
 
 				Iterator<String> it1 = e1._pronunciations.iterator();
 				Iterator<String> it2 = e2._pronunciations.iterator();
 				while (it1.hasNext()) {
 					String s1 = it1.next();
 					String s2 = it2.next();
-					if (!s1.equals(s2))
+					if (!s1.equals(s2)) {
 						return s1.compareTo(s2);
+					}
 				}
 
 				return 0; // Should not happen
 			} else {
-				if (e1._class == null && e2._class == null)
+				if (e1._class == null && e2._class == null) {
 					return 0;
-				else if (e1._class == null)
+				} else if (e1._class == null) {
 					return -1;
-				else if (e2._class == null)
+				} else if (e2._class == null) {
 					return 1;
-				else
+				} else {
 					return e1._class.compareTo(e2._class);
+				}
 			}
 		}
 
@@ -63,9 +66,9 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 					"flag_known_short"), INACTIVE(1 << 1, "flag_inactive_long",
 					"flag_inactive_short");
 
-			private int _value;
-			private String _long_name;
-			private String _short_name;
+			private final int _value;
+			private final String _long_name;
+			private final String _short_name;
 
 			private UserFlag(int value, String long_name, String short_name) {
 				_value = value;
@@ -137,8 +140,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	private String _id;
 	private String _orthography;
 	private ArrayList<String> _pronunciations;
-	private Vector<Sense> _senses;
-	private TreeSet<Sense> _sense_set;
+	private final Vector<Sense> _senses;
+	private final TreeSet<Sense> _sense_set;
 	private ArrayList<String> _categories;
 	private Vector<StringPair> _custom_fields;
 	private String _lesson;
@@ -189,15 +192,14 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	public Sense getSense(Sense sense) {
 		SortedSet<Sense> tail = _sense_set.tailSet(sense);
-		if (tail.size() == 0)
+		if (tail.size() == 0) {
 			return null;
-		else {
-			Sense first = tail.iterator().next();
-			if (_sense_comparator.compare(first, sense) != 0)
-				return null;
-			else
-				return first;
 		}
+		Sense first = tail.iterator().next();
+		if (_sense_comparator.compare(first, sense) != 0) {
+			return null;
+		}
+		return first;
 	}
 
 	public Sense[] getSenses() {
@@ -209,23 +211,26 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 
 	public Calendar getExpireDate() {
-		if (_stats._last_queried == null)
+		if (_stats._last_queried == null) {
 			return null;
+		}
 
 		Calendar expire_date = (Calendar) _stats._last_queried.clone();
-		if (_stats._batch == 0)
+		if (_stats._batch == 0) {
 			return expire_date;
+		}
 
 		float expiration_factor = JVLT.getConfig().getFloatProperty(
 				"expiration_factor", 3.0f);
 		String unit = JVLT.getConfig()
 				.getProperty("expiration_unit", UNIT_DAYS);
-		if (unit.equals(UNIT_DAYS))
+		if (unit.equals(UNIT_DAYS)) {
 			expire_date.add(Calendar.DAY_OF_MONTH, (int) Math.pow(
 					expiration_factor, _stats._batch - 1));
-		else
+		} else {
 			expire_date.add(Calendar.HOUR_OF_DAY, (int) Math.pow(
 					expiration_factor, _stats._batch - 1));
+		}
 
 		return expire_date;
 	}
@@ -298,8 +303,9 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 
 	public void addSense(int index, Sense sense) throws DictException {
-		if (_sense_set.contains(sense))
+		if (_sense_set.contains(sense)) {
 			throw new DictException("Sense \"" + sense + "\" already exists.");
+		}
 
 		_senses.add(index, sense);
 		_sense_set.add(sense);
@@ -395,9 +401,9 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 
 	public void updateBatch() {
-		if (!_stats._last_quiz_result)
+		if (!_stats._last_quiz_result) {
 			setBatch(0);
-		else {
+		} else {
 			int num_batches = JVLT.getConfig().getIntProperty("num_batches", 7);
 			setBatch(Math.min(_stats._batch + 1, num_batches));
 		}
@@ -409,18 +415,19 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof Entry))
+		if (o == null || !(o instanceof Entry)) {
 			return false;
-		else
-			return this.compareTo((Entry) o) == 0;
+		}
+		return this.compareTo((Entry) o) == 0;
 	}
 
 	@Override
 	public String toString() {
 		String s = _orthography;
-		if (_pronunciations.size() > 0)
+		if (_pronunciations.size() > 0) {
 			s += " (" + Utils.arrayToString(_pronunciations.toArray(), ", ")
 					+ ")";
+		}
 
 		return s;
 	}
@@ -439,10 +446,11 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		entry._categories.addAll(_categories);
 		entry._custom_fields.addAll(_custom_fields);
 		entry._lesson = _lesson;
-		if (_class == null)
+		if (_class == null) {
 			entry._class = null;
-		else
+		} else {
 			entry._class = (EntryClass) _class.clone();
+		}
 		entry._mm_files.addAll(_mm_files);
 		entry._pronunciations.addAll(_pronunciations);
 		entry._stats = (Stats) _stats.clone();
@@ -460,13 +468,14 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 		entry._senses.clear();
 		entry._sense_set.clear();
-		for (int i = 0; i < senses.length; i++)
+		for (Sense sense : senses) {
 			try {
-				entry.addSense((Sense) senses[i].clone());
+				entry.addSense((Sense) sense.clone());
 			} catch (DictException e) {
 				// TODO write a message about what happened
 				logger.error(e);
 			}
+		}
 
 		return entry;
 	}

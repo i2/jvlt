@@ -3,8 +3,8 @@ package net.sourceforge.jvlt.quiz;
 import net.sourceforge.jvlt.core.Entry;
 
 public class QueryResult {
-	private Entry _entry;
-	private boolean _known;
+	private final Entry _entry;
+	private final boolean _known;
 	private String _answer;
 
 	public QueryResult(Entry entry, boolean known) {
