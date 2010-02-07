@@ -829,7 +829,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		return true;
 	}
 
-	private void exit() {
+	/**
+	 * Prepare for quit
+	 *
+	 * This function save the last state of the config, examples, etc.
+	 */
+ 	public void prepareForQuit() {
 		Config conf = JVLT.getConfig();
 
 		// -----
@@ -864,6 +869,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} catch (IOException ex) {
 			logger.error("Failed to save configuration", ex);
 		}
+ 	}
+
+	private void exit() {
+		prepareForQuit();
 		System.exit(0);
 	}
 

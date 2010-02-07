@@ -33,6 +33,7 @@ public class MacOSController extends Application implements OSController {
 			// code
 			// that handles saving files.
 			if (_mainUI.requestQuit()) {
+				_mainUI.prepareForQuit();
 				e.setHandled(true);
 			} else {
 				e.setHandled(false);
