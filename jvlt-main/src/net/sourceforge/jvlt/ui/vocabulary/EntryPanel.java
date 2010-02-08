@@ -43,6 +43,7 @@ import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
+import net.sourceforge.jvlt.ui.table.PercentCellRenderer;
 import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
@@ -61,6 +62,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
 	private static final CustomFontCellRenderer PRONUNCIATION_RENDERER;
+	private static final PercentCellRenderer MISTAKE_RATIO_RENDERER =
+			new PercentCellRenderer();
 
 	static {
 		Font font;
@@ -316,6 +319,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_entry_table.getSelectionModel().addListSelectionListener(this);
 		_entry_table.setCellRenderer("Original", ORIGINAL_RENDERER);
 		_entry_table.setCellRenderer("Pronunciations", PRONUNCIATION_RENDERER);
+		_entry_table.setCellRenderer("MistakeRatio", MISTAKE_RATIO_RENDERER);
 
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridBagLayout());

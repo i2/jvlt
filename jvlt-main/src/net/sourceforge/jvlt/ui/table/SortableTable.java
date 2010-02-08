@@ -60,7 +60,7 @@ public class SortableTable<T extends Object> extends JTable implements
 	protected SortableTableModel<T> _model;
 
 	private JPopupMenu _menu;
-	private final Map<String, CustomFontCellRenderer> _cell_renderers;
+	private final Map<String, TableCellRenderer> _cell_renderers;
 	private JMenuItem _sort_descending_item;
 	private JMenuItem _no_sorting_item;
 	private JMenuItem _sort_ascending_item;
@@ -74,7 +74,7 @@ public class SortableTable<T extends Object> extends JTable implements
 		super(model);
 		_model = model;
 
-		_cell_renderers = new HashMap<String, CustomFontCellRenderer>();
+		_cell_renderers = new HashMap<String, TableCellRenderer>();
 
 		_mouse_handler = new MouseHandler();
 		getTableHeader().addMouseListener(_mouse_handler);
@@ -116,22 +116,26 @@ public class SortableTable<T extends Object> extends JTable implements
 		}
 	}
 
-	public void setCellRenderer(String column_name, CustomFontCellRenderer r) {
+	public void setCellRenderer(String column_name, TableCellRenderer r) {
 		_cell_renderers.put(column_name, r);
 
 		// Adjust row height
-		if (r.getCustomFont() != null) {
-			int old_height = getRowHeight();
-			int new_height = getFontMetrics(r.getCustomFont()).getHeight();
-			if (new_height > old_height) {
-				setRowHeight(new_height);
+		if (r instanceof CustomFontCellRenderer) {
+			CustomFontCellRenderer cfcr = (CustomFontCellRenderer) r;
+			if (cfcr.getCustomFont() != null) {
+				int old_height = getRowHeight();
+				int new_height = getFontMetrics(cfcr.getCustomFont())
+						.getHeight();
+				if (new_height > old_height) {
+					setRowHeight(new_height);
+				}
 			}
 		}
 	}
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		String column_name = _model.getColumnName(column);
+		String column_name = _model.getColumnName(column, false);
 		if (_cell_renderers.containsKey(column_name)) {
 			return _cell_renderers.get(column_name);
 		}

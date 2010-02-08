@@ -1,6 +1,5 @@
 package net.sourceforge.jvlt.metadata;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -110,19 +109,6 @@ public class EntryMetaData extends MetaData {
 		}
 	}
 	
-	public static class MistakeRatioAttribute extends DefaultAttribute {
-		public MistakeRatioAttribute() {
-			super("MistakeRatio", Double.class);
-		}
-		
-		@Override
-		public String getFormattedValue(Object o) {
-			NumberFormat formatter = NumberFormat.getPercentInstance();
-			formatter.setMaximumFractionDigits(1);
-			return formatter.format(getValue(o));
-		}
-	}
-
 	private EntryAttributeSchema _schema = null;
 	private final Vector<CustomAttribute> _custom_attributes;
 
@@ -136,7 +122,6 @@ public class EntryMetaData extends MetaData {
 		removeAttribute("Stats");
 
 		addAttribute(new SensesAttribute());
-		addAttribute(new MistakeRatioAttribute());
 		addAttribute(new DefaultChoiceAttribute("Lesson", String.class));
 		addAttribute(new ArrayChoiceAttribute("Categories", String[].class));
 		addAttribute(new CustomFieldsAttribute());

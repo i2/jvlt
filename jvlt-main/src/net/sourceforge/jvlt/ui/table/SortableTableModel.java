@@ -376,8 +376,15 @@ public class SortableTableModel<T extends Object> implements TableModel {
 				} else if (val1 instanceof Boolean) {
 					comparison = ((Boolean) val1).compareTo((Boolean) val2);
 				} else if (val1 instanceof Number) {
-					comparison = ((Number) val1).intValue()
-							- ((Number) val2).intValue();
+					double diff = ((Number) val1).doubleValue()
+							- ((Number) val2).doubleValue();
+					if (diff < 0) {
+						comparison = -1;
+					} else if (diff > 0) {
+						comparison = 1;
+					} else {
+						comparison = 0;
+					}
 				}
 			}
 
