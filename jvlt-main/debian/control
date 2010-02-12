@@ -1,0 +1,13 @@
+Source: jvlt
+Section: misc
+Priority: extra
+Maintainer: Cristian KLEIN <cristiklein@gmail.com>
+Build-Depends: debhelper (>= 7), cdbs, quilt, openjdk-6-jdk, ant, ant-optional, liblog4j1.2-java
+Standards-Version: 3.8.1
+Homepage: http://jvlt.sourceforge.net/
+
+Package: jvlt
+Architecture: all
+Depends: java-runtime 
+Description: Java Vocabulary Tool
+  jVLT is a vocabulary learning tool. Examples containing one or many of the vocabulary words may be specified. jVLT also can perform quizzes using a flash card system which is similar to the selective learning system proposed by German psychologist Sebastian Leitner. During a quiz, jVLT shows the examples of each word, letting you better memorize its usage.

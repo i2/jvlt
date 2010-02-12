@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Categories=Education;Dictionary;Languages;
+Type=Application
+Terminal=false
+Exec=java -jar /usr/share/jvlt/jVLT.jar
+Name=Vocabulary Learning Tool
+Icon=jvlt.png
+StartupNotify=true
+

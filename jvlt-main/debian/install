@@ -1,0 +1,5 @@
+dist/jVLT.jar usr/share/jvlt/
+debian/jvlt.desktop usr/share/applications/
+dist/build/images/jvlt.png usr/share/icons/
+
+
