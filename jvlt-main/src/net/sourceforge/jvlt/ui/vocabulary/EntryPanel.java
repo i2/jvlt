@@ -46,6 +46,7 @@ import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
 import net.sourceforge.jvlt.ui.table.PercentCellRenderer;
 import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
+import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
@@ -62,8 +63,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
 	private static final CustomFontCellRenderer PRONUNCIATION_RENDERER;
-	private static final PercentCellRenderer MISTAKE_RATIO_RENDERER =
-			new PercentCellRenderer();
+	private static final PercentCellRenderer MISTAKE_RATIO_RENDERER = new PercentCellRenderer();
 
 	static {
 		Font font;
@@ -128,7 +128,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 				.getSortingDirective();
 		config.setProperty("entry_table_sorting", Utils
 				.arrayToString(new Integer[] { dir.getColumn(),
-						dir.getDirection() }));
+						dir.getDirection().toInt() }));
 
 		config.setProperty("entry_table_arrow_direction_reversed", _entry_table
 				.isArrowDirectionReversed());
@@ -161,7 +161,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 						String.valueOf(dir.getDirection()) });
 		if (dir_string.length == 2) {
 			dir.setColumn(Integer.parseInt(dir_string[0]));
-			dir.setDirection(Integer.parseInt(dir_string[1]));
+			dir
+					.setDirection(SortOrder.valueOf(Integer
+							.parseInt(dir_string[1])));
 		}
 		_entry_table_model.setSortingDirective(dir);
 

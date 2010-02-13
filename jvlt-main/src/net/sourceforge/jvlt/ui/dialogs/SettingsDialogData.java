@@ -54,6 +54,7 @@ import net.sourceforge.jvlt.ui.components.LabeledComboBox;
 import net.sourceforge.jvlt.ui.components.LabeledSpinner;
 import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
+import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.FontInfo;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
@@ -526,7 +527,7 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 		_table_model.setColumnNames(data.getAttributeNames());
 		_table_model.setObjects(_extensions.values());
 		_table_model.setSortingDirective(new SortableTableModel.Directive(0,
-				SortableTableModel.ASCENDING));
+				SortOrder.ASCENDING));
 		_table = new SortableTable<MultimediaFile>(_table_model);
 		_table.getSelectionModel().addListSelectionListener(this);
 		_table.getSelectionModel().setSelectionMode(

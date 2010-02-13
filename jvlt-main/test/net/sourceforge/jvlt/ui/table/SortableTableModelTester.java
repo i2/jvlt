@@ -7,6 +7,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import net.sourceforge.jvlt.ui.table.SortableTableModel.Directive;
+import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -60,10 +61,10 @@ public class SortableTableModelTester {
 		SortableTableModel<Object>.Row currentRow = buildRow(0, current);
 		SortableTableModel<Object>.Row otherRow = buildRow(1, other);
 
-		model.setSortingDirective(new Directive(0, 1));
+		model.setSortingDirective(new Directive(0, SortOrder.ASCENDING));
 		assertEquals(currentRow.compareTo(otherRow), expected,
 				"Unexpected comparison result");
-		model.setSortingDirective(new Directive(0, -1));
+		model.setSortingDirective(new Directive(0, SortOrder.DESCENDING));
 		assertEquals(currentRow.compareTo(otherRow), -expected,
 				"Unexpected comparison result");
 	}

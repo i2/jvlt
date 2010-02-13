@@ -42,6 +42,7 @@ import net.sourceforge.jvlt.ui.dialogs.CustomDialog;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
 import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
+import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
@@ -108,7 +109,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		SortableTableModel.Directive dir = _table_model.getSortingDirective();
 		config.setProperty("example_table_sorting", Utils
 				.arrayToString(new Integer[] { dir.getColumn(),
-						dir.getDirection() }));
+						dir.getDirection().toInt() }));
 	}
 
 	public void loadState(Config config) {
@@ -134,7 +135,9 @@ public class ExamplePanel extends JPanel implements ActionListener,
 						String.valueOf(dir.getDirection()) });
 		if (dir_string.length == 2) {
 			dir.setColumn(Integer.parseInt(dir_string[0]));
-			dir.setDirection(Integer.parseInt(dir_string[1]));
+			dir
+					.setDirection(SortOrder.valueOf(Integer
+							.parseInt(dir_string[1])));
 		}
 		_table_model.setSortingDirective(dir);
 	}

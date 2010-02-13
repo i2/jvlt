@@ -28,6 +28,7 @@ import net.sourceforge.jvlt.ui.components.AttributeSelectionPanel;
 import net.sourceforge.jvlt.ui.dialogs.AbstractDialog;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialog;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
+import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.Utils;
@@ -163,7 +164,7 @@ public class SortableTable<T extends Object> extends JTable implements
 			}
 		}
 
-		return "<html>" +Utils.wrapString(o.toString(), "<br>") + "</html>";
+		return "<html>" + Utils.wrapString(o.toString(), "<br>") + "</html>";
 	}
 
 	public boolean isArrowDirectionReversed() {
@@ -176,17 +177,20 @@ public class SortableTable<T extends Object> extends JTable implements
 
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("sort_ascending")) {
-			_model.setSortingDirective(new SortableTableModel.Directive(
-					_mouse_handler.getLastClickedColumn(),
-					SortableTableModel.ASCENDING));
+			_model
+					.setSortingDirective(new SortableTableModel.Directive(
+							_mouse_handler.getLastClickedColumn(),
+							SortOrder.ASCENDING));
 		} else if (ev.getActionCommand().equals("sort_descending")) {
-			_model.setSortingDirective(new SortableTableModel.Directive(
-					_mouse_handler.getLastClickedColumn(),
-					SortableTableModel.DESCENDING));
+			_model
+					.setSortingDirective(new SortableTableModel.Directive(
+							_mouse_handler.getLastClickedColumn(),
+							SortOrder.DESCENDING));
 		} else if (ev.getActionCommand().equals("no_sorting")) {
-			_model.setSortingDirective(new SortableTableModel.Directive(
-					_mouse_handler.getLastClickedColumn(),
-					SortableTableModel.NOT_SORTED));
+			_model
+					.setSortingDirective(new SortableTableModel.Directive(
+							_mouse_handler.getLastClickedColumn(),
+							SortOrder.NOT_SORTED));
 		} else if (ev.getActionCommand().equals("select_columns")) {
 			ColumnSelectionDialogData dd = new ColumnSelectionDialogData();
 			dd.setSelectedStrings(_model.getColumnNames());
@@ -232,9 +236,9 @@ public class SortableTable<T extends Object> extends JTable implements
 			return null;
 		}
 
-		if (dir.getDirection() == SortableTableModel.DESCENDING) {
+		if (dir.getDirection() == SortOrder.DESCENDING) {
 			return _arrow_direction_reversed ? _down_arrow : _up_arrow;
-		} else if (dir.getDirection() == SortableTableModel.ASCENDING) {
+		} else if (dir.getDirection() == SortOrder.ASCENDING) {
 			return _arrow_direction_reversed ? _up_arrow : _down_arrow;
 		} else {
 			return null;
@@ -264,14 +268,14 @@ public class SortableTable<T extends Object> extends JTable implements
 			SortableTableModel.Directive new_directive;
 			if (directive.getColumn() != col) {
 				new_directive = new SortableTableModel.Directive(col,
-						SortableTableModel.ASCENDING);
+						SortOrder.ASCENDING);
 			} else {
-				if (directive.getDirection() == SortableTableModel.ASCENDING) {
+				if (directive.getDirection() == SortOrder.ASCENDING) {
 					new_directive = new SortableTableModel.Directive(col,
-							SortableTableModel.DESCENDING);
+							SortOrder.DESCENDING);
 				} else {
 					new_directive = new SortableTableModel.Directive(col,
-							SortableTableModel.ASCENDING);
+							SortOrder.ASCENDING);
 				}
 			}
 			_model.setSortingDirective(new_directive);
@@ -297,9 +301,9 @@ public class SortableTable<T extends Object> extends JTable implements
 				SortableTableModel.Directive d = _model.getSortingDirective();
 				if (d.getColumn() != _last_clicked_col) {
 					_no_sorting_item.setSelected(true);
-				} else if (d.getDirection() == SortableTableModel.ASCENDING) {
+				} else if (d.getDirection() == SortOrder.ASCENDING) {
 					_sort_ascending_item.setSelected(true);
-				} else if (d.getDirection() == SortableTableModel.DESCENDING) {
+				} else if (d.getDirection() == SortOrder.DESCENDING) {
 					_sort_descending_item.setSelected(true);
 				} else {
 					_no_sorting_item.setSelected(true);

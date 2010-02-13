@@ -13,21 +13,71 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import org.apache.log4j.Logger;
-
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.CustomCollator;
+
+import org.apache.log4j.Logger;
 
 public class SortableTableModel<T extends Object> implements TableModel {
 
 	private static final Logger logger = Logger
 			.getLogger(SortableTableModel.class);
 
-	public static final int DESCENDING = -1;
-	public static final int NOT_SORTED = 0;
-	public static final int ASCENDING = 1;
+	/**
+	 * Sort order options of table columns.
+	 * 
+	 * @author thrar
+	 */
+	public enum SortOrder {
+		/** Descending sort (high values first) */
+		DESCENDING(-1),
+		/** Ascending sort (low values first) */
+		ASCENDING(1),
+		/** No defined sort order */
+		NOT_SORTED(0);
+
+		private final int intValue;
+
+		private SortOrder(int intValue) {
+			this.intValue = intValue;
+		}
+
+		/**
+		 * Checks if this value represents a sorted order.
+		 * 
+		 * @return <tt>true</tt> if this value represents a sorted order
+		 */
+		public boolean isSorted() {
+			return this != NOT_SORTED;
+		}
+
+		/**
+		 * Converts this order to int.
+		 * 
+		 * @return the int value representing this order
+		 */
+		public int toInt() {
+			return intValue;
+		}
+
+		/**
+		 * Returns the sort order for the given numerical value.
+		 * 
+		 * @param intValue the value for which to find the corresponding sort
+		 * @return the sort order for the given numerical value, or
+		 *         {@link #NOT_SORTED} if no such order exists
+		 */
+		public static SortOrder valueOf(int intValue) {
+			for (SortOrder order : values()) {
+				if (order.intValue == intValue) {
+					return order;
+				}
+			}
+			return NOT_SORTED;
+		}
+	}
 
 	private List<Row> _view_to_model;
 	private int[] _model_to_view;
@@ -44,7 +94,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		_listeners = new ArrayList<TableModelListener>();
 		_columns = new ArrayList<String>();
 		_values = new ArrayList<T>();
-		_directive = new Directive(-1, NOT_SORTED);
+		_directive = new Directive(-1, SortOrder.NOT_SORTED);
 		_data = data;
 		_view_to_model = null;
 		_model_to_view = null;
@@ -282,7 +332,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 				_view_to_model.add(new Row(row));
 			}
 
-			if (_directive.getDirection() != NOT_SORTED) {
+			if (_directive.getDirection().isSorted()) {
 				Collections.sort(_view_to_model);
 			}
 		}
@@ -315,13 +365,13 @@ public class SortableTableModel<T extends Object> implements TableModel {
 
 	public static class Directive {
 		private int _column;
-		private int _direction;
+		private SortOrder _direction;
 
 		public Directive() {
-			this(-1, NOT_SORTED);
+			this(-1, SortOrder.NOT_SORTED);
 		}
 
-		public Directive(int column, int direction) {
+		public Directive(int column, SortOrder direction) {
 			_column = column;
 			_direction = direction;
 		}
@@ -330,7 +380,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 			return _column;
 		}
 
-		public int getDirection() {
+		public SortOrder getDirection() {
 			return _direction;
 		}
 
@@ -338,7 +388,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 			_column = col;
 		}
 
-		public void setDirection(int dir) {
+		public void setDirection(SortOrder dir) {
 			_direction = dir;
 		}
 	}
@@ -365,7 +415,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 				return 0;
 			}
 
-			int direction = _directive.getDirection();
+			SortOrder direction = _directive.getDirection();
 			Object val1 = getValue(row1, col);
 			Object val2 = getValue(row2, col);
 
@@ -393,7 +443,8 @@ public class SortableTableModel<T extends Object> implements TableModel {
 			}
 
 			if (comparison != 0) {
-				return direction == DESCENDING ? -comparison : comparison;
+				return direction == SortOrder.DESCENDING ? -comparison
+						: comparison;
 			}
 			return 0;
 		}
