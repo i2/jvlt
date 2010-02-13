@@ -114,6 +114,23 @@ public class Example implements Reinitializable, Comparable<Example> {
 
 		return text;
 	}
+	
+	/**
+	 * Returns the example text as HTML string.
+	 * Links to words are marked with the &lt;a&gt; tag.
+	 */
+	public String getHTMLText() {
+		StringBuilder builder = new StringBuilder();
+		for (TextFragment fragment: _fragments) {
+			if (fragment.getSense() == null)
+				builder.append(fragment.getText());
+			else
+				builder.append("<a href=\"" + fragment.getSense().getID()
+						+ "\">" + fragment.getText() + "</a>");
+		}
+		
+		return builder.toString();
+	}
 
 	public String getTranslation() {
 		return _translation;

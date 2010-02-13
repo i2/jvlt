@@ -256,7 +256,7 @@
 	<b><xsl:apply-templates select="Translation"/></b>
 	<xsl:variable name="entry-id" select="../../ID"/>
 	<xsl:variable name="sense-id" select="ID"/>
-	<xsl:for-each select="/Dict/Example[TextFragments/Fragment/Link=$sense-id]">
+	<xsl:for-each select="/Dict/Example[HTMLText//a/@href=$sense-id]">
 		<xsl:call-template name="process-example">
 			<xsl:with-param name="example-node" select="current()"/>
 			<xsl:with-param name="sense-id" select="$sense-id"/>
@@ -274,30 +274,14 @@
 	<img src="/images/bullet.png" width="16" height="16"/>
 	</td>
 	<td style="{$orth_font_style_family}">
-	<xsl:for-each select="$example-node/TextFragments/Fragment">
-		<xsl:choose>
-			<xsl:when test="string(Link)">
-				<xsl:choose>
-					<xsl:when test="$sense-id=string(current()/Link)">
-					<a href="{Link}" class="selflink"><xsl:value-of
-						disable-output-escaping="yes" select="Text"/></a>
-					</xsl:when>
-					<xsl:otherwise>
-					<a href="{Link}" class="link"><xsl:value-of
-						disable-output-escaping="yes" select="Text"/></a>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of disable-output-escaping="yes" select="Text"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:for-each>
+	<xsl:apply-templates select="$example-node/HTMLText/child::node()">
+		<xsl:with-param name="sense-id" select="$sense-id"/>
+	</xsl:apply-templates>
 	</td>
 	<xsl:if test="string($example-node/Translation)">
 		<td valign="center" class="vbar"/>
 		<td>
-		<xsl:copy-of select="$example-node/Translation/child::node()"/>
+		<xsl:apply-templates select="$example-node/Translation/child::node()"/>
 		</td>
 	</xsl:if>
 	<td style="white-space:nowrap;">
@@ -306,6 +290,20 @@
 	</td>
 	</tr>
 	</table>
+</xsl:template>
+
+<xsl:template match="a">
+	<xsl:param name="sense-id"/>
+	<xsl:choose>
+		<xsl:when test="$sense-id=@href">
+		<a href="$sense-id" class="selflink"><xsl:value-of
+			disable-output-escaping="yes" select="."/></a>
+		</xsl:when>
+		<xsl:otherwise>
+		<a href="$sense-id" class="link"><xsl:value-of
+			disable-output-escaping="yes" select="."/></a>
+		</xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 <xsl:template name="process-item-list">

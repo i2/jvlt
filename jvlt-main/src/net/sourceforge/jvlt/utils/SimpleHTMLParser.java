@@ -13,9 +13,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class SimpleHTMLParser {
-	public static final String[] SUPPORTED_TAGS = { "b", "br", "i", "p" };
+	public static final String[] SUPPORTED_TAGS = { "b", "br", "i", "p", "a" };
 	public static final String[] SOLO_TAGS = { "br" };
 
+	private static final Pattern ELEM_PATTERN = Pattern
+			.compile("<(/?[a-zA-Z]+)((?:\\s+[\\w-]+=\"[\\w-]+\")*)>");
+	private static final Pattern ATTRIBUTE_PATTERN = Pattern
+			.compile("([\\w-]+)=\"([\\w-]+)\"");
+	
 	private final HashSet<String> _supported_tags = new HashSet<String>();
 	private final HashSet<String> _solo_tags = new HashSet<String>();
 	private Node[] _nodes = new Node[0];
@@ -36,14 +41,13 @@ public class SimpleHTMLParser {
 		// is not null, build a DOM tree representing the html structure.
 		// -----
 		Stack<String> tags = new Stack<String>();
-		Pattern pattern = Pattern.compile("<(/?[a-zA-Z]+)>");
-		Matcher matcher = pattern.matcher(input);
+		Matcher matcher = ELEM_PATTERN.matcher(input);
 		ArrayList<Node> list = doc == null ? null : new ArrayList<Node>();
 		Element current_elem = null;
 		int pos = 0;
 		while (matcher.find()) {
 			String match = matcher.group(1);
-			if (match.charAt(0) == '/') {
+			if (match.charAt(0) == '/') { /* end tag */
 				match = match.substring(1);
 				Object o = tags.pop();
 				if (!o.equals(match)) {
@@ -52,6 +56,7 @@ public class SimpleHTMLParser {
 				}
 
 				if (doc != null) {
+					/* read text starting from the last tag until this tag */
 					int start = matcher.start();
 					if (start > pos) {
 						current_elem.appendChild(doc.createTextNode(input
@@ -61,7 +66,7 @@ public class SimpleHTMLParser {
 					current_elem = (Element) current_elem.getParentNode();
 					pos = matcher.end();
 				}
-			} else {
+			} else { /* start tag */
 				if (!_supported_tags.contains(match)) {
 					throw new ParseException("Invalid tag: \"" + match + "\"",
 							matcher.start());
@@ -84,6 +89,7 @@ public class SimpleHTMLParser {
 					}
 
 					Element elem = doc.createElement(match);
+					addAttributes(elem, matcher.group(2));
 					if (current_elem != null) {
 						current_elem.appendChild(elem);
 					} else {
@@ -112,5 +118,12 @@ public class SimpleHTMLParser {
 
 	public Node[] getNodes() {
 		return _nodes;
+	}
+	
+	private void addAttributes(Element elem, String attr_string) {
+		Matcher matcher = ATTRIBUTE_PATTERN.matcher(attr_string);
+		while (matcher.find()) {
+			elem.setAttribute(matcher.group(1), matcher.group(2));
+		}
 	}
 }

@@ -26,7 +26,7 @@
 		<table cellpadding="0" cellspacing="0">
 		<tr>
 		<td>
-		<xsl:apply-templates select="Example/TextFragments/Fragment"/>
+		<xsl:apply-templates select="Example/HTMLText/child::node()"/>
 		</td>
 		<xsl:if test="string(Example/Translation)">
 			<td valign="center" class="vbar"/>
@@ -42,32 +42,20 @@
 		<div class="hbar"/>
 
 		<div style="margin-top:5pt;">
-		<xsl:apply-templates select="Example/TextFragments/Fragment/Link"/>
+		<xsl:for-each select="Example/HTMLText//a">
+			<xsl:call-template name="process-link">
+				<xsl:with-param name="link" select="current()"/>
+			</xsl:call-template>
+		</xsl:for-each>
 		</div>
 		
 		</body>
 		</html>
 	</xsl:template>
-	
-	<xsl:template match="Fragment">
-		<xsl:choose>
-			<xsl:when test="Link">
-				<a href="{Link}" class="link">
-				<font style="{$orth_font_style_family}">
-				<xsl:value-of disable-output-escaping="yes" select="Text"/>
-				</font>
-				</a>
-			</xsl:when>
-			<xsl:otherwise>
-				<font style="{$orth_font_style_family}">
-				<xsl:value-of disable-output-escaping="yes" select="Text"/>
-				</font>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
 
-	<xsl:template match="Link">
-		<xsl:variable name="sid" select="."/>
+	<xsl:template name="process-link">
+		<xsl:param name="link"/>
+		<xsl:variable name="sid" select="$link/@href"/>
 		<xsl:variable name="entry" select="/Dict/Entry[Senses/Sense/ID=$sid]"/>
 		<div style="margin-top:2pt;">
 		<a href="{$sid}" class="link">
@@ -87,7 +75,7 @@
 		- <xsl:apply-templates select="$entry/Senses/Sense[ID=$sid]"/>
 		</div>
 	</xsl:template>
-	
+
 	<xsl:template match="Sense">
 		<xsl:if test="string(Definition)">
 			<i>(<xsl:value-of disable-output-escaping="yes"

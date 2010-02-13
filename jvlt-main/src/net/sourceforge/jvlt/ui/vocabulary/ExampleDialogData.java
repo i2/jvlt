@@ -106,10 +106,7 @@ public class ExampleDialogData extends CustomDialogData implements
 		SimpleHTMLParser parser = new SimpleHTMLParser();
 		try {
 			parser.parse(_translation_field.getText());
-			Example.TextFragment[] fragments = _example.getTextFragments();
-			for (TextFragment fragment : fragments) {
-				parser.parse(fragment.getText());
-			}
+			parser.parse(_example.getHTMLText());
 		} catch (ParseException e) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"invalid_html", new Object[] { e.getMessage() }));
