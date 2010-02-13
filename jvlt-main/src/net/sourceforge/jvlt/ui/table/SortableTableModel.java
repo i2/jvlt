@@ -13,12 +13,18 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.CustomCollator;
 
 public class SortableTableModel<T extends Object> implements TableModel {
+
+	private static final Logger logger = Logger
+			.getLogger(SortableTableModel.class);
+
 	public static final int DESCENDING = -1;
 	public static final int NOT_SORTED = 0;
 	public static final int ASCENDING = 1;
@@ -245,7 +251,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		_model_to_view = null;
 	}
 
-	private Object getValue(int row, int col) {
+	Object getValue(int row, int col) {
 		Object obj = _values.get(row);
 		Attribute attr = _data.getAttribute(_columns.get(col).toString());
 		if (_format_value.containsKey(attr.getClass())) {
@@ -337,7 +343,7 @@ public class SortableTableModel<T extends Object> implements TableModel {
 		}
 	}
 
-	private class Row implements Comparable<Row> {
+	class Row implements Comparable<Row> {
 		private final int _index;
 		private final Collator _collator;
 
@@ -371,20 +377,18 @@ public class SortableTableModel<T extends Object> implements TableModel {
 			} else if (val2 == null) {
 				comparison = 1;
 			} else {
-				if (val1 instanceof String) {
+				if (val1 instanceof String && val2 instanceof String) {
 					comparison = _collator.compare(val1, val2);
-				} else if (val1 instanceof Boolean) {
+				} else if (val1 instanceof Boolean && val2 instanceof Boolean) {
 					comparison = ((Boolean) val1).compareTo((Boolean) val2);
-				} else if (val1 instanceof Number) {
-					double diff = ((Number) val1).doubleValue()
-							- ((Number) val2).doubleValue();
-					if (diff < 0) {
-						comparison = -1;
-					} else if (diff > 0) {
-						comparison = 1;
-					} else {
-						comparison = 0;
-					}
+				} else if (val1 instanceof Number && val2 instanceof Number) {
+					comparison = Double.compare(((Number) val1).doubleValue(),
+							((Number) val2).doubleValue());
+				} else {
+					logger
+							.warn("Cannot compare row contents of class "
+									+ val1.getClass() + " and "
+									+ val2.getClass() + ".");
 				}
 			}
 

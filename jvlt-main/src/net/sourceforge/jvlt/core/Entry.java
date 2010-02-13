@@ -243,10 +243,10 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 	}
 
 	public double getMistakeRatio() {
-		if (_stats._num_queried == 0)
+		if (_stats._num_queried == 0) {
 			return 0.0;
-		else
-			return (double) _stats._num_mistakes / _stats._num_queried;
+		}
+		return (double) _stats._num_mistakes / _stats._num_queried;
 	}
 
 	public Calendar getLastQueried() {
