@@ -210,6 +210,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 			if (entries.size() == 1) {
 				// Use selected entry as template for new entry
 				Entry entry = entries.get(0).createDeepCopy();
+				entry.setID(_dict.getNextUnusedEntryID());
 				addEntry(entry);
 				_add_entry_dialog.init(entry);
 			}

@@ -29,8 +29,10 @@ public class AddEntryDialog extends AbstractEntryDialog {
 					AddEntryDialog.this.init();
 				} else if (ev.getType() == APPLY_AND_EDIT_OPTION) {
 					AddEntryDialog.this.apply();
-					AddEntryDialog.this
-							.init(getCurrentEntry().createDeepCopy());
+					Entry e = getCurrentEntry().createDeepCopy();
+					e.setID(AddEntryDialog.this.model.getDict()
+							.getNextUnusedEntryID());
+					AddEntryDialog.this.init(e);
 				} else if (ev.getType() == CLOSE_OPTION) {
 					setVisible(false);
 				}
