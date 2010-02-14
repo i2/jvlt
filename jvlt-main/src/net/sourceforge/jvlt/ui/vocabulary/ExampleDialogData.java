@@ -39,7 +39,8 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.core.Example.TextFragment;
-import net.sourceforge.jvlt.query.SimpleEntryFilter;
+import net.sourceforge.jvlt.query.EntryFilter;
+import net.sourceforge.jvlt.query.StringQueryItem;
 import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
@@ -57,7 +58,9 @@ public class ExampleDialogData extends CustomDialogData implements
 		TreeSelectionListener {
 	private final Example _example;
 	private final Dict _dict;
-	private final SimpleEntryFilter _entry_filter;
+	private final EntryFilter _entry_filter;
+	private final StringQueryItem _entry_filter_item;
+	private final Entry.Comparator _entry_comparator = new Entry.Comparator();
 	/**
 	 * Index of the first character in the current selection (-1 if there is no
 	 * selection).
@@ -86,9 +89,14 @@ public class ExampleDialogData extends CustomDialogData implements
 		_dict = dict;
 		_current_selection_start = -1;
 		_current_selection_end = -1;
-		_entry_filter = new SimpleEntryFilter();
-		_entry_filter.setMatchCase(false);
 
+		/* set up entry filter */
+		_entry_filter_item = new StringQueryItem("Orthography",
+				StringQueryItem.CONTAINS, "");
+		_entry_filter_item.setMatchCase(false);
+		_entry_filter = new EntryFilter();
+		_entry_filter.getQuery().addItem(_entry_filter_item);
+		
 		init();
 		updatePreviewPane();
 		updateAddSensesPanel();
@@ -439,7 +447,7 @@ public class ExampleDialogData extends CustomDialogData implements
 
 	private void updateSelectedSensesTree() {
 		String text = _filter_field.getText();
-		_entry_filter.setFilterString(text);
+		_entry_filter_item.setValue(text);
 		if (text == null || text.equals("")) {
 			_selected_senses_tree.clear();
 		} else {
@@ -448,6 +456,20 @@ public class ExampleDialogData extends CustomDialogData implements
 
 			ArrayList<Entry> entry_list = new ArrayList<Entry>();
 			for (Entry entry : entries) {
+				//
+				// only show entries that are not already contained in the
+				// example
+				//
+				boolean entryExists = false;
+				for (Sense sense : _example.getSenses()) {
+					if (_entry_comparator.compare(sense.getParent(), entry) == 0) {
+						entryExists = true;
+						break;
+					}
+				}
+				if (entryExists)
+					continue;
+				
 				if (entry.getOrthography().equals(text)) {
 					// Put exact matches to the beginning of the list
 					entry_list.add(0, entry);
