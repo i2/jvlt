@@ -34,8 +34,7 @@ public class ArrayAttribute extends DefaultAttribute {
 		Element elem = doc.createElement(_name);
 		Object[] objs = (Object[]) getValue(o);
 		for (Object obj : objs) {
-			Element e = XMLUtils.createTextElement(doc, "item", obj
-					.toString());
+			Element e = XMLUtils.createTextElement(doc, "item", obj.toString());
 			elem.appendChild(e);
 		}
 		return elem;

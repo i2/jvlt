@@ -23,7 +23,8 @@ public class QuizDict {
 	private QuizInfo _info = null;
 	private EntryFilter[] _filters = null;
 	private boolean _ignore_batches;
-	private final ArrayList<Entry> _available_entries; // Entries available for quiz
+	private final ArrayList<Entry> _available_entries; // Entries available for
+														// quiz
 	private final ArrayList<Entry> _current_entries; // Entries during the quiz
 	private int _current_index;
 	private final Map<Entry, QueryResult> _results;

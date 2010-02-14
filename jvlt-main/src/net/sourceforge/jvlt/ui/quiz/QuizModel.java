@@ -1000,8 +1000,7 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 			QuizModel model = (QuizModel) _model;
 			for (String quizzedAttr : quizzed_attrs) {
 				Attribute attr = model.getJVLTModel().getDictModel()
-						.getMetaData(Entry.class)
-						.getAttribute(quizzedAttr);
+						.getMetaData(Entry.class).getAttribute(quizzedAttr);
 				if (attr.getValue(entry) != null) {
 					quizzed_present_attrs.add(quizzedAttr);
 				}
@@ -1457,14 +1456,14 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		}
 
 		for (QuizInfo info : _quiz_info_map.values()) {
-if (info.getLanguage() == null
-			|| info.getLanguage().equals(dict_lang)) {
-		_visible_quiz_info_map.put(info.getName(), info);
-		_quiz_info_box.addItem(info.getName());
-} else {
-		_invisible_quiz_info_map.put(info.getName(), info);
-}
-}
+			if (info.getLanguage() == null
+					|| info.getLanguage().equals(dict_lang)) {
+				_visible_quiz_info_map.put(info.getName(), info);
+				_quiz_info_box.addItem(info.getName());
+			} else {
+				_invisible_quiz_info_map.put(info.getName(), info);
+			}
+		}
 
 		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
 				"selected_quiz_type");

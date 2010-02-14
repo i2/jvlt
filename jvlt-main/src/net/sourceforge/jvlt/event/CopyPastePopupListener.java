@@ -74,7 +74,8 @@ public class CopyPastePopupListener extends PopupListener {
 		_copy_action.setEnabled(selected != null && !selected.equals(""));
 		if (_component.isEditable() && _menu.getSubElements().length < 2) {
 			_menu.add(_paste_action);
-		} else if (!_component.isEditable() && _menu.getSubElements().length > 1) {
+		} else if (!_component.isEditable()
+				&& _menu.getSubElements().length > 1) {
 			_menu.remove(1);
 		}
 

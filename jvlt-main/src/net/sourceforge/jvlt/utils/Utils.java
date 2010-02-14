@@ -30,7 +30,7 @@ public class Utils {
 
 	/**
 	 * Insert a String into an other.
-	 *
+	 * 
 	 * @param s The string into which the other string is inserted. <i>s</i>
 	 *            will not be modified itself - instead, the result will be
 	 *            returned by the function.
@@ -138,7 +138,7 @@ public class Utils {
 
 	/**
 	 * Split a single string into multiple strings.
-	 *
+	 * 
 	 * @return An empty array if argument str is the empty string, otherwise the
 	 *         same as {@link String#split(String)} yields.
 	 */
@@ -211,7 +211,7 @@ public class Utils {
 
 	/**
 	 * Wraps a string into lines with at most 80 characters each.
-	 *
+	 * 
 	 * @param s The string to be wrapped
 	 * @param delim The line delimiter
 	 * @return The wrapped string

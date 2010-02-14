@@ -65,7 +65,8 @@ public class DictEntryTree extends JTree {
 				html_buffer.append("</html>");
 
 				return super.getTreeCellRendererComponent(tree, html_buffer
-						.toString(), selectedNow, expanded, leaf, row, hasFocusNow);
+						.toString(), selectedNow, expanded, leaf, row,
+						hasFocusNow);
 			}
 			return super.getTreeCellRendererComponent(tree, value, selectedNow,
 					expanded, leaf, row, hasFocusNow);

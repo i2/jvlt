@@ -8,7 +8,7 @@ public class EntryClassQueryItem extends ObjectQueryItem {
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param name The name
 	 * @param type The type
 	 * @param value The value (of type java.lang.String)

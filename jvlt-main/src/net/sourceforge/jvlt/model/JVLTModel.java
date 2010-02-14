@@ -132,7 +132,7 @@ public class JVLTModel implements UndoableActionListener,
 	/**
 	 * Try to save the dictionary and the statistics file using the current file
 	 * name. If no changes have been made then nothing is saved.
-	 *
+	 * 
 	 * @see #getDictFileName()
 	 */
 	public void save() throws DetailedException {
@@ -144,7 +144,7 @@ public class JVLTModel implements UndoableActionListener,
 	/**
 	 * Load a dictionary from a file. If no error occurs then the file name is
 	 * saved. Otherwise, the old file name is kept.
-	 *
+	 * 
 	 * @see #getDictFileName()
 	 */
 	public void load(String dict_file_name, String version)

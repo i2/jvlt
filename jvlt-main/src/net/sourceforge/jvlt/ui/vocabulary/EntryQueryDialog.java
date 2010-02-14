@@ -648,10 +648,10 @@ class EntryQueryRow implements ActionListener {
 
 		// Notify listeners
 		for (ComponentReplacementListener componentReplacementListener : _listeners) {
-componentReplacementListener.componentReplaced(
-			new ComponentReplacementEvent(old_component,
-					_input_component.getComponent()));
-}
+			componentReplacementListener
+					.componentReplaced(new ComponentReplacementEvent(
+							old_component, _input_component.getComponent()));
+		}
 	}
 }
 

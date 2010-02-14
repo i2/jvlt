@@ -37,8 +37,7 @@ class ResourceBundleUtils {
 		for (String file2 : _files) {
 			PropertiesFile file = readFile(file2 + ".properties");
 			for (String language : _languages) {
-				String file_name = file2 + "_" + language
-						+ ".properties";
+				String file_name = file2 + "_" + language + ".properties";
 				PropertiesFile tfile = readFile(file_name);
 				try {
 					FileOutputStream fos = new FileOutputStream(file_name);
@@ -62,8 +61,9 @@ class ResourceBundleUtils {
 								}
 							} else {
 								for (Line fileLine : file_lines) {
-									writer.write("# " + fileLine.content
-											+ "\n");
+									writer
+											.write("# " + fileLine.content
+													+ "\n");
 								}
 							}
 						}

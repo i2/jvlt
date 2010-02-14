@@ -29,7 +29,7 @@ public class DictImporter {
 	/**
 	 * Determine the entries that can be imported. Only entries that do not
 	 * already exist in the dictionary will be imported.
-	 *
+	 * 
 	 * @param dict The dictionary that will be imported.
 	 */
 	public Collection<Entry> getImportedEntries(Dict dict) {
@@ -48,7 +48,7 @@ public class DictImporter {
 	 * Determine the examples that can be added to the dictionary. Examples that
 	 * already exist in the dictionary cannot be imported. The same is true for
 	 * examples whose linked entries cannot be imported.
-	 *
+	 * 
 	 * @param dict The dictionary that will be imported.
 	 * @param entries The entries that will be imported. They can be obtained by
 	 *            the method {@link #getImportedEntries(Dict)}.

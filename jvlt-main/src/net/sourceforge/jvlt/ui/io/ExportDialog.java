@@ -227,11 +227,11 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 		try {
 			dict.setLanguage(model.getJVLTModel().getDict().getLanguage());
 			for (Entry entry : _entry_list.getEntries()) {
-dict.addEntry(entry);
-}
+				dict.addEntry(entry);
+			}
 			for (Example example : _example_list.getExamples()) {
-dict.addExample(example);
-}
+				dict.addExample(example);
+			}
 		} catch (DictException e) {
 			logger.error("Failed to set dictionary data", e);
 		}

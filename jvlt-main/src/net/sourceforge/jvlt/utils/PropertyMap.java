@@ -20,7 +20,7 @@ public class PropertyMap {
 
 	/**
 	 * Returns a property given by a certain key
-	 *
+	 * 
 	 * @param key The key
 	 * @return The value that is mapped to the key or null if there is no value
 	 *         for the key
@@ -59,8 +59,8 @@ public class PropertyMap {
 	private void firePropertyChangeEvent(String key, Object old_value,
 			Object new_value) {
 		for (PropertyChangeListener propertyChangeListener : _listeners) {
-propertyChangeListener.propertyChange(
-			new PropertyChangeEvent(this, key, old_value, new_value));
-}
+			propertyChangeListener.propertyChange(new PropertyChangeEvent(this,
+					key, old_value, new_value));
+		}
 	}
 }

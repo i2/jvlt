@@ -764,7 +764,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 * Tests whether the application can safely be terminated. If there is
 	 * modified data a dialog is shown. This method is public as it can be
 	 * called by {@link OSController}.
-	 *
+	 * 
 	 * @return Whether it is safe to quit the application
 	 */
 	public boolean requestQuit() {
@@ -811,7 +811,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	/**
 	 * Checks whether there is an unfinished quiz and - if yes - asks the user
 	 * whether to save or discard the quiz results, or to cancel.
-	 *
+	 * 
 	 * @return false if the user selects "Cancel", and true otherwise.
 	 */
 	private boolean finishQuiz() {
@@ -831,10 +831,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	/**
 	 * Prepare for quit
-	 *
+	 * 
 	 * This function save the last state of the config, examples, etc.
 	 */
- 	public void prepareForQuit() {
+	public void prepareForQuit() {
 		Config conf = JVLT.getConfig();
 
 		// -----
@@ -869,7 +869,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} catch (IOException ex) {
 			logger.error("Failed to save configuration", ex);
 		}
- 	}
+	}
 
 	private void exit() {
 		prepareForQuit();
@@ -1263,7 +1263,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	/**
 	 * A stream that proxies the previous System.err and additionally logs any
 	 * printed Strings to a logger.
-	 *
+	 * 
 	 * @author thrar
 	 */
 	private static class AppendingErrorStream extends PrintStream {
@@ -1296,9 +1296,9 @@ class DictUpdater {
 	public void updateDict(Dict dict) {
 		if (_original_version.compareTo("1.0") < 0) {
 			for (Example ex : dict.getExamples()) {
-String id = ex.getID().replace('e', 'x');
-ex.setID(id);
-}
+				String id = ex.getID().replace('e', 'x');
+				ex.setID(id);
+			}
 		}
 	}
 }

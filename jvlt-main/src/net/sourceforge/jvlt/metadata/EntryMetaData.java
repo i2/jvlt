@@ -108,7 +108,7 @@ public class EntryMetaData extends MetaData {
 			return elem;
 		}
 	}
-	
+
 	private EntryAttributeSchema _schema = null;
 	private final Vector<CustomAttribute> _custom_attributes;
 
@@ -136,8 +136,8 @@ public class EntryMetaData extends MetaData {
 	public void setAttributeSchema(EntryAttributeSchema schema) {
 		_schema = schema;
 		for (CustomAttribute customAttribute : _custom_attributes) {
-removeAttribute(customAttribute.getName());
-}
+			removeAttribute(customAttribute.getName());
+		}
 		_custom_attributes.clear();
 
 		if (schema == null) {

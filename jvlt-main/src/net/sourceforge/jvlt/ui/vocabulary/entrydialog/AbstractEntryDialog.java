@@ -61,7 +61,7 @@ import net.sourceforge.jvlt.utils.Utils;
 
 /**
  * The entry dialog, used both for adding new words and editing existing ones.
- *
+ * 
  * @author henning, thrar
  */
 public abstract class AbstractEntryDialog extends AbstractDialog {
@@ -77,7 +77,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	/**
 	 * Creates a new instance. The GUI is automatically built. Call
 	 * {@link #init()} to finalize settings before showing the dialog.
-	 *
+	 * 
 	 * @param owner the owner window for the dialog
 	 * @param title the dialog window title
 	 * @param model the data model to read data from
@@ -99,7 +99,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Builds the entire dialog GUI.
-	 *
+	 * 
 	 * @return the entire dialog GUI
 	 */
 	private Container buildUi() {
@@ -117,7 +117,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Builds the area containing the advanced button.
-	 *
+	 * 
 	 * @return the area containing the advanced button
 	 */
 	private JComponent buildAdvancedButtonArea() {
@@ -142,7 +142,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Loads general dialog information (e.g. display settings).
-	 *
+	 * 
 	 * @param config the settings will be loaded from here
 	 */
 	public void loadState(Config config) {
@@ -155,7 +155,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Saves general dialog information (e.g. display settings).
-	 *
+	 * 
 	 * @param config the settings will be stored here
 	 */
 	public void saveState(Config config) {
@@ -164,7 +164,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Sets the entries to display in the dialog.
-	 *
+	 * 
 	 * @param entry the entries to display in the dialog
 	 */
 	protected final void setCurrentEntry(Entry... entry) {
@@ -173,7 +173,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Sets the entries to display in the dialog.
-	 *
+	 * 
 	 * @param entry the entries to display in the dialog
 	 */
 	protected final void setCurrentEntry(List<Entry> entry) {
@@ -186,7 +186,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Stores the data from the GUI in the underlying elements.
-	 *
+	 * 
 	 * @throws InvalidDataException if the GUI data is inconsistent and may not
 	 *             be stored in the model
 	 */
@@ -222,7 +222,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Builds and returns the contents of the 'advanced' dialog.
-	 *
+	 * 
 	 * @return the contents of the 'advanced' dialog
 	 */
 	private AdvancedEntryDialogData getAdvancedDialogData() {
@@ -231,7 +231,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Returns all currently selected entries.
-	 *
+	 * 
 	 * @return all currently selected entries
 	 */
 	protected final List<Entry> getCurrentEntries() {
@@ -241,7 +241,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	/**
 	 * Returns the currently selected entry if a single one is selected. If no
 	 * or multiple entries are selected, <tt>null</tt> is returned.
-	 *
+	 * 
 	 * @return the currently selected entry, or <tt>null</tt> if none or more
 	 *         than one are selected
 	 */
@@ -254,7 +254,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 	/**
 	 * Returns the actions to perform regarding the entry's meanings.
-	 *
+	 * 
 	 * @return the actions to perform regarding the entry's meanings
 	 */
 	protected final List<DictObjectAction> getMeaningActions() {
@@ -264,7 +264,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	/**
 	 * The GUI components of the middle part of the entry dialog, containing the
 	 * word meanings list and its buttons.
-	 *
+	 * 
 	 * @author thrar
 	 */
 	private class MeaningsArea {
@@ -377,7 +377,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Builds the meanings area of the entry dialog.
-		 *
+		 * 
 		 * @return the meanings area of the entry dialog
 		 */
 		private JComponent buildMeaningsArea() {
@@ -423,7 +423,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Moves the currently selected list element down the given amount of
 		 * steps. If this amount is negative, the element is moved up instead.
-		 *
+		 * 
 		 * @param steps number of steps to move the element
 		 */
 		private void moveSelectedElement(int steps) {
@@ -441,7 +441,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Returns the GUI component for this area, building it if necessary.
-		 *
+		 * 
 		 * @return the GUI component for this area
 		 */
 		JComponent getGuiComponent() {
@@ -453,7 +453,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Sets the currently selected entries, updating the fields as needed.
-		 *
+		 * 
 		 * @param currentEntries the currently selected entries
 		 */
 		void setCurrentEntries(List<Entry> currentEntries) {
@@ -464,7 +464,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Enables/disables actions related to this area depending on the
 		 * selected elements.
-		 *
+		 * 
 		 * @param selectedEntries the currently selected entries
 		 */
 		private void updateActions(List<Entry> selectedEntries) {
@@ -488,7 +488,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Updates display components in this area depending on the selected
 		 * elements.
-		 *
+		 * 
 		 * @param selectedEntries the currently selected entries
 		 */
 		private void updateComponents(List<Entry> selectedEntries) {
@@ -511,7 +511,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Checks if the meaning area's GUI currently contains any meanings.
-		 *
+		 * 
 		 * @return <tt>true</tt> if the meaning list is currently not empty
 		 */
 		boolean hasMeanings() {
@@ -521,7 +521,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Returns the meaning actions to perform based on the user input in the
 		 * meaning area.
-		 *
+		 * 
 		 * @return the meaning actions to perform
 		 */
 		List<DictObjectAction> getMeaningActions() {
@@ -532,7 +532,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	/**
 	 * The GUI components of the upper part of the entry dialog, containing
 	 * orthography, pronunciation, and lesson text fields.
-	 *
+	 * 
 	 * @author thrar
 	 */
 	private static class TextFieldArea {
@@ -550,7 +550,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Builds the text field area of the entry dialog.
-		 *
+		 * 
 		 * @return the text field area of the entry dialog
 		 */
 		private JComponent buildTextFieldArea() {
@@ -600,7 +600,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Returns the GUI component for this area, building it if necessary.
-		 *
+		 * 
 		 * @return the GUI component for this area
 		 */
 		JComponent getGuiComponent() {
@@ -612,7 +612,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Sets the currently selected entries, updating the fields as needed.
-		 *
+		 * 
 		 * @param currentEntries the currently selected entries
 		 */
 		void setCurrentEntries(List<Entry> currentEntries) {
@@ -622,7 +622,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Updates display components in this area depending on the selected
 		 * elements.
-		 *
+		 * 
 		 * @param selectedEntries the currently selected entries
 		 */
 		private void updateComponents(List<Entry> currentEntries) {
@@ -675,7 +675,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Returns the data currently entered in the orthography field.
-		 *
+		 * 
 		 * @return the data currently entered in the orthography field
 		 */
 		String getSelectedOrthography() {
@@ -684,7 +684,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		/**
 		 * Returns the currently entered pronunciations.
-		 *
+		 * 
 		 * @return the currently entered pronunciations
 		 */
 		List<String> getSelectedPronunciations() {
@@ -695,7 +695,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Sets the currently selected lesson and enables/disables the lesson
 		 * combo box.
-		 *
+		 * 
 		 * @param lesson the lesson to select, pass an empty string to select no
 		 *            lesson
 		 * @param enabled the new enabled status of the lesson combo box
@@ -708,7 +708,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		/**
 		 * Returns the currently selected lesson, or an empty string if none is
 		 * selected.
-		 *
+		 * 
 		 * @return the currently selected lesson, or an empty string if none is
 		 *         selected
 		 */

@@ -140,7 +140,7 @@ public class JVLT {
 	 * necessary. If no configuration exists but there is a configuration
 	 * defined for an older version, the old configuration will be moved to the
 	 * new folder.
-	 *
+	 * 
 	 * @param config where to read/store the configuration information
 	 * @param oldConfig configuration directory from previous versions
 	 * @return the folder to use for reading/storing config information
@@ -171,7 +171,7 @@ public class JVLT {
 	 * Determines the folder where to read and store config information. This
 	 * method should only be called during initialization, refer to the
 	 * {@link #configDir} field afterwards.
-	 *
+	 * 
 	 * @return the folder where to read and store config information
 	 */
 	static String getConfigPath() {

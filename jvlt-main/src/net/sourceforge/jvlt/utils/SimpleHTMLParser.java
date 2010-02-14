@@ -20,7 +20,7 @@ public class SimpleHTMLParser {
 			.compile("<(/?[a-zA-Z]+)((?:\\s+[\\w-]+=\"[\\w-]+\")*)>");
 	private static final Pattern ATTRIBUTE_PATTERN = Pattern
 			.compile("([\\w-]+)=\"([\\w-]+)\"");
-	
+
 	private final HashSet<String> _supported_tags = new HashSet<String>();
 	private final HashSet<String> _solo_tags = new HashSet<String>();
 	private Node[] _nodes = new Node[0];
@@ -119,7 +119,7 @@ public class SimpleHTMLParser {
 	public Node[] getNodes() {
 		return _nodes;
 	}
-	
+
 	private void addAttributes(Element elem, String attr_string) {
 		Matcher matcher = ATTRIBUTE_PATTERN.matcher(attr_string);
 		while (matcher.find()) {

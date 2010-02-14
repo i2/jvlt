@@ -48,15 +48,15 @@ public class JVLTUtils {
 			TreeSet<String> value_set = new TreeSet<String>();
 			MetaData data = _model.getDictModel().getMetaData(Entry.class);
 			for (Entry entry : _dict.getEntries()) {
-String value = data.getAttribute(field)
-				.getFormattedValue(entry);
-if (value_set.add(value)) {
-			entry_map.put(value, new TreeSet<Entry>());
-}
+				String value = data.getAttribute(field)
+						.getFormattedValue(entry);
+				if (value_set.add(value)) {
+					entry_map.put(value, new TreeSet<Entry>());
+				}
 
-Set<Entry> set = entry_map.get(value);
-set.add(entry);
-}
+				Set<Entry> set = entry_map.get(value);
+				set.add(entry);
+			}
 
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					System.out, "UTF-8"));
@@ -99,11 +99,11 @@ set.add(entry);
 					System.out, "UTF-8"));
 			Set<String> set = new TreeSet<String>();
 			for (Entry entry : _dict.getEntries()) {
-String orth = entry.getOrthography();
-if (!set.add(orth)) {
-			writer.write("Duplicate: " + orth + "\n");
-}
-}
+				String orth = entry.getOrthography();
+				if (!set.add(orth)) {
+					writer.write("Duplicate: " + orth + "\n");
+				}
+			}
 
 			writer.flush();
 		} catch (Exception ex) {
@@ -117,22 +117,22 @@ if (!set.add(orth)) {
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					System.out, "UTF-8"));
 			for (Example ex : _dict.getExamples()) {
-Sense[] senses = ex.getSenses();
-writer.write(ex.getText() + ": " + senses.length + " link(s)");
+				Sense[] senses = ex.getSenses();
+				writer.write(ex.getText() + ": " + senses.length + " link(s)");
 
-Example.TextFragment[] fragments = ex.getTextFragments();
-TreeSet<Sense> set = new TreeSet<Sense>();
-for (TextFragment fragment : fragments) {
-			Sense s = fragment.getSense();
-			if (s != null) {
-				if (!set.add(s)) {
-					writer.write(", duplicate link: " + s.getParent());
+				Example.TextFragment[] fragments = ex.getTextFragments();
+				TreeSet<Sense> set = new TreeSet<Sense>();
+				for (TextFragment fragment : fragments) {
+					Sense s = fragment.getSense();
+					if (s != null) {
+						if (!set.add(s)) {
+							writer.write(", duplicate link: " + s.getParent());
+						}
+					}
 				}
-			}
-}
 
-writer.write("\n");
-}
+				writer.write("\n");
+			}
 
 			writer.flush();
 		} catch (Exception ex) {

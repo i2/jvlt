@@ -138,13 +138,13 @@ public abstract class ObjectListEditor {
 			InputComponent new_component) {
 		_input_field = new_component;
 		for (ComponentReplacementListener l : _listeners) {
-JPanel old_panel = old_component == _single_input_field ? _single_item_panel
-			: _multi_item_panel;
-JPanel new_panel = new_component == _single_input_field ? _single_item_panel
-			: _multi_item_panel;
-l.componentReplaced(new ComponentReplacementEvent(old_panel,
-			new_panel));
-}
+			JPanel old_panel = old_component == _single_input_field ? _single_item_panel
+					: _multi_item_panel;
+			JPanel new_panel = new_component == _single_input_field ? _single_item_panel
+					: _multi_item_panel;
+			l.componentReplaced(new ComponentReplacementEvent(old_panel,
+					new_panel));
+		}
 	}
 
 	protected abstract InputComponent createSingleInputComponent();

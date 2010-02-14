@@ -3,7 +3,6 @@ package net.sourceforge.jvlt.metadata;
 import java.util.Arrays;
 import java.util.HashSet;
 
-
 public class ArrayChoiceAttribute extends ArrayAttribute implements
 		ChoiceAttribute {
 	private final HashSet<Object> _values = new HashSet<Object>();

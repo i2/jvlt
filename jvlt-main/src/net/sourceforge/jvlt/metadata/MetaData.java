@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Vector;
 
-
 public class MetaData {
 	private Class<? extends Object> _type = null;
 	private final Vector<Attribute> _attributes = new Vector<Attribute>();

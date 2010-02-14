@@ -347,8 +347,8 @@ public class EntryFilterPanel extends JPanel {
 
 	private void fireActionEvent(ActionEvent e) {
 		for (ActionListener actionListener : _listeners) {
-			actionListener.actionPerformed(
-					new ActionEvent(this, e.getID(), e.getActionCommand()));
+			actionListener.actionPerformed(new ActionEvent(this, e.getID(), e
+					.getActionCommand()));
 		}
 	}
 

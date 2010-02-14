@@ -330,8 +330,8 @@ public class DictModel extends AbstractModel {
 		ArrayList<String> attrs = new ArrayList<String>();
 		for (String displayedAttrName : displayed_attr_names) {
 			if (_entry_data.getAttribute(displayedAttrName) == null) {
-				logger.warn("Attribute \""
-						+ displayedAttrName + "\" does not exist.");
+				logger.warn("Attribute \"" + displayedAttrName
+						+ "\" does not exist.");
 			} else {
 				attrs.add(displayedAttrName);
 			}

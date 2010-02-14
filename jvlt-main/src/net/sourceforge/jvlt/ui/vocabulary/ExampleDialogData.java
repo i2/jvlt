@@ -187,7 +187,7 @@ public class ExampleDialogData extends CustomDialogData implements
 				_example_field.getCaret().setDot(_current_selection_end);
 			} else {
 				_example_field.getCaret().setDot(0);
-			// updatePreviewPane() is called automatically.
+				// updatePreviewPane() is called automatically.
 			}
 		} else if (e.getActionCommand().equals("remove")) {
 			ExampleBuilder builder = new ExampleBuilder(_example);

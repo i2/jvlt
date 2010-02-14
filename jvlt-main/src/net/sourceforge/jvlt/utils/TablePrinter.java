@@ -140,7 +140,7 @@ public class TablePrinter implements Printable {
 
 	/**
 	 * Render pages using the current page format.
-	 *
+	 * 
 	 * @return Number of pages.
 	 */
 	public int renderPages(Graphics2D g2d) throws PrinterException {
@@ -206,7 +206,7 @@ public class TablePrinter implements Printable {
 
 	/**
 	 * Renders a cell of the table.
-	 *
+	 * 
 	 * @param rect The maximum size of the cell.
 	 * @param str The string contained in the cell.
 	 * @param paint Specifies whether the cell is painted or only its size is
@@ -363,8 +363,8 @@ class LineBreaker {
 					break;
 				}
 
-				Rectangle2D rec = metrics.getStringBounds(remaining, 0,
-						pos, graphics);
+				Rectangle2D rec = metrics.getStringBounds(remaining, 0, pos,
+						graphics);
 				if (rec.getWidth() > _width) {
 					break;
 				}
@@ -379,19 +379,17 @@ class LineBreaker {
 				if (pos < 0) {
 					remaining = "";
 				} else {
-					remaining = remaining
-							.substring(pos, remaining.length());
+					remaining = remaining.substring(pos, remaining.length());
 				}
 			} else {
-				int len = (int) (_width / r2d.getWidth() * remaining
-						.length());
-				Rectangle2D rec = metrics.getStringBounds(remaining, 0,
-						len, graphics);
+				int len = (int) (_width / r2d.getWidth() * remaining.length());
+				Rectangle2D rec = metrics.getStringBounds(remaining, 0, len,
+						graphics);
 				if (rec.getWidth() < _width) {
 					int new_len = len + 1;
 					while (new_len < remaining.length()) {
-						rec = metrics.getStringBounds(remaining, 0,
-								new_len, graphics);
+						rec = metrics.getStringBounds(remaining, 0, new_len,
+								graphics);
 						if (rec.getWidth() >= _width) {
 							len = new_len - 1;
 							break;

@@ -48,24 +48,24 @@ public class RemoveEntriesAction extends DictAction {
 		}
 
 		for (Example example : example_map.keySet()) {
-TreeSet<Entry> entry_set = example_map.get(example);
-if (entry_set.size() == 0) {
-		_removed_examples.add(example);
-} else {
-		Example new_example = (Example) example.clone();
-		Example.TextFragment[] fragments = new_example
-				.getTextFragments();
-		for (TextFragment f : fragments) {
-			if (f.getSense() != null
-					&& removed_entries.contains(f.getSense()
-							.getParent())) {
-				f.setSense(null);
+			TreeSet<Entry> entry_set = example_map.get(example);
+			if (entry_set.size() == 0) {
+				_removed_examples.add(example);
+			} else {
+				Example new_example = (Example) example.clone();
+				Example.TextFragment[] fragments = new_example
+						.getTextFragments();
+				for (TextFragment f : fragments) {
+					if (f.getSense() != null
+							&& removed_entries.contains(f.getSense()
+									.getParent())) {
+						f.setSense(null);
+					}
+				}
+				_example_actions.add(new EditDictObjectAction(example,
+						new_example));
 			}
 		}
-		_example_actions.add(new EditDictObjectAction(example,
-				new_example));
-}
-}
 	}
 
 	public Collection<Entry> getRemovedEntries() {
@@ -79,16 +79,16 @@ if (entry_set.size() == 0) {
 	public Collection<Example> getModifiedExamples() {
 		TreeSet<Example> examples = new TreeSet<Example>();
 		for (EditDictObjectAction editDictObjectAction : _example_actions) {
-examples.add((Example) editDictObjectAction.getObject());
-}
+			examples.add((Example) editDictObjectAction.getObject());
+		}
 
 		return examples;
 	}
 
 	public void executeAction() throws DictException {
 		for (EditDictObjectAction editDictObjectAction : _example_actions) {
-editDictObjectAction.executeAction();
-}
+			editDictObjectAction.executeAction();
+		}
 
 		for (Example example : _removed_examples) {
 			_dict.removeExample(example);
@@ -105,8 +105,8 @@ editDictObjectAction.executeAction();
 		}
 
 		for (EditDictObjectAction editDictObjectAction : _example_actions) {
-editDictObjectAction.undoAction();
-}
+			editDictObjectAction.undoAction();
+		}
 
 		for (Example example : _removed_examples) {
 			_dict.addExample(example);

@@ -19,7 +19,7 @@ public class SortedComboBoxModel implements MutableComboBoxModel {
 
 	/**
 	 * Inserts an object
-	 *
+	 * 
 	 * The obj argument is ignored.
 	 */
 	public void insertElementAt(Object obj, int index) {

@@ -113,18 +113,18 @@ public class DictCSVWriter extends DictWriter {
 		writer.write(_field_delimiter);
 		AttributeResources resources = new AttributeResources();
 		for (SchemaAttribute attr : info.num_attr_columns.keySet()) {
-if (attr instanceof ArraySchemaAttribute) {
-		int num_cols = info.num_attr_columns.get(attr);
-		for (int i = 0; i < num_cols; i++) {
-			writer.write(getField(resources.getString(attr.getName()))
-					+ " #" + (i + 1));
-			writer.write(_field_delimiter);
+			if (attr instanceof ArraySchemaAttribute) {
+				int num_cols = info.num_attr_columns.get(attr);
+				for (int i = 0; i < num_cols; i++) {
+					writer.write(getField(resources.getString(attr.getName()))
+							+ " #" + (i + 1));
+					writer.write(_field_delimiter);
+				}
+			} else {
+				writer.write(getField(resources.getString(attr.getName())));
+				writer.write(_field_delimiter);
+			}
 		}
-} else {
-		writer.write(getField(resources.getString(attr.getName())));
-		writer.write(_field_delimiter);
-}
-}
 		writer.write(System.getProperty("line.separator"));
 
 		for (Entry entry : entries) {

@@ -41,7 +41,7 @@ public abstract class CustomDialogData {
 
 	/**
 	 * This method is called right before the dialog is shown.
-	 *
+	 * 
 	 * @see CustomDialog#setVisible(boolean)
 	 */
 	public void prepareToShow() {
@@ -53,8 +53,8 @@ public abstract class CustomDialogData {
 		ComponentReplacementEvent ev = new ComponentReplacementEvent(old_comp,
 				new_comp);
 		for (ComponentReplacementListener componentReplacementListener : _listeners) {
-componentReplacementListener.componentReplaced(ev);
-}
+			componentReplacementListener.componentReplaced(ev);
+		}
 	}
 
 	protected void loadState(Config config) {

@@ -59,8 +59,7 @@ public class EntryInfoPanel extends InfoPanel {
 		for (String attrName : attr_names) {
 			Attribute attr = entry_data.getAttribute(attrName);
 			if (attr == null) {
-				logger.warn("Attribute \"" + attrName
-						+ "\" does not exist.");
+				logger.warn("Attribute \"" + attrName + "\" does not exist.");
 			} else {
 				_entry_attributes.add(entry_data.getAttribute(attrName));
 			}
@@ -159,9 +158,9 @@ public class EntryInfoPanel extends InfoPanel {
 		for (Example example : examples) {
 			root.appendChild(dof.getElementForObject(example,
 					_example_attributes.toArray(new Attribute[0])));
-		// XMLWriter writer = new XMLWriter(System.out);
-		// try { writer.write(doc); }
-		// catch (java.io.IOException e) { e.printStackTrace(); }
+			// XMLWriter writer = new XMLWriter(System.out);
+			// try { writer.write(doc); }
+			// catch (java.io.IOException e) { e.printStackTrace(); }
 		}
 
 		String html = _entry_transformer.transform(doc);

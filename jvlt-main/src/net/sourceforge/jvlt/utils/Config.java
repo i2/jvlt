@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 public class Config {
 	private final TreeMap<String, String> properties = new TreeMap<String, String>();
 

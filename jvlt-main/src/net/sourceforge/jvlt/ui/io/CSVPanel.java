@@ -12,24 +12,26 @@ public abstract class CSVPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private enum FieldDelimiter {
-		COMMA(',', ","),
-		SEMICOLON(';', ";"),
-		COLON(':', ":"),
-		SPACE(' ', GUIUtils.getString("Labels", "space")),
-		TAB('\t', GUIUtils.getString("Labels", "tab"));
+		COMMA(',', ","), SEMICOLON(';', ";"), COLON(':', ":"), SPACE(' ',
+				GUIUtils.getString("Labels", "space")), TAB('\t', GUIUtils
+				.getString("Labels", "tab"));
 
-		private char 	_character;
-		private String 	_description;
+		private char _character;
+		private String _description;
 
 		private FieldDelimiter(char character, String description) {
 			_character = character;
 			_description = description;
 		}
 
-		public char getCharacter() { return _character; }
+		public char getCharacter() {
+			return _character;
+		}
 
 		@Override
-		public String toString() { return _description; }
+		public String toString() {
+			return _description;
+		}
 	}
 
 	protected LabeledComboBox _text_delim_box;
@@ -62,7 +64,7 @@ public abstract class CSVPanel extends JPanel {
 
 		_field_delim_box = new LabeledComboBox();
 		_field_delim_box.setLabel("field_delimiter");
-		for (FieldDelimiter delim: FieldDelimiter.values()) {
+		for (FieldDelimiter delim : FieldDelimiter.values()) {
 			_field_delim_box.addItem(delim);
 		}
 

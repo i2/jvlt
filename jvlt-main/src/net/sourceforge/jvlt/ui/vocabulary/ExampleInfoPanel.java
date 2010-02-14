@@ -93,9 +93,9 @@ public class ExampleInfoPanel extends InfoPanel {
 		for (Sense sense : senses) {
 			root.appendChild(dof.getElementForObject(sense.getParent(),
 					entry_data.getAttributes()));
-		// XMLWriter writer = new XMLWriter(System.out);
-		// try { writer.write(doc); }
-		// catch (IOException e) { e.printStackTrace(); }
+			// XMLWriter writer = new XMLWriter(System.out);
+			// try { writer.write(doc); }
+			// catch (IOException e) { e.printStackTrace(); }
 		}
 
 		String html = _transformer.transform(doc);

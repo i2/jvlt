@@ -139,7 +139,7 @@ public class Wizard implements ActionListener {
 
 	private void setActionText(Action action, String text) {
 		Integer mnemonic = GUIUtils.getMnemonicKey(text);
-		action.putValue(Action.MNEMONIC_KEY, (int)KeyEvent.CHAR_UNDEFINED);
+		action.putValue(Action.MNEMONIC_KEY, (int) KeyEvent.CHAR_UNDEFINED);
 		String textToUse = text;
 		if (mnemonic != null) {
 			action.putValue(Action.MNEMONIC_KEY, mnemonic);
