@@ -1192,7 +1192,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 					_quiz_info_map.put(name, element);
 				}
 
-				updateQuizInfoList();
+				update();
 				JVLT.getRuntimeProperties().put("quiz_types", quiz_info_list);
 			}
 		} else if (ev.getActionCommand().equals("options")) {
