@@ -1094,7 +1094,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	 * Updates the list of available entries and refreshes the view. This
 	 * function must not be called during a quiz.
 	 */
-	public void update() {
+	void update() {
 		updateQuizDict();
 		updateView();
 	}

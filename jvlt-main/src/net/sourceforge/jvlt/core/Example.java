@@ -122,11 +122,12 @@ public class Example implements Reinitializable, Comparable<Example> {
 	public String getHTMLText() {
 		StringBuilder builder = new StringBuilder();
 		for (TextFragment fragment : _fragments) {
-			if (fragment.getSense() == null)
+			if (fragment.getSense() == null) {
 				builder.append(fragment.getText());
-			else
+			} else {
 				builder.append("<a href=\"" + fragment.getSense().getID()
 						+ "\">" + fragment.getText() + "</a>");
+			}
 		}
 
 		return builder.toString();

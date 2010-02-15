@@ -96,7 +96,7 @@ public class ExampleDialogData extends CustomDialogData implements
 		_entry_filter_item.setMatchCase(false);
 		_entry_filter = new EntryFilter();
 		_entry_filter.getQuery().addItem(_entry_filter_item);
-		
+
 		init();
 		updatePreviewPane();
 		updateAddSensesPanel();
@@ -467,14 +467,13 @@ public class ExampleDialogData extends CustomDialogData implements
 						break;
 					}
 				}
-				if (entryExists)
-					continue;
-				
-				if (entry.getOrthography().equals(text)) {
-					// Put exact matches to the beginning of the list
-					entry_list.add(0, entry);
-				} else {
-					entry_list.add(entry);
+				if (!entryExists) {
+					if (entry.getOrthography().equals(text)) {
+						// Put exact matches to the beginning of the list
+						entry_list.add(0, entry);
+					} else {
+						entry_list.add(entry);
+					}
 				}
 			}
 			_selected_senses_tree.setEntries(entry_list.toArray(new Entry[0]));
