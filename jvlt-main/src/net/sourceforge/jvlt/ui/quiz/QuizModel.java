@@ -1192,8 +1192,12 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 					_quiz_info_map.put(name, element);
 				}
 
-				update();
+				updateQuizInfoList();
 				JVLT.getRuntimeProperties().put("quiz_types", quiz_info_list);
+
+				// Update the quiz dictionary. This is necessary when an
+				// existing quiz type was modified by the user
+				updateQuizDict();
 			}
 		} else if (ev.getActionCommand().equals("options")) {
 			boolean old_ignore_batches = _qdict.isIgnoreBatches();
