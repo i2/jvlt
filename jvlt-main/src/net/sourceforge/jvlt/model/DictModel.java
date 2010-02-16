@@ -312,19 +312,29 @@ public class DictModel extends AbstractModel {
 
 	private void setLanguage(String oldlang, String newlang)
 			throws DictException {
+		//
+		// Save list of displayed attributes for the old language
+		//
 		Object[] displayed_attributes = (Object[]) JVLT.getRuntimeProperties()
 				.get("displayed_attributes");
 		if (displayed_attributes != null) {
-			String key = (oldlang == null || oldlang.equals("")) ? "displayed_attributes"
-					: ("displayed_attributes_" + oldlang);
+			String key = "displayed_attributes";
+			if (oldlang != null && !oldlang.equals("")) {
+				key += "_" + oldlang;
+			}
 			JVLT.getConfig().setProperty(key, displayed_attributes);
 		}
 
 		_dict.setLanguage(newlang);
 		_entry_data.setAttributeSchema(_dict.getEntryAttributeSchema());
 
-		String key = (newlang == null || newlang.equals("")) ? "displayed_attributes"
-				: ("displayed_attributes_" + newlang);
+		//
+		// Load list of displayed attributes for the new language
+		//
+		String key = "displayed_attributes";
+		if (newlang != null && !newlang.equals("")) {
+			key += "_" + newlang;
+		}
 		String[] displayed_attr_names = JVLT.getConfig().getStringListProperty(
 				key, _entry_data.getAttributeNames());
 		ArrayList<String> attrs = new ArrayList<String>();
