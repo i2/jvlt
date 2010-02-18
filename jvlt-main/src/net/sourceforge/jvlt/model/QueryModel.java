@@ -58,13 +58,11 @@ public class QueryModel extends AbstractModel {
 		}
 
 		LinkedList<Entry> entry_list = new LinkedList<Entry>();
-		Entry[] entries = sua.getKnownEntries();
-		for (Entry entrie : entries) {
-			entry_list.add(entrie);
+		for (Entry entry : sua.getKnownEntries()) {
+			entry_list.add(entry);
 		}
-		entries = sua.getUnknownEntries();
-		for (Entry entrie : entries) {
-			entry_list.add(entrie);
+		for (Entry entry : sua.getUnknownEntries()) {
+			entry_list.add(entry);
 		}
 		fireDictUpdateEvent(new EntryDictUpdateEvent(
 				EntryDictUpdateEvent.ENTRIES_CHANGED, entry_list));

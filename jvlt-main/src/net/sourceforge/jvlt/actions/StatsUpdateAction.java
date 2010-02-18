@@ -81,13 +81,13 @@ public class StatsUpdateAction extends QueryAction {
 	}
 
 	private void prepare() {
-		for (Entry knownEntrie : _known_entries) {
-			_entry_actions.add(new EditDictObjectAction(knownEntrie,
-					getUpdatedEntry(knownEntrie, true)));
+		for (Entry knownEntry : _known_entries) {
+			_entry_actions.add(new EditDictObjectAction(knownEntry,
+					getUpdatedEntry(knownEntry, true)));
 		}
-		for (Entry unknownEntrie : _unknown_entries) {
-			_entry_actions.add(new EditDictObjectAction(unknownEntrie,
-					getUpdatedEntry(unknownEntrie, false)));
+		for (Entry unknownEntry : _unknown_entries) {
+			_entry_actions.add(new EditDictObjectAction(unknownEntry,
+					getUpdatedEntry(unknownEntry, false)));
 		}
 	}
 
