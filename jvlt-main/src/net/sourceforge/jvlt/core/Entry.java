@@ -61,18 +61,14 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 	public static class Stats implements Reinitializable {
 		public enum UserFlag {
-			NONE(0, "flag_none", "flag_none"), KNOWN(1 << 0, "flag_known_long",
-					"flag_known_short"), INACTIVE(1 << 1, "flag_inactive_long",
-					"flag_inactive_short");
+			NONE(0),
+			KNOWN(1 << 0),
+			INACTIVE(1 << 1);
 
 			private final int _value;
-			private final String _long_name;
-			private final String _short_name;
 
-			private UserFlag(int value, String long_name, String short_name) {
+			private UserFlag(int value) {
 				_value = value;
-				_long_name = long_name;
-				_short_name = short_name;
 			}
 
 			public int getValue() {
@@ -80,16 +76,34 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 			}
 
 			public String getLongName() {
-				return _long_name;
+				switch (this) {
+				case NONE:
+					return "flag_none";
+				case KNOWN:
+					return "flag_known_long";
+				case INACTIVE:
+					return "flag_inactive_long";
+				default:
+					return null;
+				}
 			}
 
 			public String getShortName() {
-				return _short_name;
+				switch (this) {
+				case NONE:
+					return "flag_none";
+				case KNOWN:
+					return "flag_known_short";
+				case INACTIVE:
+					return "flag_inactive_short";
+				default:
+					return null;
+				}
 			}
 
 			@Override
 			public String toString() {
-				return GUIUtils.getString("Labels", _long_name);
+				return GUIUtils.getString("Labels", getLongName());
 			}
 		}
 
