@@ -296,11 +296,11 @@
 	<xsl:param name="sense-id"/>
 	<xsl:choose>
 		<xsl:when test="$sense-id=@href">
-		<a href="$sense-id" class="selflink"><xsl:value-of
+		<a href="{$sense-id}" class="selflink"><xsl:value-of
 			disable-output-escaping="yes" select="."/></a>
 		</xsl:when>
 		<xsl:otherwise>
-		<a href="$sense-id" class="link"><xsl:value-of
+		<a href="{@href}" class="link"><xsl:value-of
 			disable-output-escaping="yes" select="."/></a>
 		</xsl:otherwise>
 	</xsl:choose>
