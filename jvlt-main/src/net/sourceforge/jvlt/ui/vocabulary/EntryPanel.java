@@ -27,6 +27,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.RemoveEntriesAction;
 import net.sourceforge.jvlt.core.Dict;
@@ -64,6 +66,8 @@ public class EntryPanel extends JPanel implements ActionListener,
 	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
 	private static final CustomFontCellRenderer PRONUNCIATION_RENDERER;
 	private static final PercentCellRenderer MISTAKE_RATIO_RENDERER = new PercentCellRenderer();
+
+	private static Logger logger = Logger.getLogger(ExamplePanel.class);
 
 	static {
 		Font font;
@@ -160,10 +164,14 @@ public class EntryPanel extends JPanel implements ActionListener,
 						String.valueOf(dir.getColumn()),
 						String.valueOf(dir.getDirection()) });
 		if (dir_string.length == 2) {
-			dir.setColumn(Integer.parseInt(dir_string[0]));
-			dir
-					.setDirection(SortOrder.valueOf(Integer
-							.parseInt(dir_string[1])));
+			try {
+				int col = Integer.parseInt(dir_string[0]);
+				int direction = Integer.parseInt(dir_string[1]);
+				dir.setColumn(col);
+				dir.setDirection(SortOrder.valueOf(direction));
+			} catch (NumberFormatException e) {
+				logger.warn("Could not read sorting info for example table", e);
+			}
 		}
 		_entry_table_model.setSortingDirective(dir);
 

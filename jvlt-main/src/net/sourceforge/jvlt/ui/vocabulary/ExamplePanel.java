@@ -23,6 +23,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.log4j.Logger;
+
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.AddDictObjectAction;
 import net.sourceforge.jvlt.actions.EditDictObjectAction;
@@ -54,6 +56,8 @@ public class ExamplePanel extends JPanel implements ActionListener,
 	private static final long serialVersionUID = 1L;
 
 	private static final CustomFontCellRenderer ORIGINAL_RENDERER;
+
+	private static Logger logger = Logger.getLogger(ExamplePanel.class);
 
 	static {
 		Font font;
@@ -134,10 +138,14 @@ public class ExamplePanel extends JPanel implements ActionListener,
 						String.valueOf(dir.getColumn()),
 						String.valueOf(dir.getDirection()) });
 		if (dir_string.length == 2) {
-			dir.setColumn(Integer.parseInt(dir_string[0]));
-			dir
-					.setDirection(SortOrder.valueOf(Integer
-							.parseInt(dir_string[1])));
+			try {
+				int col = Integer.parseInt(dir_string[0]);
+				int direction = Integer.parseInt(dir_string[1]);
+				dir.setColumn(col);
+				dir.setDirection(SortOrder.valueOf(direction));
+			} catch (NumberFormatException e) {
+				logger.warn("Could not read sorting info for example table", e);
+			}
 		}
 		_table_model.setSortingDirective(dir);
 	}
