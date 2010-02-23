@@ -63,7 +63,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		public enum UserFlag {
 			NONE(0),
 			KNOWN(1 << 0),
-			INACTIVE(1 << 1);
+			INACTIVE(1 << 1),
+			ALWAYS_QUIZ(1 << 2);
 
 			private final int _value;
 
@@ -83,6 +84,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 					return "flag_known_long";
 				case INACTIVE:
 					return "flag_inactive_long";
+				case ALWAYS_QUIZ:
+					return "flag_always_quiz_long";
 				default:
 					return null;
 				}
@@ -96,6 +99,8 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 					return "flag_known_short";
 				case INACTIVE:
 					return "flag_inactive_short";
+				case ALWAYS_QUIZ:
+					return "flag_always_quiz_short";
 				default:
 					return null;
 				}

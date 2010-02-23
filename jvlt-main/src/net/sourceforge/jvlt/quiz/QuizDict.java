@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.TreeSet;
 
 import net.sourceforge.jvlt.core.Entry;
+import net.sourceforge.jvlt.core.Entry.Stats.UserFlag;
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.query.EntryFilter;
@@ -206,9 +207,13 @@ public class QuizDict {
 		}
 
 		// -----
-		// Only add the entries where the quizzed attribute is set and that
-		// do not have a flag set that disables them. If the batches
-		// are not ignored, only not expired entries are added.
+		// Only add those values that
+		// 1) have a value for the quizzed attribute,
+		// 2) are not yet expired, and
+		// 3) don't have a flag that disables them.
+		//
+		// 2) doesn't need to be fulfilled when batches are ignored. If the
+		// flag ALWAYS_QUIZ is set, the entry is always added.
 		// -----
 
 		String[] attr_str = _info.getQuizzedAttributes();
@@ -232,20 +237,23 @@ public class QuizDict {
 				continue;
 			}
 
-			/* Check for flags */
 			int flags = entry.getUserFlags();
-			if ((flags & Entry.Stats.UserFlag.INACTIVE.getValue()) != 0
-					|| (flags & Entry.Stats.UserFlag.KNOWN.getValue()) != 0) {
-				continue;
-			}
+			if ((flags & UserFlag.ALWAYS_QUIZ.getValue()) != 0) {
+				/* Always add the entry if the flag "Quiz until known" is set */
+				entry_array.add(entry);
+			} else {
+				/* Skip if "Inactive" or "Known" flag is set */
+				if ((flags & UserFlag.INACTIVE.getValue()) != 0
+						|| (flags & UserFlag.KNOWN.getValue()) != 0) {
+					continue;
+				}
 
-			/* Check for batch and expiry date */
-			if (!_ignore_batches && entry.getBatch() != 0
-					&& expiry_date != null && !expiry_date.before(now)) {
-				continue;
+				/* Check for batch and expiry date */
+				if (_ignore_batches || entry.getBatch() == 0
+						|| expiry_date == null || expiry_date.before(now)) {
+					entry_array.add(entry);
+				}
 			}
-
-			entry_array.add(entry);
 		}
 
 		// -----

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
@@ -31,6 +32,7 @@ class ResultDescriptor extends YesNoDescriptor implements
 	private JPanel _comp;
 	private TitledBorder _known_entries_border;
 	private TitledBorder _notknown_entries_border;
+	private JCheckBox _remove_always_quiz_flag_box;
 
 	public ResultDescriptor(WizardModel model) {
 		super(model, GUIUtils.getString("Messages", "save_changes"));
@@ -68,6 +70,17 @@ class ResultDescriptor extends YesNoDescriptor implements
 		updateLabels();
 	}
 
+	public boolean isRemoveAlwaysQuizFlag() {
+		return _remove_always_quiz_flag_box.isSelected();
+	}
+	
+	public void showRemoveAlwaysQuizFlag(boolean show) {
+		_remove_always_quiz_flag_box.setVisible(show);
+		if (!show) {
+			_remove_always_quiz_flag_box.setSelected(false);
+		}
+	}
+	
 	public void valueChanged(TreeSelectionEvent e) {
 		updateActions();
 	}
@@ -101,6 +114,9 @@ class ResultDescriptor extends YesNoDescriptor implements
 	}
 
 	private void init() {
+		CustomAction remove_always_quiz_flag_action = GUIUtils
+				.createTextAction(this, "remove_always_quiz_flag");
+
 		_up_action = GUIUtils.createIconAction(this, "up");
 		_down_action = GUIUtils.createIconAction(this, "down");
 
@@ -129,6 +145,9 @@ class ResultDescriptor extends YesNoDescriptor implements
 		cc.update(2, 0);
 		up_down_panel.add(new JButton(_up_action), cc);
 
+		_remove_always_quiz_flag_box = new JCheckBox(
+				remove_always_quiz_flag_action);
+
 		_comp = new JPanel();
 		_comp.setLayout(new GridBagLayout());
 		cc.update(0, 0, 1.0, 1.0);
@@ -137,6 +156,8 @@ class ResultDescriptor extends YesNoDescriptor implements
 		_comp.add(up_down_panel, cc);
 		cc.update(0, 2, 1.0, 1.0);
 		_comp.add(notknown_entries_scrpane, cc);
+		cc.update(0, 3, 1.0, 0.0);
+		_comp.add(_remove_always_quiz_flag_box, cc);
 
 		setContentPanel(_comp);
 	}

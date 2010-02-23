@@ -22,6 +22,7 @@ public class StatsUpdateAction extends QueryAction {
 	private final ArrayList<EditDictObjectAction> _entry_actions;
 	private boolean _update_batches = true;
 	private final Map<Entry, Integer> _user_flag_map;
+	private final Map<Entry, Integer> _removed_flag_map;
 
 	public StatsUpdateAction(Entry[] known_entries, Entry[] unknown_entries) {
 		super();
@@ -32,10 +33,15 @@ public class StatsUpdateAction extends QueryAction {
 		_now.set(Calendar.SECOND, 0);
 		_entry_actions = new ArrayList<EditDictObjectAction>();
 		_user_flag_map = new HashMap<Entry, Integer>();
+		_removed_flag_map = new HashMap<Entry, Integer>();
 	}
 
 	public void setUserFlag(Entry entry, int flag) {
 		_user_flag_map.put(entry, flag);
+	}
+	
+	public void removeUserFlag(Entry entry, int flag) {
+		_removed_flag_map.put(entry, flag);
 	}
 
 	public Entry[] getKnownEntries() {
@@ -104,6 +110,10 @@ public class StatsUpdateAction extends QueryAction {
 		}
 
 		/* Update flags */
+		if (_removed_flag_map.containsKey(entry)) {
+			new_entry.setUserFlags(new_entry.getUserFlags()
+					& ~_removed_flag_map.get(entry));
+		}
 		if (_user_flag_map.containsKey(entry)) {
 			new_entry.setUserFlags(_user_flag_map.get(entry));
 		}
