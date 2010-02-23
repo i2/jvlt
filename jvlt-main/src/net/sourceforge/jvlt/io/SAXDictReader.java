@@ -531,7 +531,7 @@ class StatsHandler extends AbstractHandler {
 			String mistakes = attributes.getValue("mistakes");
 			String last_queried = attributes.getValue("last-queried");
 			String date_added = attributes.getValue("date-added");
-			String last_result = attributes.getValue("last-quiz-result");
+			String last_result = attributes.getValue("last-result");
 			String flags = attributes.getValue("flags");
 			if (entry_id == null) {
 				throw getSAXException("invalid_xml",
