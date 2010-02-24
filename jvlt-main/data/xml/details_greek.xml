@@ -8,6 +8,7 @@
 	<class name="conjunction"/>
 	<class name="preposition"/>
 	<class name="expression"/>
+	<class name="interjection"/>
 	<attribute name="gender" classes="noun">
 		<choice name="feminine"/>
 		<choice name="masculine"/>

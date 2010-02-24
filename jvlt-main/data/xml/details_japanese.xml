@@ -5,6 +5,8 @@
 	<class name="adjective"/>
 	<class name="conjunction"/>
 	<class name="expression"/>
+	<class name="preposition"/>
+	<class name="interjection"/>
 	<attribute name="condform" classes="adjective;verb"/>
 	<attribute name="desuform" classes="adjective"/>
 	<attribute name="dictform" classes="verb"/>
