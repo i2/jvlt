@@ -35,11 +35,11 @@ public class JVLT {
 			Locale.GERMANY, new Locale("cs", "CZ"), new Locale("pl", "PL") };
 
 	private JVLTModel _model;
-	private static PropertyMap _runtime_properties;
-	private static Config _config = null;
+	private PropertyMap _runtime_properties;
+	private Config _config = null;
 
-	private static String _version = null;
-	private static String _data_version = null;
+	private String _version = null;
+	private String _data_version = null;
 
 	private static JVLT _instance;
 	static {
@@ -52,13 +52,13 @@ public class JVLT {
 	}
 
 	public static Config getConfig() {
-		return _config;
+		return _instance._config;
 	}
 
 	public void saveConfig() throws IOException {
 		String prop_file_name = configDir + File.separator + "config";
 		FileOutputStream fos = new FileOutputStream(prop_file_name);
-		_config.store(fos);
+		_instance._config.store(fos);
 	}
 
 	public static Locale[] getSupportedLocales() {
@@ -71,15 +71,15 @@ public class JVLT {
 	 * not stored in a config file.
 	 */
 	public static PropertyMap getRuntimeProperties() {
-		return _runtime_properties;
+		return _instance._runtime_properties;
 	}
 
 	public static String getVersion() {
-		return _version;
+		return _instance._version;
 	}
 
 	public static String getDataVersion() {
-		return _data_version;
+		return _instance._data_version;
 	}
 
 	public JVLT() {
