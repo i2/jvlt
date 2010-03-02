@@ -36,12 +36,17 @@ public class JVLT {
 
 	private JVLTModel _model;
 	private static PropertyMap _runtime_properties;
-	private static JVLT _instance = null;
 	private static Config _config = null;
 
 	private static String _version = null;
 	private static String _data_version = null;
 
+	private static JVLT _instance;
+	static {
+		_instance = new JVLT();
+		_instance.init();
+	}
+	
 	public static JVLT getInstance() {
 		return _instance;
 	}
@@ -80,7 +85,6 @@ public class JVLT {
 	public JVLT() {
 		_model = null;
 		_config = null;
-		_instance = this;
 		_runtime_properties = new PropertyMap();
 		configDir = getConfigPath();
 	}
@@ -91,48 +95,6 @@ public class JVLT {
 
 	public JVLTModel getModel() {
 		return _model;
-	}
-
-	public void init() {
-		// ----------
-		// Read version info
-		// ----------
-		InputStream xml_stream = JVLT.class
-				.getResourceAsStream("/xml/info.xml");
-		InputSource src = new InputSource(xml_stream);
-		XPathFactory fac = XPathFactory.newInstance();
-		XPath path = fac.newXPath();
-		try {
-			Node root = (Node) path.evaluate("/info", src, XPathConstants.NODE);
-			_version = path.evaluate("version", root);
-			_data_version = path.evaluate("data-version", root);
-		} catch (XPathExpressionException ex) {
-			logger.error(ex);
-		}
-
-		File dir = getOrBuildConfigDirectory(new File(configDir), new File(
-				OLD_CONFIG_DIR));
-
-		// ----------
-		// Read settings.
-		// ----------
-		_config = new Config();
-		try {
-			String prop_file_name = dir.getPath() + File.separator + "config";
-			FileInputStream fis = new FileInputStream(prop_file_name);
-			_config.load(fis);
-			fis.close();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-
-		_model = new JVLTModel();
-
-		// ----------
-		// Set locale.
-		// ----------
-		Locale loc = Locale.getDefault();
-		Locale.setDefault(_config.getLocaleProperty("locale", loc));
 	}
 
 	/**
@@ -202,5 +164,47 @@ public class JVLT {
 		}
 
 		return dir + File.separator + pathSuffix;
+	}
+	
+	private void init() {
+		// ----------
+		// Read version info
+		// ----------
+		InputStream xml_stream = JVLT.class
+				.getResourceAsStream("/xml/info.xml");
+		InputSource src = new InputSource(xml_stream);
+		XPathFactory fac = XPathFactory.newInstance();
+		XPath path = fac.newXPath();
+		try {
+			Node root = (Node) path.evaluate("/info", src, XPathConstants.NODE);
+			_version = path.evaluate("version", root);
+			_data_version = path.evaluate("data-version", root);
+		} catch (XPathExpressionException ex) {
+			logger.error(ex);
+		}
+
+		File dir = getOrBuildConfigDirectory(new File(configDir), new File(
+				OLD_CONFIG_DIR));
+
+		// ----------
+		// Read settings.
+		// ----------
+		_config = new Config();
+		try {
+			String prop_file_name = dir.getPath() + File.separator + "config";
+			FileInputStream fis = new FileInputStream(prop_file_name);
+			_config.load(fis);
+			fis.close();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+
+		_model = new JVLTModel();
+
+		// ----------
+		// Set locale.
+		// ----------
+		Locale loc = Locale.getDefault();
+		Locale.setDefault(_config.getLocaleProperty("locale", loc));
 	}
 }

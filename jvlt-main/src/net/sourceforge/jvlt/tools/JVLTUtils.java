@@ -34,9 +34,7 @@ public class JVLTUtils {
 	private Dict _dict;
 
 	public JVLTUtils() {
-		JVLT jvlt = new JVLT();
-		jvlt.init();
-		_model = jvlt.getModel();
+		_model = JVLT.getInstance().getModel();
 		_current_file = "";
 		_dict = null;
 	}

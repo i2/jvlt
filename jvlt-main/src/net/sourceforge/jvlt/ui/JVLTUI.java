@@ -151,7 +151,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private Dict _dict;
-	private final JVLT jvlt;
 	private final JVLTModel _model;
 	private Collection<Entry> _matched_entries;
 	private Collection<Example> _matched_examples;
@@ -172,11 +171,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private ErrorLogDialog _error_dialog;
 	private final boolean _is_mac;
 
-	public JVLTUI(JVLT jvlt, boolean is_on_mac) {
-		this.jvlt = jvlt;
+	public JVLTUI(boolean is_on_mac) {
 		_is_mac = is_on_mac;
 
-		_model = jvlt.getModel();
+		_model = JVLT.getInstance().getModel();
 		_matched_entries = null;
 		_matched_examples = null;
 		_recent_files = new LinkedList<String>();
@@ -865,7 +863,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		conf.setProperty("last_data_version", JVLT.getDataVersion());
 
 		try {
-			jvlt.saveConfig();
+			JVLT.getInstance().saveConfig();
 		} catch (IOException ex) {
 			logger.error("Failed to save configuration", ex);
 		}
@@ -1049,7 +1047,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void loadRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = jvlt.getConfigDir() + File.separator;
+		String home = JVLT.getInstance().getConfigDir() + File.separator;
 		XMLDecoder decoder;
 
 		try {
@@ -1111,7 +1109,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 	private void saveRuntimeProperties() {
 		Config conf = JVLT.getConfig();
-		String home = jvlt.getConfigDir() + File.separator;
+		String home = JVLT.getInstance().getConfigDir() + File.separator;
 		XMLEncoder encoder;
 
 		try {
@@ -1188,8 +1186,6 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	public static void main(String[] args) {
-		JVLT jvlt = new JVLT();
-		jvlt.init();
 		Config config = JVLT.getConfig();
 		boolean is_on_mac = false;
 		OSController controller = null;
@@ -1238,7 +1234,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			e.printStackTrace();
 		}
 
-		final JVLTUI ui = new JVLTUI(jvlt, is_on_mac);
+		final JVLTUI ui = new JVLTUI(is_on_mac);
 		if (controller != null) {
 			controller.setMainView(ui);
 		}

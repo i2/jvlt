@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.io.CSVDictReader;
 import net.sourceforge.jvlt.io.DictReaderException;
@@ -74,8 +73,6 @@ public class CSVImportTool {
 			return;
 		}
 
-		JVLT jvlt = new JVLT();
-		jvlt.init();
 		try {
 			Properties props = new Properties();
 			props.load(new FileInputStream(args[0]));

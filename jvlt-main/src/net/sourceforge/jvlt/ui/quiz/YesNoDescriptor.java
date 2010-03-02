@@ -6,7 +6,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.event.StateListener;
-import net.sourceforge.jvlt.event.StateListener.StateEvent;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.wizard.WizardModel;
