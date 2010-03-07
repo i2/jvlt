@@ -328,9 +328,8 @@ public class QuizModel extends WizardModel {
 				ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 				if (rd.getState() == YesNoPanel.YES_OPTION) {
 					StatsUpdateAction sua = createStatsUpdateAction(
-							rd.getKnownEntries(),
-							rd.getNotKnownEntries(),
-							rd.isRemoveAlwaysQuizFlag());
+							rd.getKnownEntries(), rd.getNotKnownEntries(),
+							rd.getAlwaysQuizFlagMap());
 					_model.getQueryModel().executeAction(sua);
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
@@ -409,18 +408,6 @@ public class QuizModel extends WizardModel {
 			}
 			rd.setKnownEntries(_known_entries);
 			rd.setNotKnownEntries(_notknown_entries);
-			
-			/*
-			 * If there is at least one known entry with the flag "Always quiz",
-			 * an option is offered to remove this flag for all known entries. 
-			 */
-			boolean show_remove_always_quiz_flag = false;
-			for (Entry e: _known_entries) {
-				if ((e.getUserFlags() & UserFlag.ALWAYS_QUIZ.getValue()) != 0) {
-					show_remove_always_quiz_flag = true;
-				}
-			}
-			rd.showRemoveAlwaysQuizFlag(show_remove_always_quiz_flag);
 		}
 
 		/* play audio */
@@ -450,12 +437,12 @@ public class QuizModel extends WizardModel {
 	public void saveQuizResults() {
 		Entry[] known;
 		Entry[] notknown;
-		boolean remove_always_quiz_flag = false;
+		Map<Entry, Boolean> always_quiz_flag_map = null;
 		if (_current_descriptor instanceof ResultDescriptor) {
 			ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 			known = rd.getKnownEntries();
 			notknown = rd.getNotKnownEntries();
-			remove_always_quiz_flag = rd.isRemoveAlwaysQuizFlag();
+			always_quiz_flag_map = rd.getAlwaysQuizFlagMap();
 		} else if (!_repeat_mode) {
 			known = _qdict.getKnownEntries();
 			notknown = _qdict.getNotKnownEntries();
@@ -464,8 +451,8 @@ public class QuizModel extends WizardModel {
 			notknown = _notknown_entries;
 		}
 
-		StatsUpdateAction sua = createStatsUpdateAction(known, notknown,
-				remove_always_quiz_flag);
+		StatsUpdateAction sua = createStatsUpdateAction(
+				known, notknown, always_quiz_flag_map);
 		_model.getQueryModel().executeAction(sua);
 	}
 
@@ -598,24 +585,21 @@ public class QuizModel extends WizardModel {
 	}
 
 	private StatsUpdateAction createStatsUpdateAction(Entry[] known,
-			Entry[] unknown, boolean remove_always_quiz_flag) {
+			Entry[] unknown, Map<Entry, Boolean> always_quiz_flag_map) {
 		StatsUpdateAction sua = new StatsUpdateAction(known, unknown);
-		sua
-				.setUpdateBatches(!_qdict.isIgnoreBatches()
-						|| JVLT.getConfig().getBooleanProperty(
-								"update_batches", false));
+		sua.setUpdateBatches(!_qdict.isIgnoreBatches() ||
+				JVLT.getConfig().getBooleanProperty("update_batches", false));
 		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
 
 		/* Store flags */
-		if (remove_always_quiz_flag) {
-			for (Entry e : known) {
-				if ((e.getUserFlags() & UserFlag.ALWAYS_QUIZ.getValue()) != 0) {
-					sua.removeUserFlag(e, UserFlag.ALWAYS_QUIZ.getValue());
-				}
-			}
-		}
 		for (Entry e : _flag_map.keySet()) {
 			sua.setUserFlag(e, _flag_map.get(e));
+		}
+		for (Map.Entry<Entry, Boolean> e: always_quiz_flag_map.entrySet()) {
+			if (e.getValue())
+				sua.setUserFlag(e.getKey(), UserFlag.ALWAYS_QUIZ.getValue());
+			else
+				sua.removeUserFlag(e.getKey(), UserFlag.ALWAYS_QUIZ.getValue());
 		}
 
 		return sua;
