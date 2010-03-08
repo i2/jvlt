@@ -8,7 +8,6 @@ import java.util.Vector;
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.StatsUpdateAction;
 import net.sourceforge.jvlt.core.Entry;
-import net.sourceforge.jvlt.core.Entry.Stats.UserFlag;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.metadata.Attribute;
@@ -329,7 +328,7 @@ public class QuizModel extends WizardModel {
 				if (rd.getState() == YesNoPanel.YES_OPTION) {
 					StatsUpdateAction sua = createStatsUpdateAction(
 							rd.getKnownEntries(), rd.getNotKnownEntries(),
-							rd.getAlwaysQuizFlagMap());
+							rd.getFlagMap());
 					_model.getQueryModel().executeAction(sua);
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
@@ -437,12 +436,12 @@ public class QuizModel extends WizardModel {
 	public void saveQuizResults() {
 		Entry[] known;
 		Entry[] notknown;
-		Map<Entry, Boolean> always_quiz_flag_map = null;
+		Map<Entry, Integer> flag_map = null;
 		if (_current_descriptor instanceof ResultDescriptor) {
 			ResultDescriptor rd = (ResultDescriptor) _current_descriptor;
 			known = rd.getKnownEntries();
 			notknown = rd.getNotKnownEntries();
-			always_quiz_flag_map = rd.getAlwaysQuizFlagMap();
+			flag_map = rd.getFlagMap();
 		} else if (!_repeat_mode) {
 			known = _qdict.getKnownEntries();
 			notknown = _qdict.getNotKnownEntries();
@@ -452,7 +451,7 @@ public class QuizModel extends WizardModel {
 		}
 
 		StatsUpdateAction sua = createStatsUpdateAction(
-				known, notknown, always_quiz_flag_map);
+				known, notknown, flag_map);
 		_model.getQueryModel().executeAction(sua);
 	}
 
@@ -585,21 +584,23 @@ public class QuizModel extends WizardModel {
 	}
 
 	private StatsUpdateAction createStatsUpdateAction(Entry[] known,
-			Entry[] unknown, Map<Entry, Boolean> always_quiz_flag_map) {
+			Entry[] unknown, Map<Entry, Integer> flag_map) {
 		StatsUpdateAction sua = new StatsUpdateAction(known, unknown);
 		sua.setUpdateBatches(!_qdict.isIgnoreBatches() ||
 				JVLT.getConfig().getBooleanProperty("update_batches", false));
 		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
 
-		/* Store flags */
+		/*
+		 * Store flags. First, the flags specified by the user during the quiz
+		 * are stored, afterwards those flags set in the result tables. 
+		 */
 		for (Entry e : _flag_map.keySet()) {
 			sua.setUserFlag(e, _flag_map.get(e));
 		}
-		for (Map.Entry<Entry, Boolean> e: always_quiz_flag_map.entrySet()) {
-			if (e.getValue())
-				sua.setUserFlag(e.getKey(), UserFlag.ALWAYS_QUIZ.getValue());
-			else
-				sua.removeUserFlag(e.getKey(), UserFlag.ALWAYS_QUIZ.getValue());
+		if (flag_map != null) {
+			for (Map.Entry<Entry, Integer> e: flag_map.entrySet()) {
+				sua.setUserFlag(e.getKey(), e.getValue());
+			}
 		}
 
 		return sua;

@@ -62,13 +62,11 @@ class ResultDescriptor extends YesNoDescriptor implements
 		updateLabels();
 	}
 	
-	public Map<Entry, Boolean> getAlwaysQuizFlagMap() {
-		Map<Entry, Boolean> always_quiz_flag_map =
-				_known_entries_table.getAlwaysQuizFlagMap();
-		always_quiz_flag_map.putAll(
-				_notknown_entries_table.getAlwaysQuizFlagMap());
+	public Map<Entry, Integer> getFlagMap() {
+		Map<Entry, Integer> flag_map = _known_entries_table.getFlagMap();
+		flag_map.putAll(_notknown_entries_table.getFlagMap());
 		
-		return always_quiz_flag_map;
+		return flag_map;
 	}
 
 	public void valueChanged(ListSelectionEvent e) {

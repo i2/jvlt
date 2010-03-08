@@ -24,32 +24,31 @@ public class ResultEntryTable extends JTable {
 		private static SensesAttribute sensesAttribute = new SensesAttribute();
 
 		private List<Entry> entries = new ArrayList<Entry>();
-		private Map<Entry, Boolean> alwaysQuizFlagMap =
-				new HashMap<Entry, Boolean>();
+		private Map<Entry, Integer> flagMap = new HashMap<Entry, Integer>();
 
 		@Override
 		public Class<?> getColumnClass(int column) {
 			if (column == 0 || column == 1)
 				return String.class;
-			else if (column == 2)
+			else if (isUserFlagColumn(column))
 				return Boolean.class;
 			else
 				return null;
 		}
 		
 		@Override
-		public int getColumnCount() { return 3; }
+		public int getColumnCount() { return 2 + UserFlag.values().length - 1; }
 
 		@Override
 		public String getColumnName(int column) {
-			switch (column) {
-			case 0:
+			if (column == 0) {
 				return GUIUtils.getString("Labels", "original");
-			case 1:
+			} else if (column == 1) {
 				return GUIUtils.getString("Labels", "meanings");
-			case 2:
-				return GUIUtils.getString("Labels", "flag_always_quiz_short");
-			default:
+			} else if (isUserFlagColumn(column)) {
+				return GUIUtils.getString("Labels",
+						UserFlag.values()[column-2+1].getShortName());
+			} else {
 				return null;
 			}
 		}
@@ -65,32 +64,40 @@ public class ResultEntryTable extends JTable {
 				return null;
 			
 			Entry e = entries.get(row);
-			switch (column) {
-			case 0:
+			if (column == 0) {
 				return e.getOrthography();
-			case 1:
+			} else if (column == 1) {
 				return sensesAttribute.getFormattedValue(e);
-			case 2:
-				if (alwaysQuizFlagMap.containsKey(e))
-					return alwaysQuizFlagMap.get(e);
-				else
-					return (e.getUserFlags() & UserFlag.ALWAYS_QUIZ.getValue())
-							!= 0;
-			default:
+			} else if (isUserFlagColumn(column)) {
+				if (flagMap.containsKey(e)) {
+					return (flagMap.get(e)
+							& UserFlag.values()[column-2+1].getValue()) != 0;
+				} else {
+					return (e.getUserFlags()
+							& UserFlag.values()[column-2+1].getValue()) != 0;
+				}
+			} else {
 				return null;
 			}
 		}
 		
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			return column == 2;
+			return isUserFlagColumn(column);
 		}
 		
 		@Override
 		public void setValueAt(Object object, int row, int column) {
-			if (column == 2) {
+			if (isUserFlagColumn(column)) {
 				Entry e = entries.get(row);
-				alwaysQuizFlagMap.put(e, (Boolean) object);
+				int flags = flagMap.containsKey(e) ? flagMap.get(e)
+						: e.getUserFlags();
+				if ((Boolean) object) {
+					flags |= UserFlag.values()[column-2+1].getValue();
+				} else {
+					flags &= ~UserFlag.values()[column-2+1].getValue();
+				}
+				flagMap.put(e, flags);
 			}
 		}
 		
@@ -110,8 +117,15 @@ public class ResultEntryTable extends JTable {
 		public void clear() {
 			int entriesSize = entries.size();
 			entries.clear();
-			if (entriesSize > 0)
+			if (entriesSize > 0) {
 				fireTableRowsDeleted(0, entriesSize - 1);
+			}
+			
+			flagMap.clear();
+		}
+		
+		private boolean isUserFlagColumn(int column) {
+			return column >= 2 && column < 2 + UserFlag.values().length - 1;
 		}
 	}
 	
@@ -161,9 +175,7 @@ public class ResultEntryTable extends JTable {
 			return null;
 	}
 	
-	public Map<Entry, Boolean> getAlwaysQuizFlagMap() {
-		return model.alwaysQuizFlagMap;
-	}
+	public Map<Entry, Integer> getFlagMap() { return model.flagMap; }
 	
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
