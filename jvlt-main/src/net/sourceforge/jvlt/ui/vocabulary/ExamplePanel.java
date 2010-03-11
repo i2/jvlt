@@ -136,7 +136,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		String[] dir_string = config.getStringListProperty(
 				"example_table_sorting", new String[] {
 						String.valueOf(dir.getColumn()),
-						String.valueOf(dir.getDirection()) });
+						String.valueOf(dir.getDirection().toInt()) });
 		if (dir_string.length == 2) {
 			try {
 				int col = Integer.parseInt(dir_string[0]);
