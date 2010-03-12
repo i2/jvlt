@@ -121,17 +121,6 @@ public class ExamplePanel extends JPanel implements ActionListener,
 				"example_table_column_names", new String[] { "Text" });
 		_table_model.setColumnNames(col_names);
 
-		double[] col_widths = config.getNumberListProperty(
-				"example_table_column_widths", new double[] { 50 });
-		if (col_widths.length != _table_model.getColumnCount()) {
-			return;
-		}
-
-		TableColumnModel col_model = _example_table.getColumnModel();
-		for (int i = 0; i < col_widths.length; i++) {
-			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
-		}
-
 		SortableTableModel.Directive dir = new SortableTableModel.Directive();
 		String[] dir_string = config.getStringListProperty(
 				"example_table_sorting", new String[] {
@@ -148,6 +137,21 @@ public class ExamplePanel extends JPanel implements ActionListener,
 			}
 		}
 		_table_model.setSortingDirective(dir);
+		
+		/*
+		 * Load column widths. This must be done after setting the sorting
+		 * directive, as otherwise the widths are reset.
+		 */
+		double[] col_widths = config.getNumberListProperty(
+				"example_table_column_widths", new double[] { 50 });
+		if (col_widths.length != _table_model.getColumnCount()) {
+			return;
+		}
+
+		TableColumnModel col_model = _example_table.getColumnModel();
+		for (int i = 0; i < col_widths.length; i++) {
+			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
+		}
 	}
 
 	public void objectSelected(SelectionEvent e) {

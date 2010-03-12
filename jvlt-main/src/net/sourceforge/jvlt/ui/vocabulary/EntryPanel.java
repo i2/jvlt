@@ -147,17 +147,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 						"Pronunciations", "Senses" });
 		_entry_table_model.setColumnNames(col_names);
 
-		double[] col_widths = config.getNumberListProperty(
-				"entry_table_column_widths", new double[] { 50, 50, 50 });
-		if (col_widths.length != _entry_table_model.getColumnCount()) {
-			return;
-		}
-
-		TableColumnModel col_model = _entry_table.getColumnModel();
-		for (int i = 0; i < col_widths.length; i++) {
-			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
-		}
-
 		SortableTableModel.Directive dir = new SortableTableModel.Directive();
 		String[] dir_string = config.getStringListProperty(
 				"entry_table_sorting", new String[] {
@@ -177,6 +166,21 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 		_entry_table.setArrowDirectionReversed(config.getBooleanProperty(
 				"entry_table_arrow_direction_reversed", false));
+
+		/*
+		 * Load column widths. This must be done after setting the sorting
+		 * directive, as otherwise the widths are reset.
+		 */
+		double[] col_widths = config.getNumberListProperty(
+				"entry_table_column_widths", new double[] { 50, 50, 50 });
+		if (col_widths.length != _entry_table_model.getColumnCount()) {
+			return;
+		}
+
+		TableColumnModel col_model = _entry_table.getColumnModel();
+		for (int i = 0; i < col_widths.length; i++) {
+			col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
+		}
 
 		// Load filter panel's state
 		_filter_panel.loadState();
