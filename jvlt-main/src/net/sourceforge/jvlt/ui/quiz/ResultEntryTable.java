@@ -36,7 +36,6 @@ public class ResultEntryTable extends JTable {
 				return null;
 		}
 		
-		@Override
 		public int getColumnCount() { return 2 + UserFlag.values().length - 1; }
 
 		@Override
@@ -53,12 +52,10 @@ public class ResultEntryTable extends JTable {
 			}
 		}
 		
-		@Override
 		public int getRowCount() {
 			return entries.size();
 		}
 
-		@Override
 		public Object getValueAt(int row, int column) {
 			if (row < 0 || row >= entries.size())
 				return null;
