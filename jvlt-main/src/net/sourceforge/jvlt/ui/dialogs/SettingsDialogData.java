@@ -114,7 +114,7 @@ public class SettingsDialogData extends CustomDialogData implements
 		Config config = JVLT.getConfig();
 
 		_old_fonts.put(FontKey.PRINT, config.getFontProperty("print_font"));
-		_old_fonts.put(FontKey.HTML, config.getFontProperty("print_font"));
+		_old_fonts.put(FontKey.HTML, config.getFontProperty("html_font"));
 		_old_fonts.put(FontKey.HTML_ORTH, config.getFontProperty("orth_font"));
 		_old_fonts.put(FontKey.HTML_PRON, config.getFontProperty("pron_font"));
 		_old_fonts.put(FontKey.UI, config.getFontProperty("ui_font"));
