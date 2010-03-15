@@ -160,7 +160,10 @@ public class CustomFieldPanel extends JPanel {
 
 		@Override
 		public boolean isCellEditable(EventObject evt) {
-			return ((MouseEvent) evt).getClickCount() >= 2;
+			if (evt instanceof MouseEvent)
+				return ((MouseEvent) evt).getClickCount() >= 2;
+			else
+				return false;
 		}
 	}
 
