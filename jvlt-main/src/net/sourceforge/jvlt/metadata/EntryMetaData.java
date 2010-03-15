@@ -107,6 +107,22 @@ public class EntryMetaData extends MetaData {
 
 			return elem;
 		}
+		
+		@Override
+		public String getFormattedValue(Object o) {
+			StringBuilder builder = new StringBuilder();
+			StringPair[] fields = (StringPair[]) getValue(o);
+			for (int i=0; i<fields.length; i++) {
+				if (i > 0)
+					builder.append(", ");
+				
+				builder.append(fields[i].getFirst());
+				builder.append(": ");
+				builder.append(fields[i].getSecond());
+			}
+			
+			return builder.toString(); 
+		}
 	}
 
 	private EntryAttributeSchema _schema = null;
