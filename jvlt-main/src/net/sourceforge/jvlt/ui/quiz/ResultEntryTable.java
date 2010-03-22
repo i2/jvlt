@@ -149,7 +149,7 @@ public class ResultEntryTable extends JTable {
 	public ResultEntryTable() {
 		model = new Model();
 		setModel(model);
-		setFillsViewportHeight(true);
+//		setFillsViewportHeight(true); Java 1.6
 	}
 	
 	public void addEntry(Entry e) { model.addEntry(e); }
