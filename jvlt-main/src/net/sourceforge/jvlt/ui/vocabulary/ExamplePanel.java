@@ -312,6 +312,8 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		_example_table = new SortableTable<Example>(_table_model);
 		_example_table.setCellRenderer("Text", ORIGINAL_RENDERER);
 		_example_table.getSelectionModel().addListSelectionListener(this);
+		_example_table.setShowTooltips(JVLT.getConfig().getBooleanProperty(
+				"Table.showTooltips", true));
 		_example_table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

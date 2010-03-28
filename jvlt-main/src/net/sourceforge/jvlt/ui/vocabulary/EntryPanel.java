@@ -323,6 +323,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_entry_table_model.setFormatValue(
 				EntryMetaData.UserFlagsAttribute.class, true);
 		_entry_table = new SortableTable<Entry>(_entry_table_model);
+		_entry_table.setShowTooltips(JVLT.getConfig().getBooleanProperty(
+				"Table.showTooltips", true));
+
 		_entry_table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

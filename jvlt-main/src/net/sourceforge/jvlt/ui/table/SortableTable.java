@@ -70,6 +70,7 @@ public class SortableTable<T extends Object> extends JTable implements
 	private final ImageIcon _up_arrow;
 	private final ImageIcon _down_arrow;
 	private boolean _arrow_direction_reversed;
+	private boolean _show_tooltips;
 
 	public SortableTable(SortableTableModel<T> model) {
 		super(model);
@@ -86,6 +87,7 @@ public class SortableTable<T extends Object> extends JTable implements
 				.getResource("/images/arrow_down.png"));
 
 		_arrow_direction_reversed = false;
+		_show_tooltips = true;
 
 		int height = getFontMetrics(getFont()).getHeight();
 		setRowHeight(height);
@@ -145,6 +147,10 @@ public class SortableTable<T extends Object> extends JTable implements
 
 	@Override
 	public String getToolTipText(MouseEvent event) {
+		if (!_show_tooltips) {
+			return null;
+		}
+			
 		int row = rowAtPoint(event.getPoint());
 		int col = columnAtPoint(event.getPoint());
 		Object o = _model.getValueAt(row, col);
@@ -165,6 +171,14 @@ public class SortableTable<T extends Object> extends JTable implements
 		}
 
 		return "<html>" + Utils.wrapString(o.toString(), "<br>") + "</html>";
+	}
+	
+	public boolean isShowTooltips() {
+		return _show_tooltips;
+	}
+	
+	public void setShowTooltips(boolean show) {
+		_show_tooltips = show;
 	}
 
 	public boolean isArrowDirectionReversed() {

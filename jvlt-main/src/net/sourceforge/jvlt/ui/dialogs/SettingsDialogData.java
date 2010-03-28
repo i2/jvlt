@@ -532,6 +532,8 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 		_table.getSelectionModel().addListSelectionListener(this);
 		_table.getSelectionModel().setSelectionMode(
 				ListSelectionModel.SINGLE_SELECTION);
+		_table.setShowTooltips(JVLT.getConfig().getBooleanProperty(
+				"Table.showTooltips", true));
 		JScrollPane scrpane = new JScrollPane();
 		scrpane.getViewport().setView(_table);
 		scrpane.setPreferredSize(new Dimension(250, 150));

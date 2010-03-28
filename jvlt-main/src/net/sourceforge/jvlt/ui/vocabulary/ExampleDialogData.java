@@ -263,6 +263,8 @@ public class ExampleDialogData extends CustomDialogData implements
 		_current_senses_table = new ExampleSenseTable(_example);
 		_current_senses_table.getSelectionModel()
 				.addListSelectionListener(this);
+		_current_senses_table.setShowTooltips(JVLT.getConfig()
+				.getBooleanProperty("Table.showTooltips", true));
 		JScrollPane current_senses_scrpane = new JScrollPane();
 		current_senses_scrpane.getViewport().setView(_current_senses_table);
 		_current_senses_label = new JLabel();
