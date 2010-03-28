@@ -7,3 +7,8 @@ letting you better memorize its usage.
 
 Further information can be found at http://jvlt.sourceforge.net
 
+Config file settings not adjustable via dialog:
+# Show tooltips in tables
+Table.showTooltips=true/false
+# Reverse arrows in entry table
+entry_table_arrow_direction_reversed=true/false
