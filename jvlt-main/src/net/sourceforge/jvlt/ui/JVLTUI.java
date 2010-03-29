@@ -861,6 +861,13 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		// Save current data version
 		conf.setProperty("last_data_version", JVLT.getDataVersion());
+		
+		// Save defaults for settings that cannot be configured
+		// via the settings dialog
+		if (!conf.containsKey("Table.showTooltips"))
+			conf.setProperty("Table.showTooltips", true);
+		if (!conf.containsKey("entry_table_arrow_direction_reversed"))
+			conf.setProperty("entry_table_arrow_direction_reversed", false);
 
 		try {
 			JVLT.getInstance().saveConfig();

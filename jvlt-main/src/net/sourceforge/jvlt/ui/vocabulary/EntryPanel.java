@@ -134,9 +134,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 				.arrayToString(new Integer[] { dir.getColumn(),
 						dir.getDirection().toInt() }));
 
-		config.setProperty("entry_table_arrow_direction_reversed", _entry_table
-				.isArrowDirectionReversed());
-
 		// Save filter panel's state
 		_filter_panel.saveState();
 	}
@@ -163,9 +160,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 			}
 		}
 		_entry_table_model.setSortingDirective(dir);
-
-		_entry_table.setArrowDirectionReversed(config.getBooleanProperty(
-				"entry_table_arrow_direction_reversed", false));
 
 		/*
 		 * Load column widths. This must be done after setting the sorting
@@ -325,6 +319,9 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_entry_table = new SortableTable<Entry>(_entry_table_model);
 		_entry_table.setShowTooltips(JVLT.getConfig().getBooleanProperty(
 				"Table.showTooltips", true));
+		_entry_table.setArrowDirectionReversed(JVLT.getConfig()
+				.getBooleanProperty("entry_table_arrow_direction_reversed",
+						false));
 
 		_entry_table.addMouseListener(new MouseAdapter() {
 			@Override
