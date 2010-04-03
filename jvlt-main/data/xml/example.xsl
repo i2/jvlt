@@ -93,6 +93,12 @@
 		</xsl:for-each>
 	</xsl:template>
 	
+	<xsl:template match="a">
+		<a href="{@href}" class="link">
+		<xsl:value-of disable-output-escaping="yes" select="."/>
+		</a>
+	</xsl:template>
+
 	<xsl:template match="*">
 		<xsl:element name="{name(.)}">
 			<xsl:apply-templates/>
