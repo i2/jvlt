@@ -60,7 +60,6 @@ public class ExampleDialogData extends CustomDialogData implements
 	private final Dict _dict;
 	private final EntryFilter _entry_filter;
 	private final StringQueryItem _entry_filter_item;
-	private final Entry.Comparator _entry_comparator = new Entry.Comparator();
 	/**
 	 * Index of the first character in the current selection (-1 if there is no
 	 * selection).
@@ -453,29 +452,20 @@ public class ExampleDialogData extends CustomDialogData implements
 		if (text == null || text.equals("")) {
 			_selected_senses_tree.clear();
 		} else {
+			/*
+			 * Add matching entries, even those already linked (in
+			 * order to allow linking the word more than once).
+			 */
 			List<Entry> entries = _entry_filter.getMatchingEntries(_dict
 					.getEntries());
 
 			ArrayList<Entry> entry_list = new ArrayList<Entry>();
 			for (Entry entry : entries) {
-				//
-				// only show entries that are not already contained in the
-				// example
-				//
-				boolean entryExists = false;
-				for (Sense sense : _example.getSenses()) {
-					if (_entry_comparator.compare(sense.getParent(), entry) == 0) {
-						entryExists = true;
-						break;
-					}
-				}
-				if (!entryExists) {
-					if (entry.getOrthography().equals(text)) {
-						// Put exact matches to the beginning of the list
-						entry_list.add(0, entry);
-					} else {
-						entry_list.add(entry);
-					}
+				if (entry.getOrthography().equals(text)) {
+					// Put exact matches to the beginning of the list
+					entry_list.add(0, entry);
+				} else {
+					entry_list.add(entry);
 				}
 			}
 			_selected_senses_tree.setEntries(entry_list.toArray(new Entry[0]));
