@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Example;
-import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.metadata.DefaultAttribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
@@ -13,8 +12,8 @@ import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
 import net.sourceforge.jvlt.utils.Utils;
 
-public class ExampleSenseTable extends SortableTable<Sense> {
-	private static class SenseMetaData extends MetaData {
+public class ExampleSenseTable extends SortableTable<Example.TextFragment> {
+	private static class TextFragmentMetaData extends MetaData {
 		private static class OriginalAttribute extends DefaultAttribute {
 			public OriginalAttribute() {
 				super("Original", String.class);
@@ -22,7 +21,8 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 
 			@Override
 			public Object getValue(Object o) {
-				return ((Sense) o).getParent().getOrthography();
+				Example.TextFragment f = (Example.TextFragment) o;
+				return f.getSense().getParent().getOrthography();
 			}
 		}
 
@@ -33,7 +33,8 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 
 			@Override
 			public Object getValue(Object o) {
-				return Utils.arrayToString(((Sense) o).getParent()
+				Example.TextFragment f = (Example.TextFragment) o;
+				return Utils.arrayToString(f.getSense().getParent()
 						.getPronunciations());
 			}
 		}
@@ -45,12 +46,13 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 
 			@Override
 			public Object getValue(Object o) {
-				return o.toString();
+				Example.TextFragment f = (Example.TextFragment) o;
+				return f.getSense().toString();
 			}
 		}
 
-		public SenseMetaData() {
-			super(Sense.class);
+		public TextFragmentMetaData() {
+			super(Example.TextFragment.class);
 		}
 
 		@Override
@@ -83,7 +85,8 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 	private Example example = null;
 
 	public ExampleSenseTable(Example example) {
-		super(new SortableTableModel<Sense>(new SenseMetaData()));
+		super(new SortableTableModel<Example.TextFragment>(
+				new TextFragmentMetaData()));
 
 		this.example = example;
 
@@ -94,18 +97,12 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 	}
 
 	public Example.TextFragment getSelectedTextFragment() {
-		List<Sense> senses = getSelectedObjects();
-		if (senses.size() == 0) {
+		List<Example.TextFragment> fragments = getSelectedObjects();
+		if (fragments.size() == 0) {
 			return null;
+		} else {
+			return fragments.get(0);
 		}
-
-		for (Example.TextFragment f : example.getTextFragments()) {
-			if (f.getSense() == senses.get(0)) {
-				return f;
-			}
-		}
-
-		return null;
 	}
 
 	public void update() {
@@ -113,7 +110,7 @@ public class ExampleSenseTable extends SortableTable<Sense> {
 
 		for (Example.TextFragment f : example.getTextFragments()) {
 			if (f.getSense() != null) {
-				_model.addObject(f.getSense());
+				_model.addObject(f);
 			}
 		}
 	}
