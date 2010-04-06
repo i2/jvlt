@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -217,11 +218,31 @@ public class ExampleDialogData extends CustomDialogData implements
 	protected void loadState(Config config) {
 		_content_pane.setPreferredSize(config.getDimensionProperty(
 				"ExampleDialog.size", new Dimension(500, 500)));
+		
+		/* restore column widths */
+		double[] col_widths = config.getNumberListProperty(
+				"ExampleDialog.SensesTable.columnWidths",
+				new double[] { 50, 50, 50 });
+		if (col_widths.length == _current_senses_table.getColumnCount()) {
+			TableColumnModel col_model = _current_senses_table.getColumnModel();
+			for (int i = 0; i < col_widths.length; i++) {
+				col_model.getColumn(i).setPreferredWidth((int) col_widths[i]);
+			}
+		}
 	}
 
 	@Override
 	protected void saveState(Config config) {
 		config.setProperty("ExampleDialog.size", _content_pane.getSize());
+		
+		/* save column widths */
+		Double[] col_widths = new Double[_current_senses_table.getColumnCount()];
+		TableColumnModel col_model = _current_senses_table.getColumnModel();
+		for (int i = 0; i < _current_senses_table.getColumnCount(); i++) {
+			col_widths[i] = new Double(col_model.getColumn(i).getWidth());
+		}
+		config.setProperty("ExampleDialog.SensesTable.columnWidths",
+						col_widths);
 	}
 
 	private void init() {
