@@ -231,6 +231,15 @@ class XMLFormatter {
 						def));
 			}
 
+			for (StringPair p : sense.getCustomFields()) {
+				Element field_elem = doc.createElement("custom-field");
+				field_elem.appendChild(XMLUtils.createTextElement(doc, "key",
+						p.getFirst()));
+				field_elem.appendChild(XMLUtils.createTextElement(doc, "value",
+						p.getSecond()));
+				sense_elem.appendChild(field_elem);
+			}
+
 			entry_elem.appendChild(sense_elem);
 		}
 

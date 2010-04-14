@@ -2,7 +2,7 @@
 <info>
 	<name>jVLT - Vocabulary Learning Tool</name>
 	<version>@VERSION@</version>
-	<data-version>1.3</data-version>
+	<data-version>1.4</data-version>
 	<developers>
 		<person>
 			<name>Henning Burchardt</name>

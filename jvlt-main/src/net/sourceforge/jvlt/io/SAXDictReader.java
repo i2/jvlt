@@ -346,11 +346,16 @@ class DictHandler extends AbstractHandler {
 				_current_entry.addCategory(getChars());
 			}
 		} else if (qname.equals("custom-field")) {
-			if (_current_entry != null && _current_custom_field != null
+			if (_current_custom_field != null
 					&& _current_custom_field[0] != null
 					&& _current_custom_field[1] != null) {
-				_current_entry.addCustomField(_current_custom_field[0],
-						_current_custom_field[1]);
+				if (_current_sense != null) {
+					_current_sense.addCustomField(_current_custom_field[0],
+							_current_custom_field[1]);
+				} else if (_current_entry != null) {
+					_current_entry.addCustomField(_current_custom_field[0],
+							_current_custom_field[1]);
+				}
 			}
 
 			_current_custom_field = null;

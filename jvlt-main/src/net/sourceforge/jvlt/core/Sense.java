@@ -1,5 +1,8 @@
 package net.sourceforge.jvlt.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Sense implements Comparable<Sense>, Reinitializable {
 	public static class Comparator implements java.util.Comparator<Sense> {
 		public int compare(Sense s1, Sense s2) {
@@ -17,11 +20,13 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 
 	private String _translation;
 	private String _definition;
+	private ArrayList<StringPair> _custom_fields;
 	private Entry _parent;
 
 	public Sense(String translation, String definition, Entry parent) {
 		_translation = translation;
 		_definition = definition;
+		_custom_fields = new ArrayList<StringPair>();
 		_parent = parent;
 	}
 
@@ -37,6 +42,7 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 		Sense sense = (Sense) obj;
 		_translation = sense._translation;
 		_definition = sense._definition;
+		_custom_fields = sense._custom_fields;
 		// Do not copy "_parent" because this attribute should not be changed.
 	}
 
@@ -46,6 +52,10 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 
 	public String getDefinition() {
 		return _definition;
+	}
+
+	public StringPair[] getCustomFields() {
+		return _custom_fields.toArray(new StringPair[0]);
 	}
 
 	public Entry getParent() {
@@ -83,6 +93,15 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 
 	public void setDefinition(String val) {
 		_definition = val;
+	}
+
+	public void setCustomFields(StringPair[] fields) {
+		_custom_fields.clear();
+		_custom_fields.addAll(Arrays.asList(fields));
+	}
+
+	public void addCustomField(String key, String value) {
+		_custom_fields.add(new StringPair(key, value));
 	}
 
 	public void setParent(Entry parent) {
@@ -126,10 +145,9 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 
 	@Override
 	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException ex) {
-			return null; // Should not happen.
-		}
+		Sense sense = new Sense(_translation, _definition, _parent);
+		sense._custom_fields.addAll(_custom_fields);
+		
+		return sense;
 	}
 }

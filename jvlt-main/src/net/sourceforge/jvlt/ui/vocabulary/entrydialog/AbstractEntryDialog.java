@@ -276,13 +276,13 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 		private final CustomAction addAction = GUIUtils.createTextAction(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Sense sense = new Sense();
-						SenseDialogData data = new SenseDialogData(
-								getCurrentEntry(), sense);
+						SenseDialogData data = new AddSenseDialogData(
+								model, getCurrentEntry());
 						int result = CustomDialog.showDialog(data,
 								getContentPane(), GUIUtils
 										.getLabelString("add_sense"));
 						if (result == AbstractDialog.OK_OPTION) {
+							Sense sense = data.getSense();
 							AddDictObjectAction action = new AddDictObjectAction(
 									sense);
 							meaningActions.add(action);
@@ -300,17 +300,16 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 							return;
 						}
 
-						Sense sense = (Sense) obj;
-						Sense clone = (Sense) sense.clone();
-						SenseDialogData data = new SenseDialogData(
-								getCurrentEntry(), clone);
+						Sense sense = meaningsMap.get((Sense) obj);
+						SenseDialogData data = new EditSenseDialogData(
+								model, sense);
 						int result = CustomDialog.showDialog(data,
 								getContentPane(), GUIUtils
 										.getLabelString("edit_sense"));
 						if (result == AbstractDialog.OK_OPTION) {
-							sense.reinit(clone);
+							Sense newSense = data.getSense();
 							EditDictObjectAction action = new EditDictObjectAction(
-									meaningsMap.get(sense), clone);
+									sense, newSense);
 							meaningActions.add(action);
 							meaningList.revalidate();
 							meaningList.repaint(meaningList.getVisibleRect());

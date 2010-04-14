@@ -19,6 +19,7 @@ import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
+import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.core.StringPair;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
@@ -30,17 +31,20 @@ import net.sourceforge.jvlt.metadata.ChoiceAttribute;
 import net.sourceforge.jvlt.metadata.EntryMetaData;
 import net.sourceforge.jvlt.metadata.ExampleMetaData;
 import net.sourceforge.jvlt.metadata.MetaData;
+import net.sourceforge.jvlt.metadata.SenseMetaData;
 
 import org.apache.log4j.Logger;
 
 public class DictModel extends AbstractModel {
 
 	private static final Logger logger = Logger.getLogger(DictModel.class);
+	private final SenseMetaData _sense_data;
 	private final EntryMetaData _entry_data;
 	private final ExampleMetaData _example_data;
 	private final LinkedList<DictUpdateListener> _dict_update_listeners;
 
 	public DictModel() {
+		_sense_data = new SenseMetaData();
 		_entry_data = new EntryMetaData();
 		_example_data = new ExampleMetaData();
 		_dict_update_listeners = new LinkedList<DictUpdateListener>();
@@ -83,6 +87,8 @@ public class DictModel extends AbstractModel {
 			return _entry_data;
 		} else if (cl.equals(Example.class)) {
 			return _example_data;
+		} else if (cl.equals(Sense.class)) {
+			return _sense_data;
 		} else {
 			return new MetaData(cl);
 		}
@@ -382,12 +388,15 @@ public class DictModel extends AbstractModel {
 				.getAttribute("CustomFields");
 		ChoiceAttribute lesson_attr = (ChoiceAttribute) _entry_data
 				.getAttribute("Lesson");
+		ChoiceAttribute sense_custom_fields_attr = (ChoiceAttribute) _sense_data
+				.getAttribute("CustomFields");
 
 		// Reset attributes
 		if (reset) {
 			categories_attr.setValues(new String[0]);
 			custom_fields_attr.setValues(new String[0]);
 			lesson_attr.setValues(new String[0]);
+			sense_custom_fields_attr.setValues(new String[0]);
 		}
 
 		// Add values
@@ -396,6 +405,12 @@ public class DictModel extends AbstractModel {
 			lesson_attr.addValues(new String[] { e.getLesson() });
 			for (StringPair p : e.getCustomFields()) {
 				custom_fields_attr.addValues(new String[] { p.getFirst() });
+			}
+			for (Sense s : e.getSenses()) {
+				for (StringPair p : s.getCustomFields()) {
+					sense_custom_fields_attr.addValues(
+							new String[] { p.getFirst() });
+				}
 			}
 		}
 	}

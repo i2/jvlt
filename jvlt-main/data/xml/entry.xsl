@@ -248,12 +248,25 @@
 	<xsl:if test="count(../Sense)>1">
 		<xsl:value-of select="position()"/>.
 	</xsl:if>
+	
+	<!-- Translation and definition -->
 	<xsl:if test="string(Definition)">
 		<span id="definition"><i>(<xsl:value-of disable-output-escaping="yes"
 			select="Definition"/>)</i></span>
 		<xsl:if test="string(Translation)">, </xsl:if>
 	</xsl:if>
 	<b><xsl:apply-templates select="Translation"/></b>
+	
+	<!-- Custom fields -->
+	<xsl:variable name="non_empty_fields"
+		select="CustomFields/item[string(value)]"/>
+	<xsl:if test="count($non_empty_fields)>0">
+		<xsl:call-template name="process-custom-fields">
+			<xsl:with-param name="non_empty_fields" select="$non_empty_fields"/>
+		</xsl:call-template>
+	</xsl:if>
+	
+	<!-- Examples -->
 	<xsl:variable name="entry-id" select="../../ID"/>
 	<xsl:variable name="sense-id" select="ID"/>
 	<xsl:for-each select="/Dict/Example[HTMLText//a/@href=$sense-id]">
