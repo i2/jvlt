@@ -300,16 +300,18 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 							return;
 						}
 
-						Sense sense = meaningsMap.get((Sense) obj);
+						Sense sense = (Sense) obj;
+						Sense origSense = meaningsMap.get(sense);
 						SenseDialogData data = new EditSenseDialogData(
-								model, sense);
+								model, origSense);
 						int result = CustomDialog.showDialog(data,
 								getContentPane(), GUIUtils
 										.getLabelString("edit_sense"));
 						if (result == AbstractDialog.OK_OPTION) {
 							Sense newSense = data.getSense();
+							sense.reinit(newSense);
 							EditDictObjectAction action = new EditDictObjectAction(
-									sense, newSense);
+									origSense, newSense);
 							meaningActions.add(action);
 							meaningList.revalidate();
 							meaningList.repaint(meaningList.getVisibleRect());

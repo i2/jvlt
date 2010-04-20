@@ -16,7 +16,8 @@ public class EditSenseDialogData extends SenseDialogData {
 	
 	@Override
 	protected void check(Sense sense) throws InvalidDataException {
-		if (_orig_sense.getParent().getSense(sense) != _orig_sense) {
+		Sense s = _orig_sense.getParent().getSense(sense);
+		if (s != null && s != _orig_sense) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"duplicate_sense"));
 		}
