@@ -1,23 +1,23 @@
 package net.sourceforge.jvlt.ui.vocabulary.entrydialog;
 
-import net.sourceforge.jvlt.core.Entry;
+import java.util.Collection;
+import java.util.Collections;
+
 import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class AddSenseDialogData extends SenseDialogData {
-	protected Entry _entry;
-	
-	public AddSenseDialogData(JVLTModel model, Entry entry) {
-		super(model, new Sense());
-		
-		_entry = entry;
+	public AddSenseDialogData(JVLTModel model,
+			Collection<Sense> existing_senses) {
+		super(model, existing_senses, new Sense());
 	}
 	
 	@Override
 	protected void check(Sense sense) throws InvalidDataException {
-		if (_entry.getSense(sense) != null) {
+		if (Collections.binarySearch(
+				_existing_senses, sense, new Sense.Comparator()) >= 0) {
 			throw new InvalidDataException(GUIUtils.getString("Messages",
 					"duplicate_sense"));
 		}

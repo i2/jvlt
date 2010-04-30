@@ -1,6 +1,10 @@
 package net.sourceforge.jvlt.ui.vocabulary.entrydialog;
 
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
@@ -19,14 +23,19 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 public abstract class SenseDialogData extends CustomDialogData {
 	protected final JVLTModel _model;
 	protected Sense _sense;
+	protected List<Sense> _existing_senses = new ArrayList<Sense>();
 
 	private CustomTextField _translation_field;
 	private CustomTextField _definition_field;
 	private CustomFieldPanel _custom_field_panel;
 
-	public SenseDialogData(JVLTModel model, Sense sense) {
+	public SenseDialogData(JVLTModel model, Collection<Sense> existing_senses,
+			Sense sense) {
 		_model = model;
 		_sense = sense;
+		
+		_existing_senses.addAll(existing_senses);
+		Collections.sort(_existing_senses, new Sense.Comparator());
 
 		init();
 	}
