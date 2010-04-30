@@ -277,7 +277,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						SenseDialogData data = new AddSenseDialogData(
-								model, meaningsMap.values());
+								model, meaningsMap.keySet());
 						int result = CustomDialog.showDialog(data,
 								getContentPane(), GUIUtils
 										.getLabelString("add_sense"));
@@ -302,7 +302,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 						Sense sense = (Sense) obj;
 						SenseDialogData data = new EditSenseDialogData(
-								model, meaningsMap.values(), sense);
+								model, meaningsMap.keySet(), sense);
 						int result = CustomDialog.showDialog(data,
 								getContentPane(), GUIUtils
 										.getLabelString("edit_sense"));
