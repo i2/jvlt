@@ -15,9 +15,9 @@ div.hbar {
 
 td.vbar {
 	background-color:#fde07f;
-    margin-left:10;
-    margin-right:10;
-    width:23;
+	margin-left:10;
+	margin-right:10;
+	width:23;
 }
 
 a.link {
@@ -33,3 +33,10 @@ a.selflink {
 span#definition {
 	color:#585858;
 }
+
+span#custom-field {
+	color:#326731;
+	font-style:italic;
+	font-weight:bold
+}
+

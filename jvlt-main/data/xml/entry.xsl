@@ -261,7 +261,7 @@
 	<xsl:variable name="non_empty_fields"
 		select="CustomFields/item[string(value)]"/>
 	<xsl:if test="count($non_empty_fields)>0">
-		<xsl:call-template name="process-custom-fields">
+		<xsl:call-template name="process-sense-custom-fields">
 			<xsl:with-param name="non_empty_fields" select="$non_empty_fields"/>
 		</xsl:call-template>
 	</xsl:if>
@@ -277,7 +277,24 @@
 	</xsl:for-each>
 	</div>
 </xsl:template>
-	
+
+<xsl:template name="process-sense-custom-fields">
+	<xsl:param name="non_empty_fields"/>
+	<table cellpadding="0" cellspacing="0" style="margin-top:2pt">
+	<xsl:for-each select="$non_empty_fields">
+		<tr>
+		<td width="14"/>
+		<td>
+		<span id="custom-field">
+		<xsl:value-of select="key"/>:
+		<xsl:value-of disable-output-escaping="yes" select="value"/>
+		</span>
+		</td>
+		</tr>
+	</xsl:for-each>
+	</table>
+</xsl:template>
+
 <xsl:template name="process-example">
 	<xsl:param name="example-node"/>
 	<xsl:param name="sense-id"/>
