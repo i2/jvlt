@@ -564,6 +564,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		cpane.add(_tab_pane, cc);
 		cc.update(0, 2, 1.0, 0.0);
 		cpane.add(status_bar, cc);
+		
+		//-----------
+		// Restore previous size
+		//-----------
+		cpane.setPreferredSize(JVLT.getConfig().getDimensionProperty(
+				"MainFrame.size", new Dimension(720, 590)));
 
 		// ----------
 		// Init data.
@@ -861,6 +867,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		// Save current data version
 		conf.setProperty("last_data_version", JVLT.getDataVersion());
+		
+		// Save main frame size
+		conf.setProperty("MainFrame.size", _main_frame.getSize());
 		
 		// Save defaults for settings that cannot be configured
 		// via the settings dialog
