@@ -39,7 +39,21 @@ public class AttributeChoice implements Comparable<AttributeChoice> {
 
 	@Override
 	public boolean equals(Object o) {
+		//Added by John Fan
+		if (o == null) {
+			return false;
+		}
+		if (! (o instanceof AttributeChoice)) {
+			return false;
+		}
+		
 		return compareTo((AttributeChoice) o) == 0;
+	}
+	
+	//Added by John Fan
+	@Override
+	public int hashCode() {
+		return this._name.hashCode();
 	}
 
 	@Override

@@ -41,8 +41,21 @@ public class SchemaAttribute implements Comparable<SchemaAttribute>, Cloneable {
 
 	@Override
 	public boolean equals(Object o) {
+		//Added by John Fan
+		if (o == null) {
+			return false;
+		}
+		if (! (o instanceof SchemaAttribute)) {
+			return false;
+		}
 		SchemaAttribute att = (SchemaAttribute) o;
 		return att._name.equals(_name) && att._group.equals(_group);
+	}
+	
+	//Added by John Fan
+	@Override
+	public int hashCode() {
+		return this._name.hashCode() + this._group.hashCode();
 	}
 
 	public int compareTo(SchemaAttribute attr) {

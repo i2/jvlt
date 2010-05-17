@@ -203,10 +203,21 @@ public class Example implements Reinitializable, Comparable<Example> {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		//Added by John Fan
+		if (o == null) {
+			return false;
+		}
+		
 		if (!(o instanceof Example)) {
 			return false;
 		}
 
 		return (compareTo((Example) o) == 0);
+	}
+	
+	//Added by John Fan
+	@Override
+	public int hashCode() {
+		return this._id.hashCode();
 	}
 }

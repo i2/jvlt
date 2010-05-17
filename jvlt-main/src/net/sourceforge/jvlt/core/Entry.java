@@ -435,6 +435,12 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 		}
 		return this.compareTo((Entry) o) == 0;
 	}
+	
+	//Added by John Fan
+	@Override
+	public int hashCode() {
+		return this._id.hashCode();
+	}
 
 	@Override
 	public String toString() {

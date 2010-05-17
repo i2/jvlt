@@ -55,7 +55,20 @@ public class DefaultAttribute implements Attribute,
 
 	@Override
 	public boolean equals(Object o) {
+		//Added by John Fan
+		if (o == null) {
+			return false;
+		}
+		if (! (o instanceof DefaultAttribute)) {
+			return false;
+		}
 		return _name.equals(((DefaultAttribute) o)._name);
+	}
+	
+	//Added by John Fan
+	@Override
+	public int hashCode() {
+		return this._name.hashCode();
 	}
 
 	protected Object getValue(Object o, String name) {
