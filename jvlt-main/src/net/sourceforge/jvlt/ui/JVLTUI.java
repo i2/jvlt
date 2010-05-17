@@ -869,7 +869,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		conf.setProperty("last_data_version", JVLT.getDataVersion());
 		
 		// Save main frame size
-		conf.setProperty("MainFrame.size", _main_frame.getSize());
+		conf.setProperty("MainFrame.size", _main_frame.getContentPane()
+				.getSize());
 		
 		// Save defaults for settings that cannot be configured
 		// via the settings dialog
