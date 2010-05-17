@@ -52,12 +52,6 @@ public class SchemaAttribute implements Comparable<SchemaAttribute>, Cloneable {
 		return att._name.equals(_name) && att._group.equals(_group);
 	}
 	
-	//Added by John Fan
-	@Override
-	public int hashCode() {
-		return this._name.hashCode() + this._group.hashCode();
-	}
-
 	public int compareTo(SchemaAttribute attr) {
 		if (!_name.equals(attr._name)) {
 			return _name.compareTo(attr._name);

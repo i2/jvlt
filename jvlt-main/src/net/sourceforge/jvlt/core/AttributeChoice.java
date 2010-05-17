@@ -50,12 +50,6 @@ public class AttributeChoice implements Comparable<AttributeChoice> {
 		return compareTo((AttributeChoice) o) == 0;
 	}
 	
-	//Added by John Fan
-	@Override
-	public int hashCode() {
-		return this._name.hashCode();
-	}
-
 	@Override
 	public String toString() {
 		return _name;

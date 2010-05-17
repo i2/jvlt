@@ -91,13 +91,6 @@ public class Sense implements Comparable<Sense>, Reinitializable {
 
 		return (compareTo((Sense) o) == 0);
 	}
-	
-	//Added by John Fan
-	@Override
-	public int hashCode() {
-		return this._translation.hashCode() + this._definition.hashCode()
-				+ this._custom_fields.size();
-	}
 
 	public void setTranslation(String val) {
 		_translation = val;

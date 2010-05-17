@@ -214,10 +214,4 @@ public class Example implements Reinitializable, Comparable<Example> {
 
 		return (compareTo((Example) o) == 0);
 	}
-	
-	//Added by John Fan
-	@Override
-	public int hashCode() {
-		return this._id.hashCode();
-	}
 }
