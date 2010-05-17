@@ -283,7 +283,6 @@
 	<table cellpadding="0" cellspacing="0" style="margin-top:2pt">
 	<xsl:for-each select="$non_empty_fields">
 		<tr>
-		<td width="14"/>
 		<td>
 		<span id="custom-field">
 		<xsl:value-of select="key"/>:
