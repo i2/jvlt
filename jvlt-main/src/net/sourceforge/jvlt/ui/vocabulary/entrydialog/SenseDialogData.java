@@ -4,6 +4,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -11,6 +12,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.core.StringPair;
 import net.sourceforge.jvlt.metadata.ChoiceAttribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
@@ -92,9 +94,20 @@ public abstract class SenseDialogData extends CustomDialogData {
 		_translation_field.setText(_sense.getTranslation());
 		_definition_field.setText(_sense.getDefinition());
 		MetaData data = _model.getDictModel().getMetaData(Sense.class);
+		
 		ChoiceAttribute custom_field_attr =
 			(ChoiceAttribute) data.getAttribute("CustomFields");
-		_custom_field_panel.setChoices(custom_field_attr.getValues());
 		_custom_field_panel.setKeyValuePairs(_sense.getCustomFields());
+		
+		HashSet<String> choices = new HashSet<String>();
+		for (Object o: custom_field_attr.getValues()) {
+			choices.add(o.toString());
+		}
+		for (Sense s: _existing_senses) {
+			for (StringPair p: s.getCustomFields()) {
+				choices.add(p.getFirst());
+			}
+		}
+		_custom_field_panel.setChoices(choices.toArray(new String[0]));
 	}
 }
