@@ -19,7 +19,24 @@ import org.w3c.dom.Document;
 
 public class XSLTransformer {
 	private Transformer _transformer = null;
+	
+	public XSLTransformer(String file) {
+		try {
+			InputStream stream = getClass().getResourceAsStream(file);
 
+			/* make relative paths in XSL files work */
+			String systemId = getClass().getResource(file).toExternalForm();
+			
+			StreamSource styleSrc = new StreamSource(stream, systemId);
+			
+			TransformerFactory factory = TransformerFactory.newInstance();
+			_transformer = factory.newTransformer(styleSrc);
+			_transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public XSLTransformer(InputStream stream) {
 		try {
 			StreamSource stylesrc = new StreamSource(stream);

@@ -2,7 +2,6 @@ package net.sourceforge.jvlt.ui.vocabulary;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.io.InputStream;
 import java.net.URL;
 
 import javax.swing.JEditorPane;
@@ -68,9 +67,7 @@ public class InfoPanel extends JPanel implements DictUpdateListener,
 	}
 
 	protected XSLTransformer createTransformer(String file) {
-		InputStream stream = EntryInfoPanel.class.getResourceAsStream(file);
-
-		return new XSLTransformer(stream);
+		return new XSLTransformer(file);
 	}
 
 	private void init() {

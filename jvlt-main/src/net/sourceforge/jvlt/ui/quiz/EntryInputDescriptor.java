@@ -18,6 +18,7 @@ import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.ui.vocabulary.EntryInfoPanel;
 
 class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 		ChangeListener {
@@ -28,6 +29,8 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 
 	public EntryInputDescriptor(QuizModel m, SelectionNotifier n) {
 		super(m, n);
+		
+		_info_panel.setMode(EntryInfoPanel.Mode.QUIZ);
 	}
 
 	@Override

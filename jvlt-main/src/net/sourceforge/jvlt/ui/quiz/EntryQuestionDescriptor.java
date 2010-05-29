@@ -8,12 +8,15 @@ import javax.swing.JPanel;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.ui.vocabulary.EntryInfoPanel;
 
 class EntryQuestionDescriptor extends EntryDescriptor {
 	private JLabel _lbl;
 
 	public EntryQuestionDescriptor(QuizModel m, SelectionNotifier n) {
 		super(m, n);
+		
+		_info_panel.setMode(EntryInfoPanel.Mode.QUIZ);
 	}
 
 	@Override

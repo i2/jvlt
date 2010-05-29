@@ -25,19 +25,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class EntryInfoPanel extends InfoPanel {
+	public enum Mode { NORMAL, QUIZ };
 
 	private static final Logger logger = Logger.getLogger(EntryInfoPanel.class);
 	private static final long serialVersionUID = 1L;
 
-	private final XSLTransformer _entry_transformer;
-	private Entry _current_entry = null;
+	private final XSLTransformer _default_transformer;
+	private final XSLTransformer _quiz_transformer;
 	private final Vector<Attribute> _entry_attributes = new Vector<Attribute>();
 	private final Vector<Attribute> _example_attributes = new Vector<Attribute>();
+	
+	private Entry _current_entry = null;
+	private Mode _mode = Mode.NORMAL;
 
 	public EntryInfoPanel(JVLTModel model, SelectionNotifier notifier) {
 		super(model, notifier);
 
-		_entry_transformer = createTransformer("/xml/entry.xsl");
+		_default_transformer = createTransformer("/xml/entry.xsl");
+		_quiz_transformer = createTransformer("/xml/entry-quiz.xsl");
 		MetaData entry_data = model.getDictModel().getMetaData(Entry.class);
 		_entry_attributes.addAll(Arrays.asList(entry_data.getAttributes()));
 		MetaData example_data = model.getDictModel().getMetaData(Example.class);
@@ -51,6 +56,14 @@ public class EntryInfoPanel extends InfoPanel {
 	public void setEntry(Entry entry) {
 		_current_entry = entry;
 		updateView();
+	}
+	
+	public Mode getMode() {
+		return _mode;
+	}
+	
+	public void setMode(Mode mode) {
+		_mode = mode;
 	}
 
 	public void setDisplayedEntryAttributes(String[] attr_names) {
@@ -163,7 +176,9 @@ public class EntryInfoPanel extends InfoPanel {
 			// catch (java.io.IOException e) { e.printStackTrace(); }
 		}
 
-		String html = _entry_transformer.transform(doc);
+		String html = _mode == Mode.NORMAL
+				? _default_transformer.transform(doc)
+				: _quiz_transformer.transform(doc);
 		// Because of a bug in JEditorPane, the content-type meta tag causes
 		// an error. Therefore, all meta tags are removed.
 		Pattern p = Pattern.compile("<META[^>]+>");
