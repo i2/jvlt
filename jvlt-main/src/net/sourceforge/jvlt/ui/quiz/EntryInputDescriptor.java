@@ -54,7 +54,12 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 			return new String[0];
 		}
 
-		String answer[] = text.split(answers_delimiter);
+		String[] answer;
+		if (_questions == 1) {
+			answer = new String[] { text };
+		} else {
+			answer = text.split(answers_delimiter);
+		}
 
 		// Strip leading and trailing blank spaces
 		for (int i = 0; i < answer.length; i++) {
