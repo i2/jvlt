@@ -1,10 +1,7 @@
 package net.sourceforge.jvlt.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -34,7 +31,6 @@ import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.Utils;
 import net.sourceforge.jvlt.utils.XMLUtils;
-import net.sourceforge.jvlt.utils.XSLTransformer;
 
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
@@ -43,7 +39,22 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SAXDictReader extends DictReader {
-
+	static class NonCloseableZipInputStream extends ZipInputStream {
+		NonCloseableZipInputStream(InputStream is) {
+			super(is);
+		}
+		
+		public void close() throws IOException {
+			// Do nothing. Solves the problem that SAXParser closes the stream
+			// after reading it.
+		}
+		
+		public void doClose() throws IOException {
+			// Really close
+			super.close();
+		}
+	}
+	
 	public SAXDictReader(String version) {
 		super(version);
 	}
@@ -53,39 +64,27 @@ public class SAXDictReader extends DictReader {
 	}
 
 	@Override
-	public void read(File file) throws DictReaderException, IOException {
+	public void read(InputStream stream) throws DictReaderException,
+			IOException {
 		_dict = new Dict();
-		ZipFile zipfile = new ZipFile(file);
-		ZipEntry dict_entry = zipfile.getEntry("dict.xml");
-		ZipEntry stats_entry = zipfile.getEntry("stats.xml");
-		if (dict_entry == null || stats_entry == null) {
-			String message = "File " + file.getName()
-					+ " has invalid file format.";
-			throw new IOException(message);
-		}
-
-		InputStream dict_stream = zipfile.getInputStream(dict_entry);
-		InputStream stats_stream = zipfile.getInputStream(stats_entry);
-		String dataversion = JVLT.getDataVersion();
-		if (_version.compareTo(dataversion) < 0) {
-			InputStream dict_xslt = SAXDictReader.class
-					.getResourceAsStream("/xml/transform-dict-" + dataversion
-							+ ".xsl");
-			InputStream stats_xslt = SAXDictReader.class
-					.getResourceAsStream("/xml/transform-stats-" + dataversion
-							+ ".xsl");
-			if (dict_xslt != null && stats_xslt != null) {
-				dict_stream = transform(dict_xslt, dict_stream);
-				stats_stream = transform(stats_xslt, stats_stream);
-				// Transformation was successful. Now we can set the version
-				// to the current version.
-				_version = JVLT.getDataVersion();
+		NonCloseableZipInputStream zis = new NonCloseableZipInputStream(stream);
+		
+		try {
+			for (int i=0; i<2; i++) {
+				ZipEntry entry = zis.getNextEntry();
+				if (entry == null) {
+					throw new IOException("Invalid file format");
+				} else if (entry.getName().equals("dict.xml")) {
+					readDict(zis);
+				} else if (entry.getName().equals("stats.xml")) {
+					readStats(zis);
+				} else {
+					throw new IOException("Invalid file format");
+				}
 			}
+		} finally {
+			zis.doClose();
 		}
-
-		readDict(dict_stream);
-		readStats(stats_stream);
-		zipfile.close();
 	}
 
 	protected void readDict(InputStream stream) throws DictReaderException {
@@ -127,19 +126,6 @@ public class SAXDictReader extends DictReader {
 			ex.printStackTrace();
 			throw new DictReaderException(GUIUtils.getString("Messages",
 					"invalid_xml"), ex.getMessage());
-		}
-	}
-
-	private InputStream transform(InputStream ts, InputStream is) {
-		if (ts == null) {
-			return is;
-		}
-		XSLTransformer transformer = new XSLTransformer(ts);
-		String result = transformer.transform(is);
-		try {
-			return new ByteArrayInputStream(result.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			return is;
 		}
 	}
 }

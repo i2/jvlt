@@ -1,6 +1,7 @@
 package net.sourceforge.jvlt.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -159,13 +160,18 @@ public class JVLTModel implements UndoableActionListener,
 		}
 
 		DictReader reader = new SAXDictReader(version);
-		reader.read(file);
-		_dict = reader.getDict();
-		_dict_file_name = dict_file_name;
-
-		_query_model.setDict(_dict);
-		// This causes a DictUpdateEvent:
-		_dict_model.setDict(_dict);
+		FileInputStream in = new FileInputStream(file);
+		try {
+			reader.read(in);
+			_dict = reader.getDict();
+			_dict_file_name = dict_file_name;
+	
+			_query_model.setDict(_dict);
+			// This causes a DictUpdateEvent:
+			_dict_model.setDict(_dict);
+		} finally {
+			in.close();
+		}
 	}
 
 	public void load(String dict_file_name) throws DictReaderException,

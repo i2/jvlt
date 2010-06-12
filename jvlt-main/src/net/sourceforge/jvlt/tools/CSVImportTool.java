@@ -1,6 +1,5 @@
 package net.sourceforge.jvlt.tools;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,8 +54,13 @@ public class CSVImportTool {
 
 	public Dict readDict(String filename) throws DictReaderException,
 			IOException {
-		_reader.read(new File(filename));
-		return _reader.getDict();
+		FileInputStream in = new FileInputStream(filename);
+		try {
+			_reader.read(in);
+			return _reader.getDict();
+		} finally {
+			in.close();
+		}
 	}
 
 	public void writeDict(Dict dict, String filename) throws IOException {

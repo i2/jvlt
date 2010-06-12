@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -302,8 +303,9 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 			reader = new SAXDictReader();
 		}
 
+		FileInputStream in = new FileInputStream(f);
 		try {
-			reader.read(f);
+			reader.read(in);
 			_dict = reader.getDict();
 			return _dict;
 		} catch (DictReaderException e) {
@@ -331,12 +333,16 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 					MessageDialog.OK_CANCEL_OPTION, text);
 			if (result == MessageDialog.OK_OPTION) {
 				reader = new SAXDictReader(ve.getVersion());
-				reader.read(f);
+				in.close();
+				in = new FileInputStream(f);
+				reader.read(in);
 				_dict = reader.getDict();
 				return _dict;
 			}
 			throw e;
-		} // catch
+		} finally {
+			in.close();
+		}
 	}
 
 	public void loadState() {

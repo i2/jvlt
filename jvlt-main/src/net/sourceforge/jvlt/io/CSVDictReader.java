@@ -1,9 +1,8 @@
 package net.sourceforge.jvlt.io;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -109,7 +108,8 @@ public class CSVDictReader extends DictReader {
 	}
 
 	@Override
-	public void read(File file) throws DictReaderException, IOException {
+	public void read(InputStream stream) throws DictReaderException,
+			IOException {
 		_dict = new Dict();
 		_duplicate_entries.clear();
 		_example_map.clear();
@@ -118,8 +118,7 @@ public class CSVDictReader extends DictReader {
 		} catch (DictException e) {
 			throw new DictReaderException("No such language: " + _language);
 		}
-		FileInputStream fis = new FileInputStream(file);
-		InputStreamReader isr = new InputStreamReader(fis, _charset);
+		InputStreamReader isr = new InputStreamReader(stream, _charset);
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> fields = new ArrayList<String>();
 		String msg = GUIUtils.getString("Messages", "invalid_file_format");
