@@ -10,7 +10,7 @@ import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
 import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Logger;
 
@@ -98,7 +98,7 @@ public class AddEntryDialog extends AbstractEntryDialog {
 
 		// Create and execute action
 		AddDictObjectAction action = new AddDictObjectAction(getCurrentEntry());
-		action.setMessage(GUIUtils.getString("Actions", "add_entry"));
+		action.setMessage(I18nService.getString("Actions", "add_entry"));
 		model.getDictModel().executeAction(action);
 	}
 }

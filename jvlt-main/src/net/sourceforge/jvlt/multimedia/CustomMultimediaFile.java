@@ -1,7 +1,8 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.multimedia;
 
 import java.io.File;
 import java.io.IOException;
+
 
 public class CustomMultimediaFile extends MultimediaFile {
 	private String _command;

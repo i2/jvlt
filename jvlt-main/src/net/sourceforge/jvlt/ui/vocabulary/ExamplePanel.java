@@ -48,7 +48,8 @@ import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class ExamplePanel extends JPanel implements ActionListener,
@@ -62,7 +63,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 	static {
 		Font font;
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
-		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_orth_font");
 		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
 		}
@@ -98,7 +99,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		updateActions();
 	}
 
-	public void saveState(Config config) {
+	public void saveState(UIConfig config) {
 		String[] columns = _table_model.getColumnNames();
 		config.setProperty("example_table_column_names", columns);
 
@@ -116,7 +117,7 @@ public class ExamplePanel extends JPanel implements ActionListener,
 						dir.getDirection().toInt() }));
 	}
 
-	public void loadState(Config config) {
+	public void loadState(UIConfig config) {
 		String[] col_names = config.getStringListProperty(
 				"example_table_column_names", new String[] { "Text" });
 		_table_model.setColumnNames(col_names);
@@ -189,12 +190,12 @@ public class ExamplePanel extends JPanel implements ActionListener,
 		if (e.getActionCommand().equals("add")) {
 			Example new_example = new Example(_dict.getNextUnusedExampleID());
 			ExampleDialogData data = new ExampleDialogData(new_example, _dict);
-			int result = CustomDialog.showDialog(data, this, GUIUtils
+			int result = CustomDialog.showDialog(data, this, I18nService
 					.getString("Labels", "add_example"));
 			if (result == AbstractDialog.OK_OPTION) {
 				AddDictObjectAction action = new AddDictObjectAction(
 						new_example);
-				action.setMessage(GUIUtils.getString("Actions", "add_example"));
+				action.setMessage(I18nService.getString("Actions", "add_example"));
 				_model.getDictModel().executeAction(action);
 			}
 		} else if (e.getActionCommand().equals("edit")) {
@@ -203,14 +204,14 @@ public class ExamplePanel extends JPanel implements ActionListener,
 			}
 		} else if (e.getActionCommand().equals("remove")) {
 			if (_current_examples.size() > 0) {
-				int result = JOptionPane.showConfirmDialog(this, GUIUtils
-						.getString("Messages", "remove_examples"), GUIUtils
+				int result = JOptionPane.showConfirmDialog(this, I18nService
+						.getString("Messages", "remove_examples"), I18nService
 						.getString("Labels", "confirm"),
 						JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
 					RemoveExamplesAction action = new RemoveExamplesAction(
 							_current_examples);
-					action.setMessage(GUIUtils.getString("Actions",
+					action.setMessage(I18nService.getString("Actions",
 							"remove_example"));
 					_model.getDictModel().executeAction(action);
 				}
@@ -375,12 +376,12 @@ public class ExamplePanel extends JPanel implements ActionListener,
 	private void editExample(Example example) {
 		Example new_data = (Example) example.clone();
 		ExampleDialogData data = new ExampleDialogData(new_data, _dict);
-		int result = CustomDialog.showDialog(data, this, GUIUtils.getString(
+		int result = CustomDialog.showDialog(data, this, I18nService.getString(
 				"Labels", "edit_example"));
 		if (result == AbstractDialog.OK_OPTION) {
 			EditDictObjectAction action = new EditDictObjectAction(example,
 					new_data);
-			action.setMessage(GUIUtils.getString("Actions", "edit_example"));
+			action.setMessage(I18nService.getString("Actions", "edit_example"));
 			_model.getDictModel().executeAction(action);
 		}
 	}

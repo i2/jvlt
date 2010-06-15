@@ -12,14 +12,14 @@ import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.quiz.QueryResult;
 import net.sourceforge.jvlt.quiz.QuizDict;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.wizard.Wizard;
 import net.sourceforge.jvlt.ui.wizard.WizardModel;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
-import net.sourceforge.jvlt.utils.MultimediaUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Logger;
 
@@ -106,11 +106,11 @@ public class QuizModel extends WizardModel {
 	public String getButtonText(String button_command) {
 		if (_current_descriptor.getID().equals("stats")) {
 			if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				return GUIUtils.getString("Actions", "start");
+				return I18nService.getString("Actions", "start");
 			}
 		} else {
 			if (button_command.equals(Wizard.CANCEL_COMMAND)) {
-				return GUIUtils.getString("Actions", "finish");
+				return I18nService.getString("Actions", "finish");
 			}
 		}
 
@@ -188,11 +188,11 @@ public class QuizModel extends WizardModel {
 			int words = _qdict.getResultCount();
 			int known = _qdict.getKnownEntries().length;
 			int not_known = words - known;
-			ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+			ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 					"Labels", "num_words"));
 			String s = formatter.format(words);
 
-			return GUIUtils.getString("Messages", "quizzed_words",
+			return I18nService.getString("Messages", "quizzed_words",
 					new Object[] { s, known, not_known });
 		}
 		return super.getStatusString();
@@ -588,7 +588,7 @@ public class QuizModel extends WizardModel {
 		StatsUpdateAction sua = new StatsUpdateAction(known, unknown);
 		sua.setUpdateBatches(!_qdict.isIgnoreBatches() ||
 				JVLT.getConfig().getBooleanProperty("update_batches", false));
-		sua.setMessage(GUIUtils.getString("Actions", "save_quiz_results"));
+		sua.setMessage(I18nService.getString("Actions", "save_quiz_results"));
 
 		/*
 		 * Store flags. First, the flags specified by the user during the quiz

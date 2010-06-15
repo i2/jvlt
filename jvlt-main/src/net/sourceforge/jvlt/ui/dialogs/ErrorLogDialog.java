@@ -18,6 +18,7 @@ import javax.swing.KeyStroke;
 
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -31,7 +32,7 @@ public class ErrorLogDialog extends JDialog {
 	final JTextArea _text_area = new JTextArea();
 
 	public ErrorLogDialog(Frame parent) {
-		super(parent, GUIUtils.getString("Labels", "error_log"), false);
+		super(parent, I18nService.getString("Labels", "error_log"), false);
 
 		Logger.getRootLogger().addAppender(new TextAreaAppender());
 		_text_area.setEditable(false);

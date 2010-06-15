@@ -45,6 +45,11 @@ import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.metadata.DefaultAttribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.AudioFile;
+import net.sourceforge.jvlt.multimedia.CustomMultimediaFile;
+import net.sourceforge.jvlt.multimedia.ImageFile;
+import net.sourceforge.jvlt.multimedia.MultimediaFile;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.ui.components.AttributeSelectionPanel;
 import net.sourceforge.jvlt.ui.components.ButtonPanel;
 import net.sourceforge.jvlt.ui.components.CustomTabbedPane;
@@ -58,14 +63,10 @@ import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.FontInfo;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.AudioFile;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
-import net.sourceforge.jvlt.utils.Config;
-import net.sourceforge.jvlt.utils.CustomMultimediaFile;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.FileUtils;
-import net.sourceforge.jvlt.utils.ImageFile;
-import net.sourceforge.jvlt.utils.MultimediaFile;
-import net.sourceforge.jvlt.utils.MultimediaUtils;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class SettingsDialogData extends CustomDialogData implements
@@ -111,7 +112,7 @@ public class SettingsDialogData extends CustomDialogData implements
 
 	public SettingsDialogData(JVLTModel model) {
 		_model = model;
-		Config config = JVLT.getConfig();
+		UIConfig config = (UIConfig) JVLT.getConfig();
 
 		_old_fonts.put(FontKey.PRINT, config.getFontProperty("print_font"));
 		_old_fonts.put(FontKey.HTML, config.getFontProperty("html_font"));
@@ -211,7 +212,7 @@ public class SettingsDialogData extends CustomDialogData implements
 					.getValue().getFont());
 		}
 
-		Config config = JVLT.getConfig();
+		UIConfig config = (UIConfig) JVLT.getConfig();
 		config.setProperty("print_font", new_fonts.get(FontKey.PRINT));
 		config.setProperty("html_font", new_fonts.get(FontKey.HTML));
 		config.setProperty("ui_font", new_fonts.get(FontKey.UI));
@@ -241,7 +242,7 @@ public class SettingsDialogData extends CustomDialogData implements
 				|| !_old_locale.equals(new_locale)
 				|| !_old_laf.getClass().getName().equals(new_laf_string)) {
 			MessageDialog.showDialog(_content_pane,
-					MessageDialog.WARNING_MESSAGE, GUIUtils.getString(
+					MessageDialog.WARNING_MESSAGE, I18nService.getString(
 							"Messages", "restart"));
 		}
 	}
@@ -287,7 +288,7 @@ public class SettingsDialogData extends CustomDialogData implements
 		_displayed_attrs_panel = new AttributeSelectionPanel();
 		_displayed_attrs_panel.setAllowReordering(true);
 		_displayed_attrs_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"displayed_attributes")));
 		MetaData data = _model.getDictModel().getMetaData(Entry.class);
 		_displayed_attrs_panel.setAvailableObjects(data.getAttributes());
@@ -299,7 +300,7 @@ public class SettingsDialogData extends CustomDialogData implements
 
 		_file_type_panel = new FileTypePanel();
 		_file_type_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"file_types")));
 		_play_immediately_chbox = new JCheckBox(GUIUtils.createTextAction(this,
 				"play_audio_immediately"));
@@ -350,7 +351,7 @@ public class SettingsDialogData extends CustomDialogData implements
 		JPanel printing_panel = new JPanel();
 		printing_panel
 				.setBorder(new TitledBorder(new EtchedBorder(
-						EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+						EtchedBorder.LOWERED), I18nService.getString("Labels",
 						"printing")));
 		printing_panel.setLayout(new GridBagLayout());
 		cc.reset();
@@ -364,7 +365,7 @@ public class SettingsDialogData extends CustomDialogData implements
 		_expiration_panel.setExpirationFactor(_old_expiration_factor);
 		_expiration_panel.setExpirationUnit(_old_expiration_unit);
 		_expiration_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"expiration_time")));
 
 		JPanel general_panel = new JPanel();
@@ -487,7 +488,7 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 			FileTypeDialogData data = new FileTypeDialogData(
 					new CustomMultimediaFile(MultimediaFile.OTHER_FILE),
 					_default_extensions);
-			int result = CustomDialog.showDialog(data, this, GUIUtils
+			int result = CustomDialog.showDialog(data, this, I18nService
 					.getString("Labels", "edit_file_type"));
 			if (result == AbstractDialog.OK_OPTION) {
 				MultimediaFile file = data.getFile();
@@ -500,7 +501,7 @@ class FileTypePanel extends JPanel implements ListSelectionListener,
 			MultimediaFile file = objs.get(0);
 			FileTypeDialogData data = new FileTypeDialogData(file,
 					_default_extensions);
-			int result = CustomDialog.showDialog(data, this, GUIUtils
+			int result = CustomDialog.showDialog(data, this, I18nService
 					.getString("Labels", "edit_file_type"));
 			if (result == AbstractDialog.OK_OPTION) {
 				_table_model.removeObject(file);
@@ -624,16 +625,16 @@ class FileTypeDialogData extends CustomDialogData implements ActionListener {
 		String new_ext = _extension_field.getText();
 		boolean default_type = _default_extensions.contains(extension);
 		if (!default_type && _default_extensions.contains(new_ext)) {
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"overwrite_extension", new String[] { new_ext }));
 		}
 
 		int type;
 		if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "audio_file"))) {
+				I18nService.getString("Labels", "audio_file"))) {
 			type = MultimediaFile.AUDIO_FILE;
 		} else if (_type_box.getSelectedItem().toString().equals(
-				GUIUtils.getString("Labels", "image_file"))) {
+				I18nService.getString("Labels", "image_file"))) {
 			type = MultimediaFile.IMAGE_FILE;
 		} else {
 			type = MultimediaFile.OTHER_FILE;
@@ -704,14 +705,14 @@ class FileTypeDialogData extends CustomDialogData implements ActionListener {
 		cc.update(2, 3, 0.0, 0.0);
 		_content_pane.add(new JButton(_browse_action), cc);
 		cc.update(0, 4, 0.0, 0.0);
-		_content_pane.add(new JLabel(GUIUtils.getString("Labels",
+		_content_pane.add(new JLabel(I18nService.getString("Labels",
 				"command_description")), cc);
 
 		String extension = FileUtils.getFileExtension(_file.getFileName());
 		boolean default_type = _default_extensions.contains(extension);
-		_type_box.addItem(GUIUtils.getString("Labels", "audio_file"));
-		_type_box.addItem(GUIUtils.getString("Labels", "image_file"));
-		_type_box.addItem(GUIUtils.getString("Labels", "other_file"));
+		_type_box.addItem(I18nService.getString("Labels", "audio_file"));
+		_type_box.addItem(I18nService.getString("Labels", "image_file"));
+		_type_box.addItem(I18nService.getString("Labels", "other_file"));
 		_type_box.setSelectedItem(_file.getTypeString());
 		_extension_field.setText(extension);
 		_extension_field.setEnabled(!default_type);
@@ -763,8 +764,8 @@ class ExpirationTimePanel extends JPanel {
 				return false;
 			}
 		};
-		_table_model.addColumn(GUIUtils.getString("Labels", "batch"));
-		_table_model.addColumn(GUIUtils.getString("Labels", "duration"));
+		_table_model.addColumn(I18nService.getString("Labels", "batch"));
+		_table_model.addColumn(I18nService.getString("Labels", "duration"));
 		JTable table = new JTable(_table_model);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
@@ -792,8 +793,8 @@ class ExpirationTimePanel extends JPanel {
 
 		_unit_box = new LabeledComboBox();
 		_unit_box.setLabel("unit");
-		_unit_box.addItem(GUIUtils.getString("Labels", "days"));
-		_unit_box.addItem(GUIUtils.getString("Labels", "hours"));
+		_unit_box.addItem(I18nService.getString("Labels", "days"));
+		_unit_box.addItem(I18nService.getString("Labels", "hours"));
 		_unit_box.addActionListener(new ActionHandler());
 
 		setLayout(new GridBagLayout());
@@ -834,7 +835,7 @@ class ExpirationTimePanel extends JPanel {
 
 	public String getExpirationUnit() {
 		if (_unit_box.getSelectedItem().equals(
-				GUIUtils.getString("Labels", "hours"))) {
+				I18nService.getString("Labels", "hours"))) {
 			return Entry.UNIT_HOURS;
 		}
 		return Entry.UNIT_DAYS;
@@ -842,9 +843,9 @@ class ExpirationTimePanel extends JPanel {
 
 	public void setExpirationUnit(String unit) {
 		if (unit.equals(Entry.UNIT_HOURS)) {
-			_unit_box.setSelectedItem(GUIUtils.getString("Labels", "hours"));
+			_unit_box.setSelectedItem(I18nService.getString("Labels", "hours"));
 		} else {
-			_unit_box.setSelectedItem(GUIUtils.getString("Labels", "days"));
+			_unit_box.setSelectedItem(I18nService.getString("Labels", "days"));
 		}
 	}
 
@@ -855,25 +856,25 @@ class ExpirationTimePanel extends JPanel {
 		for (int i = 0; i < num_batches; i++) {
 			new_data[i][0] = String.valueOf(i + 1);
 			if (_unit_box.getSelectedItem().equals(
-					GUIUtils.getString("Labels", "hours"))) {
+					I18nService.getString("Labels", "hours"))) {
 				new_data[i][1] = getFormattedDuration(Math.pow(factor, i));
 			} else {
 				new_data[i][1] = getFormattedDuration(Math.pow(factor, i) * 24);
 			}
 		}
 
-		Object[] columns = { GUIUtils.getString("Labels", "batch"),
-				GUIUtils.getString("Labels", "duration") };
+		Object[] columns = { I18nService.getString("Labels", "batch"),
+				I18nService.getString("Labels", "duration") };
 
 		_table_model.setDataVector(new_data, columns);
 	}
 
 	private String getFormattedDuration(double hours) {
-		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+		ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 				"Labels", "num_days"));
 		int num_days = (int) hours / 24;
 		String days_str = formatter.format(num_days);
-		formatter.applyPattern(GUIUtils.getString("Labels", "num_hours"));
+		formatter.applyPattern(I18nService.getString("Labels", "num_hours"));
 		int num_hours = (int) (hours - 24 * num_days);
 		if (num_hours > 0) {
 			return days_str + " " + formatter.format(num_hours);

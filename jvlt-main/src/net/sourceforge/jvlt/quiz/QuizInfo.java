@@ -1,6 +1,6 @@
 package net.sourceforge.jvlt.quiz;
 
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class QuizInfo {
 	private static QuizInfo[] _default_quiz_infos;
@@ -10,14 +10,14 @@ public class QuizInfo {
 
 		_default_quiz_infos[0] = new QuizInfo();
 		_default_quiz_infos[0]
-				.setName(GUIUtils.getString("Labels", "original"));
+				.setName(I18nService.getString("Labels", "original"));
 		_default_quiz_infos[0]
 				.setQuizzedAttributes(new String[] { "Orthography" });
 		_default_quiz_infos[0].setShownAttributes(new String[] { "Senses" });
 
 		_default_quiz_infos[1] = new QuizInfo();
 		_default_quiz_infos[1]
-				.setName(GUIUtils.getString("Labels", "meanings"));
+				.setName(I18nService.getString("Labels", "meanings"));
 		_default_quiz_infos[1].setQuizzedAttributes(new String[] { "Senses" });
 		_default_quiz_infos[1]
 				.setShownAttributes(new String[] { "Orthography" });

@@ -43,6 +43,7 @@ import net.sourceforge.jvlt.event.FilterListener.FilterEvent;
 import net.sourceforge.jvlt.metadata.EntryMetaData;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
 import net.sourceforge.jvlt.ui.table.PercentCellRenderer;
@@ -55,8 +56,8 @@ import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.vocabulary.entrydialog.AddEntryDialog;
 import net.sourceforge.jvlt.ui.vocabulary.entrydialog.EditEntryDialog;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
-import net.sourceforge.jvlt.utils.Config;
-import net.sourceforge.jvlt.utils.MultimediaUtils;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class EntryPanel extends JPanel implements ActionListener,
@@ -73,11 +74,11 @@ public class EntryPanel extends JPanel implements ActionListener,
 		Font font;
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
-		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_orth_font");
 		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
 		}
-		font = JVLT.getConfig().getFontProperty("ui_pron_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_pron_font");
 		if (font != null) {
 			PRONUNCIATION_RENDERER.setCustomFont(font);
 		}
@@ -116,7 +117,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		return _entry_table.getModel();
 	}
 
-	public void saveState(Config config) {
+	public void saveState(UIConfig config) {
 		String[] columns = _entry_table_model.getColumnNames();
 		config.setProperty("entry_table_column_names", columns);
 
@@ -138,7 +139,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		_filter_panel.saveState();
 	}
 
-	public void loadState(Config config) {
+	public void loadState(UIConfig config) {
 		String[] col_names = config.getStringListProperty(
 				"entry_table_column_names", new String[] { "Orthography",
 						"Pronunciations", "Senses" });
@@ -372,7 +373,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 
 		// Initialize dialogs
 		Frame frame = JOptionPane.getFrameForComponent(this);
-		_add_entry_dialog = new AddEntryDialog(frame, GUIUtils.getString(
+		_add_entry_dialog = new AddEntryDialog(frame, I18nService.getString(
 				"Labels", "add_entry"), _model);
 		_edit_entry_dialog = new EditEntryDialog(frame, "", _model);
 
@@ -427,7 +428,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 			try {
 				MultimediaUtils.playAudioFiles(entry);
 			} catch (IOException ex) {
-				String msg = GUIUtils.getString("Messages", "loading_failed");
+				String msg = I18nService.getString("Messages", "loading_failed");
 				MessageDialog.showDialog(this, MessageDialog.ERROR_MESSAGE,
 						msg, ex.getMessage());
 			}
@@ -435,14 +436,14 @@ public class EntryPanel extends JPanel implements ActionListener,
 	}
 
 	private void editEntries(List<Entry> entries) {
-		String title = entries.size() == 1 ? GUIUtils.getString("Labels",
-				"edit_entry") : GUIUtils.getString("Labels", "edit_entries");
-		_edit_entry_dialog.loadState(JVLT.getConfig());
+		String title = entries.size() == 1 ? I18nService.getString("Labels",
+				"edit_entry") : I18nService.getString("Labels", "edit_entries");
+		_edit_entry_dialog.loadState((UIConfig) JVLT.getConfig());
 		_edit_entry_dialog.setTitle(title);
 		_edit_entry_dialog.init(entries);
 		GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 				_edit_entry_dialog);
-		_edit_entry_dialog.saveState(JVLT.getConfig());
+		_edit_entry_dialog.saveState((UIConfig) JVLT.getConfig());
 	}
 
 	private void removeEntries(List<Entry> entries) {
@@ -453,11 +454,11 @@ public class EntryPanel extends JPanel implements ActionListener,
 		int result;
 		if (num_modified_examples + num_removed_examples > 0) {
 			ChoiceFormatter formatter = new ChoiceFormatter();
-			formatter.applyPattern(GUIUtils.getString("Labels", "words"));
+			formatter.applyPattern(I18nService.getString("Labels", "words"));
 			String s1 = formatter.format(entries.size());
 			Integer n1 = num_modified_examples;
 			Integer n2 = num_removed_examples;
-			String msg = GUIUtils.getString("Messages",
+			String msg = I18nService.getString("Messages",
 					"confirm_entry_deletion", new Object[] { s1, n1, n2 });
 			result = MessageDialog.showDialog(this,
 					MessageDialog.WARNING_MESSAGE,
@@ -468,12 +469,12 @@ public class EntryPanel extends JPanel implements ActionListener,
 		} else {
 			result = MessageDialog.showDialog(this,
 					MessageDialog.WARNING_MESSAGE,
-					MessageDialog.OK_CANCEL_OPTION, GUIUtils.getString(
+					MessageDialog.OK_CANCEL_OPTION, I18nService.getString(
 							"Messages", "remove_entry"));
 		}
 
 		if (result == MessageDialog.OK_OPTION) {
-			action.setMessage(GUIUtils.getString("Actions", "remove_entries"));
+			action.setMessage(I18nService.getString("Actions", "remove_entries"));
 			_model.getDictModel().executeAction(action);
 		}
 	}
@@ -499,7 +500,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 	}
 
 	private void addEntry(Entry template) {
-		_add_entry_dialog.loadState(JVLT.getConfig());
+		_add_entry_dialog.loadState((UIConfig) JVLT.getConfig());
 
 		if (template != null) {
 			_add_entry_dialog.init(template);
@@ -510,6 +511,6 @@ public class EntryPanel extends JPanel implements ActionListener,
 		GUIUtils.showDialog(JOptionPane.getFrameForComponent(this),
 				_add_entry_dialog);
 
-		_add_entry_dialog.saveState(JVLT.getConfig());
+		_add_entry_dialog.saveState((UIConfig) JVLT.getConfig());
 	}
 }

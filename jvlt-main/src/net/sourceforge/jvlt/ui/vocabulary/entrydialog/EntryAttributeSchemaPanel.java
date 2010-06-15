@@ -28,8 +28,8 @@ import net.sourceforge.jvlt.ui.components.AttributeChoiceListPanel;
 import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.components.IndentedComboBox;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class EntryAttributeSchemaPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -304,7 +304,7 @@ class ChoiceAttributeInput extends SchemaAttributeInput {
 
 	public ChoiceAttributeInput(ChoiceSchemaAttribute att) {
 		super(att);
-		_not_specified = new AttributeChoice(GUIUtils.getString("Labels",
+		_not_specified = new AttributeChoice(I18nService.getString("Labels",
 				"not_specified"));
 		initUI();
 	}

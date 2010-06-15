@@ -39,6 +39,24 @@
 		</javac>
 	</target>
 
+	<target name="compile-lib" depends="init"
+		description="compile the source for the library version">
+		<!--
+			unset sourcepath attribute in order to be able to specify the
+			source files explicitely
+		-->
+		<javac sourcepath="" srcdir="${src}" destdir="${build}" debug="${debug}"
+					source="1.5" target="1.5">
+			<classpath refid="project.classpath"/>
+			<compilerarg value="-Xlint:unchecked"/>
+			<include name="net/sourceforge/jvlt/JVLT.java"/>
+			<include name="net/sourceforge/jvlt/core/*.java"/>
+			<include name="net/sourceforge/jvlt/io/*.java"/>
+			<include name="net/sourceforge/jvlt/metadata/*.java"/>
+			<include name="net/sourceforge/jvlt/utils/*.java"/>
+		</javac>
+	</target>
+
 	<target name="run" depends="compile,i18n"
 		description="execute the program">
 		<java
@@ -110,6 +128,24 @@
 
 		<copy file="${dist}/${jar-prefix}-${DSTAMP}.jar"
 			tofile="${dist}/${jar-prefix}.jar"/>
+	</target>
+
+	<target name="dist-lib" depends="dist-init">
+		<antcall target="i18n"/>
+		<antcall target="compile-lib">
+			<param name="debug" value="false"/>
+		</antcall>
+
+		<tstamp/>
+
+		<jar jarfile="${dist}/jVLT-lib-${DSTAMP}.jar">
+			<fileset dir="${build}">
+				<include name="**/*.class"/>
+				<include name="i18n/*.properties"/>
+				<include name="xml/*"/>
+				<include name="log4j.properties"/>
+			</fileset>
+		</jar>
 	</target>
 
 	<target name="clean" description="clean up" >

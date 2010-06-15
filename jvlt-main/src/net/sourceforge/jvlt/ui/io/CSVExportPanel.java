@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class CSVExportPanel extends CSVPanel {
 	private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class CSVExportPanel extends CSVPanel {
 		setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0, 2, 1);
-		add(new JLabel(GUIUtils.getString("Messages", "csv_export")), cc);
+		add(new JLabel(I18nService.getString("Messages", "csv_export")), cc);
 		cc.update(0, 1, 0.5, 0.0, 1, 1);
 		add(_charset_box.getLabel(), cc);
 		cc.update(1, 1, 0.5, 0.0);

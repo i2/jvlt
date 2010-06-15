@@ -32,6 +32,7 @@ import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.dialogs.AbstractDialog;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class EntryFilterPanel extends JPanel {
 	enum FilterMode {
@@ -49,7 +50,7 @@ public class EntryFilterPanel extends JPanel {
 
 		@Override
 		public String toString() {
-			return GUIUtils.getString("Labels", _value);
+			return I18nService.getString("Labels", _value);
 		}
 	}
 
@@ -225,7 +226,7 @@ public class EntryFilterPanel extends JPanel {
 		// Create UI
 		//
 		_query_dialog = new EntryQueryDialog(JOptionPane
-				.getFrameForComponent(this), GUIUtils.getString("Labels",
+				.getFrameForComponent(this), I18nService.getString("Labels",
 				"advanced_filter"), _model);
 		_query_dialog.addDialogListener(new DialogHandler());
 
@@ -356,7 +357,7 @@ public class EntryFilterPanel extends JPanel {
 		_filter_field.setEnabled(false);
 		ObjectQuery oq = _filters.get(_mode).getQuery();
 		if (oq.getName() == null || oq.getName().equals("")) {
-			_filter_field.setText(GUIUtils
+			_filter_field.setText(I18nService
 					.getString("Labels", "filter_unnamed"));
 		} else {
 			_filter_field.setText(oq.getName());

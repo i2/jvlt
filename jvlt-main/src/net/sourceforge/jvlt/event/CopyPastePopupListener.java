@@ -10,6 +10,7 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class PopupListener extends MouseAdapter {
 	protected JPopupMenu _menu = null;
@@ -49,7 +50,7 @@ public class CopyPastePopupListener extends PopupListener {
 		_component = comp;
 
 		_copy_action = new DefaultEditorKit.CopyAction();
-		String str = GUIUtils.getString("Actions", "copy");
+		String str = I18nService.getString("Actions", "copy");
 		Integer mnemonic = GUIUtils.getMnemonicKey(str);
 		_copy_action.putValue(Action.NAME, str.replaceAll("\\$", ""));
 		if (mnemonic != null) {
@@ -57,7 +58,7 @@ public class CopyPastePopupListener extends PopupListener {
 		}
 
 		_paste_action = new DefaultEditorKit.PasteAction();
-		str = GUIUtils.getString("Actions", "paste");
+		str = I18nService.getString("Actions", "paste");
 		mnemonic = GUIUtils.getMnemonicKey(str);
 		_paste_action.putValue(Action.NAME, str.replaceAll("\\$", ""));
 		if (mnemonic != null) {

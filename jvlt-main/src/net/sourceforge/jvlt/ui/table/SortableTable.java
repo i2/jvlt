@@ -31,6 +31,7 @@ import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.table.SortableTableModel.SortOrder;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class SortableTable<T extends Object> extends JTable implements
@@ -211,7 +212,7 @@ public class SortableTable<T extends Object> extends JTable implements
 			dd.setAvailableStrings(_model.getMetaData().getAttributeNames());
 
 			int result = CustomDialog.showDialog(dd, SortableTable.this,
-					GUIUtils.getString("Labels", "select_columns"));
+					I18nService.getString("Labels", "select_columns"));
 			if (result == AbstractDialog.OK_OPTION) {
 				_model.setColumnNames(dd.getSelectedStrings());
 			}

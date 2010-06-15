@@ -7,9 +7,6 @@ import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -20,6 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class GUIUtils {
 	public static CustomAction createAnonymousAction(ActionListener listener,
@@ -39,7 +38,7 @@ public class GUIUtils {
 			action = createAnonymousAction(listener, action_command);
 		}
 
-		String action_string = getString("Actions", action_command);
+		String action_string = I18nService.getString("Actions", action_command);
 		Integer mnemonic = getMnemonicKey(action_string);
 		if (mnemonic != null) {
 			action.putValue(Action.MNEMONIC_KEY, mnemonic);
@@ -62,15 +61,15 @@ public class GUIUtils {
 		URL image_url = GUIUtils.class.getResource(image_path);
 		action.putValue(Action.SMALL_ICON, new ImageIcon(image_url));
 		// Set message for tooltip text
-		action.putValue(Action.SHORT_DESCRIPTION, getString("Labels",
-				action_command));
+		action.putValue(Action.SHORT_DESCRIPTION,
+				I18nService.getString("Labels", action_command));
 
 		return action;
 	}
 
 	public static JMenu createMenu(String str) {
 		JMenu menu = new JMenu();
-		String name = getString("Actions", str);
+		String name = I18nService.getString("Actions", str);
 		Integer mnemonic = getMnemonicKey(name);
 		if (mnemonic != null) {
 			menu.setMnemonic((char) mnemonic.intValue());
@@ -92,33 +91,6 @@ public class GUIUtils {
 		return pane;
 	}
 
-	public static String getLabelString(String name) {
-		return getString("Labels", name);
-	}
-
-	public static String getMessageString(String name) {
-		return getString("Messages", name);
-	}
-
-	public static String getString(String resource_bundle, String name) {
-		return getString(resource_bundle, name, null);
-	}
-
-	public static String getString(String resource_bundle, String name,
-			Object[] args) {
-		ResourceBundle messages = ResourceBundle.getBundle("i18n/"
-				+ resource_bundle, Locale.getDefault());
-		String str = messages.getString(name);
-
-		if (args == null) {
-			return str;
-		}
-		MessageFormat formatter = new MessageFormat("");
-		formatter.setLocale(Locale.getDefault());
-		formatter.applyPattern(str);
-		return formatter.format(args);
-	}
-
 	/**
 	 * If the string contains a "$", return the value of the character after
 	 * "$". Otherwise, return <i>null</i>.
@@ -134,7 +106,7 @@ public class GUIUtils {
 	}
 
 	public static JLabel getLabel(String lbl, Component comp) {
-		String str = getString("Actions", lbl);
+		String str = I18nService.getString("Actions", lbl);
 		JLabel label = new JLabel();
 		Integer mnemonic = getMnemonicKey(str);
 		if (mnemonic != null) {
@@ -172,12 +144,12 @@ public class GUIUtils {
 	}
 
 	public static int showSaveDiscardCancelDialog(Frame frame, String message) {
-		String text = GUIUtils.getString("Messages", message);
-		String title = GUIUtils.getString("Labels", "confirm");
-		Object[] options = { GUIUtils.getString("Actions", "yes_save"),
-				GUIUtils.getString("Actions", "no_discard"),
+		String text = I18nService.getString("Messages", message);
+		String title = I18nService.getString("Labels", "confirm");
+		Object[] options = { I18nService.getString("Actions", "yes_save"),
+				I18nService.getString("Actions", "no_discard"),
 				// Do not use "Actions" as we want no mnemonic key.
-				GUIUtils.getString("Labels", "cancel") };
+				I18nService.getString("Labels", "cancel") };
 
 		return JOptionPane.showOptionDialog(frame, text, title,
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,

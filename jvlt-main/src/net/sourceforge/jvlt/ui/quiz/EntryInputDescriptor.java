@@ -19,6 +19,7 @@ import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.vocabulary.EntryInfoPanel;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 		ChangeListener {
@@ -140,14 +141,14 @@ class EntryInputDescriptor extends EntryDescriptor implements ActionListener,
 
 			String attr = formatAttributeList(quizzed_present_attrs
 					.toArray(new String[0]));
-			String labelText = GUIUtils.getString("Messages",
+			String labelText = I18nService.getString("Messages",
 					"entry_known_question", new Object[] { attr });
 
 			if (quizzed_present_attrs.size() > 1) {
 				String answers_delimiter = JVLT.getConfig().getProperty(
 						"answers_delimiter", ",");
 				labelText += " "
-						+ GUIUtils.getString("Messages",
+						+ I18nService.getString("Messages",
 								"use_answers_delimiter",
 								new Object[] { answers_delimiter });
 			}

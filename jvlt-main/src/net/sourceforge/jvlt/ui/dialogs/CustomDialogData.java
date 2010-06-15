@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.event.ComponentReplacementListener;
 import net.sourceforge.jvlt.event.ComponentReplacementListener.ComponentReplacementEvent;
-import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 /** Content of {@link CustomDialog} */
 public abstract class CustomDialogData {
@@ -57,11 +57,11 @@ public abstract class CustomDialogData {
 		}
 	}
 
-	protected void loadState(Config config) {
+	protected void loadState(UIConfig config) {
 		// do nothing by default
 	}
 
-	protected void saveState(Config config) {
+	protected void saveState(UIConfig config) {
 		// do nothing by default
 	}
 }

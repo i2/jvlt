@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.multimedia;
 
 import java.awt.Frame;
 import java.io.File;
@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 /**
  * This class represents an image file that can be viewed with jVLT. Other image
@@ -33,7 +34,7 @@ public class ImageFile extends MultimediaFile {
 
 		ImageIcon icon = new ImageIcon(f.getAbsolutePath());
 		JDialog dlg = new JDialog(parent,
-				GUIUtils.getString("Labels", "image"), false);
+				I18nService.getString("Labels", "image"), false);
 		JLabel lbl = new JLabel(icon);
 		dlg.setContentPane(lbl);
 		GUIUtils.showDialog(parent, dlg);

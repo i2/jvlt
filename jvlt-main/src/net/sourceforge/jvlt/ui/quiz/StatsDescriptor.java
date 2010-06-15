@@ -47,6 +47,8 @@ import net.sourceforge.jvlt.ui.vocabulary.EntrySelectionDialogData;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
 import net.sourceforge.jvlt.utils.DefaultComparator;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	private final Map<String, QuizInfo> _quiz_info_map;
@@ -162,7 +164,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 			// Do not use CustomDialog.showDialog() as there will be a
 			// subdialog.
 			CustomDialog dlg = new CustomDialog(_entry_selection_data, frame,
-					GUIUtils.getString("Labels", "select_words"));
+					I18nService.getString("Labels", "select_words"));
 			GUIUtils.showDialog(frame, dlg);
 			EntrySelectionDialogData.State oldstate = _entry_selection_data
 					.getState();
@@ -203,7 +205,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 			data.setQuizInfoList(_visible_quiz_info_map.values().toArray(
 					new QuizInfo[0]));
 
-			CustomDialog dlg = new CustomDialog(data, frame, GUIUtils
+			CustomDialog dlg = new CustomDialog(data, frame, I18nService
 					.getString("Labels", "manage_quiz_types"));
 			GUIUtils.showDialog(frame, dlg);
 			if (dlg.getStatus() == AbstractDialog.OK_OPTION) {
@@ -226,8 +228,8 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 			boolean old_ignore_batches = _qdict.isIgnoreBatches();
 
 			QuizOptionsDialogData data = new QuizOptionsDialogData();
-			CustomDialog.showDialog(data, StatsDescriptor.this._panel, GUIUtils
-					.getString("Labels", "quiz_options"));
+			CustomDialog.showDialog(data, StatsDescriptor.this._panel,
+					I18nService.getString("Labels", "quiz_options"));
 			_qdict.setIgnoreBatches(JVLT.getConfig().getBooleanProperty(
 					"ignore_batches", false));
 
@@ -265,7 +267,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 
 		/* Second row */
 		cc.update(0, 1, 0.0, 0.0);
-		settings_panel.add(new JLabel(GUIUtils.getString("Labels", "options")
+		settings_panel.add(new JLabel(I18nService.getString("Labels", "options")
 				+ ":"), cc);
 		cc.update(1, 1, 0.0, 0.0);
 		settings_panel.add(Box.createHorizontalGlue(), cc);
@@ -274,7 +276,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 
 		/* Third row */
 		cc.update(0, 2, 0.0, 0.0);
-		settings_panel.add(new JLabel(GUIUtils.getString("Labels",
+		settings_panel.add(new JLabel(I18nService.getString("Labels",
 				"select_filters")
 				+ ":"), cc);
 		cc.update(1, 2, 0.0, 0.0);
@@ -337,7 +339,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	}
 
 	private synchronized void updateView() {
-		Font font = JVLT.getConfig().getFontProperty("html_font");
+		Font font = ((UIConfig) JVLT.getConfig()).getFontProperty("html_font");
 		GregorianCalendar now = new GregorianCalendar();
 		Collection<Entry> entries = _dict.getEntries();
 		int num_entries = entries.size();
@@ -404,30 +406,30 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 					+ "; font-size:" + font.getSize() + "pt;\">\n");
 		}
 		buffer.append("<table width=\"100%\">\n");
-		label = GUIUtils.getString("Labels", "num_entries") + ":";
+		label = I18nService.getString("Labels", "num_entries") + ":";
 		buffer.append(getRowString(label, num_entries_str));
-		label = GUIUtils.getString("Labels", "never_quizzed_entries") + ":";
+		label = I18nService.getString("Labels", "never_quizzed_entries") + ":";
 		buffer.append(getRowString(label, num_never_quizzed_str));
-		label = GUIUtils.getString("Labels", "expired_entries") + ":";
+		label = I18nService.getString("Labels", "expired_entries") + ":";
 		buffer.append(getRowString(label, num_expired_str));
-		label = GUIUtils.getString("Labels", "avg_num_quizzed") + ":";
+		label = I18nService.getString("Labels", "avg_num_quizzed") + ":";
 		buffer.append(getRowString(label, avg_num_quizzed_str));
-		label = GUIUtils.getString("Labels", "avg_mistake_ratio") + ":";
+		label = I18nService.getString("Labels", "avg_mistake_ratio") + ":";
 		buffer.append(getRowString(label, avg_mistake_ratio_str));
 		for (int i = 0; i <= max_batch; i++) {
 			if (!batches.containsKey(i) || batches.get(i) == 0) {
 				continue;
 			}
 
-			label = GUIUtils.getString("Labels", "batch_no",
+			label = I18nService.getString("Labels", "batch_no",
 					new Integer[] { i })
 					+ ":";
-			ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+			ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 					"Labels", "num_words"));
 			String value = formatter.format(batches.get(i));
 			int num_exp = expired.containsKey(i) ? expired.get(i) : 0;
 			if (i > 0) {
-				value = GUIUtils.getString("Labels", "words_expired",
+				value = I18nService.getString("Labels", "words_expired",
 						new Object[] { value, num_exp });
 			}
 
@@ -436,7 +438,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		buffer.append("</table>\n</body>\n</html>\n");
 		_html_panel.setText(buffer.toString());
 
-		label = GUIUtils.getString("Messages", "selected_words",
+		label = I18nService.getString("Messages", "selected_words",
 				new Object[] { getSelectedEntries() });
 		_select_words_label.setText(label);
 	}

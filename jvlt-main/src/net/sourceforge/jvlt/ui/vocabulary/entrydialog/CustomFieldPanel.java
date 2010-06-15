@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import net.sourceforge.jvlt.core.StringPair;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 /**
  * Panel for setting custom fields (used in the advanced entry dialog)
@@ -49,7 +50,7 @@ public class CustomFieldPanel extends JPanel {
 			JLabel label = (JLabel) super.getTableCellRendererComponent(table,
 					value, isSelected, hasFocus, row, column);
 			if (value == null) {
-				label.setText(GUIUtils.getString("Labels",
+				label.setText(I18nService.getString("Labels",
 						"double_click_to_edit"));
 			}
 
@@ -121,9 +122,9 @@ public class CustomFieldPanel extends JPanel {
 		@Override
 		public String getColumnName(int columnIndex) {
 			if (columnIndex == 0) {
-				return GUIUtils.getString("Labels", "field_name");
+				return I18nService.getString("Labels", "field_name");
 			}
-			return GUIUtils.getString("Labels", "field_value");
+			return I18nService.getString("Labels", "field_value");
 		}
 
 		public void removeRow(int row) {

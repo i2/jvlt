@@ -8,8 +8,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -26,7 +26,7 @@ public class LanguageComboBox extends LabeledComboBox {
 		_language_map = new HashMap<String, String>();
 
 		setLabel("language");
-		addItem(GUIUtils.getString("Labels", "other_language"));
+		addItem(I18nService.getString("Labels", "other_language"));
 		try {
 			InputStream is = LanguageComboBox.class
 					.getResourceAsStream("/xml/info.xml");

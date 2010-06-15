@@ -81,6 +81,7 @@ import net.sourceforge.jvlt.ui.components.StringInputComponent;
 import net.sourceforge.jvlt.ui.dialogs.AbstractDialog;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.ItemContainer;
 import net.sourceforge.jvlt.utils.Utils;
 
@@ -247,11 +248,11 @@ public class EntryQueryDialog extends AbstractDialog {
 		JPanel type_panel = new JPanel();
 		type_panel.setLayout(new GridLayout(2, 1, 5, 5));
 		ButtonGroup bg = new ButtonGroup();
-		_match_all_button = new JRadioButton(GUIUtils.getString("Labels",
+		_match_all_button = new JRadioButton(I18nService.getString("Labels",
 				"match_all"));
 		type_panel.add(_match_all_button);
 		bg.add(_match_all_button);
-		_match_one_button = new JRadioButton(GUIUtils.getString("Labels",
+		_match_one_button = new JRadioButton(I18nService.getString("Labels",
 				"match_one"));
 		type_panel.add(_match_one_button);
 		bg.add(_match_one_button);
@@ -548,7 +549,7 @@ class EntryQueryRow implements ActionListener {
 		_translation_type_map.clear();
 		_type_translation_map.clear();
 		for (String type : types) {
-			String translation = GUIUtils.getString("Labels", type);
+			String translation = I18nService.getString("Labels", type);
 			_type_box.addItem(translation);
 			try {
 				Field field = item.getClass().getField(type);
@@ -811,7 +812,7 @@ class StringListInput extends JPanel {
 		_display = new JTextField(10);
 		_display.setEditable(false);
 		_dialog = new StringListDialog(JOptionPane.getFrameForComponent(this),
-				GUIUtils.getString("Labels", "select_categories"));
+				I18nService.getString("Labels", "select_categories"));
 		JButton button = new JButton("...");
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {

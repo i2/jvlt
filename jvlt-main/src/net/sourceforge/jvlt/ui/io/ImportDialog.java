@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.jvlt.JVLT;
+import net.sourceforge.jvlt.actions.ImportAction;
 import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
@@ -52,12 +53,13 @@ import net.sourceforge.jvlt.ui.wizard.Wizard;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
 import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class ImportDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	public ImportDialog(Frame parent, JVLTModel model) {
-		super(parent, GUIUtils.getString("Labels", "import"), true);
+		super(parent, I18nService.getString("Labels", "import"), true);
 
 		final ImportWizardModel iwmodel = new ImportWizardModel(model);
 		iwmodel.loadState();
@@ -79,7 +81,7 @@ class ImportWizardModel extends DialogWizardModel {
 
 	public ImportWizardModel(JVLTModel model) {
 		super(model);
-		_importer = new DictImporter(model);
+		_importer = new DictImporter(model.getDict());
 
 		registerPanelDescriptor(new StartImportDescriptor(this));
 		registerPanelDescriptor(new ImportResultsDescriptor(this));
@@ -92,7 +94,7 @@ class ImportWizardModel extends DialogWizardModel {
 	public String getButtonText(String button_command) {
 		if (_current_descriptor instanceof ImportSuccessDescriptor) {
 			if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				return GUIUtils.getString("Actions", "finish");
+				return I18nService.getString("Actions", "finish");
 			}
 		}
 
@@ -129,7 +131,7 @@ class ImportWizardModel extends DialogWizardModel {
 					throw new InvalidInputException(ex.getShortMessage(), ex
 							.getLongMessage());
 				} catch (IOException ex) {
-					throw new InvalidInputException(GUIUtils.getString(
+					throw new InvalidInputException(I18nService.getString(
 							"Messages", "loading_failed"), ex.getMessage());
 				}
 			}
@@ -140,10 +142,17 @@ class ImportWizardModel extends DialogWizardModel {
 			if (command.equals(Wizard.NEXT_COMMAND)) {
 				_importer.setClearStats(ird.getClearStats());
 				try {
-					_importer.importDict(sid.getDict());
+					DictImporter.ImportInfo info = _importer.getImportInfo(
+							sid.getDict());
+					ImportAction ia = new ImportAction(
+							info.oldLanguage, info.newLanguage,
+							info.entries, info.examples);
+					ia.setMessage(I18nService.getString(
+							"Actions", "import_dict"));
+					_model.getDictModel().executeAction(ia);
 					next = isd;
 				} catch (Exception ex) {
-					throw new InvalidInputException(GUIUtils.getString(
+					throw new InvalidInputException(I18nService.getString(
 							"Messages", "importing_failed"), ex.getMessage());
 				}
 			} else if (command.equals(Wizard.BACK_COMMAND)) {
@@ -183,7 +192,7 @@ class ImportWizardModel extends DialogWizardModel {
 		String newlang = dict.getLanguage();
 		String oldlang = getJVLTModel().getDict().getLanguage();
 		if (newlang != null && oldlang != null && !newlang.equals(oldlang)) {
-			throw new InvalidInputException(GUIUtils.getString("Messages",
+			throw new InvalidInputException(I18nService.getString("Messages",
 					"invalid_language"), "Invalid language: " + oldlang + "!="
 					+ newlang);
 		}
@@ -208,7 +217,7 @@ class ImportWizardModel extends DialogWizardModel {
 class StartImportDescriptor extends WizardPanelDescriptor {
 	class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String csv_file = GUIUtils.getString("Labels", "csv_file");
+			String csv_file = I18nService.getString("Labels", "csv_file");
 			if (e.getActionCommand().equals("open")) {
 				DictFileChooser chooser;
 				ImportWizardModel iwm = (ImportWizardModel) _model;
@@ -278,7 +287,7 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 
 		File f = new File(_file_field.getText());
 		DictReader reader = null;
-		String csv_file = GUIUtils.getString("Labels", "csv_file");
+		String csv_file = I18nService.getString("Labels", "csv_file");
 		if (_type_box.getSelectedItem().equals(csv_file)) {
 			CSVDictReader csv_reader = new CSVDictReader();
 			csv_reader.setTextDelimiter(_csv_panel.getTextDelimiter());
@@ -326,7 +335,7 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 			if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0) {
 				throw e;
 			}
-			String text = GUIUtils.getString("Messages", "convert_file");
+			String text = I18nService.getString("Messages", "convert_file");
 			int result = MessageDialog.showDialog(JOptionPane
 					.getFrameForComponent(_panel),
 					MessageDialog.WARNING_MESSAGE,
@@ -351,9 +360,9 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		String type = config.getProperty("ImportDialog.Type", "jvlt");
 		if (type.equals("jvlt")) {
 			_type_box
-					.setSelectedItem(GUIUtils.getString("Labels", "jvlt_file"));
+					.setSelectedItem(I18nService.getString("Labels", "jvlt_file"));
 		} else {
-			_type_box.setSelectedItem(GUIUtils.getString("Labels", "csv_file"));
+			_type_box.setSelectedItem(I18nService.getString("Labels", "csv_file"));
 		}
 
 		_csv_panel.loadState();
@@ -363,7 +372,7 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		Config config = JVLT.getConfig();
 		config.setProperty("ImportDialog.File", _file_field.getText());
 		if (_type_box.getSelectedItem().equals(
-				GUIUtils.getString("Labels", "csv_file"))) {
+				I18nService.getString("Labels", "csv_file"))) {
 			config.setProperty("ImportDialog.Type", "csv");
 			_csv_panel.saveState();
 		} else {
@@ -382,8 +391,8 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 
 		_type_box = new LabeledComboBox();
 		_type_box.setLabel("file_type");
-		_type_box.addItem(GUIUtils.getString("Labels", "jvlt_file"));
-		_type_box.addItem(GUIUtils.getString("Labels", "csv_file"));
+		_type_box.addItem(I18nService.getString("Labels", "jvlt_file"));
+		_type_box.addItem(I18nService.getString("Labels", "csv_file"));
 		_type_box.addActionListener(new ActionHandler());
 
 		_csv_panel = new CSVImportPanel();
@@ -393,7 +402,7 @@ class StartImportDescriptor extends WizardPanelDescriptor {
 		_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0, 3, 1);
-		_panel.add(new JLabel(GUIUtils.getString("Messages", "start_import")),
+		_panel.add(new JLabel(I18nService.getString("Messages", "start_import")),
 				cc);
 		cc.update(0, 1, 0.5, 0, 1, 1);
 		_panel.add(_type_box.getLabel(), cc);
@@ -498,10 +507,10 @@ class ImportResultsDescriptor extends WizardPanelDescriptor {
 	}
 
 	private String getLabel(int num, int total, String i18n) {
-		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+		ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 				"Labels", i18n));
 		String str = formatter.format(total);
-		return GUIUtils.getString("Labels", "imported",
+		return I18nService.getString("Labels", "imported",
 				new Object[] { num, str });
 	}
 }
@@ -519,7 +528,7 @@ class ImportSuccessDescriptor extends WizardPanelDescriptor {
 	}
 
 	private void initUI() {
-		JLabel label = new JLabel(GUIUtils.getString("Labels",
+		JLabel label = new JLabel(I18nService.getString("Labels",
 				"importing_successful"));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);

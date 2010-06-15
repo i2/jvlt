@@ -6,15 +6,15 @@ import java.util.SortedMap;
 import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.ui.components.LabeledComboBox;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public abstract class CSVPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private enum FieldDelimiter {
 		COMMA(',', ","), SEMICOLON(';', ";"), COLON(':', ":"), SPACE(' ',
-				GUIUtils.getString("Labels", "space")), TAB('\t', GUIUtils
-				.getString("Labels", "tab"));
+				I18nService.getString("Labels", "space")), TAB('\t',
+						I18nService.getString("Labels", "tab"));
 
 		private char _character;
 		private String _description;

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.SimpleFileFilter;
 
 public class DictFileChooser extends JFileChooser {
@@ -54,7 +54,7 @@ public class DictFileChooser extends JFileChooser {
 			}
 		}
 
-		SimpleFileFilter filter = new SimpleFileFilter(GUIUtils.getString(
+		SimpleFileFilter filter = new SimpleFileFilter(I18nService.getString(
 				"Labels", type.getDescription()));
 		filter.setExtensions(type.getExtensions());
 		setFileFilter(filter);

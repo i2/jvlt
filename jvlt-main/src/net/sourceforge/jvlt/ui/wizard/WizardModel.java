@@ -2,8 +2,8 @@ package net.sourceforge.jvlt.ui.wizard;
 
 import java.util.HashMap;
 
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.DetailedException;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public abstract class WizardModel {
 	public static class InvalidInputException extends DetailedException {
@@ -33,7 +33,7 @@ public abstract class WizardModel {
 	}
 
 	public String getButtonText(String button_command) {
-		return GUIUtils.getString("Actions", button_command);
+		return I18nService.getString("Actions", button_command);
 	}
 
 	public boolean isButtonEnabled(String button_command) {

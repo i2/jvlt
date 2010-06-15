@@ -5,8 +5,6 @@ import java.util.Vector;
 import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
-import net.sourceforge.jvlt.core.Example.TextFragment;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 
 public class ExampleBuilder {
 	private Example _example = null;
@@ -23,13 +21,13 @@ public class ExampleBuilder {
 			throws DictException {
 		Example.TextFragment[] tfs = getTextFragments(start_index, end_index);
 		if (tfs.length != 1) {
-			throw new DictException(GUIUtils.getString("Messages",
+			throw new DictException(I18nService.getString("Messages",
 					"selection_too_large"));
 		}
 
 		Example.TextFragment tf = tfs[0];
 		if (tf.getSense() != null) {
-			throw new DictException(GUIUtils.getString("Messages",
+			throw new DictException(I18nService.getString("Messages",
 					"selection_already_linked"));
 		}
 
@@ -86,7 +84,7 @@ public class ExampleBuilder {
 		Vector<Example.TextFragment> tfs = new Vector<Example.TextFragment>();
 		Example.TextFragment[] fragments = _example.getTextFragments();
 		int tf_start = 0;
-		for (TextFragment tf : fragments) {
+		for (Example.TextFragment tf : fragments) {
 			int tf_end = tf_start + tf.getText().length() - 1;
 			if (start_index < tf_start && end_index >= tf_start) {
 				tfs.add(tf);
@@ -103,7 +101,7 @@ public class ExampleBuilder {
 	private int getTextFragmentOffset(Example.TextFragment fragment) {
 		Example.TextFragment[] fragments = _example.getTextFragments();
 		int offset = 0;
-		for (TextFragment tf : fragments) {
+		for (Example.TextFragment tf : fragments) {
 			if (tf.equals(fragment)) {
 				return offset;
 			}

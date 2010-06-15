@@ -15,7 +15,8 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Entry.Stats.UserFlag;
 import net.sourceforge.jvlt.metadata.EntryMetaData.SensesAttribute;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 public class ResultEntryTable extends JTable {
 	private static class Model extends AbstractTableModel {
@@ -41,11 +42,11 @@ public class ResultEntryTable extends JTable {
 		@Override
 		public String getColumnName(int column) {
 			if (column == 0) {
-				return GUIUtils.getString("Labels", "original");
+				return I18nService.getString("Labels", "original");
 			} else if (column == 1) {
-				return GUIUtils.getString("Labels", "meanings");
+				return I18nService.getString("Labels", "meanings");
 			} else if (isUserFlagColumn(column)) {
-				return GUIUtils.getString("Labels",
+				return I18nService.getString("Labels",
 						UserFlag.values()[column-2+1].getShortName());
 			} else {
 				return null;
@@ -133,12 +134,12 @@ public class ResultEntryTable extends JTable {
 	static {
 		Font font;
 		originalRenderer = new CustomFontCellRenderer();
-		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_orth_font");
 		if (font != null) {
 			originalRenderer.setCustomFont(font);
 		}
 		pronunciationRenderer = new CustomFontCellRenderer();
-		font = JVLT.getConfig().getFontProperty("ui_pron_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_pron_font");
 		if (font != null) {
 			pronunciationRenderer.setCustomFont(font);
 		}

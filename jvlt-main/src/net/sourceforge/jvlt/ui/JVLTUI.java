@@ -77,6 +77,9 @@ import net.sourceforge.jvlt.event.UndoableActionListener;
 import net.sourceforge.jvlt.io.DictReaderException;
 import net.sourceforge.jvlt.io.VersionException;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.AudioFile;
+import net.sourceforge.jvlt.multimedia.CustomMultimediaFile;
+import net.sourceforge.jvlt.multimedia.ImageFile;
 import net.sourceforge.jvlt.os.OSController;
 import net.sourceforge.jvlt.query.ObjectQuery;
 import net.sourceforge.jvlt.quiz.QuizInfo;
@@ -98,16 +101,15 @@ import net.sourceforge.jvlt.ui.quiz.QuizPanel;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.ui.utils.TablePrinter;
 import net.sourceforge.jvlt.ui.vocabulary.EntryPanel;
 import net.sourceforge.jvlt.ui.vocabulary.EntrySelectionDialogData;
 import net.sourceforge.jvlt.ui.vocabulary.ExamplePanel;
-import net.sourceforge.jvlt.utils.AudioFile;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
 import net.sourceforge.jvlt.utils.Config;
-import net.sourceforge.jvlt.utils.CustomMultimediaFile;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.DetailedException;
-import net.sourceforge.jvlt.utils.ImageFile;
-import net.sourceforge.jvlt.utils.TablePrinter;
 import net.sourceforge.jvlt.utils.Utils;
 import net.sourceforge.jvlt.utils.XSLTransformer;
 
@@ -150,8 +152,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		}
 	}
 
+	private static final JVLTModel _model = new JVLTModel();
+	
 	private Dict _dict;
-	private final JVLTModel _model;
 	private Collection<Entry> _matched_entries;
 	private Collection<Example> _matched_examples;
 	private final LinkedList<String> _recent_files;
@@ -171,10 +174,13 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private ErrorLogDialog _error_dialog;
 	private final boolean _is_mac;
 
+	public static JVLTModel getModel() {
+		return _model;
+	}
+
 	public JVLTUI(boolean is_on_mac) {
 		_is_mac = is_on_mac;
 
-		_model = JVLT.getInstance().getModel();
 		_matched_entries = null;
 		_matched_examples = null;
 		_recent_files = new LinkedList<String>();
@@ -278,7 +284,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				printer.renderPages((Graphics2D) _main_frame.getGraphics());
 				PrintPreviewDialog dlg = new PrintPreviewDialog(_main_frame,
-						GUIUtils.getString("Labels", "print_preview"), printer);
+						I18nService.getString("Labels", "print_preview"), printer);
 				dlg.pack();
 				dlg.setVisible(true);
 				if (dlg.getOption() == PrintPreviewDialog.PRINT_OPTION) {
@@ -307,14 +313,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 			PropertiesDialogData ddata = new PropertiesDialogData(_dict
 					.getLanguage());
-			CustomDialog dlg = new CustomDialog(ddata, _main_frame, GUIUtils
+			CustomDialog dlg = new CustomDialog(ddata, _main_frame, I18nService
 					.getString("Labels", "dict_properties"));
 			GUIUtils.showDialog(_main_frame, dlg);
 			if (dlg.getStatus() == AbstractDialog.OK_OPTION) {
 				LanguageChangeAction lca = new LanguageChangeAction(_dict
 						.getLanguage(), ddata.getLanguage());
 				lca
-						.setMessage(GUIUtils.getString("Actions",
+						.setMessage(I18nService.getString("Actions",
 								"change_language"));
 				_model.getDictModel().executeAction(lca);
 			}
@@ -371,7 +377,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				file.play();
 			} catch (IOException ex) {
-				String msg = GUIUtils.getString("Messages", "loading_failed");
+				String msg = I18nService.getString("Messages", "loading_failed");
 				MessageDialog.showDialog(_main_frame,
 						MessageDialog.ERROR_MESSAGE, msg, ex.getMessage());
 			}
@@ -380,7 +386,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				file.show(_main_frame);
 			} catch (IOException ex) {
-				String msg = GUIUtils.getString("Messages", "loading_failed");
+				String msg = I18nService.getString("Messages", "loading_failed");
 				MessageDialog.showDialog(_main_frame,
 						MessageDialog.ERROR_MESSAGE, msg, ex.getMessage());
 			}
@@ -389,7 +395,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			try {
 				cmf.play();
 			} catch (IOException ex) {
-				String msg = GUIUtils.getString("Messages", "loading_failed");
+				String msg = I18nService.getString("Messages", "loading_failed");
 				MessageDialog.showDialog(_main_frame,
 						MessageDialog.ERROR_MESSAGE, msg, ex.getMessage());
 			}
@@ -439,11 +445,11 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		// Edit menu
 		_undo_action = GUIUtils.createTextAction(this, "undo");
-		_undo_action.putValue(Action.NAME, GUIUtils.getString("Actions",
+		_undo_action.putValue(Action.NAME, I18nService.getString("Actions",
 				"undo", new Object[] { "" }).replaceAll("\\$", ""));
 		_undo_action.setEnabled(false);
 		_redo_action = GUIUtils.createTextAction(this, "redo");
-		_redo_action.putValue(Action.NAME, GUIUtils.getString("Actions",
+		_redo_action.putValue(Action.NAME, I18nService.getString("Actions",
 				"redo", new Object[] { "" }).replaceAll("\\$", ""));
 		_undo_action.setEnabled(false);
 		CustomAction properties_action = GUIUtils.createTextAction(this,
@@ -519,10 +525,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		SelectionNotifier notifier = new SelectionNotifier();
 		notifier.addSelectionListener(this);
 		_example_tab = new ExamplePanel(_model, notifier);
-		_example_tab.loadState(JVLT.getConfig());
+		_example_tab.loadState((UIConfig) JVLT.getConfig());
 		_example_tab.addFilterListener(new ExampleFilterListener());
 		_entry_tab = new EntryPanel(_model, notifier);
-		_entry_tab.loadState(JVLT.getConfig());
+		_entry_tab.loadState((UIConfig) JVLT.getConfig());
 		_entry_tab.addFilterListener(new EntryFilterListener());
 		_quiz_tab = new QuizPanel(_model, notifier);
 
@@ -568,8 +574,9 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		//-----------
 		// Restore previous size
 		//-----------
-		cpane.setPreferredSize(JVLT.getConfig().getDimensionProperty(
-				"MainFrame.size", new Dimension(720, 590)));
+		cpane.setPreferredSize(
+				((UIConfig) JVLT.getConfig()).getDimensionProperty(
+						"MainFrame.size", new Dimension(720, 590)));
 
 		// ----------
 		// Init data.
@@ -603,8 +610,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		/* Show dialog if the file already exists */
 		boolean write_file = true;
 		if (new File(file_name).exists()) {
-			if (JOptionPane.showConfirmDialog(_main_frame, GUIUtils.getString(
-					"Messages", "overwrite"), GUIUtils.getString("Labels",
+			if (JOptionPane.showConfirmDialog(_main_frame, I18nService.getString(
+					"Messages", "overwrite"), I18nService.getString("Labels",
 					"confirm"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 				write_file = false;
 			}
@@ -648,7 +655,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			return;
 		}
 		final MessageDialog dlg = new MessageDialog(_main_frame,
-				MessageDialog.INFO_MESSAGE, GUIUtils.getString("Messages",
+				MessageDialog.INFO_MESSAGE, I18nService.getString("Messages",
 						"printing"), null);
 
 		Runnable show_dlg = new Runnable() {
@@ -691,7 +698,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 						if (ve.getVersion().compareTo(JVLT.getDataVersion()) > 0) {
 							handleLoadException(ve, file_name);
 						} else {
-							String text = GUIUtils.getString("Messages",
+							String text = I18nService.getString("Messages",
 									"convert_file");
 							int result = MessageDialog.showDialog(_main_frame,
 									MessageDialog.WARNING_MESSAGE,
@@ -733,15 +740,15 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			long_message = dre.getLongMessage();
 		} else if (ex instanceof IOException) {
 			IOException ioe = (IOException) ex;
-			short_message = GUIUtils.getString("Messages", "loading_failed");
+			short_message = I18nService.getString("Messages", "loading_failed");
 			long_message = ioe.getMessage();
 		} else if (ex instanceof VersionException) {
 			VersionException ve = (VersionException) ex;
-			short_message = GUIUtils.getString("Messages", "version_too_large");
+			short_message = I18nService.getString("Messages", "version_too_large");
 			long_message = ve.getMessage();
 		} else {
 			ex.printStackTrace();
-			short_message = GUIUtils.getString("Messages", "unknown_error");
+			short_message = I18nService.getString("Messages", "unknown_error");
 			long_message = ex.getMessage();
 		}
 
@@ -807,7 +814,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 */
 	public void showSettings() {
 		SettingsDialogData ddata = new SettingsDialogData(_model);
-		CustomDialog dlg = new CustomDialog(ddata, _main_frame, GUIUtils
+		CustomDialog dlg = new CustomDialog(ddata, _main_frame, I18nService
 				.getString("Labels", "settings"));
 		GUIUtils.showDialog(_main_frame, dlg);
 	}
@@ -839,7 +846,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	 * This function save the last state of the config, examples, etc.
 	 */
 	public void prepareForQuit() {
-		Config conf = JVLT.getConfig();
+		UIConfig conf = (UIConfig) JVLT.getConfig();
 
 		// -----
 		// Save dictionary file name
@@ -880,7 +887,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			conf.setProperty("entry_table_arrow_direction_reversed", false);
 
 		try {
-			JVLT.getInstance().saveConfig();
+			JVLT.getConfig().store();
 		} catch (IOException ex) {
 			logger.error("Failed to save configuration", ex);
 		}
@@ -894,7 +901,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	private void resetStats() {
 		ResetStatsDialogData data = new ResetStatsDialogData(_dict
 				.getEntryCount(), _matched_entries.size());
-		int result = CustomDialog.showDialog(data, _main_frame, GUIUtils
+		int result = CustomDialog.showDialog(data, _main_frame, I18nService
 				.getString("Labels", "reset_stats"));
 		if (result == AbstractDialog.OK_OPTION) {
 			Collection<Entry> entries;
@@ -916,7 +923,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			}
 			EditEntriesAction action = new EditEntriesAction(actions
 					.toArray(new EditEntryAction[0]));
-			action.setMessage(GUIUtils.getString("Actions", "edit_entries",
+			action.setMessage(I18nService.getString("Actions", "edit_entries",
 					new Object[] { entries.size() }));
 			_model.getDictModel().executeAction(action);
 		}
@@ -928,7 +935,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		// Set column widths
 		Config conf = JVLT.getConfig();
-		_entry_tab.saveState(conf);
+		_entry_tab.saveState((UIConfig) conf);
 		double[] col_widths = conf.getNumberListProperty("column_widths",
 				new double[0]);
 		double total_width = 0.0;
@@ -957,12 +964,12 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 			shown_examples = _matched_examples.size();
 		}
 
-		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+		ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 				"Labels", "num_words"));
 		String entries_string = formatter.format(shown_entries);
-		formatter.applyPattern(GUIUtils.getString("Labels", "num_examples"));
+		formatter.applyPattern(I18nService.getString("Labels", "num_examples"));
 		String examples_string = formatter.format(shown_examples);
-		String text = GUIUtils.getString("Labels", "words_examples",
+		String text = I18nService.getString("Labels", "words_examples",
 				new Object[] { entries_string, examples_string, total_entries,
 						total_examples });
 		_left_status_label.setText(text);
@@ -972,14 +979,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// ---------
 		// Change undo menu item.
 		if (_model.getNumUndoableActions() == 0) {
-			String str = GUIUtils.getString("Actions", "undo",
+			String str = I18nService.getString("Actions", "undo",
 					new Object[] { "" }).replaceAll("\\$", "");
 			_undo_action.putValue(Action.NAME, str);
 			_toolbar_undo_action.putValue(Action.SHORT_DESCRIPTION, str);
 			_undo_action.setEnabled(false);
 			_toolbar_undo_action.setEnabled(false);
 		} else {
-			String text = GUIUtils
+			String text = I18nService
 					.getString("Actions", "undo", new Object[] { _model
 							.getFirstUndoableAction().getMessage() });
 			text = text.replaceAll("\\$", "");
@@ -992,14 +999,14 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		// ---------
 		// Change redo menu item.
 		if (_model.getNumRedoableActions() == 0) {
-			String str = GUIUtils.getString("Actions", "redo",
+			String str = I18nService.getString("Actions", "redo",
 					new Object[] { "" }).replaceAll("\\$", "");
 			_redo_action.putValue(Action.NAME, str);
 			_toolbar_redo_action.putValue(Action.SHORT_DESCRIPTION, str);
 			_redo_action.setEnabled(false);
 			_toolbar_redo_action.setEnabled(false);
 		} else {
-			String text = GUIUtils
+			String text = I18nService
 					.getString("Actions", "redo", new Object[] { _model
 							.getFirstRedoableAction().getMessage() });
 			text = text.replaceAll("\\$", "");
@@ -1014,7 +1021,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		String title;
 		String file_name = _model.getDictFileName();
 		if (file_name == null) {
-			title = GUIUtils.getString("Labels", "untitled");
+			title = I18nService.getString("Labels", "untitled");
 		} else {
 			int index = file_name.lastIndexOf(File.separatorChar);
 			if (index > 0) {
@@ -1026,7 +1033,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 
 		if (_model.getDictModel().isDataModified()
 				|| _model.getQueryModel().isDataModified()) {
-			title += " (" + GUIUtils.getString("Labels", "modified") + ")";
+			title += " (" + I18nService.getString("Labels", "modified") + ")";
 		}
 
 		title += " - jVLT";
@@ -1063,8 +1070,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private void loadRuntimeProperties() {
-		Config conf = JVLT.getConfig();
-		String home = JVLT.getInstance().getConfigDir() + File.separator;
+		UIConfig conf = (UIConfig) JVLT.getConfig();
+		String home = conf.getConfigDir() + File.separator;
 		XMLDecoder decoder;
 
 		try {
@@ -1125,8 +1132,8 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	private void saveRuntimeProperties() {
-		Config conf = JVLT.getConfig();
-		String home = JVLT.getInstance().getConfigDir() + File.separator;
+		UIConfig conf = (UIConfig) JVLT.getConfig();
+		String home = conf.getConfigDir() + File.separator;
 		XMLEncoder encoder;
 
 		try {
@@ -1203,10 +1210,13 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 	}
 
 	public static void main(String[] args) {
-		Config config = JVLT.getConfig();
 		boolean is_on_mac = false;
 		OSController controller = null;
-
+		UIConfig config = new UIConfig();
+		
+		// Initialize global handle
+		JVLT.init(config);
+		
 		String os_name = System.getProperty("os.name").toLowerCase();
 		if (os_name.startsWith("mac os x")
 				&& System.getProperty("mrj.version") != null) {
@@ -1229,7 +1239,7 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		}
 
 		// Set fonts.
-		Font font = JVLT.getConfig().getFontProperty("ui_font");
+		Font font = config.getFontProperty("ui_font");
 		if (font != null) {
 			String font_str = Utils.fontToString(font);
 			System.getProperties()
@@ -1328,7 +1338,7 @@ class AboutDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	public AboutDialog(Frame parent) {
-		super(parent, GUIUtils.getString("Labels", "about"), true);
+		super(parent, I18nService.getString("Labels", "about"), true);
 		init();
 	}
 

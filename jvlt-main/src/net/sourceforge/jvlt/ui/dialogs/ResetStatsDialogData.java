@@ -11,6 +11,7 @@ import javax.swing.JRadioButton;
 
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class ResetStatsDialogData extends CustomDialogData {
 	private class ActionHandler implements ActionListener {
@@ -72,7 +73,7 @@ public class ResetStatsDialogData extends CustomDialogData {
 		}
 
 		_message_label
-				.setText(GUIUtils.getString("Messages",
+				.setText(I18nService.getString("Messages",
 						"stats_deletion_warning",
 						new Object[] { num_cleaned_entries }));
 	}

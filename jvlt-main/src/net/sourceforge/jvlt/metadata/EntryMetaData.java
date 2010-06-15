@@ -11,9 +11,9 @@ import net.sourceforge.jvlt.core.EntryAttributeSchema;
 import net.sourceforge.jvlt.core.EntryClass;
 import net.sourceforge.jvlt.core.SchemaAttribute;
 import net.sourceforge.jvlt.core.Sense;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.DictObjectFormatter;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 import org.w3c.dom.Document;
@@ -76,7 +76,7 @@ public class EntryMetaData extends MetaData {
 
 			String[] string_list = new String[flags.size()];
 			for (int i = 0; i < string_list.length; i++) {
-				string_list[i] = GUIUtils.getString("Labels", flags.get(i)
+				string_list[i] = I18nService.getString("Labels", flags.get(i)
 						.getShortName());
 			}
 

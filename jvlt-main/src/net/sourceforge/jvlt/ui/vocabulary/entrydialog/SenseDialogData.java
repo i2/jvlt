@@ -20,7 +20,7 @@ import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public abstract class SenseDialogData extends CustomDialogData {
 	protected final JVLTModel _model;
@@ -55,7 +55,7 @@ public abstract class SenseDialogData extends CustomDialogData {
 
 		if (_sense.getTranslation().equals("")
 				&& _sense.getDefinition().equals(""))
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"no_translation_definition"));
 		
 		check(_sense);
@@ -72,7 +72,7 @@ public abstract class SenseDialogData extends CustomDialogData {
 		_custom_field_panel = new CustomFieldPanel();
 		_custom_field_panel.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED),
-				GUIUtils.getLabelString("custom_fields")));
+				I18nService.getLabelString("custom_fields")));
 		
 		_content_pane = new JPanel();
 		_content_pane.setLayout(new GridBagLayout());

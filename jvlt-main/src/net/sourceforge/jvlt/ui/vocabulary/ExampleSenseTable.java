@@ -10,6 +10,7 @@ import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.ui.table.CustomFontCellRenderer;
 import net.sourceforge.jvlt.ui.table.SortableTable;
 import net.sourceforge.jvlt.ui.table.SortableTableModel;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class ExampleSenseTable extends SortableTable<Example.TextFragment> {
@@ -72,11 +73,11 @@ public class ExampleSenseTable extends SortableTable<Example.TextFragment> {
 		Font font;
 		ORIGINAL_RENDERER = new CustomFontCellRenderer();
 		PRONUNCIATION_RENDERER = new CustomFontCellRenderer();
-		font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_orth_font");
 		if (font != null) {
 			ORIGINAL_RENDERER.setCustomFont(font);
 		}
-		font = JVLT.getConfig().getFontProperty("ui_pron_font");
+		font = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_pron_font");
 		if (font != null) {
 			PRONUNCIATION_RENDERER.setCustomFont(font);
 		}

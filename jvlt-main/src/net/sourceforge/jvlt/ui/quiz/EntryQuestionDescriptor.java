@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.vocabulary.EntryInfoPanel;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class EntryQuestionDescriptor extends EntryDescriptor {
 	private JLabel _lbl;
@@ -52,7 +52,7 @@ class EntryQuestionDescriptor extends EntryDescriptor {
 			String quizzed_attrs[] = _quiz_info.getQuizzedAttributes();
 			String attr = formatAttributeList(quizzed_attrs);
 			if (attr != null && !attr.equals("")) {
-				_lbl.setText(GUIUtils.getString("Messages",
+				_lbl.setText(I18nService.getString("Messages",
 						"entry_known_question", new Object[] { attr }));
 			}
 		}

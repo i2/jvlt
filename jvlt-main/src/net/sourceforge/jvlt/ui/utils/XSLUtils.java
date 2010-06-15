@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.ui.utils;
 
 import java.awt.Font;
 import java.io.File;
@@ -10,7 +10,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import net.sourceforge.jvlt.JVLT;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.multimedia.MultimediaFile;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
+import net.sourceforge.jvlt.utils.AttributeResources;
+import net.sourceforge.jvlt.utils.FileUtils;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 import org.apache.log4j.Logger;
 
@@ -38,12 +43,12 @@ public class XSLUtils {
 	}
 
 	public static String fontStyleFamily(String key) {
-		Font f = JVLT.getConfig().getFontProperty(key);
+		Font f = ((UIConfig) JVLT.getConfig()).getFontProperty(key);
 		return f == null ? "" : "font-family: " + f.getFamily();
 	}
 
 	public static String fontStyleSize(String key) {
-		Font f = JVLT.getConfig().getFontProperty(key);
+		Font f = ((UIConfig) JVLT.getConfig()).getFontProperty(key);
 		return f == null ? "" : "font-size: " + f.getSize() + "pt";
 	}
 
@@ -61,7 +66,7 @@ public class XSLUtils {
 	}
 
 	public static String i18nString(String key) {
-		return GUIUtils.getString("Labels", key);
+		return I18nService.getString("Labels", key);
 	}
 
 	public static String translate(String key) {

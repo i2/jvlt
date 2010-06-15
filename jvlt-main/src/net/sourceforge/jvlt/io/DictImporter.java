@@ -3,23 +3,27 @@ package net.sourceforge.jvlt.io;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import net.sourceforge.jvlt.actions.ImportAction;
 import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.core.DictException;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.core.Example.TextFragment;
-import net.sourceforge.jvlt.model.JVLTModel;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
 
 public class DictImporter {
-	private final JVLTModel _model;
+	private final Dict _dict;
 	private boolean _clear_stats = false;
+	
+	public static class ImportInfo {
+		public String oldLanguage;
+		public String newLanguage;
+		public Collection<Entry> entries;
+		public Collection<Example> examples;
+	}
 
-	public DictImporter(JVLTModel model) {
-		_model = model;
+	public DictImporter(Dict dict) {
+		_dict = dict;
 	}
 
 	public void setClearStats(boolean clear) {
@@ -36,7 +40,7 @@ public class DictImporter {
 		TreeSet<Entry> new_entries = new TreeSet<Entry>(new Entry.Comparator());
 		Collection<Entry> entries = dict.getEntries();
 		for (Entry entry : entries) {
-			if (_model.getDict().getEntry(entry) == null) {
+			if (_dict.getEntry(entry) == null) {
 				new_entries.add(entry);
 			}
 		}
@@ -62,13 +66,13 @@ public class DictImporter {
 		Collection<Example> examples = dict.getExamples();
 		for (Example example : examples) {
 			// Only import examples that do not already exist in the dictionary.
-			if (_model.getDict().getExample(example) == null) {
+			if (_dict.getExample(example) == null) {
 				Sense[] senses = example.getSenses();
 				boolean add_example = true;
 				// Only add example if all senses are available
 				for (int j = 0; j < senses.length; j++) {
 					if (!entry_set.contains(senses[j].getParent())) {
-						Entry entry = _model.getDict().getEntry(
+						Entry entry = _dict.getEntry(
 								senses[j].getParent());
 						if (entry == null || entry.getSense(senses[j]) == null) {
 							add_example = false;
@@ -85,15 +89,18 @@ public class DictImporter {
 		return new_examples;
 	}
 
-	public void importDict(Dict dict) throws DictException {
-		String old_lang = _model.getDict().getLanguage();
-		String new_lang = dict.getLanguage();
-		if (new_lang == null) {
-			new_lang = old_lang;
-		} else if (old_lang != null && !new_lang.equals(old_lang)) {
+	public ImportInfo getImportInfo(Dict dict) throws DictException {
+		ImportInfo info = new ImportInfo();
+		
+		info.oldLanguage = _dict.getLanguage();
+		info.newLanguage = dict.getLanguage();
+		if (info.newLanguage == null) {
+			info.newLanguage = info.oldLanguage;
+		} else if (info.oldLanguage != null
+				&& !info.newLanguage.equals(info.oldLanguage)) {
 			AttributeResources resources = new AttributeResources();
 			throw new DictException("Invalid language: "
-					+ resources.getString(new_lang));
+					+ resources.getString(info.newLanguage));
 		}
 
 		Collection<Entry> entries = getImportedEntries(dict);
@@ -124,16 +131,13 @@ public class DictImporter {
 				if (!entry_set.contains(tf.getSense().getParent())) {
 					// Replace links to senses in the imported dictionary with
 					// links to senses in the original dictionary.
-					Entry entry = _model.getDict().getEntry(
+					Entry entry = _dict.getEntry(
 							tf.getSense().getParent());
 					tf.setSense(entry.getSense(tf.getSense()));
 				}
 			}
 		}
 
-		ImportAction ia = new ImportAction(old_lang, new_lang, entries,
-				examples);
-		ia.setMessage(GUIUtils.getString("Actions", "import_dict"));
-		_model.getDictModel().executeAction(ia);
+		return info;
 	}
 }

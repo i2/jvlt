@@ -24,6 +24,7 @@ import javax.swing.event.HyperlinkListener;
 import net.sourceforge.jvlt.ui.components.ButtonPanel;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +34,7 @@ public class BrowserDialog extends JDialog {
 	private final Browser _browser;
 
 	public BrowserDialog(Frame owner, URL page) {
-		super(owner, GUIUtils.getString("Labels", "help"), false);
+		super(owner, I18nService.getString("Labels", "help"), false);
 
 		_browser = new Browser();
 		_browser.setPage(page);

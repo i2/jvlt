@@ -9,10 +9,10 @@ import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
 import net.sourceforge.jvlt.event.DictUpdateListener.LanguageDictUpdateEvent;
 import net.sourceforge.jvlt.event.DictUpdateListener.NewDictDictUpdateEvent;
 import net.sourceforge.jvlt.quiz.QuizInfo;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.vocabulary.EntryInfoPanel;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.AttributeResources;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 abstract class EntryDescriptor extends WizardPanelDescriptor {
@@ -110,9 +110,9 @@ abstract class EntryDescriptor extends WizardPanelDescriptor {
 		for (int i = 0; i < attributes.length; i++) {
 			attr += ar.getString(attributes[i]);
 			if (i < attributes.length - 2) {
-				attr += GUIUtils.getString("Labels", "enumeration_delimiter");
+				attr += I18nService.getString("Labels", "enumeration_delimiter");
 			} else if (i == attributes.length - 2) {
-				attr += GUIUtils.getString("Labels",
+				attr += I18nService.getString("Labels",
 						"enumeration_delimiter_last");
 			}
 		}

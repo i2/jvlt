@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Dict;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Example;
@@ -34,7 +33,7 @@ public class JVLTUtils {
 	private Dict _dict;
 
 	public JVLTUtils() {
-		_model = JVLT.getInstance().getModel();
+		_model = JVLTUI.getModel();
 		_current_file = "";
 		_dict = null;
 	}

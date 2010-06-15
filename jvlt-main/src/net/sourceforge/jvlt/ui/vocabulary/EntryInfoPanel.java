@@ -15,9 +15,9 @@ import net.sourceforge.jvlt.event.SelectionListener.SelectionEvent;
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.MultimediaFile;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.utils.DictObjectFormatter;
-import net.sourceforge.jvlt.utils.MultimediaFile;
-import net.sourceforge.jvlt.utils.MultimediaUtils;
 import net.sourceforge.jvlt.utils.XSLTransformer;
 
 import org.apache.log4j.Logger;

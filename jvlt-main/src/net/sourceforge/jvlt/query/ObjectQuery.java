@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.metadata.Attribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.DictModel;
+import net.sourceforge.jvlt.ui.JVLTUI;
 
 public class ObjectQuery {
 	public static final int MATCH_ONE = 0;
@@ -42,15 +42,6 @@ public class ObjectQuery {
 
 	public Class<? extends Object> getObjectClass() {
 		return _object_class;
-	}
-
-	public void setObjectClass(Class<? extends Object> cl) {
-		_object_class = cl;
-
-		DictModel model = JVLT.getInstance().getModel().getDictModel();
-		if (cl != null) {
-			_metadata = model.getMetaData(cl);
-		}
 	}
 
 	public int getType() {
@@ -109,5 +100,14 @@ public class ObjectQuery {
 		}
 
 		return true;
+	}
+
+	private void setObjectClass(Class<? extends Object> cl) {
+		_object_class = cl;
+
+		DictModel model = JVLTUI.getModel().getDictModel();
+		if (cl != null) {
+			_metadata = model.getMetaData(cl);
+		}
 	}
 }

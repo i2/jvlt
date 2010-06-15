@@ -11,11 +11,12 @@ import javax.swing.JOptionPane;
 import net.sourceforge.jvlt.ui.dialogs.FontChooser;
 import net.sourceforge.jvlt.ui.utils.FontInfo;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class FontChooserComboBox extends JComboBox {
-	public static final String DEFAULT_STRING = GUIUtils.getString("Labels",
+	public static final String DEFAULT_STRING = I18nService.getString("Labels",
 			"use_default");
-	public static final String CHOOSE_STRING = GUIUtils.getString("Labels",
+	public static final String CHOOSE_STRING = I18nService.getString("Labels",
 			"choose_font");
 
 	private class Model extends DefaultComboBoxModel {
@@ -44,7 +45,7 @@ public class FontChooserComboBox extends JComboBox {
 		public void update() {
 			fireContentsChanged(this, 0, getSize());
 
-			setSelectedItem(fontInfo == null ? GUIUtils.getString("Labels",
+			setSelectedItem(fontInfo == null ? I18nService.getString("Labels",
 					"use_default") : fontInfo.getFamily() + " "
 					+ fontInfo.getSize());
 		}

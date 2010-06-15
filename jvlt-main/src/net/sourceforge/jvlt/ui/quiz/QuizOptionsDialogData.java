@@ -15,6 +15,7 @@ import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class QuizOptionsDialogData extends CustomDialogData {
 	private class ActionHandler implements ActionListener {
@@ -74,7 +75,7 @@ public class QuizOptionsDialogData extends CustomDialogData {
 		String new_default_answer = "";
 		if (_default_answer_chbox.isSelected()) {
 			String item = _default_answer_cobox.getSelectedItem().toString();
-			if (item.equals(GUIUtils.getString("Labels", "yes"))) {
+			if (item.equals(I18nService.getString("Labels", "yes"))) {
 				new_default_answer = "yes";
 			} else {
 				new_default_answer = "no";
@@ -84,8 +85,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 		boolean new_update_batches = _update_batches_chbox.isSelected();
 		boolean new_play_audio = _play_audio_chbox.isSelected();
 
-		config.setProperty("input_answer", String.valueOf(new_input_answer));
-		config.setProperty("match_case", String.valueOf(new_match_case));
+		config.setProperty("input_answer", new_input_answer);
+		config.setProperty("match_case", new_match_case);
 		config.setProperty("default_answer", new_default_answer);
 		config.setProperty("ignore_batches", new_ignore_batches);
 		config.setProperty("update_batches", new_update_batches);
@@ -104,8 +105,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 				handler, "default_answer"));
 		_default_answer_cobox = new LabeledComboBox();
 		_default_answer_cobox.setLabel("default_answer_choice");
-		_default_answer_cobox.addItem(GUIUtils.getString("Labels", "yes"));
-		_default_answer_cobox.addItem(GUIUtils.getString("Labels", "no"));
+		_default_answer_cobox.addItem(I18nService.getString("Labels", "yes"));
+		_default_answer_cobox.addItem(I18nService.getString("Labels", "no"));
 		_ignore_batches_chbox = new JCheckBox(GUIUtils.createTextAction(
 				handler, "ignore_batches"));
 		_update_batches_chbox = new JCheckBox(GUIUtils.createTextAction(
@@ -153,8 +154,8 @@ public class QuizOptionsDialogData extends CustomDialogData {
 		_default_answer_cobox.setEnabled(!_old_input_answer
 				&& !_old_default_answer.equals(""));
 		_default_answer_cobox
-				.setSelectedItem(_old_default_answer.equals("no") ? GUIUtils
-						.getString("Labels", "no") : GUIUtils.getString(
+				.setSelectedItem(_old_default_answer.equals("no") ? I18nService
+						.getString("Labels", "no") : I18nService.getString(
 						"Labels", "yes"));
 		_ignore_batches_chbox.setSelected(_old_ignore_batches);
 		_update_batches_chbox.setEnabled(_old_ignore_batches);

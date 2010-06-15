@@ -30,6 +30,7 @@ import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.FontInfo;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class FontChooser implements ActionListener, ListSelectionListener {
 	private int _option;
@@ -51,17 +52,17 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 				"16", "18", "20", "22", "24", "26", "28", "36", "48", "72" };
 		_size_list = new InputList(font_sizes, "font_size");
 		_size_list.addListSelectionListener(this);
-		_bold_box = new JCheckBox(GUIUtils.getString("Labels", "font_bold"));
+		_bold_box = new JCheckBox(I18nService.getString("Labels", "font_bold"));
 		_bold_box.setActionCommand("bold");
 		_bold_box.addActionListener(this);
-		_italic_box = new JCheckBox(GUIUtils.getString("Labels", "font_italic"));
+		_italic_box = new JCheckBox(I18nService.getString("Labels", "font_italic"));
 		_italic_box.setActionCommand("italic");
 		_italic_box.addActionListener(this);
 
 		JPanel preview_panel = new JPanel();
 		preview_panel
 				.setBorder(new TitledBorder(new EtchedBorder(
-						EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+						EtchedBorder.LOWERED), I18nService.getString("Labels",
 						"preview")));
 		_preview_field = new CustomTextField(20);
 		_preview_field.setText("abcdefghijklmNOPQRSTUVWXYZ");
@@ -84,7 +85,7 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 		JPanel style_panel = new JPanel();
 		style_panel.setLayout(new GridBagLayout());
 		style_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"font_style")));
 		cc.update(0, 0, 1.0, 0.0);
 		style_panel.add(_bold_box, cc);
@@ -173,7 +174,7 @@ public class FontChooser implements ActionListener, ListSelectionListener {
 
 	public int showDialog(Component parent) {
 		Frame frame = JOptionPane.getFrameForComponent(parent);
-		_dlg = new JDialog(frame, GUIUtils.getString("Labels", "select_font"),
+		_dlg = new JDialog(frame, I18nService.getString("Labels", "select_font"),
 				true);
 		_dlg.setContentPane(_content_pane);
 		_option = JOptionPane.CANCEL_OPTION;

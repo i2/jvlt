@@ -51,6 +51,7 @@ import net.sourceforge.jvlt.ui.wizard.DialogWizardModel;
 import net.sourceforge.jvlt.ui.wizard.Wizard;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +59,7 @@ public class ExportDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	public ExportDialog(Frame parent, JVLTModel model) {
-		super(parent, GUIUtils.getString("Labels", "export"), true);
+		super(parent, I18nService.getString("Labels", "export"), true);
 
 		final ExportWizardModel ewmodel = new ExportWizardModel(model);
 		ewmodel.loadState();
@@ -90,7 +91,7 @@ class ExportWizardModel extends DialogWizardModel {
 	public String getButtonText(String button_command) {
 		if (_current_descriptor instanceof ExportSuccessDescriptor) {
 			if (button_command.equals(Wizard.NEXT_COMMAND)) {
-				return GUIUtils.getString("Actions", "finish");
+				return I18nService.getString("Actions", "finish");
 			}
 		}
 		return super.getButtonText(button_command);
@@ -131,8 +132,8 @@ class ExportWizardModel extends DialogWizardModel {
 				boolean write_file = true;
 				if (new File(file_name).exists()) {
 					if (JOptionPane.showConfirmDialog(fed.getPanelComponent(),
-							GUIUtils.getString("Messages", "overwrite"),
-							GUIUtils.getString("Labels", "confirm"),
+							I18nService.getString("Messages", "overwrite"),
+							I18nService.getString("Labels", "confirm"),
 							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 						write_file = false;
 					}
@@ -145,7 +146,7 @@ class ExportWizardModel extends DialogWizardModel {
 						fed.export();
 						next = esd;
 					} catch (IOException e) {
-						throw new InvalidInputException(GUIUtils.getString(
+						throw new InvalidInputException(I18nService.getString(
 								"Messages", "exporting_failed"), e.getMessage());
 					}
 				}
@@ -270,7 +271,7 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 	private void initUI() {
 		JVLTModel model = ((ExportWizardModel) _model).getJVLTModel();
 		_query_dialog = new EntryQueryDialog(JOptionPane
-				.getFrameForComponent(_panel), GUIUtils.getString("Labels",
+				.getFrameForComponent(_panel), I18nService.getString("Labels",
 				"advanced_filter"), true, model);
 		_query_dialog.addDialogListener(new DialogHandler());
 
@@ -288,7 +289,7 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 		selection_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0);
-		selection_panel.add(new JLabel(GUIUtils.getString("Labels",
+		selection_panel.add(new JLabel(I18nService.getString("Labels",
 				"select_exported_words")
 				+ ":"), cc);
 		cc.update(1, 0, 0.0, 0.0);
@@ -311,10 +312,10 @@ class StartExportDescriptor extends WizardPanelDescriptor {
 	}
 
 	private String getLabel(int num, int total, String i18n) {
-		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+		ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 				"Labels", i18n));
 		String str = formatter.format(total);
-		return GUIUtils.getString("Labels", "exported",
+		return I18nService.getString("Labels", "exported",
 				new Object[] { num, str });
 	}
 
@@ -480,11 +481,11 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 
 		_type_box = new LabeledComboBox();
 		_type_box.setLabel("file_type");
-		_type_box.insertItemAt(GUIUtils.getString("Labels", "jvlt_file"),
+		_type_box.insertItemAt(I18nService.getString("Labels", "jvlt_file"),
 				FILE_TYPE_JVLT);
-		_type_box.insertItemAt(GUIUtils.getString("Labels", "csv_file"),
+		_type_box.insertItemAt(I18nService.getString("Labels", "csv_file"),
 				FILE_TYPE_CSV);
-		_type_box.insertItemAt(GUIUtils.getString("Labels", "html_file"),
+		_type_box.insertItemAt(I18nService.getString("Labels", "html_file"),
 				FILE_TYPE_HTML);
 		_type_box.addActionListener(new ActionHandler());
 
@@ -495,7 +496,7 @@ class FinishExportDescriptor extends WizardPanelDescriptor {
 		_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0, 3, 1);
-		_panel.add(new JLabel(GUIUtils.getString("Messages", "start_export")),
+		_panel.add(new JLabel(I18nService.getString("Messages", "start_export")),
 				cc);
 		cc.update(0, 1, 0.5, 0, 1, 1);
 		_panel.add(_type_box.getLabel(), cc);
@@ -529,7 +530,7 @@ class ExportSuccessDescriptor extends WizardPanelDescriptor {
 	}
 
 	private void initUI() {
-		JLabel label = new JLabel(GUIUtils.getString("Labels",
+		JLabel label = new JLabel(I18nService.getString("Labels",
 				"exporting_successful"));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
@@ -544,7 +545,7 @@ class HTMLExportPanel extends JPanel {
 
 	public HTMLExportPanel() {
 		_bidirectional_box = new JCheckBox();
-		_bidirectional_box.setText(GUIUtils.getString("Actions",
+		_bidirectional_box.setText(I18nService.getString("Actions",
 				"bidirectional"));
 
 		setLayout(new GridBagLayout());

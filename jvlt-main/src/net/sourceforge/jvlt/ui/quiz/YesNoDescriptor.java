@@ -7,9 +7,9 @@ import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.event.StateListener;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.wizard.WizardModel;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
+import net.sourceforge.jvlt.utils.I18nService;
 
 abstract class YesNoDescriptor extends WizardPanelDescriptor implements
 		StateListener {
@@ -52,7 +52,7 @@ abstract class YesNoDescriptor extends WizardPanelDescriptor implements
 	}
 
 	private void init() {
-		String msg = GUIUtils.getString("Messages", "repeat_words");
+		String msg = I18nService.getString("Messages", "repeat_words");
 		_yes_no_panel = new YesNoPanel(msg);
 		_yes_no_panel.addStateListener(this);
 

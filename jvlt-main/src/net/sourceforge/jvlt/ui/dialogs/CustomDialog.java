@@ -13,6 +13,7 @@ import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.event.ComponentReplacementListener;
 import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 public class CustomDialog extends AbstractDialog implements DialogListener {
 	private class ComponentReplacementHandler implements
@@ -42,9 +43,9 @@ public class CustomDialog extends AbstractDialog implements DialogListener {
 
 		Frame frame = JOptionPane.getFrameForComponent(parent);
 		_dialog = new CustomDialog(data, frame, title);
-		data.loadState(JVLT.getConfig());
+		data.loadState((UIConfig) JVLT.getConfig());
 		GUIUtils.showDialog(parent, _dialog);
-		data.saveState(JVLT.getConfig());
+		data.saveState((UIConfig) JVLT.getConfig());
 		int value = _dialog._value;
 		_dialog = null;
 

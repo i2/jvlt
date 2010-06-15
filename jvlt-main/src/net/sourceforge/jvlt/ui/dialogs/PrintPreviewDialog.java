@@ -21,7 +21,8 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.jvlt.ui.components.TablePrinterPanel;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.TablePrinter;
+import net.sourceforge.jvlt.ui.utils.TablePrinter;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class PrintPreviewDialog extends JDialog implements ActionListener,
 		ChangeListener {
@@ -86,12 +87,12 @@ public class PrintPreviewDialog extends JDialog implements ActionListener,
 		settings_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 0.0, 0.0);
-		settings_panel.add(new JLabel(GUIUtils.getString("Labels", "page")
+		settings_panel.add(new JLabel(I18nService.getString("Labels", "page")
 				+ ":"), cc);
 		cc.update(1, 0, 0.0, 0.0);
 		settings_panel.add(spinner, cc);
 		cc.update(2, 0, 0.0, 0.0);
-		settings_panel.add(new JLabel(GUIUtils.getString("Labels",
+		settings_panel.add(new JLabel(I18nService.getString("Labels",
 				"total_pages", new Object[] { max_page })), cc);
 		cc.update(3, 0, 1.0, 0.0);
 		settings_panel.add(Box.createHorizontalGlue(), cc);

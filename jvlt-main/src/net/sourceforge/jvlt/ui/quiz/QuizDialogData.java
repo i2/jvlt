@@ -18,7 +18,7 @@ import net.sourceforge.jvlt.ui.components.ObjectMapEditorPanel;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 /**
  * Dialog for managing (adding, editing, removing) quiz types. For each quiz
@@ -72,7 +72,7 @@ public class QuizDialogData extends CustomDialogData {
 	@Override
 	public void updateData() throws InvalidDataException {
 		if (!_quiz_list_panel._quiz_info_list_modified) {
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"quiz_info_list_unmodified"));
 		}
 	}
@@ -97,13 +97,13 @@ public class QuizDialogData extends CustomDialogData {
 		_quizzed_attribute_box = new AttributeSelectionPanel();
 		_quizzed_attribute_box.setAllowReordering(false);
 		_quizzed_attribute_box.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"quizzed_attributes")));
 
 		_shown_attributes_panel = new AttributeSelectionPanel();
 		_shown_attributes_panel.setAllowReordering(false);
 		_shown_attributes_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"shown_attributes")));
 
 		_content_pane = new JPanel();

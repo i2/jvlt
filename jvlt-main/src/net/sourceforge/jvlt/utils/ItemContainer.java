@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
+
 public class ItemContainer {
 	private boolean _translate_items = false;
 	private final AttributeResources _resources = new AttributeResources();

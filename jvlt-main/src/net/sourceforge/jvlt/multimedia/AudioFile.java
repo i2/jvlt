@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.multimedia;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+
 
 /**
  * This class represents an audio file that can be played with jVLT. Other audio

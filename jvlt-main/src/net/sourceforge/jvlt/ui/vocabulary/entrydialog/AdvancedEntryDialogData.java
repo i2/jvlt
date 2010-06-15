@@ -35,15 +35,16 @@ import net.sourceforge.jvlt.core.StringPair;
 import net.sourceforge.jvlt.metadata.ChoiceAttribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
+import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.ui.components.ChoiceListPanel;
 import net.sourceforge.jvlt.ui.components.CustomTabbedPane;
 import net.sourceforge.jvlt.ui.components.CustomTextField;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.FileUtils;
-import net.sourceforge.jvlt.utils.MultimediaUtils;
 import net.sourceforge.jvlt.utils.SimpleFileFilter;
 import net.sourceforge.jvlt.utils.Utils;
 
@@ -146,7 +147,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	}
 
 	@Override
-	protected void loadState(Config config) {
+	protected void loadState(UIConfig config) {
 		if (config.containsKey("AdvancedEntryDialog.size")) {
 			_content_pane.setPreferredSize(config.getDimensionProperty(
 					"AdvancedEntryDialog.size", new Dimension(300, 200)));
@@ -154,7 +155,7 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 	}
 
 	@Override
-	protected void saveState(Config config) {
+	protected void saveState(UIConfig config) {
 		config.setProperty("AdvancedEntryDialog.size", _content_pane.getSize());
 	}
 
@@ -180,11 +181,11 @@ public class AdvancedEntryDialogData extends CustomDialogData {
 		}
 		_file_selection_panel.setUseRelativePath(JVLT.getConfig()
 				.getBooleanProperty("use_relative_path", false));
-		SimpleFileFilter filter = new SimpleFileFilter(GUIUtils.getString(
+		SimpleFileFilter filter = new SimpleFileFilter(I18nService.getString(
 				"Labels", "audio_files"));
 		filter.setExtensions(MultimediaUtils.AUDIO_FILE_EXTENSIONS);
 		_file_selection_panel.addFileFilter(filter);
-		filter = new SimpleFileFilter(GUIUtils.getString("Labels",
+		filter = new SimpleFileFilter(I18nService.getString("Labels",
 				"image_files"));
 		filter.setExtensions(MultimediaUtils.IMAGE_FILE_EXTENSIONS);
 		_file_selection_panel.addFileFilter(filter);

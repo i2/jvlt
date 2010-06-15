@@ -38,6 +38,7 @@ import net.sourceforge.jvlt.ui.dialogs.AbstractDialog;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 /**
@@ -393,7 +394,7 @@ public class EntrySelectionDialogData extends CustomDialogData implements
 
 		// Initialize dialog
 		_query_dlg = new SimpleEntryQueryDialog(JOptionPane
-				.getFrameForComponent(_content_pane), GUIUtils.getString(
+				.getFrameForComponent(_content_pane), I18nService.getString(
 				"Labels", "advanced_filter"), _model);
 		_query_dlg.addDialogListener(this);
 

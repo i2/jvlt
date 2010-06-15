@@ -9,7 +9,7 @@ import java.awt.print.PrinterException;
 import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
-import net.sourceforge.jvlt.utils.TablePrinter;
+import net.sourceforge.jvlt.ui.utils.TablePrinter;
 
 public class TablePrinterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;

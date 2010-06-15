@@ -15,7 +15,7 @@ import net.sourceforge.jvlt.ui.dialogs.AbstractDialog;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialog;
 import net.sourceforge.jvlt.ui.dialogs.CustomDialogData;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class DateChooserButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class DateChooserButton extends JButton implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 		DateChooser chooser = new DateChooser();
 		chooser.setDate(_date);
-		int result = CustomDialog.showDialog(chooser, this, GUIUtils.getString(
+		int result = CustomDialog.showDialog(chooser, this, I18nService.getString(
 				"Labels", "select_date"));
 		if (result == AbstractDialog.OK_OPTION) {
 			setDate(chooser.getDate());

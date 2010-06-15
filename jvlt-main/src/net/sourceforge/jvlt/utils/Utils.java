@@ -116,22 +116,6 @@ public class Utils {
 		return font.getFamily() + "-" + style_str + "-" + font.getSize();
 	}
 
-	public static String arrayToString(Object[] values, String delim) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < values.length; i++) {
-			if (i > 0) {
-				buf.append(delim);
-			}
-			buf.append(values[i].toString());
-		}
-
-		return buf.toString();
-	}
-
-	public static String arrayToString(Object[] values) {
-		return arrayToString(values, ";");
-	}
-
 	public static String[] split(String str) {
 		return split(str, ";");
 	}
@@ -227,5 +211,21 @@ public class Utils {
 		}
 
 		return builder.toString();
+	}
+
+	public static String arrayToString(Object[] values, String delim) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) {
+				buf.append(delim);
+			}
+			buf.append(values[i].toString());
+		}
+	
+		return buf.toString();
+	}
+
+	public static String arrayToString(Object[] values) {
+		return arrayToString(values, ";");
 	}
 }

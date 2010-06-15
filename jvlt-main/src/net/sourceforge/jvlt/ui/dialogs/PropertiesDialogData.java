@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.jvlt.ui.components.LanguageComboBox;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class PropertiesDialogData extends CustomDialogData {
 	private String _language;
@@ -41,7 +41,7 @@ public class PropertiesDialogData extends CustomDialogData {
 				&& (lang == null || !lang.equals(_language))) {
 			int result = MessageDialog.showDialog(_content_pane,
 					MessageDialog.WARNING_MESSAGE,
-					MessageDialog.OK_CANCEL_OPTION, GUIUtils.getString(
+					MessageDialog.OK_CANCEL_OPTION, I18nService.getString(
 							"Messages", "language_change"));
 			if (result == MessageDialog.OK_OPTION) {
 				_language = lang;

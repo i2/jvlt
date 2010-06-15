@@ -11,7 +11,7 @@ import net.sourceforge.jvlt.event.DialogListener;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
 import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class EditEntryDialog extends AbstractEntryDialog {
 	private static final long serialVersionUID = 1L;
@@ -38,7 +38,7 @@ public class EditEntryDialog extends AbstractEntryDialog {
 					}
 					EditEntriesAction action = new EditEntriesAction(actions
 							.toArray(new EditEntryAction[actions.size()]));
-					action.setMessage(GUIUtils.getString("Actions",
+					action.setMessage(I18nService.getString("Actions",
 							"edit_entries", new Object[] { actions.size() }));
 					model.getDictModel().executeAction(action);
 

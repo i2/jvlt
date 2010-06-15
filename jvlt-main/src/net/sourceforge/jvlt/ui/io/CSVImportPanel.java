@@ -40,9 +40,9 @@ import net.sourceforge.jvlt.io.EntryAttributeSchemaReader;
 import net.sourceforge.jvlt.ui.components.LabeledSpinner;
 import net.sourceforge.jvlt.ui.components.LanguageComboBox;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 import org.apache.log4j.Logger;
@@ -98,7 +98,7 @@ public class CSVImportPanel extends CSVPanel {
 			if (column == 0) {
 				return "";
 			}
-			return GUIUtils.getString("Labels", "column_name");
+			return I18nService.getString("Labels", "column_name");
 		}
 
 		public void update() {
@@ -147,7 +147,7 @@ public class CSVImportPanel extends CSVPanel {
 					names.add(translation);
 				} else {
 					for (int j = 0; j < columns; j++) {
-						names.add(GUIUtils.getString("Labels",
+						names.add(I18nService.getString("Labels",
 								"nth_attribute_column", new Object[] {
 										translation, j + 1 }));
 					}
@@ -158,7 +158,7 @@ public class CSVImportPanel extends CSVPanel {
 		}
 
 		private String getTranslation(String key, int argument) {
-			return GUIUtils.getString("Labels", key, new Object[] { argument });
+			return I18nService.getString("Labels", key, new Object[] { argument });
 		}
 	}
 
@@ -213,7 +213,7 @@ public class CSVImportPanel extends CSVPanel {
 		_num_examples_spinner.setLabel("num_examples");
 		_num_examples_spinner.addChangeListener(ch);
 
-		_ignore_first_row_box = new JCheckBox(GUIUtils.getString("Actions",
+		_ignore_first_row_box = new JCheckBox(I18nService.getString("Actions",
 				"ignore_first_row"));
 		_ignore_first_row_box.addActionListener(ah);
 
@@ -221,7 +221,7 @@ public class CSVImportPanel extends CSVPanel {
 		_attribute_table.getModel().addTableModelListener(tmh);
 		_attribute_pane = new JScrollPane(_attribute_table);
 		_attribute_pane.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"attributes")));
 
 		_preview_model = new PreviewTableModel();
@@ -233,7 +233,7 @@ public class CSVImportPanel extends CSVPanel {
 		preview_table.getColumnModel().getColumn(0).setPreferredWidth(10);
 		_preview_pane = new JScrollPane(preview_table);
 		_preview_pane.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"csv_columns")));
 	}
 
@@ -526,9 +526,9 @@ class AttributeTable extends JTable {
 		@Override
 		public String getColumnName(int column) {
 			if (column == 0) {
-				return GUIUtils.getString("Labels", "attribute");
+				return I18nService.getString("Labels", "attribute");
 			}
-			return GUIUtils.getString("Labels", "num_columns");
+			return I18nService.getString("Labels", "num_columns");
 		}
 
 		public void clear() {

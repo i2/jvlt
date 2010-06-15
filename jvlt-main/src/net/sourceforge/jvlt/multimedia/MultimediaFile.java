@@ -1,10 +1,11 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.multimedia;
 
 import java.io.File;
 import java.io.IOException;
 
-import net.sourceforge.jvlt.JVLT;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.ui.JVLTUI;
+import net.sourceforge.jvlt.utils.FileUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 import org.apache.log4j.Logger;
 
@@ -45,18 +46,18 @@ public abstract class MultimediaFile {
 
 	public static String getTypeString(int type) {
 		if (type == AUDIO_FILE) {
-			return GUIUtils.getString("Labels", "audio_file");
+			return I18nService.getString("Labels", "audio_file");
 		} else if (type == IMAGE_FILE) {
-			return GUIUtils.getString("Labels", "image_file");
+			return I18nService.getString("Labels", "image_file");
 		} else {
 			// if (type == OTHER_FILE)
-			return GUIUtils.getString("Labels", "other_file");
+			return I18nService.getString("Labels", "other_file");
 		}
 	}
 
 	protected File getFile() {
 		String path = System.getProperty("user.home");
-		String dict_file = JVLT.getInstance().getModel().getDictFileName();
+		String dict_file = JVLTUI.getModel().getDictFileName();
 		if (dict_file != null && !dict_file.equals("")) {
 			path = new File(dict_file).getParentFile().getAbsolutePath();
 		}

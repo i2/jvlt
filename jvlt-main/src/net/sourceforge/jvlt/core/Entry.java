@@ -10,7 +10,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import net.sourceforge.jvlt.JVLT;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 import org.apache.log4j.Logger;
@@ -108,7 +108,7 @@ public class Entry implements Comparable<Entry>, Reinitializable {
 
 			@Override
 			public String toString() {
-				return GUIUtils.getString("Labels", getLongName());
+				return I18nService.getString("Labels", getLongName());
 			}
 		}
 

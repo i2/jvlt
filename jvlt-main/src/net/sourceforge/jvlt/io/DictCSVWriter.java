@@ -14,8 +14,8 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.EntryClass;
 import net.sourceforge.jvlt.core.SchemaAttribute;
 import net.sourceforge.jvlt.core.Sense;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class DictCSVWriter extends DictWriter {
 	private class DictInfo {
@@ -85,31 +85,31 @@ public class DictCSVWriter extends DictWriter {
 		}
 
 		// Write column headers
-		writer.write(getField(GUIUtils.getString("Labels", "original")));
+		writer.write(getField(I18nService.getString("Labels", "original")));
 		writer.write(_field_delimiter);
-		writer.write(getField(GUIUtils.getString("Labels", "pronunciation")));
+		writer.write(getField(I18nService.getString("Labels", "pronunciation")));
 		writer.write(_field_delimiter);
 		for (int i = 0; i < info.num_senses; i++) {
-			writer.write(GUIUtils.getString("Labels", "translation") + " #"
+			writer.write(I18nService.getString("Labels", "translation") + " #"
 					+ (i + 1));
 			writer.write(_field_delimiter);
-			writer.write(GUIUtils.getString("Labels", "definition") + " #"
+			writer.write(I18nService.getString("Labels", "definition") + " #"
 					+ (i + 1));
 			writer.write(_field_delimiter);
 		}
-		writer.write(getField(GUIUtils.getString("Labels", "lesson")));
+		writer.write(getField(I18nService.getString("Labels", "lesson")));
 		writer.write(_field_delimiter);
 		for (int i = 0; i < info.num_categories; i++) {
-			writer.write(GUIUtils.getString("Labels", "category") + " #"
+			writer.write(I18nService.getString("Labels", "category") + " #"
 					+ (i + 1));
 			writer.write(_field_delimiter);
 		}
 		for (int i = 0; i < info.num_mmfiles; i++) {
-			writer.write(GUIUtils.getString("Labels", "multimedia_file") + " #"
+			writer.write(I18nService.getString("Labels", "multimedia_file") + " #"
 					+ (i + 1));
 			writer.write(_field_delimiter);
 		}
-		writer.write(getField(GUIUtils.getString("Labels", "class")));
+		writer.write(getField(I18nService.getString("Labels", "class")));
 		writer.write(_field_delimiter);
 		AttributeResources resources = new AttributeResources();
 		for (SchemaAttribute attr : info.num_attr_columns.keySet()) {

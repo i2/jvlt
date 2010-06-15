@@ -1,9 +1,10 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.multimedia;
 
 import java.io.IOException;
 
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Entry;
+import net.sourceforge.jvlt.utils.Config;
 
 public class MultimediaUtils {
 	public static final String[] AUDIO_FILE_EXTENSIONS = { "wav", "wave",

@@ -25,9 +25,9 @@ import net.sourceforge.jvlt.core.EntryClass;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.SchemaAttribute;
 import net.sourceforge.jvlt.core.Sense;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.AttributeResources;
 import net.sourceforge.jvlt.utils.ExampleBuilder;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.SimpleHTMLParser;
 import net.sourceforge.jvlt.utils.Utils;
 
@@ -121,7 +121,7 @@ public class CSVDictReader extends DictReader {
 		InputStreamReader isr = new InputStreamReader(stream, _charset);
 		BufferedReader br = new BufferedReader(isr);
 		ArrayList<String> fields = new ArrayList<String>();
-		String msg = GUIUtils.getString("Messages", "invalid_file_format");
+		String msg = I18nService.getString("Messages", "invalid_file_format");
 		int line_no = 0;
 		if (_ignore_first_line && br.ready()) {
 			br.readLine();
@@ -181,7 +181,7 @@ public class CSVDictReader extends DictReader {
 		}
 		if (!_duplicate_entries.isEmpty()) {
 			Entry[] entries = _duplicate_entries.toArray(new Entry[0]);
-			String long_msg = GUIUtils.getString("Messages",
+			String long_msg = I18nService.getString("Messages",
 					"duplicate_entries", new String[] { Utils
 							.arrayToString(entries) });
 			throw new DictReaderException(msg, long_msg);

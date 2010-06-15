@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import net.sourceforge.jvlt.event.SelectionNotifier;
 import net.sourceforge.jvlt.event.StateListener;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class EntryAnswerDescriptor extends EntryDescriptor implements StateListener {
 	private YesNoPanel _yes_no_panel;
@@ -35,7 +35,7 @@ class EntryAnswerDescriptor extends EntryDescriptor implements StateListener {
 
 	@Override
 	protected void init() {
-		String msg = GUIUtils.getString("Messages", "entry_known");
+		String msg = I18nService.getString("Messages", "entry_known");
 		_yes_no_panel = new YesNoPanel(msg);
 		_yes_no_panel.addStateListener(this);
 

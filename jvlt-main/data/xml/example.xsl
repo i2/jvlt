@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:xslutils="net.sourceforge.jvlt.utils.XSLUtils">
+	xmlns:xslutils="net.sourceforge.jvlt.ui.utils.XSLUtils">
 
 	<xsl:variable name="orth_font_style_family"
 		select="xslutils:fontStyleFamily('orth_font')"/>

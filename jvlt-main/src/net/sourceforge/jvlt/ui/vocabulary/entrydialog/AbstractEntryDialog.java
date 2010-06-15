@@ -56,7 +56,8 @@ import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.Config;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.Utils;
 
 /**
@@ -126,7 +127,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 					public void actionPerformed(ActionEvent e) {
 						if (e.getActionCommand().equals("advanced")) {
 							CustomDialog.showDialog(getAdvancedDialogData(),
-									getContentPane(), GUIUtils
+									getContentPane(), I18nService
 											.getLabelString("advanced"));
 						}
 					}
@@ -145,7 +146,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	 * 
 	 * @param config the settings will be loaded from here
 	 */
-	public void loadState(Config config) {
+	public void loadState(UIConfig config) {
 		if (config.containsKey("EntryDialog.size")) {
 			getContentPane().setPreferredSize(
 					config.getDimensionProperty("EntryDialog.size",
@@ -158,7 +159,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 	 * 
 	 * @param config the settings will be stored here
 	 */
-	public void saveState(Config config) {
+	public void saveState(UIConfig config) {
 		config.setProperty("EntryDialog.size", getContentPane().getSize());
 	}
 
@@ -198,12 +199,12 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 		if (currentEntries.size() == 1) {
 			if (!meaningsArea.hasMeanings()) {
-				throw new InvalidDataException(GUIUtils
+				throw new InvalidDataException(I18nService
 						.getMessageString("no_sense"));
 			}
 
 			if (textFieldArea.getSelectedOrthography().equals("")) {
-				throw new InvalidDataException(GUIUtils
+				throw new InvalidDataException(I18nService
 						.getMessageString("empty_orthography"));
 			}
 
@@ -214,7 +215,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 
 			Entry e = model.getDict().getEntry(getCurrentEntry());
 			if (e != null && !e.getID().equals(getCurrentEntry().getID())) {
-				throw new InvalidDataException(GUIUtils
+				throw new InvalidDataException(I18nService
 						.getMessageString("duplicate_entry"));
 			}
 		}
@@ -279,7 +280,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 						SenseDialogData data = new AddSenseDialogData(
 								model, meaningsMap.keySet());
 						int result = CustomDialog.showDialog(data,
-								getContentPane(), GUIUtils
+								getContentPane(), I18nService
 										.getLabelString("add_sense"));
 						if (result == AbstractDialog.OK_OPTION) {
 							Sense sense = data.getSense();
@@ -304,7 +305,7 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 						SenseDialogData data = new EditSenseDialogData(
 								model, meaningsMap.keySet(), sense);
 						int result = CustomDialog.showDialog(data,
-								getContentPane(), GUIUtils
+								getContentPane(), I18nService
 										.getLabelString("edit_sense"));
 						if (result == AbstractDialog.OK_OPTION) {
 							Sense newSense = data.getSense();
@@ -340,16 +341,16 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 										.showDialog(
 												getContentPane(),
 												MessageDialog.WARNING_MESSAGE,
-												GUIUtils
+												I18nService
 														.getMessageString("cannot_remove_sense"));
 								return;
 							}
 						}
 
 						int result = JOptionPane.showConfirmDialog(
-								getContentPane(), GUIUtils
+								getContentPane(), I18nService
 										.getMessageString("remove_sense"),
-								GUIUtils.getLabelString("confirm"),
+										I18nService.getLabelString("confirm"),
 								JOptionPane.YES_NO_OPTION);
 						if (result == JOptionPane.YES_OPTION) {
 							RemoveSenseAction action = new RemoveSenseAction(
@@ -416,7 +417,8 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 			cc.update(2, 0, 0.0, 1.0);
 			meaningPanel.add(buttonPanel, cc);
 			meaningPanel.setBorder(new TitledBorder(new EtchedBorder(
-					EtchedBorder.LOWERED), GUIUtils.getLabelString("senses")));
+					EtchedBorder.LOWERED),
+					I18nService.getLabelString("senses")));
 			return meaningPanel;
 		}
 
@@ -569,13 +571,15 @@ public abstract class AbstractEntryDialog extends AbstractDialog {
 									.pack();
 						}
 					});
-			Font font = JVLT.getConfig().getFontProperty("ui_pron_font");
+			Font font = ((UIConfig) JVLT.getConfig()).getFontProperty(
+					"ui_pron_font");
 			if (font != null) {
 				pronunciationEditor.setFont(font);
 			}
 
 			orthField.setActionCommand("orthography");
-			font = JVLT.getConfig().getFontProperty("ui_orth_font");
+			font = ((UIConfig) JVLT.getConfig()).getFontProperty(
+					"ui_orth_font");
 			if (font != null) {
 				orthField.setFont(font);
 			}

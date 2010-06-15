@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt.utils;
+package net.sourceforge.jvlt.ui.utils;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,7 +19,8 @@ import java.util.Vector;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.jvlt.JVLT;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 
 public class TablePrinter implements Printable {
 	private int _page_number = 0;
@@ -43,7 +44,7 @@ public class TablePrinter implements Printable {
 	public TablePrinter() {
 		PrinterJob job = PrinterJob.getPrinterJob();
 		_format = job.defaultPage();
-		_font = JVLT.getConfig().getFontProperty("print_font");
+		_font = ((UIConfig) JVLT.getConfig()).getFontProperty("print_font");
 
 		_colwidth_map = new HashMap<Integer, Double>();
 		_pages_map = new HashMap<String, Vector<Integer>>();
@@ -193,7 +194,7 @@ public class TablePrinter implements Printable {
 				row--;
 				if (getLastRowOnPage(pages, pages.size() - 1)
 						- getFirstRowOnPage(pages, pages.size() - 1) < 0) {
-					throw new PrinterException(GUIUtils.getString("Messages",
+					throw new PrinterException(I18nService.getString("Messages",
 							"page_full"));
 				}
 			}

@@ -28,7 +28,7 @@ import net.sourceforge.jvlt.core.EntryClass;
 import net.sourceforge.jvlt.core.Example;
 import net.sourceforge.jvlt.core.SchemaAttribute;
 import net.sourceforge.jvlt.core.Sense;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 import net.sourceforge.jvlt.utils.XMLUtils;
 
@@ -115,16 +115,16 @@ public class SAXDictReader extends DictReader {
 				if (e instanceof DictReaderException) {
 					throw (DictReaderException) e;
 				} else if (e instanceof VersionException) {
-					throw new DictReaderException(GUIUtils.getString(
+					throw new DictReaderException(I18nService.getString(
 							"Messages", "invalid_xml"), e);
 				}
 			} else {
-				throw new DictReaderException(GUIUtils.getString("Messages",
+				throw new DictReaderException(I18nService.getString("Messages",
 						"invalid_xml"), ex.getMessage());
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			throw new DictReaderException(GUIUtils.getString("Messages",
+			throw new DictReaderException(I18nService.getString("Messages",
 					"invalid_xml"), ex.getMessage());
 		}
 	}
@@ -164,7 +164,7 @@ abstract class AbstractHandler extends DefaultHandler {
 	protected SAXException getSAXException(String type, String message) {
 		String str = "Error at line " + _locator.getLineNumber() + ": "
 				+ message;
-		DictReaderException ex = new DictReaderException(GUIUtils.getString(
+		DictReaderException ex = new DictReaderException(I18nService.getString(
 				"Messages", type), str);
 
 		return new SAXException(str, ex);
@@ -209,20 +209,20 @@ class DictHandler extends AbstractHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		if (_duplicate_entries.size() > 0 || _duplicate_examples.size() > 0) {
-			String msg = GUIUtils.getString("Messages",
+			String msg = I18nService.getString("Messages",
 					"duplicate_entries_examples");
 			Entry[] entries = _duplicate_entries.toArray(new Entry[0]);
 			Example[] examples = _duplicate_examples.toArray(new Example[0]);
 			String long_msg = "";
 			if (entries.length > 0) {
-				long_msg += GUIUtils.getString("Messages", "duplicate_entries",
+				long_msg += I18nService.getString("Messages", "duplicate_entries",
 						new String[] { Utils.arrayToString(entries) });
 			}
 			if (examples.length > 0) {
 				if (entries.length > 0) {
 					long_msg += "\n";
 				}
-				long_msg += GUIUtils.getString("Messages",
+				long_msg += I18nService.getString("Messages",
 						"duplicate_examples", new String[] { Utils
 								.arrayToString(examples) });
 			}

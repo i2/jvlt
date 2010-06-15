@@ -6,7 +6,7 @@ import java.util.Collections;
 import net.sourceforge.jvlt.core.Sense;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.ui.dialogs.InvalidDataException;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class EditSenseDialogData extends SenseDialogData {
 	protected Sense _orig_sense;
@@ -25,7 +25,7 @@ public class EditSenseDialogData extends SenseDialogData {
 		if (index >= 0) {
 			Sense s = _existing_senses.get(index);
 			if (s != _orig_sense)
-				throw new InvalidDataException(GUIUtils.getString("Messages",
+				throw new InvalidDataException(I18nService.getString("Messages",
 				"duplicate_sense"));
 		}
 	}

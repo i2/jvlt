@@ -18,8 +18,8 @@ import net.sourceforge.jvlt.io.DictReaderException;
 import net.sourceforge.jvlt.io.DictWriter;
 import net.sourceforge.jvlt.io.DictXMLWriter;
 import net.sourceforge.jvlt.io.SAXDictReader;
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.utils.DetailedException;
+import net.sourceforge.jvlt.utils.I18nService;
 import net.sourceforge.jvlt.utils.Utils;
 
 import org.apache.log4j.Logger;
@@ -69,11 +69,11 @@ public class JVLTModel implements UndoableActionListener,
 	 */
 	public void save(String dict_file_name) throws DetailedException {
 		if (dict_file_name == null) {
-			throw new DetailedException(GUIUtils.getString("Messages",
+			throw new DetailedException(I18nService.getString("Messages",
 					"no_file"));
 		}
 
-		String exception_text = GUIUtils.getString("Messages", "saving_failed");
+		String exception_text = I18nService.getString("Messages", "saving_failed");
 
 		File file = new File(dict_file_name);
 		String path = file.getParent();

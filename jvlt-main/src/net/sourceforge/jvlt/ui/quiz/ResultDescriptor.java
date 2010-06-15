@@ -21,6 +21,7 @@ import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.wizard.WizardModel;
 import net.sourceforge.jvlt.utils.ChoiceFormatter;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class ResultDescriptor extends YesNoDescriptor implements
 		ListSelectionListener, ActionListener {
@@ -33,7 +34,7 @@ class ResultDescriptor extends YesNoDescriptor implements
 	private TitledBorder _notknown_entries_border;
 
 	public ResultDescriptor(WizardModel model) {
-		super(model, GUIUtils.getString("Messages", "save_changes"));
+		super(model, I18nService.getString("Messages", "save_changes"));
 		init();
 		updateActions();
 		updateLabels();
@@ -142,14 +143,14 @@ class ResultDescriptor extends YesNoDescriptor implements
 	}
 
 	private void updateLabels() {
-		ChoiceFormatter formatter = new ChoiceFormatter(GUIUtils.getString(
+		ChoiceFormatter formatter = new ChoiceFormatter(I18nService.getString(
 				"Labels", "num_words"));
 		String value = formatter
 				.format(_known_entries_table.getEntries().size());
-		_known_entries_border.setTitle(GUIUtils.getString("Labels",
+		_known_entries_border.setTitle(I18nService.getString("Labels",
 				"known_words", new Object[] { value }));
 		value = formatter.format(_notknown_entries_table.getEntries().size());
-		_notknown_entries_border.setTitle(GUIUtils.getString("Labels",
+		_notknown_entries_border.setTitle(I18nService.getString("Labels",
 				"not_known_words", new Object[] { value }));
 		_comp.revalidate();
 		_comp.repaint(_comp.getVisibleRect());

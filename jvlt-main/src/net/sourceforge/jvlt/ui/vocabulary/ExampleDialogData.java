@@ -49,8 +49,9 @@ import net.sourceforge.jvlt.ui.dialogs.MessageDialog;
 import net.sourceforge.jvlt.ui.utils.CustomAction;
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
-import net.sourceforge.jvlt.utils.Config;
 import net.sourceforge.jvlt.utils.ExampleBuilder;
+import net.sourceforge.jvlt.utils.I18nService;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.SimpleHTMLParser;
 import net.sourceforge.jvlt.utils.Utils;
 
@@ -107,7 +108,7 @@ public class ExampleDialogData extends CustomDialogData implements
 	@Override
 	public void updateData() throws InvalidDataException {
 		if (_example.getSenses().length == 0) {
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"no_links"));
 		}
 
@@ -116,14 +117,14 @@ public class ExampleDialogData extends CustomDialogData implements
 			parser.parse(_translation_field.getText());
 			parser.parse(_example.getHTMLText());
 		} catch (ParseException e) {
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"invalid_html", new Object[] { e.getMessage() }));
 		}
 
 		_example.setTranslation(_translation_field.getText());
 		Example e = _dict.getExample(_example);
 		if (e != null && !e.getID().equals(_example.getID())) {
-			throw new InvalidDataException(GUIUtils.getString("Messages",
+			throw new InvalidDataException(I18nService.getString("Messages",
 					"duplicate_example"));
 		}
 	}
@@ -174,12 +175,12 @@ public class ExampleDialogData extends CustomDialogData implements
 					if (entry.getSenses().length > 1) {
 						MessageDialog
 								.showDialog(_content_pane,
-										MessageDialog.WARNING_MESSAGE, GUIUtils
-												.getString("Messages",
+										MessageDialog.WARNING_MESSAGE,
+										I18nService.getString("Messages",
 														"select_meaning"));
 					} else if (entry.getSenses().length == 0) {
 						MessageDialog.showDialog(_content_pane,
-								MessageDialog.WARNING_MESSAGE, GUIUtils
+								MessageDialog.WARNING_MESSAGE, I18nService
 										.getString("Messages", "no_meaning"));
 					} else {
 						builder.addSense(entry.getSenses()[0], from, to);
@@ -215,7 +216,7 @@ public class ExampleDialogData extends CustomDialogData implements
 	}
 
 	@Override
-	protected void loadState(Config config) {
+	protected void loadState(UIConfig config) {
 		_content_pane.setPreferredSize(config.getDimensionProperty(
 				"ExampleDialog.size", new Dimension(500, 500)));
 		
@@ -232,7 +233,7 @@ public class ExampleDialogData extends CustomDialogData implements
 	}
 
 	@Override
-	protected void saveState(Config config) {
+	protected void saveState(UIConfig config) {
 		config.setProperty("ExampleDialog.size", _content_pane.getSize());
 		
 		/* save column widths */
@@ -246,7 +247,8 @@ public class ExampleDialogData extends CustomDialogData implements
 	}
 
 	private void init() {
-		Font orth_font = JVLT.getConfig().getFontProperty("ui_orth_font");
+		Font orth_font = ((UIConfig) JVLT.getConfig()).getFontProperty(
+				"ui_orth_font");
 
 		// -----------
 		// Setup the preview pane which displays the example and its
@@ -259,7 +261,7 @@ public class ExampleDialogData extends CustomDialogData implements
 		JScrollPane preview_scrpane = new JScrollPane(_preview_pane);
 		preview_scrpane
 				.setBorder(new TitledBorder(new EtchedBorder(
-						EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+						EtchedBorder.LOWERED), I18nService.getString("Labels",
 						"preview")));
 
 		// ----------
@@ -315,12 +317,12 @@ public class ExampleDialogData extends CustomDialogData implements
 
 		_add_senses_panel = new JPanel();
 		_add_senses_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+				EtchedBorder.LOWERED), I18nService.getString("Labels",
 				"create_link")));
 		_add_senses_panel.setLayout(new GridBagLayout());
 		CustomConstraints cc = new CustomConstraints();
 		cc.update(0, 0, 1.0, 0.0);
-		_add_senses_panel.add(new JLabel(GUIUtils.getString("Messages",
+		_add_senses_panel.add(new JLabel(I18nService.getString("Messages",
 				"add_senses_help")), cc);
 		cc.update(0, 1, 1.0, 0.0);
 		_add_senses_panel.add(filter_panel, cc);
@@ -345,7 +347,7 @@ public class ExampleDialogData extends CustomDialogData implements
 		cc.update(0, 2, 1.0, 0.0, 2, 1);
 		senses_panel.add(_current_senses_label, cc);
 		senses_panel.setBorder(new TitledBorder(new EtchedBorder(
-				EtchedBorder.LOWERED), GUIUtils.getString("Labels", "links")));
+				EtchedBorder.LOWERED), I18nService.getString("Labels", "links")));
 
 		_content_pane = new JPanel();
 		_content_pane.setLayout(new GridBagLayout());
@@ -379,8 +381,10 @@ public class ExampleDialogData extends CustomDialogData implements
 		// _example_field then this text is highlighted. Otherwise, the text
 		// fragments that are linked to a sense are highlighted.
 		// ---------
-		Font html_font = JVLT.getConfig().getFontProperty("html_font");
-		Font orth_font = JVLT.getConfig().getFontProperty("orth_font");
+		Font html_font = ((UIConfig) JVLT.getConfig()).getFontProperty(
+				"html_font");
+		Font orth_font = ((UIConfig) JVLT.getConfig()).getFontProperty(
+				"orth_font");
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<html>");
 		if (html_font == null) {
@@ -522,7 +526,7 @@ public class ExampleDialogData extends CustomDialogData implements
 				num++;
 			}
 
-			_current_senses_label.setText(GUIUtils.getString("Labels",
+			_current_senses_label.setText(I18nService.getString("Labels",
 					"num_linked_examples", new Object[] { num }));
 		}
 
@@ -547,7 +551,7 @@ public class ExampleDialogData extends CustomDialogData implements
 				num--;
 			}
 
-			_available_senses_label.setText(GUIUtils.getString("Labels",
+			_available_senses_label.setText(I18nService.getString("Labels",
 					"num_linked_examples", new Object[] { num }));
 		}
 	}
@@ -562,7 +566,7 @@ class ExampleTextField extends JTextArea {
 		super();
 		_example = null;
 
-		Font f = JVLT.getConfig().getFontProperty("ui_orth_font");
+		Font f = ((UIConfig) JVLT.getConfig()).getFontProperty("ui_orth_font");
 		if (f != null) {
 			setFont(f);
 		}

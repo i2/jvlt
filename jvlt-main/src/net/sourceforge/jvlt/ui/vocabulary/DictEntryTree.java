@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.core.Sense;
+import net.sourceforge.jvlt.utils.UIConfig;
 import net.sourceforge.jvlt.utils.Utils;
 
 public class DictEntryTree extends JTree {
@@ -24,10 +25,10 @@ public class DictEntryTree extends JTree {
 	private static class TreeCellRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 1L;
 
-		private static final Font orth_font = JVLT.getConfig().getFontProperty(
-				"ui_orth_font");
-		private static final Font pron_font = JVLT.getConfig().getFontProperty(
-				"ui_pron_font");
+		private static final Font orth_font = ((UIConfig) JVLT.getConfig())
+				.getFontProperty("ui_orth_font");
+		private static final Font pron_font = ((UIConfig) JVLT.getConfig())
+				.getFontProperty("ui_pron_font");
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value,

@@ -24,6 +24,7 @@ import javax.swing.border.TitledBorder;
 
 import net.sourceforge.jvlt.ui.utils.CustomConstraints;
 import net.sourceforge.jvlt.ui.utils.GUIUtils;
+import net.sourceforge.jvlt.utils.I18nService;
 
 public class MessageDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -136,7 +137,7 @@ public class MessageDialog extends JDialog implements ActionListener {
 		_details_scrpane.setPreferredSize(new Dimension(300, 100));
 		_details_scrpane
 				.setBorder(new TitledBorder(new EtchedBorder(
-						EtchedBorder.LOWERED), GUIUtils.getString("Labels",
+						EtchedBorder.LOWERED), I18nService.getString("Labels",
 						"details")));
 		_icon_label = new JLabel();
 		_details_button = new JButton(_details_action);
@@ -194,13 +195,13 @@ public class MessageDialog extends JDialog implements ActionListener {
 		String title = "";
 		String icon = "";
 		if (type == WARNING_MESSAGE) {
-			title = GUIUtils.getString("Labels", "warning");
+			title = I18nService.getString("Labels", "warning");
 			icon = "msg_warning";
 		} else if (type == ERROR_MESSAGE) {
-			title = GUIUtils.getString("Labels", "error");
+			title = I18nService.getString("Labels", "error");
 			icon = "msg_critical";
 		} else if (type == INFO_MESSAGE) {
-			title = GUIUtils.getString("Labels", "status");
+			title = I18nService.getString("Labels", "status");
 			icon = "msg_info";
 		}
 		setTitle(title);
@@ -214,9 +215,9 @@ public class MessageDialog extends JDialog implements ActionListener {
 	private void update() {
 		String text;
 		if (_show_details) {
-			text = GUIUtils.getString("Actions", "details_less");
+			text = I18nService.getString("Actions", "details_less");
 		} else {
-			text = GUIUtils.getString("Actions", "details_more");
+			text = I18nService.getString("Actions", "details_more");
 		}
 		Integer mnemonic = GUIUtils.getMnemonicKey(text);
 		if (mnemonic != null) {

@@ -3,8 +3,8 @@ package net.sourceforge.jvlt.ui.quiz;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.jvlt.ui.utils.GUIUtils;
 import net.sourceforge.jvlt.ui.wizard.WizardPanelDescriptor;
+import net.sourceforge.jvlt.utils.I18nService;
 
 class EntryNullDescriptor extends WizardPanelDescriptor {
 	public EntryNullDescriptor(QuizModel model) {
@@ -19,7 +19,7 @@ class EntryNullDescriptor extends WizardPanelDescriptor {
 	}
 
 	private void init() {
-		JLabel label = new JLabel(GUIUtils.getString("Messages",
+		JLabel label = new JLabel(I18nService.getString("Messages",
 				"current_entry_removed"));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
