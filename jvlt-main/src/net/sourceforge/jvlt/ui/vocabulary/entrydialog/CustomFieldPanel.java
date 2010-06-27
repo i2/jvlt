@@ -25,6 +25,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -241,6 +243,13 @@ public class CustomFieldPanel extends JPanel {
 			}
 		};
 		table.getSelectionModel().addListSelectionListener(selectionListener);
+		
+		TableModelListener modelListener = new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				updateActions();
+			}
+		};
+		tableModel.addTableModelListener(modelListener);
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(new Dimension(400, 200));
