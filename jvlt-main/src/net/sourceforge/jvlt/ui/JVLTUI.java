@@ -1260,6 +1260,10 @@ public class JVLTUI implements ActionListener, UndoableActionListener,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		// Set locale
+		Locale loc = Locale.getDefault();
+		Locale.setDefault(config.getLocaleProperty("locale", loc));
 
 		final JVLTUI ui = new JVLTUI(is_on_mac);
 		if (controller != null) {
