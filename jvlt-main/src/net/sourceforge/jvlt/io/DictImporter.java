@@ -103,16 +103,16 @@ public class DictImporter {
 					+ resources.getString(info.newLanguage));
 		}
 
-		Collection<Entry> entries = getImportedEntries(dict);
+		info.entries = getImportedEntries(dict);
 		TreeSet<Entry> entry_set = new TreeSet<Entry>();
-		entry_set.addAll(entries);
-		Collection<Example> examples = getImportedExamples(dict, entries);
+		entry_set.addAll(info.entries);
+		info.examples = getImportedExamples(dict, info.entries);
 
 		// -----
 		// Prepare the entries
 		// -----
 		if (_clear_stats) {
-			for (Entry entry : entries) {
+			for (Entry entry : info.entries) {
 				entry.resetStats();
 			}
 		}
@@ -120,7 +120,7 @@ public class DictImporter {
 		// -----
 		// Prepare the examples
 		// -----
-		for (Example example : examples) {
+		for (Example example : info.examples) {
 			Example.TextFragment[] fragments = example.getTextFragments();
 			for (TextFragment fragment : fragments) {
 				Example.TextFragment tf = fragment;
