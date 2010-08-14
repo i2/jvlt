@@ -17,5 +17,7 @@
 	<class name="expression"/>
 	<class name="preposition"/>
 	<class name="interjection"/>
+	<class name="prefix"/>
+	<class name="suffix"/>
 </schema>
 
