@@ -4,12 +4,15 @@
 	<class name="verb"/>
 	<class name="adjective"/>
 	<class name="adverb"/>
+	<class name="pronoun"/>
 	<class name="conjunction"/>
 	<class name="expression"/>
 	<class name="preposition"/>
 	<class name="interjection"/>
 	<class name="particle"/>
-	<attribute name="gender" classes="noun">
+	<class name="prefix"/>
+	<class name="suffix"/>
+	<attribute name="gender" classes="noun;pronoun">
 		<choice name="feminine"/>
 		<choice name="masculine"/>
 		<choice name="neuter"/>
