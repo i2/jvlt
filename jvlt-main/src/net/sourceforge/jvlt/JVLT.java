@@ -19,8 +19,14 @@ import org.xml.sax.InputSource;
 public class JVLT {
 	private static final Logger logger = Logger.getLogger(JVLT.class);
 
-	private static final Locale[] _locales = { Locale.US, Locale.FRANCE,
-			Locale.GERMANY, new Locale("cs", "CZ"), new Locale("pl", "PL") };
+	private static final Locale[] _locales = {
+		Locale.US,
+		Locale.FRANCE,
+		Locale.GERMANY,
+		new Locale("cs", "CZ"),
+		new Locale("pl", "PL"),
+		new Locale("pt", "BR")
+	};
 
 	private PropertyMap _runtime_properties;
 	private Config _config = null;

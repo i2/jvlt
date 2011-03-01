@@ -46,6 +46,14 @@
 			</e-mail>
 			<role>Polish translation</role>
 		</person>
+		<person>
+			<name>Djavan Fagundes</name>
+			<e-mail>
+				<local-part>djavan</local-part>
+				<domain>comum.org</domain>
+			</e-mail>
+			<role>Brazilian Portuguese translation</role>
+		</person>
 	</translators>
 	<contributors>
 		<person>
