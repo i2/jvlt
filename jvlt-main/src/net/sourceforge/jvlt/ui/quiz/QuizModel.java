@@ -518,7 +518,7 @@ public class QuizModel extends WizardModel {
 									solutions.get(i).toLowerCase())));
 
 					if (!correct_answer) {
-						if (!"".equals(bad_answers) || "".equals(good_answers)) {
+						if (!"".equals(bad_answers)) {
 							bad_answers += answers_delimiter;
 						}
 						bad_answers += answers[i];
@@ -529,7 +529,7 @@ public class QuizModel extends WizardModel {
 						good_answers += answers[i];
 					}
 				}
-				if (!"".equals(bad_answers)) {
+				if (!"".equals(bad_answers) || "".equals(good_answers)) {
 					result = new QueryResult(entry, false, bad_answers);
 				} else {
 					result = new QueryResult(entry, true, good_answers);
