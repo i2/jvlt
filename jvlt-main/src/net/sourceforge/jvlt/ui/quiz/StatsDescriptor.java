@@ -54,6 +54,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 	private final Map<String, QuizInfo> _quiz_info_map;
 	private final Map<String, QuizInfo> _visible_quiz_info_map;
 	private final Map<String, QuizInfo> _invisible_quiz_info_map;
+	private final Map<String, QuizInfo> _default_quiz_info_map;
 	private Dict _dict;
 	private final QuizDict _qdict;
 
@@ -77,6 +78,7 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 		_quiz_info_map = new HashMap<String, QuizInfo>();
 		_visible_quiz_info_map = new HashMap<String, QuizInfo>();
 		_invisible_quiz_info_map = new HashMap<String, QuizInfo>();
+		_default_quiz_info_map = new HashMap<String, QuizInfo>();
 
 		JVLTModel jm = model.getJVLTModel();
 		_entry_selection_data = new EntrySelectionDialogData(jm);
@@ -87,6 +89,11 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				"ignore_batches", false));
 
 		init();
+		
+		for (QuizInfo defaultQuizInfo : QuizInfo.getDefaultQuizInfos()) {
+			_default_quiz_info_map.put(defaultQuizInfo.getName(), defaultQuizInfo);
+		}
+		
 		loadQuizInfoList();
 	}
 
@@ -496,8 +503,9 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 
 		Object selected_quiz_type = JVLT.getRuntimeProperties().get(
 				"selected_quiz_type");
-		if (selected_quiz_type == null
-				|| !_visible_quiz_info_map.containsKey(selected_quiz_type)) {
+		if (selected_quiz_type == null  
+				|| (!_visible_quiz_info_map.containsKey(selected_quiz_type) 
+						&& !_default_quiz_info_map.containsKey(selected_quiz_type))) {
 			_quiz_info_box.setSelectedItem(default_quiz_infos[0].getName());
 		} else {
 			_quiz_info_box.setSelectedItem(selected_quiz_type);
