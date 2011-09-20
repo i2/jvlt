@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<schema lang="czech">
+	<class name="noun"/>
+	<class name="adjective"/>
+	<class name="pronoun"/>
+	<class name="numeral"/>
+	<class name="verb"/>
+	<class name="adverb"/>
+	<class name="preposition"/>
+	<class name="conjunction"/>
+	<class name="particle"/>
+	
+	<attribute name="gender" classes="noun;pronoun;numeral">
+		<choice name="feminine"/>
+		<choice name="masculine"/>
+		<choice name="neuter"/>
+	</attribute>
+	<attribute name="genitive" classes="noun;pronoun;numeral" group="declension"/>
+	<attribute name="sg_1st" classes="verb" group="conjugation"/>
+	<attribute name="aspect" classes="verb"/>
+	<!-- TODO counterpart aspect? -->
+</schema>
+
