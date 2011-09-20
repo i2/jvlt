@@ -225,7 +225,8 @@ class StatsDescriptor extends WizardPanelDescriptor implements ActionListener {
 				}
 
 				updateQuizInfoList();
-				JVLT.getRuntimeProperties().put("quiz_types", quiz_info_list);
+				JVLT.getRuntimeProperties().put("quiz_types",
+						_quiz_info_map.values().toArray(new QuizInfo[0]));
 
 				// Update the quiz dictionary. This is necessary when an
 				// existing quiz type was modified by the user

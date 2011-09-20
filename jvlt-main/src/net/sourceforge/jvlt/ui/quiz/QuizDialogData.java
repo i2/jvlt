@@ -10,6 +10,7 @@ import javax.swing.border.TitledBorder;
 
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.metadata.Attribute;
+import net.sourceforge.jvlt.metadata.CustomAttribute;
 import net.sourceforge.jvlt.metadata.MetaData;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.quiz.QuizInfo;
@@ -128,21 +129,32 @@ public class QuizDialogData extends CustomDialogData {
 			return null;
 		}
 
+		boolean existLanguageSpecificAttributes = false;
+		
 		Object[] shown_selected = _shown_attributes_panel.getSelectedObjects();
 		String[] shown_attr_list = new String[shown_selected.length];
 		for (int i = 0; i < shown_selected.length; i++) {
-			shown_attr_list[i] = ((Attribute) shown_selected[i]).getName();
+			Attribute attr = (Attribute) shown_selected[i];
+			shown_attr_list[i] = attr.getName();
+			if (attr instanceof CustomAttribute) {
+				existLanguageSpecificAttributes = true;
+			}
 		}
 
 		Object[] quizzed_selected = _quizzed_attribute_box.getSelectedObjects();
 		String[] quizzed_attr_list = new String[quizzed_selected.length];
 		for (int i = 0; i < quizzed_selected.length; i++) {
-			quizzed_attr_list[i] = ((Attribute) quizzed_selected[i]).getName();
+			Attribute attr = (Attribute) quizzed_selected[i];
+			quizzed_attr_list[i] = attr.getName();
+			if (attr instanceof CustomAttribute) {
+				existLanguageSpecificAttributes = true;
+			}
 		}
 
 		QuizInfo info = new QuizInfo();
 		info.setName(name);
-		info.setLanguage(_model.getDict().getLanguage());
+		info.setLanguage(existLanguageSpecificAttributes
+				? _model.getDict().getLanguage() : null);
 		info.setQuizzedAttributes(quizzed_attr_list);
 		info.setShownAttributes(shown_attr_list);
 
