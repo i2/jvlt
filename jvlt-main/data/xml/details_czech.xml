@@ -2,22 +2,23 @@
 <schema lang="czech">
 	<class name="noun"/>
 	<class name="adjective"/>
-	<class name="pronoun"/>
+	<class name="pron"/>
 	<class name="numeral"/>
 	<class name="verb"/>
 	<class name="adverb"/>
 	<class name="preposition"/>
 	<class name="conjunction"/>
 	<class name="particle"/>
+	<class name="interjection"/>
 	
-	<attribute name="gender" classes="noun;pronoun;numeral">
+	<attribute name="gender" classes="noun;pron;numeral">
 		<choice name="feminine"/>
 		<choice name="masculine"/>
 		<choice name="neuter"/>
 	</attribute>
-	<attribute name="genitive" classes="noun;pronoun;numeral" group="declension"/>
+	<attribute name="genitive" classes="noun;pron;numeral" group="declension"/>
 	<attribute name="sg_1st" classes="verb" group="conjugation"/>
 	<attribute name="aspect" classes="verb"/>
-	<!-- TODO counterpart aspect? -->
+	<attribute name="aspect_counterpart" classes="verb"/>
 </schema>
 
