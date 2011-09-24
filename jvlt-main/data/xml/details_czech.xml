@@ -18,7 +18,10 @@
 	</attribute>
 	<attribute name="genitive" classes="noun;pron;numeral" group="declension"/>
 	<attribute name="sg_1st" classes="verb" group="conjugation"/>
-	<attribute name="aspect" classes="verb"/>
+	<attribute name="aspect" classes="verb">
+		<choice name="perfective"/>
+		<choice name="imperfective"/>
+	</attribute>
 	<attribute name="aspect_counterpart" classes="verb"/>
 </schema>
 
