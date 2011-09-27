@@ -4,10 +4,14 @@
 	<class name="verb"/>
 	<class name="adjective"/>
 	<class name="adverb"/>
+	<class name="pron"/>
 	<class name="conjunction"/>
 	<class name="expression"/>
 	<class name="preposition"/>
 	<class name="interjection"/>
+	<class name="prefix"/>
+	<class name="suffix"/>
+	
 	<attribute name="nominative" classes="noun"/>
 	<attribute name="accusative" classes="noun"/>
 	<attribute name="genitive" classes="noun"/>

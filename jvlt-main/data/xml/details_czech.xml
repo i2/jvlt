@@ -10,6 +10,8 @@
 	<class name="conjunction"/>
 	<class name="particle"/>
 	<class name="interjection"/>
+	<class name="prefix"/>
+	<class name="suffix"/>
 	
 	<attribute name="gender" classes="noun;pron;numeral">
 		<choice name="feminine"/>

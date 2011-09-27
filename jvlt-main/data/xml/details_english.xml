@@ -13,6 +13,7 @@
 	<attribute name="comparative" classes="adjective;adverb" group="comparison"/>
 	<attribute name="superlative" classes="adjective;adverb" group="comparison"/>
 
+	<class name="pron"/>
 	<class name="conjunction"/>
 	<class name="expression"/>
 	<class name="preposition"/>
