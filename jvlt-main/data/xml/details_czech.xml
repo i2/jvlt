@@ -18,7 +18,7 @@
 		<choice name="masculine"/>
 		<choice name="neuter"/>
 	</attribute>
-	<attribute name="genitive" classes="noun;pron;numeral" group="declension"/>
+	<attribute name="genitive" classes="noun;pronoun;numeral" group="declension"/>
 	<attribute name="sg_1st" classes="verb" group="conjugation"/>
 	<attribute name="aspect" classes="verb">
 		<choice name="perfective"/>
