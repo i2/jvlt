@@ -2,7 +2,7 @@
 <schema lang="czech">
 	<class name="noun"/>
 	<class name="adjective"/>
-	<class name="pron"/>
+	<class name="pronoun"/>
 	<class name="numeral"/>
 	<class name="verb"/>
 	<class name="adverb"/>

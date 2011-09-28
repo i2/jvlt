@@ -4,7 +4,7 @@
 	<class name="verb"/>
 	<class name="adjective"/>
 	<class name="adverb"/>
-	<class name="pron"/>
+	<class name="pronoun"/>
 	<class name="conjunction"/>
 	<class name="expression"/>
 	<class name="preposition"/>
