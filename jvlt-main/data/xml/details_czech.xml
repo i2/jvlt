@@ -13,7 +13,7 @@
 	<class name="prefix"/>
 	<class name="suffix"/>
 	
-	<attribute name="gender" classes="noun;pron;numeral">
+	<attribute name="gender" classes="noun;pronoun;numeral">
 		<choice name="feminine"/>
 		<choice name="masculine"/>
 		<choice name="neuter"/>
