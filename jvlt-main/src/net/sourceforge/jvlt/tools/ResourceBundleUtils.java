@@ -22,8 +22,8 @@ class ResourceBundleUtils {
 
 	private static final Logger logger = Logger
 			.getLogger(ResourceBundleUtils.class);
-	private static final String[] LANGUAGES = new String[] { "cs_CZ", "de_DE",
-			"fr_FR", "pl_PL" };
+	private static final String[] LANGUAGES = new String[] {
+		"cs_CZ", "de_DE", "el_GR", "fr_FR", "pl_PL", "pt_BR", "sv_SE" };
 
 	private final String[] _files;
 	private final String[] _languages;
@@ -117,7 +117,8 @@ class ResourceBundleUtils {
 								pf.addLine(new Line(i, line), null);
 								continue;
 							}
-							throw new Exception("Invalid line: " + line);
+							throw new Exception("Invalid line in file '"
+								+ filename + "': " + line);
 						}
 						current_key = matcher.group(1);
 						pf.addLine(new Line(i, line), current_key);
