@@ -54,6 +54,14 @@
 			</e-mail>
 			<role>Brazilian Portuguese translation</role>
 		</person>
+		<person>
+			<name>Magdalini Fotiadou</name>
+			<e-mail>
+				<local-part>fotiadmi</local-part>
+				<domain>csd.auth.gr</domain>
+			</e-mail>
+			<role>Greek and Swedish translation</role>
+		</person>
 	</translators>
 	<contributors>
 		<person>
