@@ -24,8 +24,10 @@ public class JVLT {
 		Locale.FRANCE,
 		Locale.GERMANY,
 		new Locale("cs", "CZ"),
+		new Locale("el", "GR"),
 		new Locale("pl", "PL"),
-		new Locale("pt", "BR")
+		new Locale("pt", "BR"),
+		new Locale("sv", "SE")
 	};
 
 	private PropertyMap _runtime_properties;
