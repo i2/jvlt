@@ -53,8 +53,17 @@ public class MultimediaUtils {
 		for (String mmFile : mm_files) {
 			MultimediaFile mm_file = MultimediaUtils
 					.getMultimediaFileForName(mmFile);
-			if (mm_file.getType() == MultimediaFile.AUDIO_FILE) {
+			playAudioFile(mm_file);
+		}
+	}
+	
+	protected static void playAudioFile(MultimediaFile mm_file)
+			throws IOException {
+		if (mm_file.getType() == MultimediaFile.AUDIO_FILE) {
+			if (mm_file instanceof AudioFile) {
 				((AudioFile) mm_file).play();
+			} else {
+				((CustomMultimediaFile) mm_file).play();
 			}
 		}
 	}
