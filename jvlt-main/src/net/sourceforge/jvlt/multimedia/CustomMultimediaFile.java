@@ -3,8 +3,11 @@ package net.sourceforge.jvlt.multimedia;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 
 public class CustomMultimediaFile extends MultimediaFile {
+	private static final Logger logger = Logger.getLogger(MultimediaFile.class);
+
 	private String _command;
 
 	public CustomMultimediaFile(String file_name, int type) {
@@ -33,6 +36,9 @@ public class CustomMultimediaFile extends MultimediaFile {
 	}
 
 	public void play() throws IOException {
+		logger.debug("Trying to play file '" + _file_name + "' with command '"
+				+ _command + "'...");
+
 		if (_command == null || _command.equals("")) {
 			return;
 		}
@@ -44,9 +50,16 @@ public class CustomMultimediaFile extends MultimediaFile {
 			throw new IOException(msg);
 		}
 
-		String c = _command.replaceAll("%f", f.getAbsolutePath());
+		String c = getCommandString(f.getAbsolutePath());
+		
+		logger.debug("Command is '" + c + "'");
+		
 		// System.out.println(c);
 		Runtime rt = Runtime.getRuntime();
 		rt.exec(c);
+	}
+	
+	protected String getCommandString(String path) {
+		return _command.replaceAll("%f", path.replaceAll("\\\\", "\\\\\\\\"));
 	}
 }

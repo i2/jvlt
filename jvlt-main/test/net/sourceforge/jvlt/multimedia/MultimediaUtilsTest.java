@@ -19,7 +19,7 @@ public class MultimediaUtilsTest {
 	 * an exception.
 	 */
 	@Test
-	public void testPlayAudioFiles() throws IOException {
+	public void testPlayAudioFile() throws IOException {
 		EasyMock.expect(customFile.getType())
 			.andReturn(MultimediaFile.AUDIO_FILE);
 		customFile.play();
