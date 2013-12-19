@@ -265,7 +265,7 @@ public class UIConfig implements Config {
 	 * @param oldConfig configuration directory from previous versions
 	 * @return the folder to use for reading/storing config information
 	 */
-	private static File getOrBuildConfigDirectory(File config, File oldConfig) {
+	protected static File getOrBuildConfigDirectory(File config, File oldConfig) {
 		// TODO what do we do if we can't write the config for whatever reason?
 		if (config.exists()) {
 			if (!config.isDirectory()) {
@@ -294,7 +294,7 @@ public class UIConfig implements Config {
 	 * 
 	 * @return the folder where to read and store config information
 	 */
-	private static String getConfigPath() {
+	protected static String getConfigPath() {
 		String pathSuffix = "jvlt";
 
 		String configOverride = System.getProperty("config");

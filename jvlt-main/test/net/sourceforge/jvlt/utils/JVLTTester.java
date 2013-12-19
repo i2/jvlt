@@ -1,4 +1,4 @@
-package net.sourceforge.jvlt; // NOPMD static imports for mocking/asserting
+package net.sourceforge.jvlt.utils; // NOPMD static imports for mocking/asserting
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -8,11 +8,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 
+import net.sourceforge.jvlt.utils.UIConfig;
+
 import org.testng.annotations.Test;
 
 public class JVLTTester {
 
-	private static final String REGULAR_CONFIG = JVLT.getConfigPath();
+	private static final String REGULAR_CONFIG = UIConfig.getConfigPath();
 	private static final String CONFIG_OVERRIDE = "config";
 
 	/**
@@ -22,7 +24,7 @@ public class JVLTTester {
 	public void testDebugFolderSet() {
 		String folder = System.getProperty("user.home");
 		System.setProperty(CONFIG_OVERRIDE, folder);
-		assertEquals(JVLT.getConfigPath(), folder + File.separator + "jvlt",
+		assertEquals(UIConfig.getConfigPath(), folder + File.separator + "jvlt",
 				"Did not set config folder to specified existing path");
 	}
 
@@ -33,7 +35,7 @@ public class JVLTTester {
 	public void testNonExistingDebugFolderSet() {
 		String folder = "this doesn't exist - hopefully";
 		System.setProperty(CONFIG_OVERRIDE, folder);
-		assertEquals(JVLT.getConfigPath(), REGULAR_CONFIG,
+		assertEquals(UIConfig.getConfigPath(), REGULAR_CONFIG,
 				"Did not ignore nonexistent path for config");
 	}
 
@@ -44,7 +46,7 @@ public class JVLTTester {
 	public void testInvalidDebugFolderSet() {
 		String folder = "?/\\'";
 		System.setProperty(CONFIG_OVERRIDE, folder);
-		assertEquals(JVLT.getConfigPath(), REGULAR_CONFIG,
+		assertEquals(UIConfig.getConfigPath(), REGULAR_CONFIG,
 				"Did not ignore invalid path for config");
 	}
 
@@ -54,7 +56,7 @@ public class JVLTTester {
 	@Test
 	public void testNoDebugFolderSet() {
 		System.clearProperty(CONFIG_OVERRIDE);
-		assertEquals(JVLT.getConfigPath(), REGULAR_CONFIG,
+		assertEquals(UIConfig.getConfigPath(), REGULAR_CONFIG,
 				"Did not use default path for config with nothing specified");
 	}
 
@@ -70,7 +72,7 @@ public class JVLTTester {
 		when(config.exists()).thenReturn(true);
 		when(config.isDirectory()).thenReturn(false);
 
-		JVLT.getOrBuildConfigDirectory(config, oldConfig);
+		UIConfig.getOrBuildConfigDirectory(config, oldConfig);
 
 		verifyNoMoreInteractions(oldConfig);
 	}
@@ -88,7 +90,7 @@ public class JVLTTester {
 		when(oldConfig.exists()).thenReturn(true);
 		when(oldConfig.renameTo(config)).thenReturn(true);
 
-		JVLT.getOrBuildConfigDirectory(config, oldConfig);
+		UIConfig.getOrBuildConfigDirectory(config, oldConfig);
 
 		verify(oldConfig).renameTo(config);
 	}
@@ -107,7 +109,7 @@ public class JVLTTester {
 		when(oldConfig.exists()).thenReturn(true);
 		when(oldConfig.renameTo(config)).thenReturn(false);
 
-		JVLT.getOrBuildConfigDirectory(config, oldConfig);
+		UIConfig.getOrBuildConfigDirectory(config, oldConfig);
 
 		verify(oldConfig).renameTo(config);
 		verify(config).mkdirs();
@@ -125,7 +127,7 @@ public class JVLTTester {
 		when(config.exists()).thenReturn(false);
 		when(oldConfig.exists()).thenReturn(false);
 
-		JVLT.getOrBuildConfigDirectory(config, oldConfig);
+		UIConfig.getOrBuildConfigDirectory(config, oldConfig);
 
 		verify(config).mkdirs();
 	}
