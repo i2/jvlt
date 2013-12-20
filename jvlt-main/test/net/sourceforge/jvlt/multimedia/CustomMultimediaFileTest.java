@@ -19,6 +19,6 @@ public class CustomMultimediaFileTest {
 		
 		String commandString = file.getCommandString(path + fileName);
 		Assert.assertEquals("Wrong command string: " + commandString,
-				"play \\\\test\\test.mp3", commandString);
+				"play \"\\\\test\\test.mp3\"", commandString);
 	}
 }

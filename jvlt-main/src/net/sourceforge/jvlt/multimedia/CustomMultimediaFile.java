@@ -60,6 +60,7 @@ public class CustomMultimediaFile extends MultimediaFile {
 	}
 	
 	protected String getCommandString(String path) {
-		return _command.replaceAll("%f", path.replaceAll("\\\\", "\\\\\\\\"));
+		String pathString = path.replaceAll("\\\\", "\\\\\\\\");
+		return _command.replaceAll("%f", "\"" + pathString + "\"");
 	}
 }
