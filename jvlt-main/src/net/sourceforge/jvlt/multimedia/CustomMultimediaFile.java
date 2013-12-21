@@ -36,7 +36,7 @@ public class CustomMultimediaFile extends MultimediaFile {
 	}
 
 	public void play() throws IOException {
-		logger.debug("Trying to play file '" + _file_name + "' with command '"
+		logger.trace("Trying to play file '" + _file_name + "' with command '"
 				+ _command + "'...");
 
 		if (_command == null || _command.equals("")) {
@@ -50,17 +50,21 @@ public class CustomMultimediaFile extends MultimediaFile {
 			throw new IOException(msg);
 		}
 
-		String c = getCommandString(f.getAbsolutePath());
+		String[] cmdArray = getCommandArray(f.getAbsolutePath());
 		
-		logger.debug("Command is '" + c + "'");
-		
-		// System.out.println(c);
 		Runtime rt = Runtime.getRuntime();
-		rt.exec(c);
+		rt.exec(cmdArray);
 	}
 	
-	protected String getCommandString(String path) {
-		String pathString = path.replaceAll("\\\\", "\\\\\\\\");
-		return _command.replaceAll("%f", "\"" + pathString + "\"");
+	protected String[] getCommandArray(String path) {
+		// Split space-separated string but ignore spaces in quotes
+		String[] cmdArray = _command.split(" (?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+		for (int i = 0; i < cmdArray.length; i++) {
+			if (cmdArray[i].equals("%f")) {
+				cmdArray[i] = path;
+			}
+		}
+		
+		return cmdArray;
 	}
 }
