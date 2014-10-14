@@ -1,16 +1,17 @@
 package net.sourceforge.jvlt.ui.quiz;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import net.sourceforge.jvlt.JVLT;
 import net.sourceforge.jvlt.actions.StatsUpdateAction;
 import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.SelectionNotifier;
-import net.sourceforge.jvlt.metadata.Attribute;
+import net.sourceforge.jvlt.metadata.QuizzableAttribute;
 import net.sourceforge.jvlt.model.JVLTModel;
 import net.sourceforge.jvlt.multimedia.MultimediaUtils;
 import net.sourceforge.jvlt.quiz.QueryResult;
@@ -479,22 +480,13 @@ public class QuizModel extends WizardModel {
 			}
 		} else if (d instanceof EntryInputDescriptor) {
 			String attr_names[] = _qdict.getQuizInfo().getQuizzedAttributes();
-			Vector<String> solutions = new Vector<String>();
+			List<QuizzableAttribute> attributes =
+					new ArrayList<QuizzableAttribute>();
 			for (String attrName : attr_names) {
-				Attribute attr = _model.getDictModel().getMetaData(Entry.class)
+				QuizzableAttribute attr = (QuizzableAttribute) _model
+						.getQueryModel().getQuizEntryMetaData()
 						.getAttribute(attrName);
-
-				String solution = attr.getFormattedValue(entry);
-
-				// Strip leading and trailing blank spaces
-				solution = solution.replaceAll("^\\s+", "");
-				solution = solution.replaceAll("\\s+$", "");
-
-				if (solution.equals("")) {
-					continue;
-				}
-
-				solutions.add(solution);
+				attributes.add(attr);
 			}
 
 			EntryInputDescriptor eid = (EntryInputDescriptor) d;
@@ -504,7 +496,7 @@ public class QuizModel extends WizardModel {
 
 			if (!eid.isAnswerKnown()) {
 				result = new QueryResult(entry, false);
-			} else if (answers.length < solutions.size()) {
+			} else if (answers.length < attributes.size()) {
 				result = new QueryResult(entry, false);
 			} else {
 				String bad_answers = "";
@@ -512,10 +504,8 @@ public class QuizModel extends WizardModel {
 				String answers_delimiter = JVLT.getConfig().getProperty(
 						"answers_delimiter", ",");
 				for (int i = 0; i < answers.length; i++) {
-					boolean correct_answer = (match_case
-							&& answers[i].equals(solutions.get(i)) || (!match_case && answers[i]
-							.toLowerCase().equals(
-									solutions.get(i).toLowerCase())));
+					boolean correct_answer = attributes.get(i)
+							.matches(entry, answers[i], match_case);
 
 					if (!correct_answer) {
 						if (!"".equals(bad_answers)) {

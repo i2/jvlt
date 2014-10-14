@@ -9,9 +9,11 @@ import net.sourceforge.jvlt.core.Entry;
 import net.sourceforge.jvlt.event.DictUpdateListener;
 import net.sourceforge.jvlt.event.DictUpdateListener.DictUpdateEvent;
 import net.sourceforge.jvlt.event.DictUpdateListener.EntryDictUpdateEvent;
+import net.sourceforge.jvlt.metadata.QuizEntryMetaData;
 
 public class QueryModel extends AbstractModel {
 	private final LinkedList<DictUpdateListener> _dict_update_listeners;
+	private final QuizEntryMetaData _entry_meta_data = new QuizEntryMetaData();
 
 	public QueryModel() {
 		_dict_update_listeners = new LinkedList<DictUpdateListener>();
@@ -23,6 +25,10 @@ public class QueryModel extends AbstractModel {
 
 	public void removeDictUpdateListener(DictUpdateListener listener) {
 		_dict_update_listeners.remove(listener);
+	}
+	
+	public QuizEntryMetaData getQuizEntryMetaData() {
+		return _entry_meta_data;
 	}
 
 	@Override
