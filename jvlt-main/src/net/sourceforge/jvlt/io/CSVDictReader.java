@@ -389,8 +389,14 @@ public class CSVDictReader extends DictReader {
 
 					SchemaAttribute attr = cl.getAttribute(attr_name);
 					if (attr == null) {
-						attr = cl.getAttribute((String) _attribute_translations
-								.get(attr_name));
+						// Maybe the translation instead of the key has been
+						// specified
+						String attrTranslation = (String) _attribute_translations
+								.get(attr_name);
+						if (attrTranslation != null) {
+							attr = cl.getAttribute((String) _attribute_translations
+									.get(attr_name));
+						}
 						if (attr == null) {
 							throw new DictReaderException(
 									"Unknown attribute: '" + attr_name + "'");

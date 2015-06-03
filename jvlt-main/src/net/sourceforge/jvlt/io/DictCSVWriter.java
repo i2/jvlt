@@ -85,48 +85,56 @@ public class DictCSVWriter extends DictWriter {
 		}
 
 		// Write column headers
-		writer.write(getField(I18nService.getString("Labels", "original")));
-		writer.write(_field_delimiter);
-		writer.write(getField(I18nService.getString("Labels", "pronunciation")));
-		writer.write(_field_delimiter);
+		StringBuilder builder = new StringBuilder();
+		builder.append(getField(I18nService.getString("Labels", "original")));
+		builder.append(_field_delimiter);
+		builder.append(getField(I18nService.getString("Labels", "pronunciation")));
+		builder.append(_field_delimiter);
 		for (int i = 0; i < info.num_senses; i++) {
-			writer.write(I18nService.getString("Labels", "translation") + " #"
+			builder.append(I18nService.getString("Labels", "translation") + " #"
 					+ (i + 1));
-			writer.write(_field_delimiter);
-			writer.write(I18nService.getString("Labels", "definition") + " #"
+			builder.append(_field_delimiter);
+			builder.append(I18nService.getString("Labels", "definition") + " #"
 					+ (i + 1));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
-		writer.write(getField(I18nService.getString("Labels", "lesson")));
-		writer.write(_field_delimiter);
+		builder.append(getField(I18nService.getString("Labels", "lesson")));
+		builder.append(_field_delimiter);
 		for (int i = 0; i < info.num_categories; i++) {
-			writer.write(I18nService.getString("Labels", "category") + " #"
+			builder.append(I18nService.getString("Labels", "category") + " #"
 					+ (i + 1));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
 		for (int i = 0; i < info.num_mmfiles; i++) {
-			writer.write(I18nService.getString("Labels", "multimedia_file") + " #"
+			builder.append(I18nService.getString("Labels", "multimedia_file") + " #"
 					+ (i + 1));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
-		writer.write(getField(I18nService.getString("Labels", "class")));
-		writer.write(_field_delimiter);
+		builder.append(getField(I18nService.getString("Labels", "class")));
+		builder.append(_field_delimiter);
 		AttributeResources resources = new AttributeResources();
 		for (SchemaAttribute attr : info.num_attr_columns.keySet()) {
 			if (attr instanceof ArraySchemaAttribute) {
 				int num_cols = info.num_attr_columns.get(attr);
 				for (int i = 0; i < num_cols; i++) {
-					writer.write(getField(resources.getString(attr.getName()))
+					builder.append(getField(resources.getString(attr.getName()))
 							+ " #" + (i + 1));
-					writer.write(_field_delimiter);
+					builder.append(_field_delimiter);
 				}
 			} else {
-				writer.write(getField(resources.getString(attr.getName())));
-				writer.write(_field_delimiter);
+				builder.append(getField(resources.getString(attr.getName())));
+				builder.append(_field_delimiter);
 			}
 		}
-		writer.write(System.getProperty("line.separator"));
+		
+		// Remove last field delimiter
+		builder.deleteCharAt(builder.length() - 1);
 
+		builder.append(System.getProperty("line.separator"));
+		
+		writer.write(builder.toString());
+
+		// Write entries
 		for (Entry entry : entries) {
 			writeEntry(writer, info, entry);
 		}
@@ -136,57 +144,58 @@ public class DictCSVWriter extends DictWriter {
 
 	private void writeEntry(Writer writer, DictInfo info, Entry entry)
 			throws IOException {
+		StringBuilder builder = new StringBuilder();
+		
 		// Write orthography
-		writer.write(getField(entry.getOrthography()));
-		writer.write(_field_delimiter);
+		builder.append(getField(entry.getOrthography()));
+		builder.append(_field_delimiter);
 
 		// Write first pronunciation
 		String[] pronunciations = entry.getPronunciations();
 		if (pronunciations.length > 0) {
-			writer.write(getField(pronunciations[0]));
+			builder.append(getField(pronunciations[0]));
 		} else {
-			writer.write(getField(""));
+			builder.append(getField(""));
 		}
-		writer.write(_field_delimiter);
+		builder.append(_field_delimiter);
 
 		// Write senses
 		Sense[] senses = entry.getSenses();
 		for (int i = 0; i < info.num_senses; i++) {
-			writer.write(i < senses.length ? getField(senses[i]
+			builder.append(i < senses.length ? getField(senses[i]
 					.getTranslation()) : getField(""));
-			writer.write(_field_delimiter);
-			writer
-					.write(i < senses.length ? getField(senses[i]
+			builder.append(_field_delimiter);
+			builder.append(i < senses.length ? getField(senses[i]
 							.getDefinition()) : getField(""));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
 
 		// Write lesson
-		writer.write(getField(entry.getLesson()));
-		writer.write(_field_delimiter);
+		builder.append(getField(entry.getLesson()));
+		builder.append(_field_delimiter);
 
 		// Write categories
 		String[] categories = entry.getCategories();
 		for (int i = 0; i < info.num_categories; i++) {
-			writer.write(i < categories.length ? getField(categories[i])
+			builder.append(i < categories.length ? getField(categories[i])
 					: getField(""));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
 
 		// Write multimedia files
 		String[] mmfiles = entry.getMultimediaFiles();
 		for (int i = 0; i < info.num_mmfiles; i++) {
-			writer.write(i < mmfiles.length ? getField(mmfiles[i])
+			builder.append(i < mmfiles.length ? getField(mmfiles[i])
 					: getField(""));
-			writer.write(_field_delimiter);
+			builder.append(_field_delimiter);
 		}
 
 		// TODO: Write examples
 
 		// Write entry class
 		EntryClass ec = entry.getEntryClass();
-		writer.write(ec != null ? ec.getName() : getField(""));
-		writer.write(_field_delimiter);
+		builder.append(ec != null ? ec.getName() : getField(""));
+		builder.append(_field_delimiter);
 
 		// Write language-specific attributes
 		if (ec != null) {
@@ -195,6 +204,7 @@ public class DictCSVWriter extends DictWriter {
 			while (it.hasNext()) {
 				SchemaAttribute attr = ec.getAttribute(it.next().getName());
 				if (attr == null) {
+					builder.append(_field_delimiter);
 					continue;
 				}
 
@@ -203,21 +213,24 @@ public class DictCSVWriter extends DictWriter {
 					Object[] vals = (Object[]) asa.getValue();
 					int num_cols = info.num_attr_columns.get(attr);
 					for (int i = 0; i < num_cols; i++) {
-						writer
-								.write(getField(vals != null && i < vals.length ? vals[i]
-										.toString()
-										: ""));
-						writer.write(_field_delimiter);
+						builder.append(getField(vals != null && i < vals.length
+								? vals[i].toString() : ""));
+						builder.append(_field_delimiter);
 					}
 				} else {
 					Object val = attr.getValue();
-					writer.write(getField(val != null ? val.toString() : ""));
-					writer.write(_field_delimiter);
+					builder.append(getField(val != null ? val.toString() : ""));
+					builder.append(_field_delimiter);
 				}
 			}
 		}
 
-		writer.write(System.getProperty("line.separator"));
+		// Remove last field delimiter
+		builder.deleteCharAt(builder.length() - 1);
+
+		builder.append(System.getProperty("line.separator"));
+
+		writer.write(builder.toString());
 	}
 
 	private String getField(String value) {
