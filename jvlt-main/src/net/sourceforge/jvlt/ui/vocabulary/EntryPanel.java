@@ -333,7 +333,7 @@ public class EntryPanel extends JPanel implements ActionListener,
 		JScrollPane entry_scrpane = new JScrollPane();
 		entry_scrpane.getViewport().setView(_entry_table);
 		_entry_table.getSelectionModel().addListSelectionListener(this);
-		_entry_table.setCellRenderer("Original", ORIGINAL_RENDERER);
+		_entry_table.setCellRenderer("Orthography", ORIGINAL_RENDERER);
 		_entry_table.setCellRenderer("Pronunciations", PRONUNCIATION_RENDERER);
 		_entry_table.setCellRenderer("MistakeRatio", MISTAKE_RATIO_RENDERER);
 
