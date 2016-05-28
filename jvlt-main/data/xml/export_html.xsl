@@ -9,6 +9,23 @@
 	<html>
 	<head>
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
+	<style>
+		body {
+			<xsl:value-of select="xslutils:fontStyleFamily('html_font')"/>;
+			<xsl:value-of select="xslutils:fontStyleSize('html_font')"/>;
+		}
+	
+		.orth {
+			<xsl:value-of select="xslutils:fontStyleFamily('orth_font')"/>;
+			<xsl:value-of select="xslutils:fontStyleSize('orth_font')"/>;
+			font-weight: bold;
+		}
+		
+		.pron {
+			<xsl:value-of select="xslutils:fontStyleFamily('pron_font')"/>;
+			<xsl:value-of select="xslutils:fontStyleSize('pron_font')"/>;
+		}
+	</style>
 	</head>
 	<body>
 	<h3>
@@ -26,10 +43,10 @@
 <xsl:template match="entry">
 	<p>
 	<xsl:apply-templates select="multimedia"/>
-	<b><xsl:value-of select="orth"/></b>
+	<span class="orth"><xsl:value-of select="orth"/></span>
 	<xsl:text> </xsl:text>
 	<xsl:if test="count(pron) > 0">
-		[<xsl:apply-templates select="pron"/>]
+		<span class="pron">[<xsl:apply-templates select="pron"/>]</span>
 		<xsl:text> </xsl:text>
 	</xsl:if>
 	<xsl:call-template name="process-attributes">
